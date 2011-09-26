@@ -1,0 +1,16 @@
+<classpath>
+  <classpathentry kind="src" output="build/main" path="src/main"/>
+  <classpathentry kind="src" output="build/peers" path="src/peers"/>
+  <classpathentry kind="src" output="build/classes" path="src/classes"/>
+  <classpathentry kind="src" output="build/examples" path="src/examples"/>
+  <classpathentry kind="src" output="build/tests" path="src/tests"/>
+  <classpathentry kind="lib" path="tools/RunAnt.jar"/>
+  <classpathentry kind="lib" path="tools/RunJPF.jar"/>
+  <classpathentry kind="lib" path="tools/RunTest.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry combineaccessrules="false" kind="src" path="/jpf-core"/>
+
+  <!-- we have to add 3rd party libraries later-on, unless eclipse understands wildcards
+	<classpathentry kind="lib" path="lib/*.jar"/>
+  -->
+</classpath>
