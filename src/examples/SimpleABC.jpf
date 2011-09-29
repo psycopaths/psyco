@@ -1,0 +1,21 @@
+classpath+=build/classes
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+sut.class=abc
+
+interface.alphabet=a,b,c
+interface.outputFile=_generatedIntABC
+
+vm.store_steps=true 
+
++log.info=teacher,learning
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
