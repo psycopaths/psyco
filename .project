@@ -4,6 +4,7 @@
     <comment></comment>
     <projects>
         <project>jpf-core</project>
+        <project>jpf-learn</project>
     </projects>
     <buildSpec>
         <buildCommand>

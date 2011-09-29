@@ -9,6 +9,7 @@
   <classpathentry kind="lib" path="tools/RunTest.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry combineaccessrules="false" kind="src" path="/jpf-core"/>
+  <classpathentry combineaccessrules="false" kind="src" path="/jpf-learn"/>
 
   <!-- we have to add 3rd party libraries later-on, unless eclipse understands wildcards
 	<classpathentry kind="lib" path="lib/*.jar"/>
