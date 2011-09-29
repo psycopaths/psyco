@@ -52,12 +52,18 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
   	public TeacherClassic(Config conf) {
 		
 		memoized_ = new MemoizeTable();
+    
+    /* targetArgs are no longer relevant
+     
 		String[] targetArgs = conf.getTargetArgs();
 		if (targetArgs.length < 1)
 			throw new RuntimeException("No target arguments configured");
 		
-		module1_ = conf.getString("interface.targetClass"); // this is our target class
-		module2_ = null; // TODO change for compositional verification
+    */
+    
+  
+    module1_ = conf.getString("sut.class"); // this is our target class
+    module2_ = null; // TODO change for compositional verification
 		JPFargs_ = conf;	
 		String[] alpha = conf.getStringArray("interface.alphabet");
 		alphabet_ = new Vector();
@@ -69,6 +75,8 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 
   public boolean query(AbstractList<String> sequence) throws SETException {
     
+    if (sequence.isEmpty()) 
+      return true;
     Boolean recalled = memoized_.getResult(sequence);
 		if (recalled != null) { // we get the result from memoized
 			return (!recalled.booleanValue()); // note the fact that it is the other way around
@@ -119,7 +127,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 	
   public JPF createJPFInstance(String[] programArgs) {
 
-    JPFargs_.setTarget("ProgramExecutive");  // main program
+    JPFargs_.setTarget("gov.nasa.jpf.psyco.Target.ProgramExecutive");  // main program
 		JPFargs_.setTargetArgs(programArgs); // arguments to main
 		
 		JPF jpf = new JPF(JPFargs_);

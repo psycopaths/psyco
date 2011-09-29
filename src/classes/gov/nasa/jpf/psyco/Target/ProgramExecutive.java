@@ -41,24 +41,24 @@ public class ProgramExecutive {
     // ignore first argument so start at 1
     for (int i = 1; i < invokeSpecs.length; i++) {
       Invocation invoke = new Invocation(invokeSpecs[i]);
-      Class cls = invoke.get_class();
+      //Class cls = invoke.get_class(); // dont think we need this...
       Method m = invoke.get_method();
+      System.out.println("\n\nDEBUG- Starting to print here***************");
+      System.out.println(m);
+      System.out.println("\n\n");
+      
       Object[] args = invoke.get_Arguments();
       
-      m.invoke(null,args); // null needs to be changed if I handle instances
-      
-      
-      /** don't catch exception so that we have obervable failures
-      try {
+   //   try {
         m.invoke(null,args); // null needs to be changed if I handle instances
-      } catch (IllegalAccessException e1) {
-        System.err.println("IllegalAccessException during query handling" + invokeSpecs[i]);
-      } catch (InvocationTargetException e2) {
-        Throwable cause = e2.getCause();
-        System.err.println("InvocationTargetException during execution of " + invokeSpecs[i]);
-        cause.printStackTrace();
-      }
-      **/
+//      } catch (IllegalAccessException e1) {
+//        System.err.println("IllegalAccessException during query handling" + invokeSpecs[i]);
+//      } catch (InvocationTargetException e2) {
+//        Throwable cause = e2.getCause();
+//        System.err.println("InvocationTargetException during execution of " + invokeSpecs[i]);
+//        cause.printStackTrace();
+//      }
+      
     }
   }
 

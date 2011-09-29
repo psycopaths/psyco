@@ -40,12 +40,12 @@ public class Invocation {
       try{
         invokedClass = Class.forName(cName);
       }catch(ClassNotFoundException e1){
-        // TODO do not leave empty handler
+        System.err.println("Class not found:" + cName);
       };
       try {      
         invokedMethod = invokedClass.getDeclaredMethod(mName);
       } catch(NoSuchMethodException e2){
-        // TODO do not leave empty handler
+        System.err.println("Method not found for name" + mName);
       };
     } else {
       // TODO throw some exception 
@@ -81,7 +81,7 @@ public class Invocation {
   }
   
   Object[] get_Arguments() {
-    return null;
+    return new Object[0];
   }
   
 }
