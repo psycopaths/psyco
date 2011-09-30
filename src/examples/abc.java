@@ -23,13 +23,13 @@ public class abc {
   static int x = 0;
   
   public static Boolean a() {
-    if (x == 0) {
-      x++;
-    } else {
-      assert false;
+    // try a method precondition
+    if (x != 1) {
+      return false;
     }
+    x++;
     return true;
-  } 
+  }
   
   public static void b() {
     if (x == 1) {

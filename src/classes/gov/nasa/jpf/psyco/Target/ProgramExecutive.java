@@ -39,20 +39,24 @@ public class ProgramExecutive {
   static void sequence(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
 
     // ignore first argument so start at 1
-    Boolean stop = Boolean.FALSE;
-    
-    for (int i = 1; (i < invokeSpecs.length && !stop.booleanValue()); i++) {
+    Boolean go_on = Boolean.TRUE;
+
+    for (int i = 1; (i < invokeSpecs.length && go_on.booleanValue()); i++) {
       Invocation invoke = new Invocation(invokeSpecs[i]);
-      //Class cls = invoke.get_class(); // dont think we need this...
       Method m = invoke.get_method();
       Object[] args = invoke.get_Arguments();
+
+      //   try {
       
-   //   try {
-        stop = (Boolean) m.invoke(null,args); // null needs to be changed if I handle instances
-        
-        if (stop) {
-          System.out.println("Sequence execution violated method assumption");
-        }
+      // !go_on means that method assumption was violated
+      go_on = (Boolean) m.invoke(null, args); // null needs to be changed if I handle instances
+
+      if (!go_on.booleanValue()) {
+        System.out.println("Sequence execution violated method assumption");
+      }
+      
+      // no longer catch exceptions so that JPF can return error
+      
 //      } catch (IllegalAccessException e1) {
 //        System.err.println("IllegalAccessException during query handling" + invokeSpecs[i]);
 //      } catch (InvocationTargetException e2) {
@@ -60,7 +64,7 @@ public class ProgramExecutive {
 //        System.err.println("InvocationTargetException during execution of " + invokeSpecs[i]);
 //        cause.printStackTrace();
 //      }
-      
+
     }
   }
 
@@ -81,7 +85,6 @@ public class ProgramExecutive {
       } else {
         System.err.println("Requires to specify whether we are to execute a query or a conjecture");
       }
-    } 
+    }
   }
-  
 }
