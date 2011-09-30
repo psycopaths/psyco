@@ -39,18 +39,20 @@ public class ProgramExecutive {
   static void sequence(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
 
     // ignore first argument so start at 1
-    for (int i = 1; i < invokeSpecs.length; i++) {
+    Boolean stop = Boolean.FALSE;
+    
+    for (int i = 1; (i < invokeSpecs.length && !stop.booleanValue()); i++) {
       Invocation invoke = new Invocation(invokeSpecs[i]);
       //Class cls = invoke.get_class(); // dont think we need this...
       Method m = invoke.get_method();
-      System.out.println("\n\nDEBUG- Starting to print here***************");
-      System.out.println(m);
-      System.out.println("\n\n");
-      
       Object[] args = invoke.get_Arguments();
       
    //   try {
-        m.invoke(null,args); // null needs to be changed if I handle instances
+        stop = (Boolean) m.invoke(null,args); // null needs to be changed if I handle instances
+        
+        if (stop) {
+          System.out.println("Sequence execution violated method assumption");
+        }
 //      } catch (IllegalAccessException e1) {
 //        System.err.println("IllegalAccessException during query handling" + invokeSpecs[i]);
 //      } catch (InvocationTargetException e2) {

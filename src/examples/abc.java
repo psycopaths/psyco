@@ -22,12 +22,13 @@ public class abc {
   
   static int x = 0;
   
-  public static void a() {
+  public static Boolean a() {
     if (x == 0) {
       x++;
     } else {
       assert false;
     }
+    return true;
   } 
   
   public static void b() {
