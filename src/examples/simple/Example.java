@@ -23,11 +23,13 @@ public class Example {
   private static int y = 0;
 
   public static void init(int p, int q) {
+    System.out.println("-------- In init!");
     x = p;
     y = q;
   }
 
   public static void a() {
+    System.out.println("-------- In a!");
     if (x == 0) {
       y = 10;
     } else if (x == 1) {
@@ -38,8 +40,9 @@ public class Example {
   }
 
   public static void b() {
+    System.out.println("-------- In b!");
     if (y == 10) {
-        assert false;
+      assert false;
     }
   }
 }
