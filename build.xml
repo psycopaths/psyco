@@ -34,6 +34,12 @@
   <!-- get the jpf-learn path properties -->
   <property file="${jpf-learn}/jpf.properties"/>
 
+  <!-- get the jpf-jdart path properties -->
+  <property file="${jpf-jdart}/jpf.properties"/>
+
+  <!-- get the jpf-symbc path properties -->
+  <property file="${jpf-symbc}/jpf.properties"/>
+
   <!-- compiler settings -->
   <property name="src_level"     value="6"/>
   <property name="debug"         value="on"/>
@@ -58,6 +64,11 @@
     <!-- add in what we need from jpf-learn -->
     <pathelement path="${jpf-learn.native_classpath}"/>
 
+    <!-- add in what we need from jpf-jdart -->
+    <pathelement path="${jpf-jdart.native_classpath}"/>
+
+  	<!-- add in what we need from jpf-symbc -->
+    <pathelement path="${jpf-symbc.native_classpath}"/>
   </path>
 
   <!-- init: common initialization -->

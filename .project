@@ -5,6 +5,8 @@
     <projects>
         <project>jpf-core</project>
         <project>jpf-learn</project>
+        <project>jpf-jdart</project>
+        <project>jpf-symbc</project>
     </projects>
     <buildSpec>
         <buildCommand>
