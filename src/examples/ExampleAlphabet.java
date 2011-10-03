@@ -16,10 +16,20 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package simple;
+
 
 public class ExampleAlphabet {
 
+<<<<<<< local
+    // [true]
+    public static Boolean init_0() {
+        if (true) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [true]
   public static boolean init_0(int p, int q) {
     System.out.println("-------- In init_0!");
@@ -28,7 +38,19 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
+<<<<<<< local
+                    
+    // [q != 10]
+    public static Boolean init_00() {
+        if (parInitQ != 10) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   }
 
   // [q != 10]
@@ -38,7 +60,19 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
+<<<<<<< local
+                    
+    // [q == 10]
+    public static Boolean init_01() {
+        if (parInitQ == 10) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   }
 
   // [q == 10]
@@ -48,9 +82,20 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [q != 10 && p != 0]
+    public static Boolean init_000() {
+        if (parInitQ != 10 && parInitP != 0) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [q != 10 && p != 0]
   public static boolean init_000(int p, int q) {
     if (q != 10 && p != 0) {
@@ -58,9 +103,20 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [q != 10 && p == 0]
+    public static Boolean init_001() {
+        if (parInitQ != 10 && parInitP == 0) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [q != 10 && p == 0]
   public static boolean init_001(int p, int q) {
     if (q != 10 && p == 0) {
@@ -68,9 +124,20 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [q == 10 && p != 0]
+    public static Boolean init_010() {
+        if (parInitQ == 10 && parInitP != 0) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [q == 10 && p != 0]
   public static boolean init_010(int p, int q) {
     if (q == 10 && p != 0) {
@@ -78,9 +145,20 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [q == 10 && p == 0]
+    public static Boolean init_011() {
+        if (parInitQ == 10 && parInitP == 0) {
+            Example.init(parInitP, parInitQ);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [q == 10 && p == 0]
   public static boolean init_011(int p, int q) {
     if (q == 10 && p == 0) {
@@ -88,9 +166,20 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [true]
+    public static Boolean a_0() {
+        if (true) {
+            Example.a();
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+=======
   // [true]
   public static boolean a_0() {
     if (true) {
@@ -98,9 +187,21 @@ public class ExampleAlphabet {
       return true;
     } else {
       return false;
+>>>>>>> other
     }
   }
 
+<<<<<<< local
+    // [true]
+    public static Boolean b_0() {
+        if (true) {
+            Example.b();
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+    }    
+=======
   // [true]
   public static boolean b_0() {
     if (true) {
@@ -110,4 +211,5 @@ public class ExampleAlphabet {
       return false;
     }
   }    
+>>>>>>> other
 }

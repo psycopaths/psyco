@@ -16,7 +16,7 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package simple;
+
 
 public class Example {
   private static int x = 0;

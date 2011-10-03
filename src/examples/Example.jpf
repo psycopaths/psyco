@@ -1,12 +1,13 @@
+classpath+=build/classes
 shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 
 target=empty
 args=empty
 
-sut.class=abc
+sut.class=ExampleAlphabet
 
-interface.alphabet=a,b,c
-interface.outputFile=_generatedIntABC
+interface.alphabet=init_000,init_001,init_010,init_011,a_0,b_0
+interface.outputFile=_generatedIntExampleAlphabet
 
 vm.store_steps=true 
 

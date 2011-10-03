@@ -50,6 +50,11 @@
                     <location>src/examples</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>jpf-psyco</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -194,12 +199,12 @@
                         <location>src/main</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>src/peers</label>
-                        <location>src/peers</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>src/classes</label>
                         <location>src/classes</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/peers</label>
+                        <location>src/peers</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>src/annotations</label>
@@ -229,7 +234,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/main</package-root>
-                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath}</classpath>
+                <classpath mode="compile">build/main:/Users/dimitra/projects/jpf/jpf-core/build/jpf.jar:/Users/dimitra/projects/jpf/jpf-core/build/jpf-annotations.jar:/Users/dimitra/projects/jpf/jpf-core/lib/jpf-shell-min.jar:/Users/dimitra/projects/jpf/jpf-core/lib/junit-4.6.jar:/Users/dimitra/projects/jpf/jpf-learn/build/jpf-learn.jar:/Users/dimitra/projects/jpf/jpf-learn/lib/*.jar:/Users/dimitra/projects/jpf/jpf-symbc/build/jpf-symbc.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
