@@ -20,16 +20,17 @@ package simple;
 
 public class Query {
   
-  public void sequence(int p, int q) {
+  private static void sequence() {
+    ExampleAlphabet.init();
+
     System.out.println("-------- In sequence!");
-    if (!ExampleAlphabet.init_0(p, q)) return;
+    if (!ExampleAlphabet.init_0()) return;
     if (!ExampleAlphabet.a_0()) return;
     if (!ExampleAlphabet.b_0()) return;
   }
   
   public static void main(String[] args) {
     System.out.println("-------- In main!");
-    Query query = new Query();
-    query.sequence(0, 0);
+    sequence();
   }
 }

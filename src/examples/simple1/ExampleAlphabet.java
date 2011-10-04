@@ -22,9 +22,9 @@ import gov.nasa.jpf.symbc.Symbolic;
 
 public class ExampleAlphabet {
   @Symbolic("true")
-  public static int init_p = 0;
+  public static int init_0_0 = 0;
   @Symbolic("true")
-  public static int init_q = 0;
+  public static int init_0_1 = 0;
 
   public static void init() {}
 
@@ -32,7 +32,7 @@ public class ExampleAlphabet {
   public static boolean init_0() {
     System.out.println("-------- In init_0!");
     if (true) {
-      Example.init(init_p, init_q);
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -41,8 +41,8 @@ public class ExampleAlphabet {
 
   // [q != 10]
   public static boolean init_00() {
-    if (init_q != 10) {
-      Example.init(init_p, init_q);
+    if (init_0_1 != 10) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -51,8 +51,8 @@ public class ExampleAlphabet {
 
   // [q == 10]
   public static boolean init_01() {
-    if (init_q == 10) {
-      Example.init(init_p, init_q);
+    if (init_0_1 == 10) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -61,8 +61,8 @@ public class ExampleAlphabet {
 
   // [q != 10 && p != 0]
   public static boolean init_000() {
-    if (init_q != 10 && init_p != 0) {
-      Example.init(init_p, init_q);
+    if (init_0_1 != 10 && init_0_0 != 0) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -71,8 +71,8 @@ public class ExampleAlphabet {
 
   // [q != 10 && p == 0]
   public static boolean init_001() {
-    if (init_q != 10 && init_p == 0) {
-      Example.init(init_p, init_q);
+    if (init_0_1 != 10 && init_0_0 == 0) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -81,8 +81,8 @@ public class ExampleAlphabet {
 
   // [q == 10 && p != 0]
   public static boolean init_010() {
-    if (init_q == 10 && init_p != 0) {
-      Example.init(init_p, init_q);
+    if (init_0_1 == 10 && init_0_0 != 0) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
@@ -91,8 +91,8 @@ public class ExampleAlphabet {
 
   // [q == 10 && p == 0]
   public static boolean init_011() {
-    if (init_q == 10 && init_p == 0) {
-      Example.init(init_p, init_q);
+    if (init_0_1 == 10 && init_0_0 == 0) {
+      Example.init(init_0_0, init_0_1);
       return true;
     } else {
       return false;
