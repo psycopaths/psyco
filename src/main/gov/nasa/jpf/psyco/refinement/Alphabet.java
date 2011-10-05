@@ -57,7 +57,16 @@ public class Alphabet {
     source += "package " + packageName + ";\n\n";
     source += "import gov.nasa.jpf.symbc.Symbolic;\n\n";
     source += "public class " + className + " {\n\n";
+
+    source += "  public static class TotallyPsyco extends java.lang.AssertionError {\n";
+    source += "    private static final long serialVersionUID = 1L;\n\n";
+    source += "    TotallyPsyco(String msg) {\n";
+    source += "      super(msg);\n";
+    source += "    }\n";
+    source += "  }\n\n";
+
     source += "  public static void init() {}\n\n";
+
     Iterator<Symbol> itr = symbols.values().iterator();
     while (itr.hasNext()) {
       Symbol symbol = itr.next();

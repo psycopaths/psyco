@@ -86,7 +86,7 @@ public class Symbol {
       source += "  @Symbolic(\"true\")\n";
       source += "  public static int " + paramName + " = 0;\n";
     }
-    source += "  public static Boolean ";
+    source += "  public static void ";
     source += symbolName;
     source += "() {\n";
     source += "    if (";
@@ -106,9 +106,8 @@ public class Symbol {
       }
     }
     source += ");\n";
-    source += "      return true;\n";
     source += "    } else {\n";
-    source += "      return false;\n";
+    source += "      throw new TotallyPsyco(\"Odd Psyco\");\n";
     source += "    }\n";
     source += "  }\n";
     return source;
