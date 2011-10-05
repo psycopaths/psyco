@@ -31,19 +31,32 @@ import java.util.HashSet;
 import jfuzz.ConstraintsTree;
 
 public class AlphabetRefinement {
-  private static Alphabet alphabet = new Alphabet();
+  public static final String REFINED_CLASS_NAME = "RefinedAlphabet";
+  private Alphabet alphabet;
+  private String psycoPath;
+  private String examplePath;
+  private String originalClassName;
+  
+  public AlphabetRefinement(String psycoPath, String examplePath, String packageName, String originalClassName) {
+    alphabet = new Alphabet(packageName, REFINED_CLASS_NAME);
+    this.psycoPath = psycoPath;
+    this.examplePath = examplePath;
+    this.originalClassName = originalClassName;
+  }
+  
+  public void addInitialSymbol(String originalMethodName, int numParams) {
+    Symbol initialSymbol = new Symbol(originalClassName, originalMethodName, numParams);
+    alphabet.addSymbol(initialSymbol);
+  }
+  
+  public String createInitialRefinement() {
+    writeAndCompileRefinement();
+    return alphabet.getSymbolsAsString();
+  }
 
-  // return enum type (true, false, refined)
-  public static String refine(ConstraintsTree constraintsTree) {
+  public String refine(ConstraintsTree constraintsTree) {
     System.out.println("Refining...");
     constraintsTree.printConstraintsTree();
-    
-    Symbol initialSymbol = new Symbol("init", "init", 2, new Precondition(new ArrayList<ArrayList<Constraint>>()));
-    alphabet.addSymbol(initialSymbol);
-    initialSymbol = new Symbol("a", "a", 0, new Precondition(new ArrayList<ArrayList<Constraint>>()));
-    alphabet.addSymbol(initialSymbol);
-    initialSymbol = new Symbol("b", "b", 0, new Precondition(new ArrayList<ArrayList<Constraint>>()));
-    alphabet.addSymbol(initialSymbol);
     
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
@@ -69,18 +82,30 @@ public class AlphabetRefinement {
       }
       
       Precondition precondition = new Precondition(coveredPCs);
-      Symbol newSymbol = new Symbol(symbolName, alphabet.getSymbol(symbolName).getMethodName(), alphabet.getSymbol(symbolName).getNumParams(), precondition);
+      Symbol oldSymbol = alphabet.getSymbol(symbolName);
+      Symbol newSymbol = new Symbol(symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     
       precondition = new Precondition(errorPCs);
-      newSymbol = new Symbol(symbolName, alphabet.getSymbol(symbolName).getMethodName(), alphabet.getSymbol(symbolName).getNumParams(), precondition);
+      newSymbol = new Symbol(symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     }
 
+    if (allCovered) {
+      return "OK";
+    } else if (allErrors) {
+      return "ERROR";
+    } else {
+      writeAndCompileRefinement();
+      return alphabet.getSymbolsAsString();
+    }
+  }
+  
+  private void writeAndCompileRefinement() {
     System.out.println(alphabet.toSource());
     BufferedWriter writer = null;
     try {
-      writer = new BufferedWriter(new FileWriter("/Users/zrakamar/projects/jpf/jpf-psyco/src/examples/simple2/ExampleAlphabet.java"));
+      writer = new BufferedWriter(new FileWriter(examplePath + "/" + REFINED_CLASS_NAME + ".java"));
       writer.write(alphabet.toSource());
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -97,7 +122,7 @@ public class AlphabetRefinement {
     }
     try {
       String s = null;
-      Process p = Runtime.getRuntime().exec("/Users/zrakamar/projects/jpf/jpf-psyco/bin/compile_example");
+      Process p = Runtime.getRuntime().exec(psycoPath + "/bin/compile_example " + psycoPath);
 
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(
           p.getInputStream()));
@@ -119,15 +144,7 @@ public class AlphabetRefinement {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
-    
-    if (allCovered) {
-      return "OK";
-    } else if (allErrors) {
-      return "ERROR";
-    } else {
-      return alphabet.getSymbolsAsString();
-    }
+    }    
   }
 
 }

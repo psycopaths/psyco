@@ -18,13 +18,16 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
-import gov.nasa.jpf.symbc.Symbolic;
+import gov.nasa.jpf.symbc.numeric.Constraint;
+
+import java.util.ArrayList;
 
 public class Symbol {
   private static int symbolCounter = 0;
   private String symbolName;
   private String oldSymbolName;
-  private String methodName;
+  private String originalMethodName;
+  private String originalClassName;
   private int numParams = 0;
   private Precondition precondition;
   
@@ -35,11 +38,22 @@ public class Symbol {
 //    symbolCounter++;
 //  }
   
-  public Symbol(String symbolName, String methodName, int numParams, Precondition precondition) {
-    this.oldSymbolName = symbolName;
+  public Symbol(String originalClassName, String originalMethodName, int numParams) {
+    oldSymbolName = originalMethodName;
+    symbolName = originalMethodName + "_" + symbolCounter;
+    symbolCounter++;
+    this.originalMethodName = originalMethodName;
+    this.originalClassName = originalClassName;
+    this.numParams = numParams;
+    precondition = new Precondition(new ArrayList<ArrayList<Constraint>>());
+  }
+
+  public Symbol(String symbolName, String originalClassName, String originalMethodName, int numParams, Precondition precondition) {
+    oldSymbolName = symbolName;
     this.symbolName = symbolName + "_" + symbolCounter;
     symbolCounter++;
-    this.methodName = methodName;
+    this.originalMethodName = originalMethodName;
+    this.originalClassName = originalClassName;
     this.numParams = numParams;
     this.precondition = precondition;
   }
@@ -48,8 +62,8 @@ public class Symbol {
     return symbolName;
   }
   
-  public String getMethodName() {
-    return methodName;
+  public String getOriginalMethodName() {
+    return originalMethodName;
   }
 
   public int getNumParams() {
@@ -84,7 +98,7 @@ public class Symbol {
     }
     source += preconditionStr;
     source += ") {\n";
-    source += "      Example." + methodName + "(";
+    source += "      " + originalClassName + "." + originalMethodName + "(";
     for (int i = 0; i < numParams; i++) {
       source += symbolName + "_" + i;
       if (i < numParams - 1) {

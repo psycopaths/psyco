@@ -23,6 +23,13 @@ import java.util.Iterator;
 
 public class Alphabet {
   private HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
+  private String packageName;
+  private String className;
+  
+  public Alphabet(String packageName, String className) {
+    this.packageName = packageName;
+    this.className = className;
+  }
   
   public void addSymbol(Symbol symbol) {
     symbols.put(symbol.getSymbolName(), symbol);
@@ -47,9 +54,9 @@ public class Alphabet {
   
   public String toSource() {
     String source = "";
-    source += "package simple2;\n\n";
+    source += "package " + packageName + ";\n\n";
     source += "import gov.nasa.jpf.symbc.Symbolic;\n\n";
-    source += "public class ExampleAlphabet {\n\n";
+    source += "public class " + className + " {\n\n";
     source += "  public static void init() {}\n\n";
     Iterator<Symbol> itr = symbols.values().iterator();
     while (itr.hasNext()) {
