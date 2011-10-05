@@ -32,6 +32,19 @@ public class Alphabet {
     return symbols.get(symbolName);
   }
   
+  public String getSymbolsAsString() {
+    String symbolsAsString = "";
+    Iterator<String> itr = symbols.keySet().iterator();
+    while (itr.hasNext()) {
+      String symbolName = itr.next();
+      symbolsAsString += symbolName;
+      if (itr.hasNext()) {
+        symbolsAsString += ",";
+      }
+    }
+    return symbolsAsString;
+  }
+  
   public String toSource() {
     String source = "";
     source += "package simple2;\n\n";

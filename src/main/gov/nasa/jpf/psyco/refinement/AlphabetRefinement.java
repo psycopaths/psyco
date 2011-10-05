@@ -34,7 +34,7 @@ public class AlphabetRefinement {
   private static Alphabet alphabet = new Alphabet();
 
   // return enum type (true, false, refined)
-  public static void refine(ConstraintsTree constraintsTree) {
+  public static String refine(ConstraintsTree constraintsTree) {
     System.out.println("Refining...");
     constraintsTree.printConstraintsTree();
     
@@ -47,18 +47,32 @@ public class AlphabetRefinement {
     
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
-    
+
+    boolean allErrors = true;
+    boolean allCovered = true;
     for (String symbolName : methodNames) {
 //      System.out.println("Symbol: " + symbolName);
 //      System.out.println("Covered PCs...");
-      ArrayList<ArrayList<Constraint>> errorPCs = constraintsTree.getCoveredPathConstraints(symbolName);
-      Precondition precondition = new Precondition(errorPCs);
+      ArrayList<ArrayList<Constraint>> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
+      if (!coveredPCs.isEmpty()) {
+        allErrors = false;
+      } else {
+        continue;
+      }
+
+//      System.out.println("Error PCs...");
+      ArrayList<ArrayList<Constraint>> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      if (!errorPCs.isEmpty()) {
+        allCovered = false;
+      } else {
+        continue;
+      }
+      
+      Precondition precondition = new Precondition(coveredPCs);
       Symbol newSymbol = new Symbol(symbolName, alphabet.getSymbol(symbolName).getMethodName(), alphabet.getSymbol(symbolName).getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     
-//      System.out.println("Error PCs...");
-      ArrayList<ArrayList<Constraint>> coveredPCs = constraintsTree.getErrorPathConstraints(symbolName);
-      precondition = new Precondition(coveredPCs);
+      precondition = new Precondition(errorPCs);
       newSymbol = new Symbol(symbolName, alphabet.getSymbol(symbolName).getMethodName(), alphabet.getSymbol(symbolName).getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     }
@@ -105,6 +119,14 @@ public class AlphabetRefinement {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+    
+    if (allCovered) {
+      return "OK";
+    } else if (allErrors) {
+      return "ERROR";
+    } else {
+      return alphabet.getSymbolsAsString();
     }
   }
 
