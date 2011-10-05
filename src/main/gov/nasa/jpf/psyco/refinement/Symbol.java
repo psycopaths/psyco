@@ -36,7 +36,6 @@ public class Symbol {
 //  }
   
   public Symbol(String symbolName, String methodName, int numParams, Precondition precondition) {
-    System.out.println("Creating symbol...");
     this.oldSymbolName = symbolName;
     this.symbolName = symbolName + "_" + symbolCounter;
     symbolCounter++;

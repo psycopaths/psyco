@@ -46,7 +46,6 @@ public class Precondition {
         if (itr1.hasNext()) {
           source += " && ";
         }
-//        System.out.println(pc.stringPC());
       }      
       if (itr.hasNext()) {
         source += " || ";

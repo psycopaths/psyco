@@ -6,42 +6,6 @@ public class ExampleAlphabet {
 
   public static void init() {}
 
-  public static boolean b_2_7() {
-    if (true) {
-      Example.b();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public static boolean a_1_6() {
-    if (true) {
-      Example.a();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public static boolean a_1_5() {
-    if (true) {
-      Example.a();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public static boolean b_2_8() {
-    if (true) {
-      Example.b();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   public static boolean a_1() {
     if (true) {
       Example.a();
@@ -69,7 +33,7 @@ public class ExampleAlphabet {
   @Symbolic("true")
   public static int init_0_3_1 = 0;
   public static boolean init_0_3() {
-    if (init_0_3_0 != 0 && 1 == init_0_3_0) {
+    if (init_0_3_0 == 0) {
       Example.init(init_0_3_0, init_0_3_1);
       return true;
     } else {
@@ -91,7 +55,7 @@ public class ExampleAlphabet {
   @Symbolic("true")
   public static int init_0_4_1 = 0;
   public static boolean init_0_4() {
-    if (init_0_4_0 == 0) {
+    if (init_0_4_0 != 0 && 1 == init_0_4_0 || init_0_4_0 != 0 && 1 != init_0_4_0) {
       Example.init(init_0_4_0, init_0_4_1);
       return true;
     } else {
