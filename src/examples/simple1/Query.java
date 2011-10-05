@@ -24,9 +24,9 @@ public class Query {
     ExampleAlphabet.init();
 
     System.out.println("-------- In sequence!");
-    if (!ExampleAlphabet.init_0()) return;
-    if (!ExampleAlphabet.a_0()) return;
-    if (!ExampleAlphabet.b_0()) return;
+    ExampleAlphabet.init_0();
+    ExampleAlphabet.a_0();
+    ExampleAlphabet.b_0();
   }
   
   public static void main(String[] args) {

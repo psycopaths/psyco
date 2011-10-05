@@ -18,3 +18,5 @@ perturb.sequence.method=simple.Query.sequence()
 symbolic.dp=yices
 symbolic.method=simple.Query.sequence()
 symbolic.classes=simple.ExampleAlphabet
+
+symbolic.assertions=simple.ExampleAlphabet$TotallyPsyco

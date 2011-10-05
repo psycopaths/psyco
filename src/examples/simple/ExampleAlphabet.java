@@ -21,6 +21,15 @@ package simple;
 import gov.nasa.jpf.symbc.Symbolic;
 
 public class ExampleAlphabet {
+
+  public static class TotallyPsyco extends java.lang.AssertionError {
+    private static final long serialVersionUID = 1L;
+
+    TotallyPsyco(String msg) {
+      super(msg);
+    }
+  }
+
   @Symbolic("true")
   public static int init_0_0 = 0;
   @Symbolic("true")
@@ -29,93 +38,84 @@ public class ExampleAlphabet {
   public static void init() {}
 
   // [true]
-  public static Boolean init_0() {
+  public static void init_0() {
     System.out.println("-------- In init_0!");
     if (true) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q != 10]
-  public static Boolean init_00() {
+  public static void init_00() {
     if (init_0_1 != 10) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q == 10]
-  public static Boolean init_01() {
+  public static void init_01() {
     if (init_0_1 == 10) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q != 10 && p != 0]
-  public static Boolean init_000() {
+  public static void init_000() {
     if (init_0_1 != 10 && init_0_0 != 0) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q != 10 && p == 0]
-  public static Boolean init_001() {
+  public static void init_001() {
     if (init_0_1 != 10 && init_0_0 == 0) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q == 10 && p != 0]
-  public static Boolean init_010() {
+  public static void init_010() {
     if (init_0_1 == 10 && init_0_0 != 0) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [q == 10 && p == 0]
-  public static Boolean init_011() {
+  public static void init_011() {
     if (init_0_1 == 10 && init_0_0 == 0) {
       Example.init(init_0_0, init_0_1);
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [true]
-  public static Boolean a_0() {
+  public static void a_0() {
     if (true) {
       Example.a();
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }
 
   // [true]
-  public static Boolean b_0() {
+  public static void b_0() {
     if (true) {
       Example.b();
-      return true;
     } else {
-      return false;
+      throw new TotallyPsyco("Odd Psyco");
     }
   }    
 }
