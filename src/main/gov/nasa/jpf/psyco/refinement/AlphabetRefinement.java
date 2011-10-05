@@ -78,7 +78,7 @@ public class AlphabetRefinement {
     }
     try {
       String s = null;
-      Process p = Runtime.getRuntime().exec("/Users/zrakamar/projects/jpf/jpf-psyco/compile_example");
+      Process p = Runtime.getRuntime().exec("/Users/zrakamar/projects/jpf/jpf-psyco/bin/compile_example");
 
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(
           p.getInputStream()));
