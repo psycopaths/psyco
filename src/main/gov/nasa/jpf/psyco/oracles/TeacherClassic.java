@@ -64,7 +64,8 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 			throw new RuntimeException("No target arguments configured");
 		
     */
-     
+    
+    refine = false;
     module1_ = conf.getString("sut.class"); // this is our target class
     module2_ = null; // TODO change for compositional verification
 		JPFargs_ = conf;	
