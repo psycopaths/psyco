@@ -16,7 +16,7 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package simple;
+package simple2;
 
 public class Query {
   
@@ -24,9 +24,9 @@ public class Query {
     ExampleAlphabet.init();
 
     System.out.println("-------- In sequence!");
-    if (!ExampleAlphabet.init_0()) return;
-    if (!ExampleAlphabet.a_0()) return;
-    if (!ExampleAlphabet.b_0()) return;
+    if (!ExampleAlphabet.init_0_3()) return;
+    if (!ExampleAlphabet.a_1()) return;
+    if (!ExampleAlphabet.b_2()) return;
   }
   
   public static void main(String[] args) {

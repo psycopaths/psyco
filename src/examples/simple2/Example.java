@@ -16,21 +16,33 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package simple;
+package simple2;
 
-public class Query {
-  
-  private static void sequence() {
-    ExampleAlphabet.init();
+public class Example {
+  private static int x = 0;
+  private static int y = 0;
 
-    System.out.println("-------- In sequence!");
-    if (!ExampleAlphabet.init_0()) return;
-    if (!ExampleAlphabet.a_0()) return;
-    if (!ExampleAlphabet.b_0()) return;
+  public static void init(int p, int q) {
+    System.out.println("-------- In init!");
+    x = p;
+    y = q;
   }
-  
-  public static void main(String[] args) {
-    System.out.println("-------- In main!");
-    sequence();
+
+  public static void a() {
+    System.out.println("-------- In a!");
+    if (x == 0) {
+      y = 10;
+    } else if (x == 1) {
+      y = 11;
+    } else {
+      y = 12;
+    }
+  }
+
+  public static void b() {
+    System.out.println("-------- In b!");
+    if (y != 10) {
+      assert false;
+    }
   }
 }

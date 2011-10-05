@@ -29,9 +29,13 @@ public class Precondition {
   public Precondition(ArrayList<ArrayList<Constraint>> PCsP) {
     PCs = PCsP;
   }
-  
+
   public String toSource() {
     String source = "";
+    if (PCs.isEmpty()) {
+      source += "true";
+      return source;
+    }
     Iterator<ArrayList<Constraint>> itr = PCs.iterator();
     while (itr.hasNext()) {
       ArrayList<Constraint> errorPC = itr.next();
