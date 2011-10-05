@@ -6,7 +6,7 @@ public class ExampleAlphabet {
 
   public static void init() {}
 
-  public static boolean a_1() {
+  public static Boolean a_1() {
     if (true) {
       Example.a();
       return true;
@@ -19,7 +19,7 @@ public class ExampleAlphabet {
   public static int init_0_0 = 0;
   @Symbolic("true")
   public static int init_0_1 = 0;
-  public static boolean init_0() {
+  public static Boolean init_0() {
     if (true) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -32,7 +32,7 @@ public class ExampleAlphabet {
   public static int init_0_3_0 = 0;
   @Symbolic("true")
   public static int init_0_3_1 = 0;
-  public static boolean init_0_3() {
+  public static Boolean init_0_3() {
     if (init_0_3_0 == 0) {
       Example.init(init_0_3_0, init_0_3_1);
       return true;
@@ -41,7 +41,7 @@ public class ExampleAlphabet {
     }
   }
 
-  public static boolean b_2() {
+  public static Boolean b_2() {
     if (true) {
       Example.b();
       return true;
@@ -54,7 +54,7 @@ public class ExampleAlphabet {
   public static int init_0_4_0 = 0;
   @Symbolic("true")
   public static int init_0_4_1 = 0;
-  public static boolean init_0_4() {
+  public static Boolean init_0_4() {
     if (init_0_4_0 != 0 && 1 == init_0_4_0 || init_0_4_0 != 0 && 1 != init_0_4_0) {
       Example.init(init_0_4_0, init_0_4_1);
       return true;

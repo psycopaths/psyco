@@ -29,7 +29,7 @@ public class ExampleAlphabet {
   public static void init() {}
 
   // [true]
-  public static boolean init_0() {
+  public static Boolean init_0() {
     System.out.println("-------- In init_0!");
     if (true) {
       Example.init(init_0_0, init_0_1);
@@ -40,7 +40,7 @@ public class ExampleAlphabet {
   }
 
   // [q != 10]
-  public static boolean init_00() {
+  public static Boolean init_00() {
     if (init_0_1 != 10) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -50,7 +50,7 @@ public class ExampleAlphabet {
   }
 
   // [q == 10]
-  public static boolean init_01() {
+  public static Boolean init_01() {
     if (init_0_1 == 10) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -60,7 +60,7 @@ public class ExampleAlphabet {
   }
 
   // [q != 10 && p != 0]
-  public static boolean init_000() {
+  public static Boolean init_000() {
     if (init_0_1 != 10 && init_0_0 != 0) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -70,7 +70,7 @@ public class ExampleAlphabet {
   }
 
   // [q != 10 && p == 0]
-  public static boolean init_001() {
+  public static Boolean init_001() {
     if (init_0_1 != 10 && init_0_0 == 0) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -80,7 +80,7 @@ public class ExampleAlphabet {
   }
 
   // [q == 10 && p != 0]
-  public static boolean init_010() {
+  public static Boolean init_010() {
     if (init_0_1 == 10 && init_0_0 != 0) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -90,7 +90,7 @@ public class ExampleAlphabet {
   }
 
   // [q == 10 && p == 0]
-  public static boolean init_011() {
+  public static Boolean init_011() {
     if (init_0_1 == 10 && init_0_0 == 0) {
       Example.init(init_0_0, init_0_1);
       return true;
@@ -100,7 +100,7 @@ public class ExampleAlphabet {
   }
 
   // [true]
-  public static boolean a_0() {
+  public static Boolean a_0() {
     if (true) {
       Example.a();
       return true;
@@ -110,7 +110,7 @@ public class ExampleAlphabet {
   }
 
   // [true]
-  public static boolean b_0() {
+  public static Boolean b_0() {
     if (true) {
       Example.b();
       return true;

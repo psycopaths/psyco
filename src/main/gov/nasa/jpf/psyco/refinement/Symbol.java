@@ -72,7 +72,7 @@ public class Symbol {
       source += "  @Symbolic(\"true\")\n";
       source += "  public static int " + paramName + " = 0;\n";
     }
-    source += "  public static boolean ";
+    source += "  public static Boolean ";
     source += symbolName;
     source += "() {\n";
     source += "    if (";
