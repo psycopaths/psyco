@@ -18,19 +18,27 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Alphabet {
-  private ArrayList<Symbol> symbols = new ArrayList<Symbol>();
+  private HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
   
   public void addSymbol(Symbol symbol) {
-    symbols.add(symbol);
+    symbols.put(symbol.getSymbolName(), symbol);
+  }
+  
+  public Symbol getSymbol(String symbolName) {
+    return symbols.get(symbolName);
   }
   
   public String toSource() {
-    String source = "public class ExampleAlphabet {\n\n";
-    Iterator<Symbol> itr = symbols.iterator();
+    String source = "";
+    source += "package simple2;\n\n";
+    source += "import gov.nasa.jpf.symbc.Symbolic;\n\n";
+    source += "public class ExampleAlphabet {\n\n";
+    source += "  public static void init() {}\n\n";
+    Iterator<Symbol> itr = symbols.values().iterator();
     while (itr.hasNext()) {
       Symbol symbol = itr.next();
       source += symbol.toSource();

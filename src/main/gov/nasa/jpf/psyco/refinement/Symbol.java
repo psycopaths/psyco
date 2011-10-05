@@ -18,23 +18,81 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
+import gov.nasa.jpf.symbc.Symbolic;
+
 public class Symbol {
+  private static int symbolCounter = 0;
+  private String symbolName;
+  private String oldSymbolName;
   private String methodName;
+  private int numParams = 0;
   private Precondition precondition;
   
-  public Symbol(String methodNameP, Precondition preconditionP) {
-    methodName = methodNameP;
-    precondition = preconditionP;
+//  public Symbol(String symbolName, String methodName, Precondition precondition) {
+//    this.symbolName = symbolName + "_" + symbolCounter;
+//    this.methodName = methodName;
+//    this.precondition = precondition;
+//    symbolCounter++;
+//  }
+  
+  public Symbol(String symbolName, String methodName, int numParams, Precondition precondition) {
+    System.out.println("Creating symbol...");
+    this.oldSymbolName = symbolName;
+    this.symbolName = symbolName + "_" + symbolCounter;
+    symbolCounter++;
+    this.methodName = methodName;
+    this.numParams = numParams;
+    this.precondition = precondition;
+  }
+
+  public String getSymbolName() {
+    return symbolName;
   }
   
+  public String getMethodName() {
+    return methodName;
+  }
+
+  public int getNumParams() {
+    return numParams;
+  }
+
+  public String[] getParams() {
+    String[] params = new String[numParams];
+    for (int i = 0; i < numParams; i++) {
+      String paramName = symbolName + "_" + i;
+      params[i] = paramName;
+    }
+    return params;
+  }
+
   public String toSource() {
-    String source = "  public static void ";
-    source += methodName;
+    String source = "";
+    for (int i = 0; i < numParams; i++) {
+      String paramName = symbolName + "_" + i;
+      source += "  @Symbolic(\"true\")\n";
+      source += "  public static int " + paramName + " = 0;\n";
+    }
+    source += "  public static boolean ";
+    source += symbolName;
     source += "() {\n";
     source += "    if (";
-    source += precondition.toSource();
+    String preconditionStr = precondition.toSource();
+    for (int i = 0; i < numParams; i++) {
+      String oldParamName = oldSymbolName + "_" + i;
+      String newParamName = symbolName + "_" + i;
+      preconditionStr = preconditionStr.replaceAll(oldParamName, newParamName);
+    }
+    source += preconditionStr;
     source += ") {\n";
-    source += "      Example.init(p, q);\n";
+    source += "      Example." + methodName + "(";
+    for (int i = 0; i < numParams; i++) {
+      source += symbolName + "_" + i;
+      if (i < numParams - 1) {
+        source += ", ";
+      }
+    }
+    source += ");\n";
     source += "      return true;\n";
     source += "    } else {\n";
     source += "      return false;\n";
