@@ -33,37 +33,51 @@ public class RunGenerateInt implements JPFShell {
 
   Config conf;
 
-  public RunGenerateInt (Config conf) {
+  public RunGenerateInt(Config conf) {
     this.conf = conf;
     LogManager.init(conf);
   }
-  
-  
+
   public void start(String[] args) {
 
-    TeacherClassic teacher = new TeacherClassic(conf);
+    SETLearner learnInterface = null;
+    TeacherClassic teacher = null;
+    Candidate inf = null;
+    boolean newLearningInstance = true;
 
-    try {
-      /* run the learning algorithm */
-      SETLearner learnInterface = new SETLearner(teacher);
-      Candidate inf = (Candidate) learnInterface.getAssumption();
 
-      String storeResult = conf.getProperty("interface.outputFile");
+    while (newLearningInstance) {
+      newLearningInstance = false; // unless we need to refine
+      try {
+        /* run the learning algorithm */
+        teacher = new TeacherClassic(conf);
+        learnInterface = new SETLearner(teacher);
+        inf = (Candidate) learnInterface.getAssumption();
 
-      System.out.println("\n\n********************************************");
-      if (inf == null) {
-        System.out.println("Interface is null - no environment can help");
-      } else {
-        System.out.print("Interface generation completed. ");
-        Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
-        Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
+      } catch (SETException sx) {
+        sx.printStackTrace();
       }
-      System.out.println("********************************************");
 
-    } catch (SETException sx) {
-      sx.printStackTrace();
+      if (teacher.refine()) {
+        conf.setProperty("interface.alphabet", teacher.getNewAlphabet());
+      }
     }
 
-  }
 
+    String storeResult = conf.getProperty("interface.outputFile");
+
+
+    System.out.println("\n\n********************************************");
+    if (inf == null) {
+      System.out.println("Interface is null - no environment can help");
+    } else {
+      System.out.print("Interface generation completed. ");
+      Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
+      Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
+    }
+    System.out.println("********************************************");
+
+
+
+  }
 }

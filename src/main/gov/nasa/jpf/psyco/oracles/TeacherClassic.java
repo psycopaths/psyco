@@ -49,6 +49,10 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
   private Config JPFargs_;
   private Vector alphabet_;
   
+  private boolean refine = false;
+  private String newAlphabet;
+  
+  
   	public TeacherClassic(Config conf) {
 		
 		memoized_ = new MemoizeTable();
@@ -60,8 +64,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 			throw new RuntimeException("No target arguments configured");
 		
     */
-    
-  
+     
     module1_ = conf.getString("sut.class"); // this is our target class
     module2_ = null; // TODO change for compositional verification
 		JPFargs_ = conf;	
@@ -75,6 +78,9 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 
   public boolean query(AbstractList<String> sequence) throws SETException {
     
+    if (refine)
+      return (true); // means we ignore all queries 
+                     // when the alphabet will be refined 
     if (sequence.isEmpty()) 
       return true;
     Boolean recalled = memoized_.getResult(sequence);
@@ -97,6 +103,9 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
             
 			JPF jpf = createJPFInstance(programArgs); // driver for M1
 			jpf.run();
+      // call Zvon's stuff
+      if (refine)
+        return (true); // will be ignored anyway
 			boolean violating = jpf.foundErrors();
 			memoized_.setResult(sequence, violating);
 			return (!violating);
@@ -126,15 +135,24 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
   
 	
   public JPF createJPFInstance(String[] programArgs) {
-
     JPFargs_.setTarget("gov.nasa.jpf.psyco.Target.ProgramExecutive");  // main program
 		JPFargs_.setTargetArgs(programArgs); // arguments to main
 		
 		JPF jpf = new JPF(JPFargs_);
 		return jpf;
 	}
+  
+  public boolean refine() {
+    return refine;
+  }
+  
+  public void setRefine(boolean v) {
+    refine = v;
+  }
 
- 
+  public String getNewAlphabet() {
+    return newAlphabet;
+  }
 	
 }
   

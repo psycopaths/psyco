@@ -34,11 +34,13 @@
   <!-- get the jpf-learn path properties -->
   <property file="${jpf-learn}/jpf.properties"/>
 
+  <!-- get the jpf-symbc path properties -->
+  <property file="${jpf-symbc}/jpf.properties"/>
+
   <!-- get the jpf-jdart path properties -->
   <property file="${jpf-jdart}/jpf.properties"/>
 
-  <!-- get the jpf-symbc path properties -->
-  <property file="${jpf-symbc}/jpf.properties"/>
+
 
   <!-- compiler settings -->
   <property name="src_level"     value="6"/>

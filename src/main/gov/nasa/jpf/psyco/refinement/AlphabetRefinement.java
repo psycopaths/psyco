@@ -26,6 +26,7 @@ import jfuzz.ConstraintsTree;
 public class AlphabetRefinement {
   private static Alphabet alphabet = new Alphabet();
 
+  
   public static void refine(String methodName, ConstraintsTree constraintsTree) {
     System.out.println("Refining...");
     constraintsTree.printConstraintsTree();
@@ -43,4 +44,6 @@ public class AlphabetRefinement {
     alphabet.addSymbol(symbol);
     System.out.println(alphabet.toSource());
   }
+    
+   
 }

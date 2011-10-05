@@ -7,3 +7,4 @@ dist/*
 *.class
 *~
 *.DS_Store
+tmp/*

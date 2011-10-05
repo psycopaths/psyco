@@ -1,13 +1,15 @@
-classpath+=build/classes
+# make sure to disable @using jdart from the jpf.properties to try the concrete execution
+# should return that only a is feasible when conjectures are not enabled
+
 shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 
 target=empty
 args=empty
 
-sut.class=ExampleAlphabet
+sut.class=learnConcrete.abc
 
-interface.alphabet=init_000,init_001,init_010,init_011,a_0,b_0
-interface.outputFile=_generatedIntExampleAlphabet
+interface.alphabet=a,b,c
+interface.outputFile=tmp/_generatedIntABC
 
 vm.store_steps=true 
 
