@@ -33,13 +33,11 @@ import jfuzz.ConstraintsTree;
 public class AlphabetRefinement {
   public static final String REFINED_CLASS_NAME = "RefinedAlphabet";
   private Alphabet alphabet;
-  private String psycoPath;
   private String examplePath;
   private String originalClassName;
   
-  public AlphabetRefinement(String psycoPath, String examplePath, String packageName, String originalClassName) {
+  public AlphabetRefinement(String examplePath, String packageName, String originalClassName) {
     alphabet = new Alphabet(packageName, REFINED_CLASS_NAME);
-    this.psycoPath = psycoPath;
     this.examplePath = examplePath;
     this.originalClassName = originalClassName;
   }
@@ -122,7 +120,7 @@ public class AlphabetRefinement {
     }
     try {
       String s = null;
-      Process p = Runtime.getRuntime().exec(psycoPath + "/bin/compile_example " + psycoPath);
+      Process p = Runtime.getRuntime().exec("ant");
 
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(
           p.getInputStream()));
