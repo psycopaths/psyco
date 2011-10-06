@@ -63,9 +63,11 @@ public class RunGenerateInt implements JPFShell {
         if (methodFields.length == 2) {
           teacherAlpha += (methodFields[0]);
           teacherAlpha += ",";
-          refiner.addInitialSymbol(methodFields[0], Integer.getInteger(methodFields[1]));
+          refiner.addInitialSymbol(methodFields[0], Integer.parseInt(methodFields[1]));
         }
       }
+      teacherAlpha = refiner.createInitialRefinement();
+      conf.setProperty("sut.class", AlphabetRefinement.REFINED_CLASS_NAME);
     } else {
       for (String ap : conf.getStringArray("interface.alphabet")) {
         // now I have pairs method_name:#parameters    
@@ -96,7 +98,6 @@ public class RunGenerateInt implements JPFShell {
 
       if (teacher.refine()) {
         conf.setProperty("interface.alphabet", teacher.getNewAlphabet());
-        conf.setProperty("sut.class", AlphabetRefinement.REFINED_CLASS_NAME);
         newLearningInstance = true;
       }
     }

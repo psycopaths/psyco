@@ -145,6 +145,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
         jfuzz.runJDart();
         ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET);      
         String result = alphaRefiner.refine(ct);
+        System.out.println("Refinement result: " + result);
         if (result.equals("OK")) {
           return true;
         } else if (result.equals("ERROR")) {
