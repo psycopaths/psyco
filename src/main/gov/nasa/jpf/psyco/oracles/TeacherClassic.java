@@ -29,10 +29,13 @@ import gov.nasa.jpf.learn.classic.MemoizeTable;
 
 
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
+import jfuzz.ConstraintsTree;
+
 
 /*
  * Teacher for interface generation in psyco using classic L*
@@ -40,6 +43,9 @@ import java.util.Vector;
 
 
 public class TeacherClassic  implements MinimallyAdequateTeacher {
+  
+  public static final String CONCR = "concrete";
+  public static final String SYMB = "symbolic";
   
   private JPFLogger logger = JPF.getLogger("teacher");
 	private SETLearner set_;
@@ -53,7 +59,12 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
   private String newAlphabet;
   
   
-  	public TeacherClassic(Config conf) {
+  // by default, mode is concrete
+  private static String mode = CONCR; 
+  private static AlphabetRefinement alphaRefiner = null;
+  
+  
+  	public TeacherClassic(Config conf, AlphabetRefinement ref) {
 		
 		memoized_ = new MemoizeTable();
     
@@ -66,11 +77,13 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
     */
     
     refine = false;
-    module1_ = conf.getString("sut.class"); // this is our target class
+    alphaRefiner = ref; 
+    module1_ = conf.getString("sut.package") + "." + conf.getString("sut.class"); // this is our target class
     module2_ = null; // TODO change for compositional verification
 		JPFargs_ = conf;	
 		String[] alpha = conf.getStringArray("interface.alphabet");
 		alphabet_ = new Vector();
+    
     
     for (String a : alpha) {
 				alphabet_.add(a);
@@ -78,22 +91,26 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
     }
 
   public boolean query(AbstractList<String> sequence) throws SETException {
-    
-    if (refine)
+
+    if (refine) {
       return (true); // means we ignore all queries 
-                     // when the alphabet will be refined 
-    if (sequence.isEmpty()) 
+    }                     // when the alphabet will be refined 
+    
+    // the following assumes that initial state of target is not error
+    if (sequence.isEmpty()) {
       return true;
+    }
+    
     Boolean recalled = memoized_.getResult(sequence);
-		if (recalled != null) { // we get the result from memoized
-			return (!recalled.booleanValue()); // note the fact that it is the other way around
-		} else { // need to model check
-			
-      
+    if (recalled != null) { // we get the result from memoized
+      return (!recalled.booleanValue()); // note the fact that it is the other way around
+    } else { // need to model check
+
+
       // first create sequence in format appropriate for Executor
-      
+
       logger.info("New query: ", sequence);
-      
+
       String[] programArgs = new String[sequence.size() + 1];
       programArgs[0] = "sequence";
       int counter = 1;
@@ -101,20 +118,35 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
         programArgs[counter] = module1_ + ":" + nextEl;
         counter++;
       }
-            
-			JPF jpf = createJPFInstance(programArgs); // driver for M1
-			jpf.run();
-      // call Zvon's stuff
-      if (refine)
-        return (true); // will be ignored anyway
-			boolean violating = jpf.foundErrors();
-			memoized_.setResult(sequence, violating);
-			return (!violating);
-		}
+
+      if (mode.equals(SYMB)) {
+        // TODO
+        // first call jpf-jdart when it is ready and get the constraints tree
+        // for the moment just get a new constraints tree
+        ConstraintsTree ct = new ConstraintsTree();
+        String result = alphaRefiner.refine(ct);
+        if (result.equals("OK")) {
+          return true;
+        } else if (result.equals("ERROR")) {
+          return false;
+        } else { // must refine
+          refine = true;
+          newAlphabet = result;  
+          return (true); // will be ignored since refined was set to true
+        }
+      } else {  // mode is concrete
+        JPF jpf = createJPFInstance(programArgs); // driver for M1
+        jpf.run();
+        boolean violating = jpf.foundErrors();
+        memoized_.setResult(sequence, violating);
+        return (!violating);
+      }
+    }
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {    
     // TODO provide support
+    // Make sure to allow for symbolic AND conrete execution
     return null;
   }
 
@@ -153,6 +185,10 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 
   public String getNewAlphabet() {
     return newAlphabet;
+  }
+  
+  public static void setMode(String m) {
+    mode = m;
   }
 	
 }

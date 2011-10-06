@@ -1,4 +1,3 @@
-
 //
 // Copyright (C) 2008 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration
@@ -17,37 +16,37 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-
 package learnConcrete;
 
-
 public class abc {
-  
-  static int x = 0;
-  
-  public static Boolean a() {
-    // try a method precondition
-    if (x != 1) {
-      return false;
-    }
+
+static int x = 0;
+
+public static Boolean a() {
+  System.out.println("In method a...");
+  // try a method precondition
+  if (x != 1) {
+    return false;
+  }
+  x++;
+  return true;
+}
+
+public static void b() {
+  System.out.println("In method b...");
+  if (x == 1) {
     x++;
-    return true;
+  } else {
+    assert false;
   }
-  
-  public static void b() {
-    if (x == 1) {
-      x++;
-    } else {
-      assert false;
-    }
+}
+
+public static void c() {
+  System.out.println("In method c...");
+  if (x == 2) {
+    x = 0;
+  } else {
+    assert false;
   }
-  
-  public static void c() {
-   if (x == 2) {
-      x = 0;
-    } else {
-      assert false;
-    }
-  }
-  
+}
 }

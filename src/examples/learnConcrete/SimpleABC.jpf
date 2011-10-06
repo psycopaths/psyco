@@ -6,13 +6,22 @@ shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 target=empty
 args=empty
 
-sut.class=learnConcrete.abc
+JPF.mode=concrete
 
-interface.alphabet=a,b,c
-interface.outputFile=tmp/_generatedIntABC
+
+sut.package =learnConcrete
+sut.class=abc
+example.path=src/examples/learnConcrete
+
+# format is method_name: # of parameters
+interface.alphabet=a:0,b:0,c:0
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/generatedIntABC
 
 vm.store_steps=true 
 
+# enable reporting for these loggers
 +log.info=teacher,learning
 
 # following line used to track what JPF executes
