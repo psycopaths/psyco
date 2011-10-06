@@ -1,3 +1,5 @@
+@using jpf-jdart
+
 target=simple1.Query
 
 classpath=${jpf-psyco}/build/examples
