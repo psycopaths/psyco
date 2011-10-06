@@ -35,6 +35,7 @@ import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
 import jfuzz.ConstraintsTree;
+import jfuzz.JFuzz;
 
 
 /*
@@ -46,6 +47,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
   
   public static final String CONCR = "concrete";
   public static final String SYMB = "symbolic";
+  public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
   
   private JPFLogger logger = JPF.getLogger("teacher");
 	private SETLearner set_;
@@ -88,6 +90,11 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
     for (String a : alpha) {
 				alphabet_.add(a);
 			}
+    
+    if (mode.equals(SYMB)) {
+      setUpJDartConfig();
+    }
+    
     }
 
   public boolean query(AbstractList<String> sequence) throws SETException {
@@ -133,7 +140,10 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
         // TODO
         // first call jpf-jdart when it is ready and get the constraints tree
         // for the moment just get a new constraints tree
-        ConstraintsTree ct = new ConstraintsTree();
+        
+        JFuzz jfuzz = createJDartInstance(programArgs);
+        jfuzz.runJDart();
+        ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET);      
         String result = alphaRefiner.refine(ct);
         if (result.equals("OK")) {
           return true;
@@ -176,14 +186,43 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 		set_ = set;
 	}
   
+  
+  
+  private void setUpJDartConfig() {
+    
+  	String jpfHome = JPFargs_.getProperty("jpf.home");
+  	String jdartHome = JPFargs_.getProperty("jpf-jdart");  	
+  	String yicesPath = jdartHome + "/lib/libYices.so";
+  	
+  	JPFargs_.setProperty("yices.library.path", yicesPath);
+  	JPFargs_.setProperty("jpf.basedir", jpfHome);
+    
+    JPFargs_.setTarget(TARGET);  // main program
+		JPFargs_.setProperty("jfuzz.time", "3,3,0,0");
+  	JPFargs_.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
+  	JPFargs_.setProperty("listener", "jfuzz.ConcolicListener");
+  	JPFargs_.setProperty("perturb.params", "foo");
+  	JPFargs_.setProperty("perturb.foo.class", "jfuzz.Producer");
+  	JPFargs_.setProperty("perturb.foo.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
+  	JPFargs_.setProperty("symbolic.dp", "yices");
+  	JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");  
+     
+  }
 	
-  public JPF createJPFInstance(String[] programArgs) {
-    JPFargs_.setTarget("gov.nasa.jpf.psyco.Target.ProgramExecutive");  // main program
-		JPFargs_.setTargetArgs(programArgs); // arguments to main
-		
+  public JPF createJPFInstance(String[] programArgs) {		
+    JPFargs_.setTarget(TARGET);  // main program
+    JPFargs_.setTargetArgs(programArgs); // arguments to main
 		JPF jpf = new JPF(JPFargs_);
 		return jpf;
 	}
+  
+  public JFuzz createJDartInstance(String[] programArgs) {
+    JPFargs_.setTargetArgs(programArgs); // arguments to main
+    String packageName = JPFargs_.getProperty("sut.package"); 
+    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
+    JPFargs_.setProperty("symbolic.assertions", st);   
+    return (new JFuzz(JPFargs_));   
+  }
   
   public boolean refine() {
     return refine;
