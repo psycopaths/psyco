@@ -1,4 +1,3 @@
-# make sure to disable @using jdart from the jpf.properties to try the concrete execution
 # should return that only a is feasible when conjectures are not enabled
 
 shell=gov.nasa.jpf.psyco.tools.RunGenerateInt

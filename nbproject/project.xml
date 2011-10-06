@@ -259,7 +259,7 @@
             <compilation-unit>
                 <package-root>src/examples</package-root>
                 <unit-tests/>
-                <classpath mode="compile">${jpf-symbc.native_classpath}</classpath>
+                <classpath mode="compile">${jpf-core.native_classpath};${jpf-symbc.native_classpath};${jpf-jdart.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

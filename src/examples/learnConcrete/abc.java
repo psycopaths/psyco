@@ -22,14 +22,9 @@ public class abc {
 
 static int x = 0;
 
-public static Boolean a() {
+public static void a() {
   System.out.println("In method a...");
-  // try a method precondition
-  if (x != 1) {
-    return false;
-  }
   x++;
-  return true;
 }
 
 public static void b() {

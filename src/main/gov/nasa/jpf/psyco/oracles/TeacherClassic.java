@@ -113,7 +113,17 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 
       String[] programArgs = new String[sequence.size() + 1];
       programArgs[0] = "sequence";
-      int counter = 1;
+      
+      int counter = 0;
+      
+      if (mode.equals(CONCR)) {
+        counter = 1;
+      }
+      else if (mode.equals(SYMB)) {
+        programArgs[1] = module1_ + ":" + "init";
+        counter = 2;
+      }
+      
       for (String nextEl : sequence) {
         programArgs[counter] = module1_ + ":" + nextEl;
         counter++;

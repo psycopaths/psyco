@@ -39,21 +39,15 @@ public class ProgramExecutive {
   static void sequence(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
 
     // ignore first argument so start at 1
-    Boolean go_on = Boolean.TRUE;
 
-    for (int i = 1; (i < invokeSpecs.length && go_on.booleanValue()); i++) {
+    for (int i = 1; i < invokeSpecs.length; i++) {
       Invocation invoke = new Invocation(invokeSpecs[i]);
       Method m = invoke.get_method();
       Object[] args = invoke.get_Arguments();
+      
+      m.invoke(null, args);
 
       //   try {
-      
-      // !go_on means that method assumption was violated
-      go_on = (Boolean) m.invoke(null, args); // null needs to be changed if I handle instances
-
-      if (!go_on.booleanValue()) {
-        System.out.println("Sequence execution violated method assumption");
-      }
       
       // no longer catch exceptions so that JPF can return error
       
