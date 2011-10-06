@@ -34,10 +34,14 @@ public class Call implements JPFShell {
   	System.out.println("-------- In start!");
 
   	Config conf = new Config(args);
+  	
+  	String jpfHome = conf.getProperty("jpf.home");
+  	String jdartHome = conf.getProperty("jpf-jdart");  	
+  	String yicesPath = jdartHome + "/lib/libYices.so";
+  	
   	conf.setProperty("target", "callingJDart.Input");
-  	conf.setProperty("classpath", "/Users/vishwa/workspace/jpf-p/jpf-psyco/build/examples");
-  	conf.setProperty("yices.library.path", "/Users/vishwa/workspace/jpf-p/jpf-jdart/lib/libYices.so");
-  	conf.setProperty("jpf.basedir", "/Users/vishwa/workspace/jpf-p");
+  	conf.setProperty("yices.library.path", yicesPath);
+  	conf.setProperty("jpf.basedir", jpfHome);
   	conf.setProperty("jfuzz.time", "3,3,0,0");
   	conf.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
   	conf.setProperty("listener", "jfuzz.ConcolicListener");
