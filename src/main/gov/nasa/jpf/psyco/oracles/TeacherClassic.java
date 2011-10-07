@@ -135,7 +135,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
       }
       
       for (String nextEl : sequence) {
-        programArgs[counter] = module1_ + ":" + nextEl;
+        programArgs[counter] = module1_ + ":PSYCO0_" + nextEl;
         counter++;
       }
 
