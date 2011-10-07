@@ -176,6 +176,13 @@
            classpathref="lib.path"/>
   </target>
 
+  <target name="compile-examples" if="have_examples" depends="">
+    <mkdir dir="build/examples" />
+    <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
+           debug="${debug}" source="${src_level}" deprecation="${deprecation}"
+           classpathref="lib.path"/>
+  </target>
+
 
   <!-- ======================= MISC SECTION ================================ -->
 

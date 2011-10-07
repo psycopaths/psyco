@@ -32,6 +32,7 @@ import jfuzz.ConstraintsTree;
 
 public class AlphabetRefinement {
   public static final String REFINED_CLASS_NAME = "RefinedAlphabet";
+  public static final int NUMBER_OF_METHOD_COPIES = 10;
   private Alphabet alphabet;
   private String examplePath;
   private String originalClassName;
@@ -53,6 +54,9 @@ public class AlphabetRefinement {
   }
 
   public String refine(ConstraintsTree constraintsTree) {
+    if (constraintsTree == null) {
+      return "OK";
+    }
     System.out.println("Refining...");
     constraintsTree.printConstraintsTree();
     
@@ -80,12 +84,13 @@ public class AlphabetRefinement {
       }
       
       Precondition precondition = new Precondition(coveredPCs);
-      Symbol oldSymbol = alphabet.getSymbol(symbolName);
-      Symbol newSymbol = new Symbol(symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
+      String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
+      Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
+      Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     
       precondition = new Precondition(errorPCs);
-      newSymbol = new Symbol(symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
+      newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
     }
 
@@ -120,7 +125,7 @@ public class AlphabetRefinement {
     }
     try {
       String s = null;
-      Process p = Runtime.getRuntime().exec("ant");
+      Process p = Runtime.getRuntime().exec("ant compile-examples");
 
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(
           p.getInputStream()));

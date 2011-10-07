@@ -48,8 +48,8 @@ public class Symbol {
     precondition = new Precondition(new ArrayList<ArrayList<Constraint>>());
   }
 
-  public Symbol(String symbolName, String originalClassName, String originalMethodName, int numParams, Precondition precondition) {
-    oldSymbolName = symbolName;
+  public Symbol(String symbolName, String oldSymbolName, String originalClassName, String originalMethodName, int numParams, Precondition precondition) {
+    this.oldSymbolName = oldSymbolName;
     this.symbolName = symbolName + "_" + symbolCounter;
     symbolCounter++;
     this.originalMethodName = originalMethodName;
@@ -81,35 +81,37 @@ public class Symbol {
 
   public String toSource() {
     String source = "";
-    for (int i = 0; i < numParams; i++) {
-      String paramName = symbolName + "_" + i;
-      source += "  @Symbolic(\"true\")\n";
-      source += "  public static int " + paramName + " = 0;\n";
-    }
-    source += "  public static void ";
-    source += symbolName;
-    source += "() {\n";
-    source += "    if (";
-    String preconditionStr = precondition.toSource();
-    for (int i = 0; i < numParams; i++) {
-      String oldParamName = oldSymbolName + "_" + i;
-      String newParamName = symbolName + "_" + i;
-      preconditionStr = preconditionStr.replaceAll(oldParamName, newParamName);
-    }
-    source += preconditionStr;
-    source += ") {\n";
-    source += "      " + originalClassName + "." + originalMethodName + "(";
-    for (int i = 0; i < numParams; i++) {
-      source += symbolName + "_" + i;
-      if (i < numParams - 1) {
-        source += ", ";
+    for (int methodCopy = 0; methodCopy < AlphabetRefinement.NUMBER_OF_METHOD_COPIES; methodCopy++) {
+      for (int i = 0; i < numParams; i++) {
+        String paramName = "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        source += "  @Symbolic(\"true\")\n";
+        source += "  public static int " + paramName + " = 0;\n";
       }
+      source += "  public static void ";
+      source += "PSYCO" + methodCopy + "_" + symbolName;
+      source += "() {\n";
+      source += "    if (";
+      String preconditionStr = precondition.toSource();
+      for (int i = 0; i < numParams; i++) {
+        String oldParamName = oldSymbolName + "_" + i;
+        String newParamName = "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        preconditionStr = preconditionStr.replaceAll(oldParamName, newParamName);
+      }
+      source += preconditionStr;
+      source += ") {\n";
+      source += "      " + originalClassName + "." + originalMethodName + "(";
+      for (int i = 0; i < numParams; i++) {
+        source += "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        if (i < numParams - 1) {
+          source += ", ";
+        }
+      }
+      source += ");\n";
+      source += "    } else {\n";
+      source += "      throw new TotallyPsyco(\"Odd Psyco\");\n";
+      source += "    }\n";
+      source += "  }\n\n";
     }
-    source += ");\n";
-    source += "    } else {\n";
-    source += "      throw new TotallyPsyco(\"Odd Psyco\");\n";
-    source += "    }\n";
-    source += "  }\n";
     return source;
   }
 }
