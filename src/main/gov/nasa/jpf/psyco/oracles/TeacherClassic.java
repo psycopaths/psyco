@@ -36,6 +36,7 @@ import java.util.Vector;
 import jfuzz.ConstraintsTree;
 import jfuzz.JFuzz;
 import gov.nasa.jpf.learn.classic.Candidate;
+import java.util.HashMap;
 
 
 /*
@@ -88,7 +89,18 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
 
   }
-
+  
+  private String getPrefix(String action, HashMap hm) {
+    if (mode.equals(CONCR)) {
+      System.out.println(("PSYCO" + hm.get(action) + "_")); // only for testing symbolic mode
+      return "";
+    }
+    else {
+      return ("PSYCO" + hm.get(action) + "_");
+    }
+  }
+  
+  
   public boolean query(AbstractList<String> sequence) throws SETException {
 
     if (refine) {
@@ -125,9 +137,16 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         counter = 2;
       }
 
+      HashMap hm = new HashMap();
       for (String nextEl : sequence) {
-        programArgs[counter] = module1_ + ":" + nextEl;
-        counter++;
+        if (!hm.containsKey(nextEl)) {
+          hm.put(nextEl, new Integer(0));}
+        
+          programArgs[counter] = module1_ + ":" + getPrefix(nextEl, hm) + nextEl;
+          counter++;
+          Integer value = (Integer) hm.get(nextEl);
+          value++;
+          hm.put(nextEl, value);
       }
 
 
@@ -162,22 +181,15 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   public Vector conjecture(Candidate cndt) throws SETException {
 
+    
+    // TODO currently only checking safety - need to add permissiveness
     boolean conjRes;
     int maxDepth = 3;
     logger.info("STARTING CONJECTURE");
 
     Candidate.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
     String result = Candidate.allSequences;
-    String res;
-    if (result.endsWith("*")) {
-      // remove it
-      res = result.substring(0, result.lastIndexOf("*"));
-    }
-    else {
-      res = result;
-    }
-    
-    System.out.println("&&&&& Last " + res);
+    String res = result.replaceFirst(";", "");
             
     String[] sequences = res.split(";");
 
@@ -194,14 +206,15 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       }
 
       conjRes = query(seq);
-      logger.info("ENDING CONJECTURE");
       
       if (!conjRes) // result is false
       {
+        logger.info("ENDING CONJECTURE");
         return (seq); // refine the assumption
       }
       
     }
+    logger.info("ENDING CONJECTURE");
     return null; // will need to check if there was refinement involved
 
   }
