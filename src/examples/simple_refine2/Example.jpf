@@ -1,0 +1,30 @@
+@using jpf-jdart
+
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+JPF.mode=symbolic
+
+sut.package=simple_refine2
+sut.class=Example
+example.path=src/examples/simple_refine2
+
+# format is method_name: # of parameters
+interface.alphabet=init:2,a:0,b:0
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/generatedIntABC
+
+vm.store_steps=true 
+
+# enable reporting for these loggers
++log.info=teacher,learning
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
