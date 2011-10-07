@@ -118,15 +118,18 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
 
       logger.info("New query: ", sequence);
 
-      String[] programArgs = new String[sequence.size() + 1];
-      programArgs[0] = "sequence";
       
+      String[] programArgs=null;
       int counter = 0;
       
       if (mode.equals(CONCR)) {
+        programArgs = new String[sequence.size() + 1];
+        programArgs[0] = "sequence";
         counter = 1;
       }
       else if (mode.equals(SYMB)) {
+        programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
+        programArgs[0] = "sequence";
         programArgs[1] = module1_ + ":" + "init";
         counter = 2;
       }
@@ -143,7 +146,7 @@ public class TeacherClassic  implements MinimallyAdequateTeacher {
         
         JFuzz jfuzz = createJDartInstance(programArgs);
         jfuzz.runJDart();
-        ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET);      
+        ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET + ".sequence");      
         String result = alphaRefiner.refine(ct);
         System.out.println("Refinement result: " + result);
         if (result.equals("OK")) {

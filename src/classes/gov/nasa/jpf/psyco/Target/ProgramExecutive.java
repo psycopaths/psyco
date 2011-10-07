@@ -34,14 +34,16 @@ public class ProgramExecutive {
 
   static final String SEQ = "sequence";
   static final String AUT = "automaton";
+  
+  static String[] invokeSpecs_ = null; // jdart cannot handle parameters in sequence
 
   // executes a sequence for queries
-  static void sequence(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
+  static void sequence() throws IllegalAccessException, InvocationTargetException {
 
     // ignore first argument so start at 1
 
-    for (int i = 1; i < invokeSpecs.length; i++) {
-      Invocation invoke = new Invocation(invokeSpecs[i]);
+    for (int i = 1; i < invokeSpecs_.length; i++) {
+      Invocation invoke = new Invocation(invokeSpecs_[i]);
       Method m = invoke.get_method();
       Object[] args = invoke.get_Arguments();
       
@@ -63,19 +65,20 @@ public class ProgramExecutive {
   }
 
   // executes automaton for conjectures
-  static void automaton(String[] invokeSpecs) {
+  static void automaton() {
     // TODO implement it for conjectures
   }
 
   public static void main(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
-    int lg = invokeSpecs.length;
+    invokeSpecs_ = invokeSpecs;
+    int lg = invokeSpecs_.length;
 
     if (invokeSpecs.length > 0) {
       String zero = invokeSpecs[0];
       if (zero.equalsIgnoreCase(SEQ)) {
-        sequence(invokeSpecs);
+        sequence();
       } else if (zero.equalsIgnoreCase(AUT)) {
-        automaton(invokeSpecs);
+        automaton();
       } else {
         System.err.println("Requires to specify whether we are to execute a query or a conjecture");
       }
