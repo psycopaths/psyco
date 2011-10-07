@@ -268,6 +268,8 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String packageName = JPFargs_.getProperty("sut.package");
     String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
     JPFargs_.setProperty("symbolic.assertions", st);
+    st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    JPFargs_.setProperty("symbolic.classes", st);
     return (new JFuzz(JPFargs_));
   }
 
