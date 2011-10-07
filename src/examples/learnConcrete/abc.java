@@ -29,11 +29,11 @@ public static void a() {
 
 public static void b() {
   System.out.println("In method b...");
-  if (x == 1) {
+//  if (x == 1) {
     x++;
-  } else {
-    assert false;
-  }
+ // } else {
+ //   assert false;
+ // }
 }
 
 public static void c() {
