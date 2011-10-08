@@ -28,3 +28,7 @@ vm.store_steps=true
 # avoid statistics during learning process by enabling the following line
 #report.console.finished=result
 report.console.property_violation=error
+
+# declare all classes in the component that implement methods in the 
+# alphabet
+symbolic.classes=simple_refine1.Example

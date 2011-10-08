@@ -53,5 +53,7 @@ public class Call implements JPFShell {
 
   	JFuzz jfuzz = new JFuzz(conf);
   	jfuzz.runJDart();
+  	jfuzz = new JFuzz(conf);
+  	jfuzz.runJDart();
   }
 }
