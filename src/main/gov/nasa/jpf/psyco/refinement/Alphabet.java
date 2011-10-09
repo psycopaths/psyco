@@ -38,7 +38,11 @@ public class Alphabet {
   public Symbol getSymbol(String symbolName) {
     return symbols.get(symbolName);
   }
-  
+
+  public void removeSymbol(String symbolName) {
+    symbols.remove(symbolName);
+  }
+
   public String getSymbolsAsString() {
     String symbolsAsString = "";
     Iterator<String> itr = symbols.keySet().iterator();

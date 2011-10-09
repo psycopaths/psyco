@@ -63,6 +63,7 @@ public class AlphabetRefinement {
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
 
+    HashSet<String> refinedSymbols = new HashSet<String>();
     boolean allErrors = true;
     boolean allCovered = true;
     for (String symbolName : methodNames) {
@@ -92,6 +93,8 @@ public class AlphabetRefinement {
       precondition = new Precondition(errorPCs);
       newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
       alphabet.addSymbol(newSymbol);
+      
+      refinedSymbols.add(strippedSymbolName);
     }
 
     if (allCovered) {
@@ -99,8 +102,14 @@ public class AlphabetRefinement {
     } else if (allErrors) {
       return "ERROR";
     } else {
+      for (String refinedSymbolName : refinedSymbols) {
+        System.out.println("Removed symbol: " + refinedSymbolName);
+        alphabet.removeSymbol(refinedSymbolName);
+      }
       writeAndCompileRefinement();
-      return alphabet.getSymbolsAsString();
+      String newAlphabet = alphabet.getSymbolsAsString();
+      System.out.println("New refined alphabet: " + newAlphabet);
+      return newAlphabet;
     }
   }
   
