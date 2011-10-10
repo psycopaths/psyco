@@ -199,7 +199,6 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     Candidate.printCandidateAssumption(cndt, alphabet_);
 
-    // TODO currently only checking safety - need to add permissiveness
     boolean conjRes;
     int maxDepth = 3;
     logger.info("STARTING CONJECTURE");
@@ -211,11 +210,13 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String bd = Candidate.allBadSequences;
     String bad = bd.replaceFirst(";", "");
 
+    System.out.println("Good is: " + res);
     System.out.println("Bad is: " + bad);
 
     String[] sequences = res.split(";");
     String[] badSequences = bad.split(";");
 
+    logger.info("START CHECK SAFE");
     // check safety
     for (String nextSeq : sequences) {
       // first convert sequence for query
@@ -238,6 +239,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     }
 
+    logger.info("START CHECK PERMISSIVE");
     // check permissiveness
     for (String nextSeq : badSequences) {
       // first convert sequence for query
