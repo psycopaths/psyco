@@ -20,7 +20,7 @@ interface.outputFile=tmp/generatedIntABC
 vm.store_steps=true 
 
 # enable reporting for these loggers
-+log.info=teacher,learning
++log.fine=teacher,learning
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

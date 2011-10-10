@@ -99,10 +99,10 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
   }
 
-   public boolean query(AbstractList<String> sequence) throws SETException {
-     return (query(sequence, true));
-   }
-  
+  public boolean query(AbstractList<String> sequence) throws SETException {
+    return (query(sequence, true));
+  }
+
   public boolean query(AbstractList<String> sequence, boolean memoize) throws SETException {
 
     if (refine) {
@@ -117,7 +117,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     Boolean recalled = memoized_.getResult(sequence);
 
     if (recalled != null) { // we get the result from memoized
-      return (!recalled.booleanValue()); // note the fact that it is the other way around
+      logger.info("Result from memoized for sequence: ", sequence);
+      logger.info("Result is: ", !recalled.booleanValue());
+      return (!recalled.booleanValue()); // note the fact that it is the other way around      
     } else { // need to model check
 
 
@@ -166,12 +168,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         System.out.println("Refinement result: " + result);
         if (result.equals("OK")) {
           if (memoize) {
-            memoized_.setResult(sequence, true);
+            memoized_.setResult(sequence, false); // memoized stores them the other way around
           }
           return true;
         } else if (result.equals("ERROR")) {
           if (memoize) {
-            memoized_.setResult(sequence, false);
+            memoized_.setResult(sequence, true); // memoized stores them the other way around
           }
           return false;
         } else { // must refine
@@ -218,31 +220,47 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     logger.info("START CHECK SAFE");
     // check safety
-    for (String nextSeq : sequences) {
-      // first convert sequence for query
-      Vector seq = new Vector();
+    if (sequences.length == 0) {
+      logger.info("NO ACCEPTED TRACES");
+      // check permissive next
+    } else {
+      for (String nextSeq : sequences) {
+        // first convert sequence for query
+        Vector seq = new Vector();
 
-      // remove first : inserted
-      String nS = nextSeq.replaceFirst(":", "");
-      String[] methods = nS.split(":");
-      for (String nextMeth : methods) {
-        seq.add(nextMeth);
+        // remove first : inserted
+        String nS = nextSeq.replaceFirst(":", "");
+        String[] methods = nS.split(":");
+        for (String nextMeth : methods) {
+          seq.add(nextMeth);
+          System.out.println("%%%%%%%% " + nextMeth);
+        }
+
+        conjRes = query(seq, false); // do not memoize
+
+        if (!conjRes) // result is false so assumption does not block enough
+        {
+          logger.info("ENDING CONJECTURE");
+          return (seq); // refine the assumption
+        }
+
       }
-
-      conjRes = query(seq, false); // do not memoize
-
-      if (!conjRes) // result is false so assumption does not block enough
-      {
-        logger.info("ENDING CONJECTURE");
-        return (seq); // refine the assumption
-      }
-
     }
 
     logger.info("START CHECK PERMISSIVE");
     // check permissiveness
+    
+    if (badSequences.length == 0) {
+      logger.info("NO REJECTED TRACES");
+      logger.info("ENDING CONJECTURE");
+      return null;
+    }
     for (String nextSeq : badSequences) {
       // first convert sequence for query
+      if (nextSeq.equals("")) {
+        return null;
+      }
+      
       Vector seq = new Vector();
 
       // remove first : inserted
