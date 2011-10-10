@@ -7,7 +7,7 @@
 
 package psyco.java.io;
 
-import java.io.*;
+//import java.io.*;
 
 /**
  * A piped output stream can be connected to a piped input stream to create a
@@ -34,8 +34,8 @@ public class PipedOutputStream {
    * GC).
    */
 //  private PipedInputStream sink;
-  private int sink = 0;
-  private int sinkConnected = 0;
+  private static int sink = 0;
+  private static int sinkConnected = 0;
 
   /**
    * Creates a piped output stream connected to the specified piped input
@@ -50,9 +50,6 @@ public class PipedOutputStream {
 //  public PipedOutputStream(PipedInputStream snk) throws IOException {
 //    connect(snk);
 //  }
-  public PipedOutputStream(int snk) throws IOException {
-    connect(snk);
-  }
 
   /**
    * Creates a piped output stream that is not yet connected to a piped input
@@ -62,8 +59,8 @@ public class PipedOutputStream {
    * @see java.io.PipedInputStream#connect(java.io.PipedOutputStream)
    * @see java.io.PipedOutputStream#connect(java.io.PipedInputStream)
    */
-  public PipedOutputStream() {
-  }
+//  public PipedOutputStream() {
+//  }
 
   /**
    * Connects this piped output stream to a receiver. If this object is already
@@ -102,7 +99,7 @@ public class PipedOutputStream {
 //    snk.out = 0;
 //    snk.connected = true;
 //  }
-  public synchronized void connect(int snk) throws IOException {
+  public static synchronized void connect(int snk) {
     if (snk == 0) {
       assert false;
     } else if (sink != 0 || sinkConnected == 1) {
@@ -130,7 +127,7 @@ public class PipedOutputStream {
 //    }
 //    sink.receive(b);
 //  }
-  public void write() throws IOException {
+  public static void write() {
     if (sink == 0) {
       assert false;
     }
@@ -186,7 +183,7 @@ public class PipedOutputStream {
 //      }
 //    }
 //  }
-  public synchronized void flush() throws IOException {
+  public static synchronized void flush() {
     if (sink != 0) {
       ;
     }
@@ -205,7 +202,7 @@ public class PipedOutputStream {
 //      sink.receivedLast();
 //    }
 //  }
-  public void close() throws IOException {
+  public static void close() {
     if (sink != 0) {
       ;
     }

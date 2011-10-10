@@ -117,8 +117,10 @@ public class AlphabetRefinement {
     System.out.println(alphabet.toSource());
     BufferedWriter writer = null;
     try {
-      writer = new BufferedWriter(new FileWriter(examplePath + "/" + REFINED_CLASS_NAME + ".java"));
+      String fileName = examplePath + "/" + REFINED_CLASS_NAME + ".java";
+      writer = new BufferedWriter(new FileWriter(fileName));
       writer.write(alphabet.toSource());
+      System.out.println("Written refined alphabet into " + fileName);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
