@@ -89,19 +89,21 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
 
   }
-  
+
   private String getPrefix(String action, HashMap hm) {
     if (mode.equals(CONCR)) {
       System.out.println(("PSYCO" + hm.get(action) + "_")); // only for testing symbolic mode
       return "";
-    }
-    else {
+    } else {
       return ("PSYCO" + hm.get(action) + "_");
     }
   }
+
+   public boolean query(AbstractList<String> sequence) throws SETException {
+     return (query(sequence, true));
+   }
   
-  
-  public boolean query(AbstractList<String> sequence) throws SETException {
+  public boolean query(AbstractList<String> sequence, boolean memoize) throws SETException {
 
     if (refine) {
       return (true); // means we ignore all queries 
@@ -113,6 +115,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
 
     Boolean recalled = memoized_.getResult(sequence);
+
     if (recalled != null) { // we get the result from memoized
       return (!recalled.booleanValue()); // note the fact that it is the other way around
     } else { // need to model check
@@ -140,13 +143,14 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       HashMap hm = new HashMap();
       for (String nextEl : sequence) {
         if (!hm.containsKey(nextEl)) {
-          hm.put(nextEl, new Integer(0));}
-        
-          programArgs[counter] = module1_ + ":" + getPrefix(nextEl, hm) + nextEl;
-          counter++;
-          Integer value = (Integer) hm.get(nextEl);
-          value++;
-          hm.put(nextEl, value);
+          hm.put(nextEl, new Integer(0));
+        }
+
+        programArgs[counter] = module1_ + ":" + getPrefix(nextEl, hm) + nextEl;
+        counter++;
+        Integer value = (Integer) hm.get(nextEl);
+        value++;
+        hm.put(nextEl, value);
       }
 
 
@@ -161,8 +165,14 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         String result = alphaRefiner.refine(ct);
         System.out.println("Refinement result: " + result);
         if (result.equals("OK")) {
+          if (memoize) {
+            memoized_.setResult(sequence, true);
+          }
           return true;
         } else if (result.equals("ERROR")) {
+          if (memoize) {
+            memoized_.setResult(sequence, false);
+          }
           return false;
         } else { // must refine
           refine = true;
@@ -173,7 +183,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         JPF jpf = createJPFInstance(programArgs); // driver for M1
         jpf.run();
         boolean violating = jpf.foundErrors();
-        memoized_.setResult(sequence, violating);
+        if (memoize) {
+          memoized_.setResult(sequence, violating);
+        }
         return (!violating);
       }
     }
@@ -181,7 +193,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   public Vector conjecture(Candidate cndt) throws SETException {
 
-    
+    if (refine) {
+      return null; // we need to ignore conjectures because alphabet is refined 
+    }
+
+    Candidate.printCandidateAssumption(cndt, alphabet_);
+
     // TODO currently only checking safety - need to add permissiveness
     boolean conjRes;
     int maxDepth = 3;
@@ -190,14 +207,20 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     Candidate.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
     String result = Candidate.allSequences;
     String res = result.replaceFirst(";", "");
-            
-    String[] sequences = res.split(";");
 
+    String bd = Candidate.allBadSequences;
+    String bad = bd.replaceFirst(";", "");
+
+    System.out.println("Bad is: " + bad);
+
+    String[] sequences = res.split(";");
+    String[] badSequences = bad.split(";");
+
+    // check safety
     for (String nextSeq : sequences) {
       // first convert sequence for query
       Vector seq = new Vector();
 
-      System.out.println(" First query is " + nextSeq);
       // remove first : inserted
       String nS = nextSeq.replaceFirst(":", "");
       String[] methods = nS.split(":");
@@ -205,14 +228,36 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         seq.add(nextMeth);
       }
 
-      conjRes = query(seq);
-      
-      if (!conjRes) // result is false
+      conjRes = query(seq, false); // do not memoize
+
+      if (!conjRes) // result is false so assumption does not block enough
       {
         logger.info("ENDING CONJECTURE");
         return (seq); // refine the assumption
       }
-      
+
+    }
+
+    // check permissiveness
+    for (String nextSeq : badSequences) {
+      // first convert sequence for query
+      Vector seq = new Vector();
+
+      // remove first : inserted
+      String nS = nextSeq.replaceFirst(":", "");
+      String[] methods = nS.split(":");
+      for (String nextMeth : methods) {
+        seq.add(nextMeth);
+      }
+
+      conjRes = query(seq, false); // do not memoize
+
+      if (conjRes) // result is true so incompatible with assumption generated
+      {
+        logger.info("ENDING CONJECTURE");
+        return (seq); // refine the assumption
+      }
+
     }
     logger.info("ENDING CONJECTURE");
     return null; // will need to check if there was refinement involved
@@ -269,10 +314,11 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
     JPFargs_.setProperty("symbolic.assertions", st);
     st = JPFargs_.getProperty("symbolic.classes");
-    if (st != null)
-    	st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    else
-    	st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    if (st != null) {
+      st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    } else {
+      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    }
     JPFargs_.setProperty("symbolic.classes", st);
     return (new JFuzz(JPFargs_));
   }
