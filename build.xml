@@ -177,6 +177,7 @@
   </target>
 
   <target name="compile-examples" if="have_examples" depends="-init">
+    <delete dir="build/examples" />
     <mkdir dir="build/examples" />
     <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
