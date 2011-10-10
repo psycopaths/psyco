@@ -79,9 +79,10 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String[] alpha = conf.getStringArray("interface.alphabet");
     alphabet_ = new Vector();
 
-
+    logger.info("New teacher alphabet is: ");
     for (String a : alpha) {
       alphabet_.add(a);
+      logger.info(a);
     }
 
     if (mode.equals(SYMB)) {
@@ -241,6 +242,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         if (!conjRes) // result is false so assumption does not block enough
         {
           logger.info("ENDING CONJECTURE");
+          // reinitialize these
+          Candidate.allSequences = "";
+          Candidate.allBadSequences = "";
           return (seq); // refine the assumption
         }
 
@@ -249,10 +253,13 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     logger.info("START CHECK PERMISSIVE");
     // check permissiveness
-    
+
     if (badSequences.length == 0) {
       logger.info("NO REJECTED TRACES");
       logger.info("ENDING CONJECTURE");
+      // reinitialize these
+      Candidate.allSequences = "";
+      Candidate.allBadSequences = "";
       return null;
     }
     for (String nextSeq : badSequences) {
@@ -260,7 +267,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       if (nextSeq.equals("")) {
         return null;
       }
-      
+
       Vector seq = new Vector();
 
       // remove first : inserted
@@ -275,11 +282,17 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       if (conjRes) // result is true so incompatible with assumption generated
       {
         logger.info("ENDING CONJECTURE");
+        // reinitialize these
+        Candidate.allSequences = "";
+        Candidate.allBadSequences = "";
         return (seq); // refine the assumption
       }
 
     }
     logger.info("ENDING CONJECTURE");
+    // reinitialize these
+    Candidate.allSequences = "";
+    Candidate.allBadSequences = "";
     return null; // will need to check if there was refinement involved
 
   }
