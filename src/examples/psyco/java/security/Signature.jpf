@@ -1,0 +1,34 @@
+@using jpf-jdart
+
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+JPF.mode=symbolic
+
+sut.package=psyco.java.security
+sut.class=Signature
+example.path=src/examples/psyco/java/security
+
+# format is method_name: # of parameters
+interface.alphabet=initSign:0,initVerify:0,sign:0,verify:0,update:0
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/generatedIntABC
+
+vm.store_steps=true 
+
+# enable reporting for these loggers
++log.info=teacher,learning
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
+
+# declare all classes in the component that implement methods in the 
+# alphabet
+symbolic.classes=psyco.java.security.Signature
