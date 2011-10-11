@@ -265,6 +265,8 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     for (String nextSeq : badSequences) {
       // first convert sequence for query
       if (nextSeq.equals("")) {
+        Candidate.allSequences = "";
+        Candidate.allBadSequences = "";
         return null;
       }
 
