@@ -18,7 +18,9 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.symbc.numeric.Constraint;
+import gov.nasa.jpf.util.JPFLogger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,6 +35,7 @@ import jfuzz.ConstraintsTree;
 public class AlphabetRefinement {
   public static final String REFINED_CLASS_NAME = "RefinedAlphabet";
   public static final int NUMBER_OF_METHOD_COPIES = 10;
+  private JPFLogger logger = JPF.getLogger("refinement");
   private Alphabet alphabet;
   private String examplePath;
   private String originalClassName;
@@ -56,12 +59,11 @@ public class AlphabetRefinement {
 
   public String refine(ConstraintsTree constraintsTree) {
     queryCounter++;
-    System.out.println("Query counter: " + queryCounter);
+    logger.info("Refinement # " + queryCounter);
     if (constraintsTree == null) {
       return "OK";
     }
-    System.out.println("Refining...");
-    constraintsTree.printConstraintsTree();
+    logger.info("Constraints tree:\n" + constraintsTree);
     
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
@@ -74,14 +76,12 @@ public class AlphabetRefinement {
     boolean allErrors = true;
     boolean allCovered = true;
     for (String symbolName : methodNames) {
-//      System.out.println("Symbol: " + symbolName);
-//      System.out.println("Covered PCs...");
+      logger.info("Processing symbol " + symbolName);
       ArrayList<ArrayList<Constraint>> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
       if (!coveredPCs.isEmpty()) {
         allErrors = false;
       }
 
-//      System.out.println("Error PCs...");
       ArrayList<ArrayList<Constraint>> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
       if (!errorPCs.isEmpty()) {
         allCovered = false;
@@ -110,24 +110,22 @@ public class AlphabetRefinement {
       return "ERROR";
     } else {
       for (String refinedSymbolName : refinedSymbols) {
-        System.out.println("Removed symbol: " + refinedSymbolName);
         alphabet.removeSymbol(refinedSymbolName);
       }
       writeAndCompileRefinement();
       String newAlphabet = alphabet.getSymbolsAsString();
-      System.out.println("New refined alphabet: " + newAlphabet);
+      logger.info("New refined alphabet: " + newAlphabet);
       return newAlphabet;
     }
   }
   
   private void writeAndCompileRefinement() {
-    System.out.println(alphabet.toSource());
+    logger.fine(alphabet.toSource());
     BufferedWriter writer = null;
     try {
       String fileName = examplePath + "/" + REFINED_CLASS_NAME + ".java";
       writer = new BufferedWriter(new FileWriter(fileName));
       writer.write(alphabet.toSource());
-      System.out.println("Written refined alphabet into " + fileName);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -152,15 +150,15 @@ public class AlphabetRefinement {
           p.getErrorStream()));
 
       // read the output from the command
-      System.out.println("Here is the standard output of the command:\n");
+      logger.fine("Here is the standard output of the compile command:\n");
       while ((s = stdInput.readLine()) != null) {
-        System.out.println(s);
+        logger.fine(s);
       }
 
       // read any errors from the attempted command
-      System.out.println("Here is the standard error of the command (if any):\n");
+      logger.fine("Here is the standard error of the compile command (if any):\n");
       while ((s = stdError.readLine()) != null) {
-        System.out.println(s);
+        logger.fine(s);
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block

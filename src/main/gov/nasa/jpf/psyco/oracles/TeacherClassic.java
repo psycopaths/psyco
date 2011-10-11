@@ -166,7 +166,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         jfuzz.runJDart();
         ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET + ".sequence()V");
         String result = alphaRefiner.refine(ct);
-        System.out.println("Refinement result: " + result);
+        logger.info("Refinement result: " + result);
         if (result.equals("OK")) {
           if (memoize) {
             memoized_.setResult(sequence, false); // memoized stores them the other way around

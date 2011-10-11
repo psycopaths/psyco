@@ -21,6 +21,7 @@ vm.store_steps=true
 
 # enable reporting for these loggers
 +log.info=teacher,learning
++log.info=refinement
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker
