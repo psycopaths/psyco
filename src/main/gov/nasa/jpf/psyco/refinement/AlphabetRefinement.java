@@ -65,6 +65,10 @@ public class AlphabetRefinement {
     
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
+    
+    if (methodNames.isEmpty()) {
+      return "OK";
+    }
 
     HashSet<String> refinedSymbols = new HashSet<String>();
     boolean allErrors = true;
