@@ -36,6 +36,7 @@ public class AlphabetRefinement {
   private Alphabet alphabet;
   private String examplePath;
   private String originalClassName;
+  private static int queryCounter = 0;
   
   public AlphabetRefinement(String examplePath, String packageName, String originalClassName) {
     alphabet = new Alphabet(packageName, REFINED_CLASS_NAME);
@@ -54,6 +55,8 @@ public class AlphabetRefinement {
   }
 
   public String refine(ConstraintsTree constraintsTree) {
+    queryCounter++;
+    System.out.println("Query counter: " + queryCounter);
     if (constraintsTree == null) {
       return "OK";
     }
@@ -72,34 +75,34 @@ public class AlphabetRefinement {
       ArrayList<ArrayList<Constraint>> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
       if (!coveredPCs.isEmpty()) {
         allErrors = false;
-      } else {
-        continue;
       }
 
 //      System.out.println("Error PCs...");
       ArrayList<ArrayList<Constraint>> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
       if (!errorPCs.isEmpty()) {
         allCovered = false;
-      } else {
-        continue;
       }
-      
-      Precondition precondition = new Precondition(coveredPCs);
-      String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
-      Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
-      Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
-      alphabet.addSymbol(newSymbol);
-    
-      precondition = new Precondition(errorPCs);
-      newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
-      alphabet.addSymbol(newSymbol);
-      
-      refinedSymbols.add(strippedSymbolName);
+
+      if (!coveredPCs.isEmpty() && !errorPCs.isEmpty()) {
+        Precondition precondition = new Precondition(coveredPCs);
+        String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
+        Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
+        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
+        alphabet.addSymbol(newSymbol);
+
+        precondition = new Precondition(errorPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
+        alphabet.addSymbol(newSymbol);
+
+        refinedSymbols.add(strippedSymbolName);
+      }
     }
 
     if (allCovered) {
+      assert !allErrors;
       return "OK";
     } else if (allErrors) {
+      assert !allCovered;
       return "ERROR";
     } else {
       for (String refinedSymbolName : refinedSymbols) {
