@@ -1,0 +1,11 @@
+digraph finite_state_machine {
+  rankdir = LR;
+  node [shape = doublecircle, style = filled, fillcolor = khaki]; S0;
+  node [shape = circle, style = filled, fillcolor = cornsilk1];
+  S0 -> S1 [ label = "connect_0_4 [p != 0]" ];
+  S0 -> S0 [ label = "flush_2 [true]" ];
+  S0 -> S0 [ label = "close_3 [true]" ];
+  S1 -> S1 [ label = "flush_2 [true]" ];
+  S1 -> S1 [ label = "close_3 [true]" ];
+  S1 -> S1 [ label = "write_1 [true]" ];
+}
