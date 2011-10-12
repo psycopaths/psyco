@@ -60,11 +60,17 @@ public class AlphabetRefinement {
   public String refine(ConstraintsTree constraintsTree) {
     queryCounter++;
     logger.info("Refinement # " + queryCounter);
-    if (constraintsTree == null) {
-      return "OK";
-    }
+    assert constraintsTree != null;
     logger.info("Constraints tree:\n" + constraintsTree);
     
+    if (constraintsTree.isEmpty()) {
+      if (constraintsTree.inError()) {
+        return "ERROR";
+      } else {
+        return "OK";
+      }
+    }
+
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
     
