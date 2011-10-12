@@ -19,6 +19,8 @@
 package gov.nasa.jpf.psyco.tools;
 
 import gov.nasa.jpf.Config;
+
+import java.util.HashMap;
 import java.util.Vector;
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.learn.classic.Candidate;
@@ -113,7 +115,8 @@ public class RunGenerateInt implements JPFShell {
       System.out.print("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
-      Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet());
+      HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
+      Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions);
     }
     System.out.println("********************************************");
 
