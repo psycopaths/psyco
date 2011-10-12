@@ -87,11 +87,7 @@ public class Alphabet {
     Iterator<Map.Entry<String, Symbol>> itr = symbols.entrySet().iterator();
     while (itr.hasNext()) {
       Map.Entry<String, Symbol> entry = itr.next();
-      String preconditionStr = entry.getValue().getPrecondition().toSource();
-      for (int i = 0; i < AlphabetRefinement.NUMBER_OF_METHOD_COPIES; i++) {
-        String psycoStr = "PSYCO" + i + "_";
-        preconditionStr = preconditionStr.replaceAll(psycoStr, "");
-      }
+      String preconditionStr = entry.getValue().getSymbolToPrecondition();
       symbolsToPreconditions.put(entry.getKey(), preconditionStr);
     }
     return symbolsToPreconditions;

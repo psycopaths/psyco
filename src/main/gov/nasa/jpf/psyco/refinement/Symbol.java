@@ -73,6 +73,16 @@ public class Symbol {
   public Precondition getPrecondition() {
     return precondition;
   }
+  
+  public String getSymbolToPrecondition() {
+    String[] paramNames = new String[]{"p", "q", "r"};
+    String preconditionStr = precondition.toSource();
+    for (int i = 0; i < numParams; i++) {
+      String oldParamName = oldSymbolName + "_" + i;
+      preconditionStr = preconditionStr.replaceAll(oldParamName, paramNames[i]);
+    }
+    return preconditionStr;
+  }
 
   public String[] getParams() {
     String[] params = new String[numParams];
