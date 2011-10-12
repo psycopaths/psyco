@@ -99,10 +99,10 @@ public class PipedOutputStream {
 //    snk.out = 0;
 //    snk.connected = true;
 //  }
-  public static synchronized void connect(int snk) {
+  public static synchronized void connect(int snk, int snkConnected) {
     if (snk == 0) {
       assert false;
-    } else if (sink != 0 || sinkConnected == 1) {
+    } else if (sink != 0 || snkConnected == 1) {
       assert false;
     }
     sink = snk;
