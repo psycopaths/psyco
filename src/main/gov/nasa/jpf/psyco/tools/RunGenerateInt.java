@@ -113,6 +113,7 @@ public class RunGenerateInt implements JPFShell {
       System.out.print("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
+      Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet());
     }
     System.out.println("********************************************");
 

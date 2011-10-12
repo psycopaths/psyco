@@ -93,7 +93,6 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   private String getPrefix(String action, HashMap hm) {
     if (mode.equals(CONCR)) {
-      System.out.println(("PSYCO" + hm.get(action) + "_")); // only for testing symbolic mode
       return "";
     } else {
       return ("PSYCO" + hm.get(action) + "_");
@@ -234,10 +233,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         String[] methods = nS.split(":");
         for (String nextMeth : methods) {
           seq.add(nextMeth);
-          System.out.println("%%%%%%%% " + nextMeth);
         }
 
-        conjRes = query(seq, false); // do not memoize
+        conjRes = query(seq, true); // let it memoize and see what happens
 
         if (!conjRes) // result is false so assumption does not block enough
         {
@@ -279,7 +277,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         seq.add(nextMeth);
       }
 
-      conjRes = query(seq, false); // do not memoize
+      conjRes = query(seq, true); // let it memoize and see what happens
 
       if (conjRes) // result is true so incompatible with assumption generated
       {
@@ -333,6 +331,10 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     JPFargs_.setProperty("perturb.foo.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
     JPFargs_.setProperty("symbolic.dp", "yices");
     JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
+    
+    // the following ensures state matching is off - should it be in dart jpf.properties?
+    // caused memory leak so adding it here
+    JPFargs_.setProperty("vm.storage.class", null);
 
   }
 

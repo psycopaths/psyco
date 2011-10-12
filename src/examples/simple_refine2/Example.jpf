@@ -17,10 +17,8 @@ interface.alphabet=init:2,a:0,b:0
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntABC
 
-vm.store_steps=true 
-
 # enable reporting for these loggers
-+log.info=teacher,learning
++log.fine=teacher,learning
 +log.info=refinement
 
 # following line used to track what JPF executes
