@@ -20,6 +20,7 @@ package gov.nasa.jpf.psyco.refinement;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class Alphabet {
   private HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
@@ -79,5 +80,15 @@ public class Alphabet {
     }
     source += "}\n";
     return source;
+  }
+  
+  public HashMap<String, String> getSymbolsToPreconditions() {
+    HashMap<String, String> symbolsToPreconditions = new HashMap<String, String>();
+    Iterator<Map.Entry<String, Symbol>> itr = symbols.entrySet().iterator();
+    while (itr.hasNext()) {
+      Map.Entry<String, Symbol> entry = itr.next();
+      symbolsToPreconditions.put(entry.getKey(), entry.getValue().getPrecondition().toSource());
+    }
+    return symbolsToPreconditions;
   }
 }

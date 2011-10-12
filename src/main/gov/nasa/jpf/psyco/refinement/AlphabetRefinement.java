@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import jfuzz.ConstraintsTree;
@@ -55,6 +56,10 @@ public class AlphabetRefinement {
   public String createInitialRefinement() {
     writeAndCompileRefinement();
     return alphabet.getSymbolsAsString();
+  }
+
+  public HashMap<String, String> getSymbolsToPreconditions() {
+    return alphabet.getSymbolsToPreconditions();
   }
 
   public String refine(ConstraintsTree constraintsTree) {

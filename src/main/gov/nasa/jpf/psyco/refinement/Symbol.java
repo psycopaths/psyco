@@ -69,6 +69,10 @@ public class Symbol {
   public int getNumParams() {
     return numParams;
   }
+  
+  public Precondition getPrecondition() {
+    return precondition;
+  }
 
   public String[] getParams() {
     String[] params = new String[numParams];
