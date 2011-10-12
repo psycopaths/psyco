@@ -17,8 +17,6 @@ interface.alphabet=connect:1,write:0,flush:0,close:0
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntABC
 
-vm.store_steps=true 
-
 # enable reporting for these loggers
 +log.info=teacher,learning
 +log.info=refinement
