@@ -228,22 +228,25 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         // first convert sequence for query
         Vector seq = new Vector();
 
-        // remove first : inserted
-        String nS = nextSeq.replaceFirst(":", "");
-        String[] methods = nS.split(":");
-        for (String nextMeth : methods) {
-          seq.add(nextMeth);
-        }
+        
+        if (!nextSeq.isEmpty()) { // if empty shows no accepted traces
+          // remove first : inserted
+          String nS = nextSeq.replaceFirst(":", "");
+          String[] methods = nS.split(":");
+          for (String nextMeth : methods) {
+            seq.add(nextMeth);
+          }
 
-        conjRes = query(seq, true); // let it memoize and see what happens
+          conjRes = query(seq, true); // let it memoize and see what happens
 
-        if (!conjRes) // result is false so assumption does not block enough
-        {
-          logger.info("ENDING CONJECTURE");
-          // reinitialize these
-          Candidate.allSequences = "";
-          Candidate.allBadSequences = "";
-          return (seq); // refine the assumption
+          if (!conjRes) // result is false so assumption does not block enough
+          {
+            logger.info("ENDING CONJECTURE");
+            // reinitialize these
+            Candidate.allSequences = "";
+            Candidate.allBadSequences = "";
+            return (seq); // refine the assumption
+          }
         }
 
       }
