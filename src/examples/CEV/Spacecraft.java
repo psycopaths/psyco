@@ -34,7 +34,7 @@ package CEV;
  * the state chart
  */
 public class Spacecraft {	
-	static public ErrorLog errors;
+//	static public ErrorLog errors;
   
   static int STAGE1 = 0;
   static int STAGE2 = 1;
@@ -70,20 +70,20 @@ public class Spacecraft {
   public static void reset(int component) {
   	if (component == STAGE1)
   		doneStage1 = false;
-  	else if (component == STAGE2)
-  		doneStage2 = false;
-  	else if (component == LAS)
-  		lasDocked = true;
-  	else if (component == CM)
-  		cmDocked = true;
-  	else if (component == SM)
-  		smDocked = true;
-  	else if (component == LSAM_ASCENT)
-  		lsamAscentDocked = false;
-  	else if (component == LSAM_DESCENT)
-  		lsamDescentDocked = false;
-  	else if (component == EDS)
-  		edsDocked = false;
+    else if (component == LAS)
+      lasDocked = true;
+//  	else if (component == STAGE2)
+//  		doneStage2 = false;
+//  	else if (component == CM)
+//  		cmDocked = true;
+//  	else if (component == SM)
+//  		smDocked = true;
+//  	else if (component == LSAM_ASCENT)
+//  		lsamAscentDocked = false;
+//  	else if (component == LSAM_DESCENT)
+//  		lsamDescentDocked = false;
+//  	else if (component == EDS)
+//  		edsDocked = false;
   }
   
   public static void doStage1Separation () {
@@ -97,10 +97,10 @@ public class Spacecraft {
   // that's nominal, if the LAS is not required anymore
   public static boolean doLASjettison (int altitude) {
   	if (!lasDocked) {
-  		errors.log("las jettison without docked las");
+//  		errors.log("las jettison without docked las");
   		return false;
   	} else if (altitude < 100000) {
-  		errors.log("las jettison at altitudes under 100000 ft prohibited");
+//  		errors.log("las jettison at altitudes under 100000 ft prohibited");
   		return false;
   	}
   	lasDocked = false;
@@ -115,7 +115,7 @@ public class Spacecraft {
   
   public static boolean doEDSseparation () {
   	if (!edsDocked) {
-  		errors.log("eds separation without eds attached");
+//  		errors.log("eds separation without eds attached");
   		return false;
   	}
     edsDocked = false;
@@ -132,7 +132,7 @@ public class Spacecraft {
   
   public static boolean doSMseparation () {
   	if (!smDocked) {
-  		errors.log("sm separation without sm attached");
+//  		errors.log("sm separation without sm attached");
   		return false;
   	}
   	smDocked = false;
@@ -143,7 +143,7 @@ public class Spacecraft {
   
   public static boolean readyForLSAMrendezvous() {
     if (lasDocked) {
-      errors.log("lsamRendezvous with las attached");
+//      errors.log("lsamRendezvous with las attached");
       return false;
     }
     return true;
@@ -151,7 +151,7 @@ public class Spacecraft {
 
   public static boolean readyForDeorbit () {
     if (lasDocked || smDocked || lsamAscentDocked || edsDocked) {  
-      errors.log("deorbit with docked components");
+//      errors.log("deorbit with docked components");
       return false;
     }
     return true;
