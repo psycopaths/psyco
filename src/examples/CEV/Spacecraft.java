@@ -68,10 +68,10 @@ public class Spacecraft {
   }
   
   public static void reset(int component) {
-  	if (component == STAGE1)
-  		doneStage1 = false;
-    else if (component == LAS)
+    if (component == LAS)
       lasDocked = true;
+//    else if (component == STAGE1)
+//  		doneStage1 = false;
 //  	else if (component == STAGE2)
 //  		doneStage2 = false;
 //  	else if (component == CM)
