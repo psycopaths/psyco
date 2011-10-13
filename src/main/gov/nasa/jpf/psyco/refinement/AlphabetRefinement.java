@@ -99,17 +99,21 @@ public class AlphabetRefinement {
       }
 
       if (!coveredPCs.isEmpty() && !errorPCs.isEmpty()) {
-        Precondition precondition = new Precondition(coveredPCs);
         String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
         Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
-        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
-        alphabet.addSymbol(newSymbol);
 
-        precondition = new Precondition(errorPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), precondition);
-        alphabet.addSymbol(newSymbol);
+        Precondition preconditionCovered = new Precondition(coveredPCs);
+        Precondition preconditionError = new Precondition(errorPCs);
 
-        refinedSymbols.add(strippedSymbolName);
+        if (!preconditionCovered.equals(preconditionError)) {
+          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+          alphabet.addSymbol(newSymbol);
+
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+          alphabet.addSymbol(newSymbol);
+
+          refinedSymbols.add(strippedSymbolName);
+        }
       }
     }
 
@@ -120,6 +124,9 @@ public class AlphabetRefinement {
       assert !allCovered;
       return "ERROR";
     } else {
+      if (refinedSymbols.isEmpty()) {
+        return "ERROR";
+      }
       for (String refinedSymbolName : refinedSymbols) {
         alphabet.removeSymbol(refinedSymbolName);
       }

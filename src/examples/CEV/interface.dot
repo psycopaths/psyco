@@ -1,0 +1,11 @@
+digraph finite_state_machine {
+  rankdir = LR;
+  node [shape = doublecircle, style = filled, fillcolor = khaki]; S0;
+  node [shape = circle, style = filled, fillcolor = cornsilk1];
+  S0 -> S0 [ label = "reset_0_6 [2 != p]" ];
+  S0 -> S0 [ label = "reset_0_5 [2 == p]" ];
+  S0 -> S1 [ label = "lasJettison_1_3 [100000 <= p]" ];
+  S1 -> S1 [ label = "reset_0_6 [2 != p]" ];
+  S1 -> S0 [ label = "reset_0_5 [2 == p]" ];
+  S1 -> S1 [ label = "lsamRendezvous_2 [true]" ];
+}

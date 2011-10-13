@@ -12,8 +12,7 @@ sut.class=CEV
 example.path=src/examples/CEV
 
 # format is method_name: # of parameters
-#interface.alphabet=reset:1,stage1Separation:0
-interface.alphabet=reset:1,lasJettison:1
+interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntABC
