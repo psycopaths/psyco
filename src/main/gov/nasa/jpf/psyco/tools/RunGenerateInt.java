@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.learn.classic.Candidate;
+import gov.nasa.jpf.learn.classic.MemoizeTable;
 import gov.nasa.jpf.learn.classic.SETException;
 import gov.nasa.jpf.learn.classic.SETLearner;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
@@ -48,6 +49,7 @@ public class RunGenerateInt implements JPFShell {
     Candidate inf = null;
     boolean newLearningInstance = true;
     AlphabetRefinement refiner = null;
+    MemoizeTable memoize = null;
 
 
     String mode = conf.getProperty("JPF.mode");
@@ -90,7 +92,7 @@ public class RunGenerateInt implements JPFShell {
       newLearningInstance = false; // unless we need to refine
       try {
         /* run the learning algorithm */
-        teacher = new TeacherClassic(conf, refiner);
+        teacher = new TeacherClassic(conf, refiner, memoize);
         learnInterface = new SETLearner(teacher);
         inf = (Candidate) learnInterface.getAssumption();
 
@@ -101,13 +103,14 @@ public class RunGenerateInt implements JPFShell {
       if (teacher.refine()) {
         conf.setProperty("interface.alphabet", teacher.getNewAlphabet());
         newLearningInstance = true;
+        memoize = teacher.getMemoizeTable();
       }
     }
 
 
     String storeResult = conf.getProperty("interface.outputFile");
 
-
+    System.out.println("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
     System.out.println("\n\n********************************************");
     if (inf == null) {
       System.out.println("Interface is null - no environment can help");
@@ -115,12 +118,12 @@ public class RunGenerateInt implements JPFShell {
       System.out.print("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
-      HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
-      Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions);
+      if (mode.equals(TeacherClassic.SYMB)) {
+        HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
+        Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions);
+      }
     }
     System.out.println("********************************************");
 
   }
-  
-
 }

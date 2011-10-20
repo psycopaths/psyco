@@ -58,6 +58,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   // by default, mode is concrete
   private static String mode = CONCR;
   private static AlphabetRefinement alphaRefiner = null;
+  private int memoizeHits = 0;
 
   public TeacherClassic(Config conf, AlphabetRefinement ref) {
 
@@ -91,6 +92,44 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   }
 
+  
+  // allow reuse of memoized table after refinements
+  public TeacherClassic(Config conf, AlphabetRefinement ref, MemoizeTable mem) {
+
+    if (mem == null) {
+      memoized_ = new MemoizeTable();
+    } else {
+      memoized_ = mem;
+    }
+    
+    /* targetArgs are no longer relevant
+    
+    String[] targetArgs = conf.getTargetArgs();
+    if (targetArgs.length < 1)
+    throw new RuntimeException("No target arguments configured");
+    
+     */
+
+    refine = false;
+    alphaRefiner = ref;
+    module1_ = conf.getString("sut.package") + "." + conf.getString("sut.class"); // this is our target class
+    module2_ = null; // TODO change for compositional verification
+    JPFargs_ = conf;
+    String[] alpha = conf.getStringArray("interface.alphabet");
+    alphabet_ = new Vector();
+
+    logger.info("New teacher alphabet is: ");
+    for (String a : alpha) {
+      alphabet_.add(a);
+      logger.info(a);
+    }
+
+    if (mode.equals(SYMB)) {
+      setUpJDartConfig();
+    }
+
+  }
+  
   private String getPrefix(String action, HashMap hm) {
     if (mode.equals(CONCR)) {
       return "";
@@ -114,11 +153,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       return true;
     }
 
-    Boolean recalled = memoized_.getResult(sequence);
+    Boolean recalled = memoized_.getSimulatedResult(sequence);
 
     if (recalled != null) { // we get the result from memoized
       logger.info("Result from memoized for sequence: ", sequence);
       logger.info("Result is: ", !recalled.booleanValue());
+      memoizeHits++;
       return (!recalled.booleanValue()); // note the fact that it is the other way around      
     } else { // need to model check
 
@@ -212,8 +252,8 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String bd = Candidate.allBadSequences;
     String bad = bd.replaceFirst(";", "");
 
-    System.out.println("Good is: " + res);
-    System.out.println("Bad is: " + bad);
+    //System.out.println("Good is: " + res);
+    //System.out.println("Bad is: " + bad);
 
     String[] sequences = res.split(";");
     String[] badSequences = bad.split(";");
@@ -374,8 +414,16 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   public String getNewAlphabet() {
     return newAlphabet;
   }
+  
+  public MemoizeTable getMemoizeTable() {
+    return memoized_;
+  }
 
   public static void setMode(String m) {
     mode = m;
+  }
+  
+  public int getMemoizeHits() {
+    return memoizeHits;
   }
 }
