@@ -55,6 +55,7 @@ public class RunGenerateInt implements JPFShell {
     String mode = conf.getProperty("JPF.mode");
     String teacherAlpha = "";
     
+    long time1 = System.currentTimeMillis();
     
     if (mode.equals(TeacherClassic.SYMB)) {
       // need to initialize the refiner
@@ -106,10 +107,13 @@ public class RunGenerateInt implements JPFShell {
         memoize = teacher.getMemoizeTable();
       }
     }
+    
+    long time2 = System.currentTimeMillis();
 
 
     String storeResult = conf.getProperty("interface.outputFile");
 
+    System.out.println("\n\n Total time is: " + (time2-time1)  );
     System.out.println("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
     System.out.println("\n\n********************************************");
     if (inf == null) {

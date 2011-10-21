@@ -152,8 +152,15 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     if (sequence.isEmpty()) {
       return true;
     }
+    
+    Boolean recalled;
 
-    Boolean recalled = memoized_.getSimulatedResult(sequence);
+    if (mode.equals(SYMB)) {
+      recalled = memoized_.getSimulatedResult(sequence);
+    } else {
+      recalled = memoized_.getResult(sequence);
+    }
+
 
     if (recalled != null) { // we get the result from memoized
       logger.info("Result from memoized for sequence: ", sequence);
@@ -252,7 +259,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     String bd = Candidate.allBadSequences;
     String bad = bd.replaceFirst(";", "");
 
-    //System.out.println("Good is: " + res);
+    System.out.println("Good is: " + res);
     //System.out.println("Bad is: " + bad);
 
     String[] sequences = res.split(";");

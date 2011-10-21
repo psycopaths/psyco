@@ -1,0 +1,33 @@
+@using jpf-jdart
+
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+JPF.mode=symbolic
+
+sut.package=exampleProtocolSteffen2011
+sut.class=Protocol
+example.path=src/examples/exampleProtocolSteffen2011
+
+
+# format is method_name: # of parameters
+interface.alphabet=msg:2,recv_ack:1
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/generatedProtocol
+
+# enable reporting for these loggers
+log.info=teacher,learning,refinement
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
+
+# declare all classes in the component that implement methods in the 
+# alphabet
+symbolic.classes=exampleProtocolSteffen2011.Protocol
