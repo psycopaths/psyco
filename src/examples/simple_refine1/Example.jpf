@@ -5,7 +5,7 @@ shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 target=empty
 args=empty
 
-JPF.mode=symbolic
+JPF.isModeSymbolic=true
 
 sut.package=simple_refine1
 sut.class=Example
@@ -18,8 +18,7 @@ interface.alphabet=init:2,a:0,b:0
 interface.outputFile=tmp/generatedIntABC
 
 # enable reporting for these loggers
-log.info=teacher,learning
-#,refinement
+log.info=teacher,learning,refinement
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

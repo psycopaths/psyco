@@ -52,12 +52,12 @@ public class RunGenerateInt implements JPFShell {
     MemoizeTable memoize = null;
 
 
-    String mode = conf.getProperty("JPF.mode");
+    boolean mode = conf.getBoolean("JPF.isModeSymbolic");
     String teacherAlpha = "";
     
     long time1 = System.currentTimeMillis();
     
-    if (mode.equals(TeacherClassic.SYMB)) {
+    if (mode == TeacherClassic.SYMB) {
       // need to initialize the refiner
       refiner = new AlphabetRefinement(conf.getProperty("example.path"),
               conf.getProperty("sut.package"), conf.getProperty("sut.class"));
@@ -86,9 +86,9 @@ public class RunGenerateInt implements JPFShell {
     }
 
     conf.setProperty("interface.alphabet", teacherAlpha);
-    TeacherClassic.setMode(conf.getProperty("JPF.mode"));
+    TeacherClassic.setMode(mode); 
     
-
+    
     while (newLearningInstance) {
       newLearningInstance = false; // unless we need to refine
       try {
@@ -122,7 +122,7 @@ public class RunGenerateInt implements JPFShell {
       System.out.print("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
-      if (mode.equals(TeacherClassic.SYMB)) {
+      if (mode == TeacherClassic.SYMB) {
         HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
         Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions);
       }

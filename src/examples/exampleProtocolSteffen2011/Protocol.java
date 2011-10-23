@@ -32,7 +32,11 @@ public class Protocol {
 
 
   public static void msg(int sequence, int content) {
-    if ((buffer_empty) && (sequence%2 == expect % 2)) {  // this is as expected
+    System.out.println("Sequence is " + (sequence & 1));
+    System.out.println("Expect is " + (expect & 1));
+    
+    
+    if ((buffer_empty) && ((sequence & 1) == (expect & 1) )) {  // this is as expected
       expect++;
       buffer_empty = false;
       // OK message will be passed to upper layer
@@ -46,7 +50,7 @@ public class Protocol {
     if (buffer_empty) {
       assert false;
     } else {
-      if (value == (expect-1) % 2) {
+      if (value == ((expect-1) & 1)) {
          // ack is enabled, message is consumed
         buffer_empty = true;
       } else {
@@ -54,6 +58,16 @@ public class Protocol {
         assert false;
       }
     }        
+  }
+  
+  public static void main(String[] args) {
+    msg(0, 6);
+ //   recv_ack(0);
+    msg(1, 10);
+ //   recv_ack(1);
+    msg(0, 100);
+ //   recv_ack(0);
+    
   }
     
 }

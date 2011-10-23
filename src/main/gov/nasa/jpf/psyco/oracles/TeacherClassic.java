@@ -44,8 +44,8 @@ import java.util.HashMap;
  */
 public class TeacherClassic implements MinimallyAdequateTeacher {
 
-  public static final String CONCR = "concrete";
-  public static final String SYMB = "symbolic";
+  public static final boolean CONCR = false;
+  public static final boolean SYMB = true;
   public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
   private JPFLogger logger = JPF.getLogger("teacher");
   private SETLearner set_;
@@ -56,7 +56,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   private boolean refine = false;
   private String newAlphabet;
   // by default, mode is concrete
-  private static String mode = CONCR;
+  private static boolean mode = CONCR;
   private static AlphabetRefinement alphaRefiner = null;
   private int memoizeHits = 0;
 
@@ -86,7 +86,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       logger.info(a);
     }
 
-    if (mode.equals(SYMB)) {
+    if (mode == SYMB) { 
       setUpJDartConfig();
     }
 
@@ -124,14 +124,14 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       logger.info(a);
     }
 
-    if (mode.equals(SYMB)) {
+    if (mode == SYMB) {
       setUpJDartConfig();
     }
 
   }
   
   private String getPrefix(String action, HashMap hm) {
-    if (mode.equals(CONCR)) {
+    if (mode == CONCR) {
       return "";
     } else {
       return ("PSYCO" + hm.get(action) + "_");
@@ -155,7 +155,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     
     Boolean recalled;
 
-    if (mode.equals(SYMB)) {
+    if (mode == SYMB) {
       recalled = memoized_.getSimulatedResult(sequence);
     } else {
       recalled = memoized_.getResult(sequence);
@@ -178,11 +178,11 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       String[] programArgs = null;
       int counter = 0;
 
-      if (mode.equals(CONCR)) {
+      if (mode == CONCR) {
         programArgs = new String[sequence.size() + 1];
         programArgs[0] = "sequence";
         counter = 1;
-      } else if (mode.equals(SYMB)) {
+      } else if (mode == SYMB) {
         programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
         programArgs[0] = "sequence";
         programArgs[1] = module1_ + ":" + "init";
@@ -203,7 +203,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       }
 
 
-      if (mode.equals(SYMB)) {
+      if (mode == SYMB) {
         // TODO
         // first call jpf-jdart when it is ready and get the constraints tree
         // for the moment just get a new constraints tree
@@ -426,7 +426,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     return memoized_;
   }
 
-  public static void setMode(String m) {
+  public static void setMode(boolean m) {
     mode = m;
   }
   

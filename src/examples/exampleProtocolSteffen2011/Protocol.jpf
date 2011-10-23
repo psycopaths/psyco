@@ -5,7 +5,7 @@ shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 target=empty
 args=empty
 
-JPF.mode=symbolic
+JPF.isModeSymbolic=true
 
 sut.package=exampleProtocolSteffen2011
 sut.class=Protocol
@@ -19,7 +19,7 @@ interface.alphabet=msg:2,recv_ack:1
 interface.outputFile=tmp/generatedProtocol
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement
+log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker
