@@ -62,6 +62,10 @@ public class AlphabetRefinement {
     return alphabet.getSymbolsToPreconditions();
   }
 
+  public Symbol getSymbol(String symbolName) {
+    return alphabet.getSymbol(symbolName);
+  }
+
   public String refine(ConstraintsTree constraintsTree) {
     queryCounter++;
     logger.info("Refinement # " + queryCounter);
