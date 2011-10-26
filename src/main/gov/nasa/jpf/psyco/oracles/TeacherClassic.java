@@ -62,6 +62,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   // by default, mode is concrete
   private static boolean mode = CONCR;
   private static AlphabetRefinement alphaRefiner = null;
+  private static boolean optimizeQueriesNoParams = true; // enabled by default
   private int memoizeHits = 0;
 
   public TeacherClassic(Config conf, AlphabetRefinement ref) {
@@ -196,26 +197,28 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     // we have not returned so we need to model check
 
-
-
     // first create sequence in format appropriate for Executor
 
-    
+    // default is to not use the optimization for queries with no parameters
+    boolean parameters_involved = true;
 
     // is there any parameters involved?
-    boolean parameters_involved = false;
+    
+    // only perform this if optimization is enabled
+    if (optimizeQueriesNoParams) {
+      parameters_involved = false;
 
-    if (mode == SYMB) {
-      for (String nextEl : sequence) {
-        if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
-          parameters_involved = true; // there are parameters so may need to refine
-          break; // exit the loop
+
+      if (mode == SYMB) {
+        for (String nextEl : sequence) {
+          if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
+            parameters_involved = true; // there are parameters so may need to refine
+            break; // exit the loop
+          }
         }
       }
     }
     
-   
-    //parameters_involved = true;
     
     String[] programArgs = null;
     int counter = 0;
@@ -509,4 +512,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   public int getMemoizeHits() {
     return memoizeHits;
   }
+  
+  public static void setOptimize(boolean o) {
+    optimizeQueriesNoParams = o;
+  }
+  
 }

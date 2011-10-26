@@ -53,6 +53,10 @@ public class RunGenerateInt implements JPFShell {
 
 
     boolean mode = conf.getBoolean("JPF.isModeSymbolic");
+    if (conf.getProperty("optimizeQueries") != null) {
+      TeacherClassic.setOptimize(conf.getBoolean("optimizeQueries"));
+    }
+    
     String teacherAlpha = "";
     
     long time1 = System.currentTimeMillis();
