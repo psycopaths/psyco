@@ -36,7 +36,11 @@ import java.util.Vector;
 import jfuzz.ConstraintsTree;
 import jfuzz.JFuzz;
 import gov.nasa.jpf.learn.classic.Candidate;
+import gov.nasa.jpf.psyco.refinement.Symbol;
 import java.util.HashMap;
+import gov.nasa.jpf.psyco.Target.ProgramExecutive;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /*
@@ -131,11 +135,29 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   }
   
   private String getPrefix(String action, HashMap hm) {
-    if (mode == CONCR) {
-      return "";
-    } else {
       return ("PSYCO" + hm.get(action) + "_");
+  }
+  
+  private void resetTarget() {
+
+    try {
+      Class<?> invokedClass = Class.forName(module1_);
+      try {
+        Method clinit = invokedClass.getDeclaredMethod("internalReset");
+        clinit.setAccessible(true);
+        try {
+          clinit.invoke(null);
+        } catch (Throwable e) {
+          System.err.println("Problem accessing internalReset?");
+        }
+
+      } catch (NoSuchMethodException e2) {
+        System.err.println("Method not found for name internalReset");
+      };
+    } catch (ClassNotFoundException e1) {
+      System.err.println("Class not found: " + module1_);
     }
+
   }
 
   public boolean query(AbstractList<String> sequence) throws SETException {
@@ -153,8 +175,11 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       return true;
     }
     
+    
+    logger.info("New query: ", sequence);
+    
     Boolean recalled;
-
+    
     if (mode == SYMB) {
       recalled = memoized_.getSimulatedResult(sequence);
     } else {
@@ -167,77 +192,128 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       logger.info("Result is: ", !recalled.booleanValue());
       memoizeHits++;
       return (!recalled.booleanValue()); // note the fact that it is the other way around      
-    } else { // need to model check
+    }
+
+    // we have not returned so we need to model check
 
 
-      // first create sequence in format appropriate for Executor
 
-      logger.info("New query: ", sequence);
+    // first create sequence in format appropriate for Executor
 
+    
 
-      String[] programArgs = null;
-      int counter = 0;
+    // is there any parameters involved?
+    boolean parameters_involved = false;
 
-      if (mode == CONCR) {
-        programArgs = new String[sequence.size() + 1];
-        programArgs[0] = "sequence";
-        counter = 1;
-      } else if (mode == SYMB) {
-        programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
-        programArgs[0] = "sequence";
-        programArgs[1] = module1_ + ":" + "init";
-        counter = 2;
-      }
-
-      HashMap hm = new HashMap();
+    if (mode == SYMB) {
       for (String nextEl : sequence) {
-        if (!hm.containsKey(nextEl)) {
-          hm.put(nextEl, new Integer(0));
+        if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
+          parameters_involved = true; // there are parameters so may need to refine
+          break; // exit the loop
         }
-
-        programArgs[counter] = module1_ + ":" + getPrefix(nextEl, hm) + nextEl;
-        counter++;
-        Integer value = (Integer) hm.get(nextEl);
-        value++;
-        hm.put(nextEl, value);
-      }
-
-
-      if (mode == SYMB) {
-        // TODO
-        // first call jpf-jdart when it is ready and get the constraints tree
-        // for the moment just get a new constraints tree
-
-        JFuzz jfuzz = createJDartInstance(programArgs);
-        jfuzz.runJDart();
-        ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET + ".sequence()V");
-        String result = alphaRefiner.refine(ct);
-        logger.info("Refinement result: " + result);
-        if (result.equals("OK")) {
-          if (memoize) {
-            memoized_.setResult(sequence, false); // memoized stores them the other way around
-          }
-          return true;
-        } else if (result.equals("ERROR")) {
-          if (memoize) {
-            memoized_.setResult(sequence, true); // memoized stores them the other way around
-          }
-          return false;
-        } else { // must refine
-          refine = true;
-          newAlphabet = result;
-          return (true); // will be ignored since refined was set to true
-        }
-      } else {  // mode is concrete
-        JPF jpf = createJPFInstance(programArgs); // driver for M1
-        jpf.run();
-        boolean violating = jpf.foundErrors();
-        if (memoize) {
-          memoized_.setResult(sequence, violating);
-        }
-        return (!violating);
       }
     }
+    
+   
+    //parameters_involved = true;
+    
+    String[] programArgs = null;
+    int counter = 0;
+
+    if (mode == CONCR || !parameters_involved) {
+      programArgs = new String[sequence.size() + 1];
+      programArgs[0] = "sequence";
+      counter = 1;
+    } else if (mode == SYMB) {
+      programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
+      programArgs[0] = "sequence";
+      programArgs[1] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + "init";
+      counter = 2;
+    }
+
+    // create the PSYCO names for the refiner
+
+    HashMap hm = new HashMap();
+    for (String nextEl : sequence) {
+
+      if (!hm.containsKey(nextEl)) {
+        hm.put(nextEl, new Integer(0));
+      }
+
+      if (mode == CONCR) {
+        programArgs[counter] = module1_ + ":" + nextEl;
+      } else if (!parameters_involved) {
+        programArgs[counter] = module1_ + ":" + (alphaRefiner.getSymbol(nextEl)).getOriginalMethodName();
+      } else { // symbolic mode and parameters involved
+        programArgs[counter] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + getPrefix(nextEl, hm) + nextEl;
+      }
+
+      counter++;
+      Integer value = (Integer) hm.get(nextEl);
+      value++;
+      hm.put(nextEl, value);
+    }
+
+    if ((mode == SYMB) && (!parameters_involved)) {
+      logger.info("---------- NO PARAMETERS - RUN JAVA------------");
+      // just execute with simple java - avoid JPF altogether
+      boolean result = true;
+      try {
+        resetTarget();
+        ProgramExecutive.main(programArgs);
+      } catch (Throwable e) {
+        // make sure exception is due to assert false and not to some mistake...
+        if (!((e.getCause()).toString()).equals("java.lang.AssertionError")) {
+          System.err.println("Unexpected exception caught during query");
+        }
+
+        result = false;
+      }
+      if (memoize) {
+        memoized_.setResult(sequence, !result); // memoized stores them the other way around
+      }
+      logger.info("Result from running Java is ", result);
+      return result;
+    }
+
+
+    if (mode == SYMB) {
+      logger.info("---------- RUN CONCOLIC ------------");
+      // TODO
+      // first call jpf-jdart when it is ready and get the constraints tree
+      // for the moment just get a new constraints tree
+
+      JFuzz jfuzz = createJDartInstance(programArgs);
+      jfuzz.runJDart();
+      ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET + ".sequence()V");
+      String result = alphaRefiner.refine(ct);
+      logger.info("Refinement result: " + result);
+      if (result.equals("OK")) {
+        if (memoize) {
+          memoized_.setResult(sequence, false); // memoized stores them the other way around
+        }
+        return true;
+      } else if (result.equals("ERROR")) {
+        if (memoize) {
+          memoized_.setResult(sequence, true); // memoized stores them the other way around
+        }
+        return false;
+      } else { // must refine
+        refine = true;
+        newAlphabet = result;
+        return (true); // will be ignored since refined was set to true
+      }
+    } else {  // mode is concrete
+      logger.info("---------- RUN JPF CONCRETE MODE ------------");
+      JPF jpf = createJPFInstance(programArgs); // driver for M1
+      jpf.run();
+      boolean violating = jpf.foundErrors();
+      if (memoize) {
+        memoized_.setResult(sequence, violating);
+      }
+      return (!violating);
+    }
+    
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {

@@ -72,7 +72,6 @@ public class RunGenerateInt implements JPFShell {
         }
       }
       teacherAlpha = refiner.createInitialRefinement();
-      conf.setProperty("sut.class", AlphabetRefinement.REFINED_CLASS_NAME);
     } else {
       for (String ap : conf.getStringArray("interface.alphabet")) {
         // now I have pairs method_name:#parameters    

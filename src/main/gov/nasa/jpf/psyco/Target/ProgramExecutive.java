@@ -29,6 +29,7 @@ package gov.nasa.jpf.psyco.Target;
 import java.lang.reflect.Method;
 import java.lang.IllegalAccessException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.AbstractList;
 
 public class ProgramExecutive {
 
@@ -68,7 +69,8 @@ public class ProgramExecutive {
   static void automaton() {
     // TODO implement it for conjectures
   }
-
+  
+  
   public static void main(String[] invokeSpecs) throws IllegalAccessException, InvocationTargetException {
     invokeSpecs_ = invokeSpecs;
     int lg = invokeSpecs_.length;

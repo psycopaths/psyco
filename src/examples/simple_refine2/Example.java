@@ -22,11 +22,20 @@ public class Example {
   private static int x = 0;
   private static int y = 0;
 
+  
+  // used for java execution - not for learning
+  public static void internalReset() {
+    x = 0;
+    y = 0;
+  }
+  
   public static void init(int p, int q) {
     System.out.println("-------- In init!");
     x = p;
     y = q;
   }
+  
+  
 
   public static void a() {
     System.out.println("-------- In a!");

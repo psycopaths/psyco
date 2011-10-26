@@ -39,19 +39,18 @@ public class Invocation {
     if (parseSpec(spec)) {
       try{
         invokedClass = Class.forName(cName);
-      }catch(ClassNotFoundException e1){
-        System.err.println("Class not found:" + cName);
-      };
-      try {      
+        try {      
         invokedMethod = invokedClass.getDeclaredMethod(mName);
       } catch(NoSuchMethodException e2){
-        System.err.println("Method not found for name" + mName);
+        System.err.println("Method not found for name " + mName);
       };
+      }catch(ClassNotFoundException e1){
+        System.err.println("Class not found: " + cName);
+      } 
     } else {
       // TODO throw some exception 
     }
-  }
-      
+  }      
     //if (!parseSpec(spec)){
       //throw new ConfigException(spec);
   

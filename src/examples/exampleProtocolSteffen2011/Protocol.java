@@ -30,13 +30,17 @@ public class Protocol {
   private static int expect = 0; // next expected seq. nr
   private static boolean buffer_empty = true;
 
+  public static void internalReset() {
+    expect = 0;
+    buffer_empty = true;
+  }
 
   public static void msg(int sequence, int content) {
     System.out.println("Sequence is " + (sequence & 1));
     System.out.println("Expect is " + (expect & 1));
     
     
-    if ((buffer_empty) && ((sequence & 1) == (expect & 1) )) {  // this is as expected
+    if ((buffer_empty) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
       expect++;
       buffer_empty = false;
       // OK message will be passed to upper layer
@@ -50,7 +54,7 @@ public class Protocol {
     if (buffer_empty) {
       assert false;
     } else {
-      if (value == ((expect-1) & 1)) {
+      if (value == ((expect-1) % 2)) {
          // ack is enabled, message is consumed
         buffer_empty = true;
       } else {
@@ -62,11 +66,11 @@ public class Protocol {
   
   public static void main(String[] args) {
     msg(0, 6);
- //   recv_ack(0);
+    recv_ack(0);
     msg(1, 10);
- //   recv_ack(1);
+    recv_ack(1);
     msg(0, 100);
- //   recv_ack(0);
+    recv_ack(0);
     
   }
     
