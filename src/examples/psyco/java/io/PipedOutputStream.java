@@ -36,6 +36,12 @@ public class PipedOutputStream {
 //  private PipedInputStream sink;
   private static int sink = 0;
   private static int sinkConnected = 0;
+  
+    // only used for concrete execution
+  public static void internalReset() {
+    sink = 0;
+    sinkConnected = 0;
+  }
 
   /**
    * Creates a piped output stream connected to the specified piped input

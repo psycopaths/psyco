@@ -5,7 +5,9 @@ shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
 target=empty
 args=empty
 
-JPF.mode=symbolic
+JPF.isModeSymbolic=true
+# allow to run directly with JAVA queries that have no parameters
+optimizeQueries=true
 
 sut.package=psyco.java.io
 sut.class=PipedOutputStream
