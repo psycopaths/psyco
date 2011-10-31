@@ -37,28 +37,25 @@ public class CEV {
   }
   
   public static void lasJettison (int altitude) {
-  	boolean result = Spacecraft.doLASjettison(altitude);
-  	assert result;
+  	Spacecraft.doLASjettison(altitude);
   }
   
   public static void lsamRendezvous() {
-    assert Spacecraft.readyForLSAMrendezvous();
-    Spacecraft.doLSAMrendezvous();
+    if (Spacecraft.readyForLSAMrendezvous())
+    	Spacecraft.doLSAMrendezvous();
   }
 
   public static void doEdsSeparation () {
-  	boolean result = Spacecraft.doEDSseparation();
-  	assert result;
+  	Spacecraft.doEDSseparation();
   }
   
   public static void doSMSeparation () {
-  	boolean result = Spacecraft.doSMseparation();
-  	assert result;
+  	Spacecraft.doSMseparation();
   }
 
   public static void readyForDeorbit () {
-    assert Spacecraft.readyForDeorbit();
-    Spacecraft.init();
+    if (Spacecraft.readyForDeorbit())
+    	Spacecraft.init();
   }
   
   public static void lsamAscentBurn () {

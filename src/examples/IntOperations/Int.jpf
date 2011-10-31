@@ -1,0 +1,33 @@
+@using jpf-jdart
+
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+JPF.isModeSymbolic=true
+
+sut.package=IntOperations
+sut.class=IntMath
+example.path=src/examples/IntOperations
+
+
+# format is method_name: # of parameters
+interface.alphabet=divide:3
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/generatedIntOp
+
+# enable reporting for these loggers
+log.info=teacher,learning,refinement,jdart
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
+
+# declare all classes in the component that implement methods in the 
+# alphabet
+symbolic.classes=IntOperations.IntMath
