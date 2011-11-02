@@ -92,4 +92,15 @@ public class Alphabet {
     }
     return symbolsToPreconditions;
   }
+  
+  public HashMap<String, String> getSymbolsToMethodNames() {
+    HashMap<String, String> symbolsToMethodNames = new HashMap<String, String>();
+    Iterator<Map.Entry<String, Symbol>> itr = symbols.entrySet().iterator();
+    while (itr.hasNext()) {
+      Map.Entry<String, Symbol> entry = itr.next();
+      String methodName = entry.getValue().getOriginalMethodName();
+      symbolsToMethodNames.put(entry.getKey(), methodName);
+    }
+    return symbolsToMethodNames;
+  }
 }

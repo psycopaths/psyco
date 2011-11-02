@@ -127,7 +127,8 @@ public class RunGenerateInt implements JPFShell {
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
       if (mode == TeacherClassic.SYMB) {
         HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
-        Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions);
+        HashMap<String, String> symbolsToMethodNames = refiner.getSymbolsToMethodNames();
+        Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions, symbolsToMethodNames);
       }
     }
     System.out.println("********************************************");

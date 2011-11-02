@@ -62,6 +62,10 @@ public class AlphabetRefinement {
     return alphabet.getSymbolsToPreconditions();
   }
 
+  public HashMap<String, String> getSymbolsToMethodNames() {
+    return alphabet.getSymbolsToMethodNames();
+  }
+
   public Symbol getSymbol(String symbolName) {
     return alphabet.getSymbol(symbolName);
   }
