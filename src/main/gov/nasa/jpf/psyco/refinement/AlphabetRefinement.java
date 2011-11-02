@@ -96,12 +96,12 @@ public class AlphabetRefinement {
     boolean allCovered = true;
     for (String symbolName : methodNames) {
       logger.info("Processing symbol " + symbolName);
-      ArrayList<ArrayList<Constraint>> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
+      ArrayList<Constraint> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
       if (!coveredPCs.isEmpty()) {
         allErrors = false;
       }
 
-      ArrayList<ArrayList<Constraint>> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      ArrayList<Constraint> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
       if (!errorPCs.isEmpty()) {
         allCovered = false;
       }

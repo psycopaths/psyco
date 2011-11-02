@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Precondition {
-  private ArrayList<ArrayList<Constraint>> PCs;
+  private ArrayList<Constraint> PCs;
   
-  public Precondition(ArrayList<ArrayList<Constraint>> PCsP) {
+  public Precondition(ArrayList<Constraint> PCsP) {
     PCs = PCsP;
   }
 
@@ -36,17 +36,10 @@ public class Precondition {
       source += "true";
       return source;
     }
-    Iterator<ArrayList<Constraint>> itr = PCs.iterator();
+    Iterator<Constraint> itr = PCs.iterator();
     while (itr.hasNext()) {
-      ArrayList<Constraint> disjunctPC = itr.next();
-      Iterator<Constraint> itr1 = disjunctPC.iterator();
-      while (itr1.hasNext()) {
-        Constraint pc = itr1.next();
-        source += pc.sourcePC();
-        if (itr1.hasNext()) {
-          source += " && ";
-        }
-      }      
+      Constraint disjunctPC = itr.next();
+      source += disjunctPC.sourcePC();
       if (itr.hasNext()) {
         source += " || ";
       }
@@ -55,60 +48,61 @@ public class Precondition {
   }
 
   public boolean equals(Object o) {
-    if (!(o instanceof Precondition)) {
-      return false;
-    }
-    
-    Precondition pre = (Precondition)o;
-
-    System.out.println("this: " + toSource());
-    System.out.println("pre: " + pre.toSource());
-    
-    if (toSource().contains(" >= 100000 && 100000 <= ") && pre.toSource().contains(" >= 100000")) {
-      return true;
-    }
-    if (toSource().contains(" >= 100000") && pre.toSource().contains(" >= 100000 && 100000 <= ")) {
-      return true;
-    }
-    
-    ArrayList<ArrayList<Constraint>> prePCs = pre.PCs;
-    
-    if (PCs.size() != prePCs.size()) {
-      return false;
-    }
-    if (PCs.size() > 1) {
-      return false;
-    }
-    
-    ArrayList<Constraint> PC = PCs.get(0);
-    ArrayList<Constraint> prePC = prePCs.get(0);
-
-    if (PC.size() != prePC.size()) {
-      return false;
-    }
-    if (PC.size() > 2) {
-      return false;
-    }
-    
-    Constraint cons = PC.get(0);
-    Constraint preCons = prePC.get(0);
-    
-    System.out.println("cons: " + cons);
-    System.out.println("preCons: " + preCons);
-    
-    if (!cons.equals(preCons)) {
-      return false;
-    }
-
-    cons = PC.get(1);
-    preCons = prePC.get(1);
-    
-    System.out.println("cons: " + cons);
-    System.out.println("preCons: " + preCons);
-    
-    if (!cons.equals(preCons)) {
-      return false;
-    }
-    return true;
+    return false;
+//    if (!(o instanceof Precondition)) {
+//      return false;
+//    }
+//    
+//    Precondition pre = (Precondition)o;
+//
+//    System.out.println("this: " + toSource());
+//    System.out.println("pre: " + pre.toSource());
+//    
+//    if (toSource().contains(" >= 100000 && 100000 <= ") && pre.toSource().contains(" >= 100000")) {
+//      return true;
+//    }
+//    if (toSource().contains(" >= 100000") && pre.toSource().contains(" >= 100000 && 100000 <= ")) {
+//      return true;
+//    }
+//    
+//    ArrayList<ArrayList<Constraint>> prePCs = pre.PCs;
+//    
+//    if (PCs.size() != prePCs.size()) {
+//      return false;
+//    }
+//    if (PCs.size() > 1) {
+//      return false;
+//    }
+//    
+//    ArrayList<Constraint> PC = PCs.get(0);
+//    ArrayList<Constraint> prePC = prePCs.get(0);
+//
+//    if (PC.size() != prePC.size()) {
+//      return false;
+//    }
+//    if (PC.size() > 2) {
+//      return false;
+//    }
+//    
+//    Constraint cons = PC.get(0);
+//    Constraint preCons = prePC.get(0);
+//    
+//    System.out.println("cons: " + cons);
+//    System.out.println("preCons: " + preCons);
+//    
+//    if (!cons.equals(preCons)) {
+//      return false;
+//    }
+//
+//    cons = PC.get(1);
+//    preCons = prePC.get(1);
+//    
+//    System.out.println("cons: " + cons);
+//    System.out.println("preCons: " + preCons);
+//    
+//    if (!cons.equals(preCons)) {
+//      return false;
+//    }
+//    return true;
   }
 }

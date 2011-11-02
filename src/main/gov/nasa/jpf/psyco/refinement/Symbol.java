@@ -45,7 +45,7 @@ public class Symbol {
     this.originalMethodName = originalMethodName;
     this.originalClassName = originalClassName;
     this.numParams = numParams;
-    precondition = new Precondition(new ArrayList<ArrayList<Constraint>>());
+    precondition = new Precondition(new ArrayList<Constraint>());
   }
 
   public Symbol(String symbolName, String oldSymbolName, String originalClassName, String originalMethodName, int numParams, Precondition precondition) {
