@@ -38,8 +38,8 @@ public class Precondition {
     }
     Iterator<ArrayList<Constraint>> itr = PCs.iterator();
     while (itr.hasNext()) {
-      ArrayList<Constraint> errorPC = itr.next();
-      Iterator<Constraint> itr1 = errorPC.iterator();
+      ArrayList<Constraint> disjunctPC = itr.next();
+      Iterator<Constraint> itr1 = disjunctPC.iterator();
       while (itr1.hasNext()) {
         Constraint pc = itr1.next();
         source += pc.sourcePC();
@@ -53,7 +53,7 @@ public class Precondition {
     }
     return source;
   }
-  
+
   public boolean equals(Object o) {
     if (!(o instanceof Precondition)) {
       return false;

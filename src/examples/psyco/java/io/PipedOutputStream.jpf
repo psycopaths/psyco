@@ -20,7 +20,7 @@ interface.alphabet=connect:2,write:0,flush:0,close:0
 interface.outputFile=tmp/generatedIntABC
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement
+log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker
