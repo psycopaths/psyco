@@ -18,32 +18,27 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
-import gov.nasa.jpf.symbc.numeric.Constraint;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import gov.nasa.jpf.symbc.numeric.Formula;
+import gov.nasa.jpf.symbc.numeric.TrueConstant;
 
 public class Precondition {
-  private ArrayList<Constraint> PCs;
-  
-  public Precondition(ArrayList<Constraint> PCsP) {
-    PCs = PCsP;
+  private Formula precond;
+
+  public Precondition() {
+    this.precond = new TrueConstant();
+  }
+
+  public Precondition(Formula precond) {
+    this.precond = precond;
+  }
+
+  public Formula getFormula() {
+    return precond;
   }
 
   public String toSource() {
     String source = "";
-    if (PCs.isEmpty()) {
-      source += "true";
-      return source;
-    }
-    Iterator<Constraint> itr = PCs.iterator();
-    while (itr.hasNext()) {
-      Constraint disjunctPC = itr.next();
-      source += disjunctPC.sourcePC();
-      if (itr.hasNext()) {
-        source += " || ";
-      }
-    }
+    source += precond.sourcePC();
     return source;
   }
 

@@ -19,7 +19,10 @@
 package gov.nasa.jpf.psyco.refinement;
 
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.symbc.numeric.Constraint;
+import gov.nasa.jpf.symbc.numeric.Formula;
+import gov.nasa.jpf.symbc.numeric.LogicalExpression;
+import gov.nasa.jpf.symbc.numeric.LogicalOperator;
+import gov.nasa.jpf.symbc.numeric.NotExpression;
 import gov.nasa.jpf.util.JPFLogger;
 
 import java.io.BufferedReader;
@@ -27,7 +30,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -96,32 +98,34 @@ public class AlphabetRefinement {
     boolean allCovered = true;
     for (String symbolName : methodNames) {
       logger.info("Processing symbol " + symbolName);
-      ArrayList<Constraint> coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
-      if (!coveredPCs.isEmpty()) {
-        allErrors = false;
-      }
 
-      ArrayList<Constraint> errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
-      if (!errorPCs.isEmpty()) {
-        allCovered = false;
-      }
+      String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
+      Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
-      if (!coveredPCs.isEmpty() && !errorPCs.isEmpty()) {
-        String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
-        Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
+      Formula errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+//      if (!errorPCs.isEmpty()) {
+//        allCovered = false;
+//      }
+      
+      LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
+      coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
+      coveredPCs.addExpresion(new NotExpression(errorPCs));
 
+//      Formula coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
+//      if (!coveredPCs.isEmpty()) {
+//        allErrors = false;
+//      }
+      
+      if (errorPCs.solve() && coveredPCs.solve()) {
         Precondition preconditionCovered = new Precondition(coveredPCs);
+        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+        alphabet.addSymbol(newSymbol);
+
         Precondition preconditionError = new Precondition(errorPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+        alphabet.addSymbol(newSymbol);
 
-        if (!preconditionCovered.equals(preconditionError)) {
-          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
-          alphabet.addSymbol(newSymbol);
-
-          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
-          alphabet.addSymbol(newSymbol);
-
-          refinedSymbols.add(strippedSymbolName);
-        }
+        refinedSymbols.add(strippedSymbolName);        
       }
     }
 
