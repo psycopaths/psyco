@@ -18,8 +18,8 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
-import gov.nasa.jpf.symbc.numeric.Formula;
-import gov.nasa.jpf.symbc.numeric.TrueConstant;
+import solvers.Formula;
+import solvers.TrueConstant;
 
 public class Precondition {
   private Formula precond;

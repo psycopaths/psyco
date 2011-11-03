@@ -19,10 +19,6 @@
 package gov.nasa.jpf.psyco.refinement;
 
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.symbc.numeric.Formula;
-import gov.nasa.jpf.symbc.numeric.LogicalExpression;
-import gov.nasa.jpf.symbc.numeric.LogicalOperator;
-import gov.nasa.jpf.symbc.numeric.NotExpression;
 import gov.nasa.jpf.util.JPFLogger;
 
 import java.io.BufferedReader;
@@ -32,6 +28,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import solvers.Formula;
+import solvers.LogicalExpression;
+import solvers.LogicalOperator;
+import solvers.NotExpression;
 
 import jfuzz.ConstraintsTree;
 
@@ -103,20 +104,20 @@ public class AlphabetRefinement {
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
       Formula errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
-//      if (!errorPCs.isEmpty()) {
-//        allCovered = false;
-//      }
-      
+      boolean errorPCsSatisfiable = errorPCs.isSatisfiable();
+      if (errorPCsSatisfiable) {
+        allCovered = false;
+      }
+
       LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
       coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
       coveredPCs.addExpresion(new NotExpression(errorPCs));
+      boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
+      if (coveredPCsSatisfiable) {
+        allErrors = false;
+      }
 
-//      Formula coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
-//      if (!coveredPCs.isEmpty()) {
-//        allErrors = false;
-//      }
-      
-      if (errorPCs.solve() && coveredPCs.solve()) {
+      if (errorPCsSatisfiable && coveredPCsSatisfiable) {
         Precondition preconditionCovered = new Precondition(coveredPCs);
         Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
         alphabet.addSymbol(newSymbol);
