@@ -18,6 +18,8 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
+import java.util.HashMap;
+
 import solvers.Formula;
 import solvers.TrueConstant;
 
@@ -40,6 +42,10 @@ public class Precondition {
     String source = "";
     source += precond.sourcePC();
     return source;
+  }
+
+  public void replaceNames(HashMap<String, String> names) {
+    precond.replaceNames(names);
   }
 
   public boolean equals(Object o) {
