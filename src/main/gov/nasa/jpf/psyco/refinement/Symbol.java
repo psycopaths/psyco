@@ -21,6 +21,7 @@ package gov.nasa.jpf.psyco.refinement;
 import gov.nasa.jpf.symbc.numeric.Constraint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Symbol {
   private static int symbolCounter = 0;
@@ -55,6 +56,14 @@ public class Symbol {
     this.originalMethodName = originalMethodName;
     this.originalClassName = originalClassName;
     this.numParams = numParams;
+    
+    HashMap<String, String> replacementNames = new HashMap<String, String>();
+    for (int i = 0; i < numParams; i++) {
+      String oldParamName = symbolName + "_P" + i;
+      String newParamName = this.symbolName + "_P" + i;
+      replacementNames.put(oldParamName, newParamName);
+    }
+    precondition.replaceNames(replacementNames);
     this.precondition = precondition;
   }
 
@@ -78,7 +87,7 @@ public class Symbol {
     String[] paramNames = new String[]{"p", "q", "r"};
     String preconditionStr = precondition.toSource();
     for (int i = 0; i < numParams; i++) {
-      String oldParamName = oldSymbolName + "_" + i;
+      String oldParamName = symbolName + "_P" + i;
       preconditionStr = preconditionStr.replaceAll(oldParamName, paramNames[i]);
     }
     return preconditionStr;
@@ -97,7 +106,7 @@ public class Symbol {
     String source = "";
     for (int methodCopy = 0; methodCopy < AlphabetRefinement.NUMBER_OF_METHOD_COPIES; methodCopy++) {
       for (int i = 0; i < numParams; i++) {
-        String paramName = "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        String paramName = "PSYCO" + methodCopy + "_" + symbolName + "_P" + i;
         source += "  @Symbolic(\"true\")\n";
         source += "  public static int " + paramName + " = 0;\n";
       }
@@ -107,15 +116,15 @@ public class Symbol {
       source += "    if (";
       String preconditionStr = precondition.toSource();
       for (int i = 0; i < numParams; i++) {
-        String oldParamName = oldSymbolName + "_" + i;
-        String newParamName = "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        String oldParamName = symbolName + "_P" + i;
+        String newParamName = "PSYCO" + methodCopy + "_" + symbolName + "_P" + i;
         preconditionStr = preconditionStr.replaceAll(oldParamName, newParamName);
       }
       source += preconditionStr;
       source += ") {\n";
       source += "      " + originalClassName + "." + originalMethodName + "(";
       for (int i = 0; i < numParams; i++) {
-        source += "PSYCO" + methodCopy + "_" + symbolName + "_" + i;
+        source += "PSYCO" + methodCopy + "_" + symbolName + "_P" + i;
         if (i < numParams - 1) {
           source += ", ";
         }
