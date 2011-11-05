@@ -104,6 +104,14 @@ public class AlphabetRefinement {
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
       Formula errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      HashMap<String, String> replacementNames = new HashMap<String, String>();
+      for (int i = 0; i < oldSymbol.getNumParams(); i++) {
+        String oldParamName = symbolName + "_P" + i;
+        String newParamName = strippedSymbolName + "_P" + i;
+        replacementNames.put(oldParamName, newParamName);
+      }
+      errorPCs.replaceNames(replacementNames);      
+      logger.info("Error PCs:" + errorPCs.sourcePC());
       boolean errorPCsSatisfiable = errorPCs.isSatisfiable();
       if (errorPCsSatisfiable) {
         allCovered = false;
@@ -111,7 +119,13 @@ public class AlphabetRefinement {
 
       LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
       coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
-      coveredPCs.addExpresion(new NotExpression(errorPCs));
+      try {
+        coveredPCs.addExpresion(new NotExpression(errorPCs.clone()));
+      } catch (CloneNotSupportedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      logger.info("Covered PCs:" + coveredPCs.sourcePC());
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
       if (coveredPCsSatisfiable) {
         allErrors = false;
