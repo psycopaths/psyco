@@ -22,6 +22,8 @@ import gov.nasa.jpf.Config;
 import jfuzz.*;
 import gov.nasa.jpf.JPFShell;
 
+import gov.nasa.jpf.psyco.explore.SequenceExplorer;
+import gov.nasa.jpf.psyco.explore.SequenceExplorer.ExplorationMethod;
 import gov.nasa.jpf.psyco.explore.PsycoProducer;
 import gov.nasa.jpf.util.LogManager;
 
@@ -57,13 +59,13 @@ public class Call implements JPFShell {
   	conf.setProperty("symbolic.classes", "sequencetest.Input");
     conf.setProperty("vm.storage.class", null);
 //  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3,sequencetest.Input.reset(I)V:sequencetest.Input.c4");
-    conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2");
+    conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1");
 
-  	JFuzz jfuzz = new JFuzz(conf);
-  	PsycoProducer.captureVectors();
-  	jfuzz.runJDart();  
-  	jfuzz = new JFuzz(conf);
-  	JFuzz.startReuse();
-  	jfuzz.runJDart();
+  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	explore.run();
+
+  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2");
+  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	explore.run();
   }
 }

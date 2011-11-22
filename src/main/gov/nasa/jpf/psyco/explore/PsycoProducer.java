@@ -101,7 +101,7 @@ public class PsycoProducer extends Producer {
       // yield all valuations to cover the methods. In this mode we simply
       // apply all those previously stored values first before looking for
       // unknowns in the constraints tree
-      if (JFuzz.startReuse) {
+      if (SequenceExplorer.startReuse) {
       	populateValuations();
       	choices = 1;
       	currentChoice = 0;

@@ -27,11 +27,11 @@ import gov.nasa.jpf.jvm.bytecode.ATHROW;
 import gov.nasa.jpf.jvm.bytecode.Instruction;
 import gov.nasa.jpf.jvm.bytecode.InvokeInstruction;
 import gov.nasa.jpf.jvm.ClassInfo;
+import gov.nasa.jpf.jvm.ElementInfo;
+import gov.nasa.jpf.jvm.FieldInfo;
 import gov.nasa.jpf.jvm.JVM;
 import gov.nasa.jpf.jvm.MethodInfo;
-import gov.nasa.jpf.jvm.StackFrame;
 import gov.nasa.jpf.jvm.ThreadInfo;
-import gov.nasa.jpf.symbc.numeric.MinMax;
 import jfuzz.*;
 
 /* This class extends the Perturbator and is at the heart of the jdart
@@ -60,7 +60,7 @@ public class PsycoListener extends ConcolicListener {
 		super.registerValuationVector(insn, ti, mi, isSequenceMethod);
 
 		// now register the valuation vector with Producer
-  	if (isSequenceMethod && !JFuzz.startReuse)
+  	if (isSequenceMethod && !SequenceExplorer.startReuse)
   		PsycoProducer.addValuationVector(mi, latestValuation);
   }
 	
@@ -97,6 +97,12 @@ public class PsycoListener extends ConcolicListener {
   		  		// Since we did process this class, we can now set any values that need to 
         		// be set for class fields post initialization
   		  		PsycoProducer.doDeferredAssignments(ci);
+  		  		if (JDartExplorer.startReuse) {
+  		  			ClassInfo x = ClassInfo.getInitializedClassInfo("sequencetest.State", JVM.getVM().getCurrentThread());
+  		    		FieldInfo y = x.getStaticField("moreResets");
+  		  			ElementInfo z = x.getStaticElementInfo();
+  		    		z.setIntField(y, (Integer)1);
+  		  		}
         	}
         }
       }

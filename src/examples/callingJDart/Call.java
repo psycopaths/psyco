@@ -19,9 +19,10 @@
 package callingJDart;
 
 import gov.nasa.jpf.Config;
-import jfuzz.*;
 import gov.nasa.jpf.JPFShell;
 
+import gov.nasa.jpf.psyco.explore.SequenceExplorer;
+import gov.nasa.jpf.psyco.explore.SequenceExplorer.ExplorationMethod;
 import gov.nasa.jpf.util.LogManager;
 
 public class Call implements JPFShell {
@@ -52,9 +53,9 @@ public class Call implements JPFShell {
   	conf.setProperty("symbolic.dp", "yices");
   	conf.setProperty("symbolic.method", "callingJDart.Input.foo(i#b)");
 
-  	JFuzz jfuzz = new JFuzz(conf);
-  	jfuzz.runJDart();
-  	jfuzz = new JFuzz(conf);
-  	jfuzz.runJDart();
+  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	explore.run();
+  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	explore.run();
   }
 }

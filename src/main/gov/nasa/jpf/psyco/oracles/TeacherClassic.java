@@ -28,13 +28,15 @@ import gov.nasa.jpf.learn.classic.MemoizeTable;
 
 
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.psyco.explore.SequenceExplorer;
+import gov.nasa.jpf.psyco.explore.SequenceExplorer.ExplorationMethod;
+import gov.nasa.jpf.psyco.explore.PsycoProducer;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
 import jfuzz.ConstraintsTree;
-import jfuzz.JFuzz;
 import gov.nasa.jpf.learn.classic.Candidate;
 import gov.nasa.jpf.psyco.refinement.Symbol;
 import java.util.HashMap;
@@ -286,9 +288,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       // first call jpf-jdart when it is ready and get the constraints tree
       // for the moment just get a new constraints tree
 
-      JFuzz jfuzz = createJDartInstance(programArgs);
-      jfuzz.runJDart();
-      ConstraintsTree ct = jfuzz.getConstraintsTree(TARGET + ".sequence()V");
+      SequenceExplorer explorer = createExplorer(programArgs, ExplorationMethod.JDart);
+      explorer.run();
+      ConstraintsTree ct = explorer.getConstraintsTree(TARGET + ".sequence()V");
       String result = alphaRefiner.refine(ct);
       logger.info("Refinement result: " + result);
       if (result.equals("OK")) {
@@ -444,27 +446,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   private void setUpJDartConfig() {
 
-    String jpfHome = JPFargs_.getProperty("jpf.home");
-    String jdartHome = JPFargs_.getProperty("jpf-jdart");
-    String yicesPath = jdartHome + "/lib/libYices.so";
-
-    JPFargs_.setProperty("yices.library.path", yicesPath);
-    JPFargs_.setProperty("jpf.basedir", jpfHome);
-
     JPFargs_.setTarget(TARGET);  // main program
-    JPFargs_.setProperty("jfuzz.time", "3,3,0,0");
-    JPFargs_.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
-    JPFargs_.setProperty("listener", "jfuzz.ConcolicListener");
-    JPFargs_.setProperty("perturb.params", "foo");
-    JPFargs_.setProperty("perturb.foo.class", "jfuzz.Producer");
-    JPFargs_.setProperty("perturb.foo.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
-    JPFargs_.setProperty("symbolic.dp", "yices");
     JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
     
     // the following ensures state matching is off - should it be in dart jpf.properties?
     // caused memory leak so adding it here
     JPFargs_.setProperty("vm.storage.class", null);
-
   }
 
   public JPF createJPFInstance(String[] programArgs) {
@@ -474,7 +461,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     return jpf;
   }
 
-  public JFuzz createJDartInstance(String[] programArgs) {
+  public SequenceExplorer createExplorer(String[] programArgs, SequenceExplorer.ExplorationMethod explorationMethod) {
     JPFargs_.setTargetArgs(programArgs); // arguments to main
     String packageName = JPFargs_.getProperty("sut.package");
     String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
@@ -486,7 +473,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
     }
     JPFargs_.setProperty("symbolic.classes", st);
-    return (new JFuzz(JPFargs_));
+    return (new SequenceExplorer(JPFargs_, explorationMethod, true));
   }
 
   public boolean refine() {
