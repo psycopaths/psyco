@@ -1,0 +1,8 @@
+@using jpf-core
+@using jpf-jdart
+
+classpath=${jpf-psyco}/build/examples
+
+shell=sequencetest.Call
+
+vm.storage.class=null
