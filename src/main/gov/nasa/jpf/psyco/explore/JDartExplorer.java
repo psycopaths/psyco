@@ -52,10 +52,10 @@ public class JDartExplorer extends SymbolicExplorer {
 
     	config.setProperty("jfuzz.time", "3,3,0,0");
     	config.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
-    	//    JPFargs_.setProperty("listener", "jfuzz.ConcolicListener");
+//    	config.setProperty("listener", "jfuzz.ConcolicListener");
     	config.setProperty("listener", "gov.nasa.jpf.psyco.explore.PsycoListener");
     	config.setProperty("perturb.params", "foo");
-    	//    JPFargs_.setProperty("perturb.foo.class", "jfuzz.Producer");
+//    	config.setProperty("perturb.foo.class", "jfuzz.Producer");
     	config.setProperty("perturb.foo.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
     	config.setProperty("perturb.foo.method", symbolicMethod);
     	config.setProperty("symbolic.dp", "yices");
