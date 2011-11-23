@@ -69,6 +69,10 @@ public class AlphabetRefinement {
     return alphabet.getSymbolsToMethodNames();
   }
 
+  public String getSequenceMethodsForJDart(String[] sequence) {
+    return alphabet.getSequenceMethodsForJDart(sequence);
+  }
+
   public Symbol getSymbol(String symbolName) {
     return alphabet.getSymbol(symbolName);
   }

@@ -56,7 +56,43 @@ public class Alphabet {
     }
     return symbolsAsString;
   }
-  
+
+  public String getSequenceMethodsForJDart(String[] sequence) {
+    HashMap<String, Integer> sequenceSymbolCount = new HashMap<String, Integer>();
+    String sequenceMethods = "";
+    for (int i = 0; i < sequence.length; i++) {
+      String symbolStr = sequence[i];
+      int symbolCount = 0;
+      if (sequenceSymbolCount.containsKey(symbolStr)) {
+        symbolCount = sequenceSymbolCount.get(symbolStr) + 1;
+      }
+      sequenceSymbolCount.put(symbolStr, symbolCount);
+      Symbol symbol = symbols.get(symbolStr);
+
+      sequenceMethods += packageName + "." + className + ".";
+      sequenceMethods += symbol.getOriginalMethodName();
+
+      sequenceMethods += "(";
+      for (int j = 0; j < symbol.getNumParams(); j++) {
+        sequenceMethods += "I";
+      }
+      sequenceMethods += ")V:";
+
+      for (int j = 0; j < symbol.getNumParams(); j++) {
+        sequenceMethods += packageName + "." + className + ".";
+        sequenceMethods += "PSYCO" + symbolCount + "_" + symbol.getSymbolName() + "_P" + j;
+        if (j < symbol.getNumParams() - 1) {
+          sequenceMethods += ":";
+        }
+      }
+
+      if (i < sequence.length - 1) {
+        sequenceMethods += ",";
+      }
+    }
+    return sequenceMethods;
+  }
+
   public String toSource() {
     String source = "";
     source += "package " + packageName + ";\n\n";
