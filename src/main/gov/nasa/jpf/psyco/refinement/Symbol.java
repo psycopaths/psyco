@@ -75,6 +75,10 @@ public class Symbol {
     return originalMethodName;
   }
 
+  public String getOriginalClassName() {
+    return originalClassName;
+  }
+
   public int getNumParams() {
     return numParams;
   }

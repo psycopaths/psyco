@@ -69,7 +69,7 @@ public class Alphabet {
       sequenceSymbolCount.put(symbolStr, symbolCount);
       Symbol symbol = symbols.get(symbolStr);
 
-      sequenceMethods += packageName + "." + className + ".";
+      sequenceMethods += packageName + "." + symbol.getOriginalClassName() + ".";
       sequenceMethods += symbol.getOriginalMethodName();
 
       sequenceMethods += "(";
