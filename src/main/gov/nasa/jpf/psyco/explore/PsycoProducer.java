@@ -122,7 +122,7 @@ public class PsycoProducer extends Producer {
   		vectors = new Vector<Vector<Object>>();
   		methodToValuations.put(mi.getFullName(), vectors);
   	}
-  	System.out.println(mi.getFullName() + " " + valuation.toString());
+//  	System.out.println(mi.getFullName() + " " + valuation.toString());
   	Vector<Object> clone = new Vector<Object>();
   	for (int i = 0; i < valuation.size(); i++)
   		clone.add(valuation.elementAt(i));
@@ -220,12 +220,12 @@ public class PsycoProducer extends Producer {
 			// map
 			choices = populateValuations(sequenceMethods, null, 0 /* index */);
 			
-			System.out.println("We have " + choices + " choices of pre-valuated vectors");
-			System.out.println("..and the valuations are");
-  		for (int i = 0; i < sequenceValuations.size(); i++) {
-  			Vector<Object> v = sequenceValuations.elementAt(i);
-  			System.out.println("  " + v.toString());
-  		}			
+//			System.out.println("We have " + choices + " choices of pre-valuated vectors");
+//			System.out.println("..and the valuations are");
+//  		for (int i = 0; i < sequenceValuations.size(); i++) {
+//  			Vector<Object> v = sequenceValuations.elementAt(i);
+//  			System.out.println("  " + v.toString());
+//  		}			
 		}
 		
 		return choices;
@@ -328,7 +328,7 @@ public class PsycoProducer extends Producer {
   			if (className.equals(ci.getName()))
   				PsycoProducer.producer.registerClassFieldValue(null, 0, fieldName, value, null);
   		}
-  		System.out.println("currentChoice = " + currentChoice);
+//  		System.out.println("currentChoice = " + currentChoice);
 			currentChoice++;
   	}
   	Producer.doDeferredAssignments(ci);

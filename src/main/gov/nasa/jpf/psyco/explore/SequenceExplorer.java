@@ -64,7 +64,7 @@ public class SequenceExplorer {
     	sequenceMethods = config.getProperty("sequence.methods");
     }
     
-    System.out.println("Sequence methods string = " + sequenceMethods);    
+//    System.out.println("Sequence methods string = " + sequenceMethods);    
   }
   
   // reset method for external use
