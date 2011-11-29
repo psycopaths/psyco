@@ -26,15 +26,7 @@ import jfuzz.ConstraintsTree;
 public abstract class SymbolicExplorer {
   // reset method for external use
   public abstract void reset();
-  
-  // The following method is used to let us know that we need to accumulate vectors 
-  // for a subsequent optimal answering of queries  
-  public abstract void capture();
-  
-  // The following method is used to inform us that we should start re-using 
-  // captured vectors for method exploration
-  public abstract void startReuse();
-  
+
   // run method to begin exploration
   public abstract void run();
   

@@ -18,8 +18,11 @@
  ******************************************************************************/
 package gov.nasa.jpf.psyco.explore;
 
+import java.util.AbstractList;
+
 import jfuzz.ConstraintsTree;
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.LogManager;
 
 // The main class to explore a method symbolically
@@ -32,9 +35,8 @@ public class SequenceExplorer {
   Config config;
   SymbolicExplorer explorer = null;
 
-  static boolean startReuse = false;
-
-  public SequenceExplorer (Config conf, ExplorationMethod explorationMethod, boolean psyco) {
+  public SequenceExplorer (Config conf, ExplorationMethod explorationMethod, boolean psyco,
+  		AbstractList<String> sequence, AlphabetRefinement refiner) {
     this.config = conf;
     LogManager.init(conf);
     
@@ -45,25 +47,24 @@ public class SequenceExplorer {
     default:
     	throw new IllegalArgumentException("JDart is the only symbolic exploration technique currently supported");
     }
-
-    startReuse = false;
     
-    // Now check if we have a sequence of length one or more. 
-    // For all sequences of length one, we automatically set the exploration to run in the 
-    // vector capture mode. For sequences longer than one, we set the exploration to run in
-    // the vector re-use mode.
-    String sequenceMethods = config.getProperty("sequence.methods");
-    if (sequenceMethods != null) {
-    	String[] methodSpecs = sequenceMethods.split(",");
-    	if (methodSpecs.length > 1) {
-    		startReuse = true;
-    		explorer.startReuse();
-    	} else {
-    		explorer.capture();
+    // now create a string array of methods in the sequence and use that to get
+    // the sequence.methods string from the refiner
+    String sequenceMethods = null;
+    
+    if (sequence != null) {
+    	String[] sequenceStrings = new String[sequence.size()];
+    	int index = 0;
+    	for (String s : sequence) {
+    		sequenceStrings[index++] = s;
     	}
+    	sequenceMethods = refiner.getSequenceMethodsForJDart(sequenceStrings);
+    	config.setProperty("sequence.methods", sequenceMethods);
     } else {
-    	explorer.capture();
+    	sequenceMethods = config.getProperty("sequence.methods");
     }
+    
+    System.out.println("Sequence methods string = " + sequenceMethods);    
   }
   
   // reset method for external use

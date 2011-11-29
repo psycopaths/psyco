@@ -61,11 +61,11 @@ public class Call implements JPFShell {
 //  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3,sequencetest.Input.reset(I)V:sequencetest.Input.c4");
     conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1");
 
-  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
   	explore.run();
 
   	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2");
-  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false);
+  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
   	explore.run();
   }
 }

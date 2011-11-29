@@ -20,6 +20,9 @@ package gov.nasa.jpf.psyco.explore;
 //
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import jfuzz.ConstraintsTree;
@@ -40,33 +43,80 @@ public class PsycoProducer extends Producer {
     
   // Hash that maps each method name to a vector of Objects that represent
   // all the values that were applied to the parameters of that method
-  static HashMap<String, Vector<Vector<Object>>> methodToValuations = null;
+  static HashMap<String, Vector<Vector<Object>>> methodToValuations =
+  		new HashMap<String, Vector<Vector<Object>>>();
     
   // sequence valuation vectors. Created at the time of setMethodInfo and read
   // destructively
   static Vector<Vector<Object>> sequenceValuations = null;
   static Vector<String> sequenceFields = null;
   
+  // the following static map keeps track of all the methods that we have fully
+  // explored. We update this map during cleanup
+  static HashSet<String> exploredMethods = new HashSet<String>();
+  
   // current choice of valuation for optimized assignment
   static int currentChoice = 0;
+  
+  // start re-use when set
+  static boolean startReuse = false;
 
   public PsycoProducer (Config conf, String keyPrefix){
     super(conf, keyPrefix);
     
+    if (sequenceValuations == null) {
+    	currentChoice = 0;
+      sequenceValuations = new Vector<Vector<Object>>();
+      sequenceFields = new Vector<String>();
+    }
+    
     producer = this;
   }
   
-  // method used to start storing valuation vectors for later re-use
-  static public void captureVectors() {
-  	methodToValuations = new HashMap<String, Vector<Vector<Object>>>();
-    sequenceValuations = new Vector<Vector<Object>>();
-    sequenceFields = new Vector<String>();
+  public static void initialize() {
+  	startReuse = startReuse();
+  	
+  	currentChoice = 0;
+  	if (sequenceValuations != null)
+  		sequenceValuations.clear();
+  	if (sequenceFields != null)
+  		sequenceFields.clear();
+  }
+  
+  public static void cleanup() {
+  	currentChoice = 0;
+  	startReuse = false;
+  	
+  	if (sequenceValuations != null)
+  		sequenceValuations.clear();
+  	if (sequenceFields != null)
+  		sequenceFields.clear();
+    
+    // iterate over methodToValuations and put the methods found into
+    // exploredMethods. We do this step only for sequences of length 1
+    if (JDartExplorer.explorer.sequenceLength() == 1) {
+      @SuppressWarnings("rawtypes")
+      Iterator itr = methodToValuations.entrySet().iterator();
+      while (itr.hasNext()) {
+        @SuppressWarnings("unchecked")
+        Map.Entry<String, Vector<Vector<Object>>> next = (Map.Entry<String, Vector<Vector<Object>>>)itr.next();
+        Map.Entry<String, Vector<Vector<Object>>> e = next;
+        String methodName = (String)e.getKey();
+        if (!exploredMethods.contains(methodName))
+        	exploredMethods.add(methodName);
+      }    	
+    }
   }
   
   // Method to add a valuation vector corresponding to the values with which
   // the method with MethodInfo mi was called
   
   public static void addValuationVector(MethodInfo mi, Vector<Object> valuation) {
+  	// if we have already fully processed this method then simply return
+  	if (exploredMethods.contains(mi.getFullName()))
+  		return;
+
+  	// otherwise, clone and add the valuation vector to the methodToValuations map
   	Vector<Vector<Object>> vectors = methodToValuations.get(mi.getFullName());
   	if (vectors == null) {
   		vectors = new Vector<Vector<Object>>();
@@ -77,6 +127,24 @@ public class PsycoProducer extends Producer {
   	for (int i = 0; i < valuation.size(); i++)
   		clone.add(valuation.elementAt(i));
   	vectors.add(clone);
+  }
+  
+  // The following method is used to check if we can re-use prior vectors.
+  // Given a sequence of methods that we want to explore, we check if each 
+  // of the methods in the sequence are in exploredMethods. If they are, then
+  // we have prior vectors that we can use to optimize exploration
+  
+  public static boolean startReuse() {
+  	if (JDartExplorer.explorer.sequenceLength() == 0)
+  		return false;
+  	
+  	String[] sequenceMethodNames = JDartExplorer.explorer.sequenceMethodNames();
+  	for (int i = 0; i < sequenceMethodNames.length; i++) {
+  		if (exploredMethods.contains(sequenceMethodNames[i])) {
+  			return true;
+  		}
+  	}
+  	return false;
   }
 
   // The following method defers to the base class implementation for
@@ -101,7 +169,7 @@ public class PsycoProducer extends Producer {
       // yield all valuations to cover the methods. In this mode we simply
       // apply all those previously stored values first before looking for
       // unknowns in the constraints tree
-      if (SequenceExplorer.startReuse) {
+      if (startReuse) {
       	populateValuations();
       	choices = 1;
       	currentChoice = 0;
@@ -128,7 +196,10 @@ public class PsycoProducer extends Producer {
   public int populateValuations() {
   	choices = 0;
   	
-  	Vector<String> sequenceMethods = new Vector<String>();
+    sequenceValuations = new Vector<Vector<Object>>();
+    sequenceFields = new Vector<String>();
+
+    Vector<String> sequenceMethods = new Vector<String>();
   	
 		Config conf = JVM.getVM().getConfig();
 		String[] methodNames = conf.getStringArray("sequence.methods");
@@ -136,10 +207,8 @@ public class PsycoProducer extends Producer {
 			for (String methodName : methodNames) {
 				String[] tokens = methodName.split(":");
 				methodName = tokens[0];
-				Vector<Vector<Object>> valuations = methodToValuations.get(methodName);
-				if (valuations != null) {
-					sequenceMethods.add(methodName);
-				}
+				sequenceMethods.add(methodName);
+				
 				// add fields for this method
 				for (int i = 1; i < tokens.length; i++) {
 					sequenceFields.add(tokens[i]);
@@ -171,22 +240,35 @@ public class PsycoProducer extends Producer {
   	
   	String methodName = sequenceMethods.elementAt(index);
   	Vector<Vector<Object>> priorVectors = methodToValuations.get(methodName);
-  	assert(priorVectors != null);
-  	
-  	for (int i = 0; i < priorVectors.size(); i++) {
-  		Vector<Object> v = new Vector<Object>();
-  		if (valuation != null)
-  			v.addAll(valuation);
-  		
-  		v.addAll(priorVectors.elementAt(i));
-  		int k = populateValuations(sequenceMethods, v, index + 1);
-  		if (k != 0)
-  			choices += k;
-  		else
-  			choices++;
-  		
-  		if (index == sequenceMethods.size() - 1)
-  			sequenceValuations.add(v);
+
+  	if (priorVectors != null && priorVectors.size() > 0) {
+  		for (int i = 0; i < priorVectors.size(); i++) {
+  			Vector<Object> v = new Vector<Object>();
+  			if (valuation != null)
+  				v.addAll(valuation);
+
+  			v.addAll(priorVectors.elementAt(i));
+  			int k = populateValuations(sequenceMethods, v, index + 1);
+  			if (k != 0)
+  				choices += k;
+  			else
+  				choices++;
+
+  			if (index == sequenceMethods.size() - 1)
+  				sequenceValuations.add(v);
+  		}
+  	} else {
+			Vector<Object> v = new Vector<Object>();
+			if (valuation != null)
+				v.addAll(valuation);
+			int k = populateValuations(sequenceMethods, v, index + 1);
+			if (k != 0)
+				choices += k;
+			else
+				choices++;
+			
+			if (index == sequenceMethods.size() - 1)
+				sequenceValuations.add(v);
   	}
   	return choices;
   }
@@ -216,6 +298,9 @@ public class PsycoProducer extends Producer {
   // method to check if we are in random mode to do deferred assignments
   
   static public boolean hasChoices() {
+  	if (sequenceValuations == null)
+  		return false;
+  	
   	if (currentChoice < sequenceValuations.size())
   		return true;
   	return false;

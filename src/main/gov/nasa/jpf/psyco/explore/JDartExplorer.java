@@ -35,8 +35,12 @@ import jfuzz.termination.*;
 
 public class JDartExplorer extends SymbolicExplorer {
 
-  Config config;
-  JFuzz jfuzz = null;
+  private Config config;
+  private JFuzz jfuzz = null;
+  private int sequenceLength = 0;
+  private String[] sequenceMethodNames = null;
+  
+  public static JDartExplorer explorer = null;
 
   public JDartExplorer (Config conf, boolean psyco) {
     this.config = conf;
@@ -60,10 +64,24 @@ public class JDartExplorer extends SymbolicExplorer {
     	config.setProperty("perturb.foo.method", symbolicMethod);
     	config.setProperty("symbolic.dp", "yices");
     }
+    
+    String sequenceMethods = config.getProperty("sequence.methods");
+    if (sequenceMethods != null) {
+    	String[] tokens = sequenceMethods.split(",");
+    	sequenceLength = tokens.length;
+    	sequenceMethodNames = new String[sequenceLength];
+    	for (int i = 0; i < sequenceLength; i++) {
+    		String token = tokens[i];
+    		String methodName = token.substring(0, token.indexOf(':'));
+    		sequenceMethodNames[i] = methodName;
+    	}
+    }
 
     LogManager.init(config);
     
     jfuzz = new JFuzz(config);
+    
+    explorer = this;
   }
 
   // the logger
@@ -90,10 +108,6 @@ public class JDartExplorer extends SymbolicExplorer {
   // java library path
   public static final String JFUZZ_JAVA_LIB_PATH = "java.library.path";
 
-  // this flag when set tells us that we should start re-using vectors from prior
-  // exploration runs
-  public static boolean startReuse = false;
-
   // for more debug info
   public static boolean debug = false;
 
@@ -106,20 +120,16 @@ public class JDartExplorer extends SymbolicExplorer {
   	JFuzz.reset();
   }
   
-  // The following method is used to let us know that we need to accumulate vectors 
-  // for a subsequent optimal answering of queries
-  
-  public void capture() {
-  	PsycoProducer.captureVectors();
+  // method used to get the sequence length
+  public int sequenceLength() {
+  	return sequenceLength;
   }
   
-  // The following method is used to inform us that we should start re-using 
-  // captured vectors for method exploration
-  
-  public void startReuse() {
-  	startReuse = true;
+  // method used to get the methods in the sequence
+  public String[] sequenceMethodNames() {
+  	return sequenceMethodNames;
   }
-     
+  
   /* 
    * Method used to run JDart without a shell. The method is expected to be called after
    * registering a config object at the time of constructing JDartExplorer. The method terminates
@@ -151,6 +161,9 @@ public class JDartExplorer extends SymbolicExplorer {
     // now reset internal state
     BytecodeUtils.reset();
     ConstraintsTree.reset();
+
+    // initialize the producer
+    PsycoProducer.initialize();
     
     do {
       PsycoProducer.reset();
@@ -164,6 +177,9 @@ public class JDartExplorer extends SymbolicExplorer {
       } finally {
       }
     } while (!termination.isDone() && !ConstraintsTree.done());
+    
+    // now that we are done exploration of the given sequence, call cleanup methods
+    PsycoProducer.cleanup();
 
     ConstraintsTree.printAllTrees();
     PsycoProducer.printAllValuations();

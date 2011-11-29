@@ -60,7 +60,7 @@ public class PsycoListener extends ConcolicListener {
 		super.registerValuationVector(insn, ti, mi, isSequenceMethod);
 
 		// now register the valuation vector with Producer
-  	if (isSequenceMethod && !SequenceExplorer.startReuse)
+  	if (isSequenceMethod)
   		PsycoProducer.addValuationVector(mi, latestValuation);
   }
 	
@@ -97,12 +97,17 @@ public class PsycoListener extends ConcolicListener {
   		  		// Since we did process this class, we can now set any values that need to 
         		// be set for class fields post initialization
   		  		PsycoProducer.doDeferredAssignments(ci);
-  		  		if (JDartExplorer.startReuse) {
-  		  			ClassInfo x = ClassInfo.getInitializedClassInfo("sequencetest.State", JVM.getVM().getCurrentThread());
-  		    		FieldInfo y = x.getStaticField("moreResets");
-  		  			ElementInfo z = x.getStaticElementInfo();
-  		    		z.setIntField(y, (Integer)1);
-  		  		}
+//  		  		if (JDartExplorer.explorer.sequenceLength() > 1) {
+//  		  			ClassInfo x = ClassInfo.getInitializedClassInfo("sequencetest.State", JVM.getVM().getCurrentThread());
+//  		  			if (x != null) {
+//  		  				FieldInfo y = x.getStaticField("moreResets");
+//  		  				if (y != null) {
+//  		  					ElementInfo z = x.getStaticElementInfo();
+//  		  					if (z != null)
+//  		  						z.setIntField(y, (Integer)1);
+//  		  				}
+//  		  			}
+//  		  		}
         	}
         }
       }

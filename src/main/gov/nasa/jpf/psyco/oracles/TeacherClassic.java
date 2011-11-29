@@ -288,7 +288,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       // first call jpf-jdart when it is ready and get the constraints tree
       // for the moment just get a new constraints tree
 
-      SequenceExplorer explorer = createExplorer(programArgs, ExplorationMethod.JDart);
+      SequenceExplorer explorer = createExplorer(programArgs, ExplorationMethod.JDart, sequence);
       explorer.run();
       ConstraintsTree ct = explorer.getConstraintsTree(TARGET + ".sequence()V");
       String result = alphaRefiner.refine(ct);
@@ -461,7 +461,9 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     return jpf;
   }
 
-  public SequenceExplorer createExplorer(String[] programArgs, SequenceExplorer.ExplorationMethod explorationMethod) {
+  public SequenceExplorer createExplorer(String[] programArgs, 
+  		SequenceExplorer.ExplorationMethod explorationMethod,
+  		AbstractList<String> sequence) {
     JPFargs_.setTargetArgs(programArgs); // arguments to main
     String packageName = JPFargs_.getProperty("sut.package");
     String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
@@ -473,7 +475,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
     }
     JPFargs_.setProperty("symbolic.classes", st);
-    return (new SequenceExplorer(JPFargs_, explorationMethod, true));
+    return (new SequenceExplorer(JPFargs_, explorationMethod, true, sequence, alphaRefiner));
   }
 
   public boolean refine() {
