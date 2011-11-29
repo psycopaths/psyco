@@ -40,14 +40,6 @@ public class SequenceExplorer {
     this.config = conf;
     LogManager.init(conf);
     
-    switch (explorationMethod) {
-    case JDart:
-    	explorer = new JDartExplorer(conf, psyco);
-    	break;
-    default:
-    	throw new IllegalArgumentException("JDart is the only symbolic exploration technique currently supported");
-    }
-    
     // now create a string array of methods in the sequence and use that to get
     // the sequence.methods string from the refiner
     String sequenceMethods = null;
@@ -62,6 +54,14 @@ public class SequenceExplorer {
     	config.setProperty("sequence.methods", sequenceMethods);
     } else {
     	sequenceMethods = config.getProperty("sequence.methods");
+    }
+    
+    switch (explorationMethod) {
+    case JDart:
+    	explorer = new JDartExplorer(config, psyco);
+    	break;
+    default:
+    	throw new IllegalArgumentException("JDart is the only symbolic exploration technique currently supported");
     }
     
 //    System.out.println("Sequence methods string = " + sequenceMethods);    

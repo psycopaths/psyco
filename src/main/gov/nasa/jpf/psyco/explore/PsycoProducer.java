@@ -122,11 +122,13 @@ public class PsycoProducer extends Producer {
   		vectors = new Vector<Vector<Object>>();
   		methodToValuations.put(mi.getFullName(), vectors);
   	}
+  	if (!vectors.contains(valuation)) {
 //  	System.out.println(mi.getFullName() + " " + valuation.toString());
-  	Vector<Object> clone = new Vector<Object>();
-  	for (int i = 0; i < valuation.size(); i++)
-  		clone.add(valuation.elementAt(i));
-  	vectors.add(clone);
+  		Vector<Object> clone = new Vector<Object>();
+  		for (int i = 0; i < valuation.size(); i++)
+  			clone.add(valuation.elementAt(i));
+  		vectors.add(clone);
+  	}
   }
   
   // The following method is used to check if we can re-use prior vectors.
