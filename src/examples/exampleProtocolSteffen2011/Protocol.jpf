@@ -6,6 +6,7 @@ target=empty
 args=empty
 
 JPF.isModeSymbolic=true
+conjecture.Depth=4
 
 sut.package=exampleProtocolSteffen2011
 sut.class=Protocol

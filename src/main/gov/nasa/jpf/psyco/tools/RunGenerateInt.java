@@ -23,10 +23,12 @@ import gov.nasa.jpf.Config;
 import java.util.HashMap;
 import java.util.Vector;
 import gov.nasa.jpf.JPFShell;
-import gov.nasa.jpf.learn.classic.Candidate;
-import gov.nasa.jpf.learn.classic.MemoizeTable;
-import gov.nasa.jpf.learn.classic.SETException;
-import gov.nasa.jpf.learn.classic.SETLearner;
+import gov.nasa.jpf.learn.basic.Candidate;
+import gov.nasa.jpf.learn.basic.Learner;
+import gov.nasa.jpf.learn.TDFA.MemoizeTable;
+import gov.nasa.jpf.learn.TDFA.TDFALearner;
+import gov.nasa.jpf.learn.basic.SETException;
+import gov.nasa.jpf.psyco.oracles.Teacher3Values;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 
 
@@ -44,8 +46,8 @@ public class RunGenerateInt implements JPFShell {
 
   public void start(String[] args) {
 
-    SETLearner learnInterface = null;
-    TeacherClassic teacher = null;
+    Learner learnInterface = null;
+    Teacher3Values teacher = null;
     Candidate inf = null;
     boolean newLearningInstance = true;
     AlphabetRefinement refiner = null;
@@ -54,14 +56,14 @@ public class RunGenerateInt implements JPFShell {
 
     boolean mode = conf.getBoolean("JPF.isModeSymbolic");
     if (conf.getProperty("optimizeQueries") != null) {
-      TeacherClassic.setOptimize(conf.getBoolean("optimizeQueries"));
+      Teacher3Values.setOptimize(conf.getBoolean("optimizeQueries"));
     }
     
     String teacherAlpha = "";
     
     long time1 = System.currentTimeMillis();
     
-    if (mode == TeacherClassic.SYMB) {
+    if (mode == Teacher3Values.SYMB) {
       // need to initialize the refiner
       refiner = new AlphabetRefinement(conf.getProperty("example.path"),
               conf.getProperty("sut.package"), conf.getProperty("sut.class"));
@@ -89,15 +91,19 @@ public class RunGenerateInt implements JPFShell {
     }
 
     conf.setProperty("interface.alphabet", teacherAlpha);
-    TeacherClassic.setMode(mode); 
     
+    Teacher3Values.setMode(mode); 
+    int depth = conf.getInt("conjecture.Depth");
+    if (depth > 0) {
+      Teacher3Values.maxDepth = depth;
+    } 
     
     while (newLearningInstance) {
       newLearningInstance = false; // unless we need to refine
       try {
         /* run the learning algorithm */
-        teacher = new TeacherClassic(conf, refiner, memoize);
-        learnInterface = new SETLearner(teacher);
+        teacher = new Teacher3Values(conf, refiner, memoize);
+        learnInterface = new TDFALearner(teacher);
         inf = (Candidate) learnInterface.getAssumption();
 
       } catch (SETException sx) {

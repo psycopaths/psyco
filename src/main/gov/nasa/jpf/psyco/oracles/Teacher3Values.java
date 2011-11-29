@@ -20,12 +20,13 @@ package gov.nasa.jpf.psyco.oracles;
 
 // needs learning project
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.learn.classic.Candidate;
-import gov.nasa.jpf.learn.classic.SETException;
-import gov.nasa.jpf.learn.classic.SETLearner;
-import gov.nasa.jpf.learn.classic.MinimallyAdequateTeacher;
-import gov.nasa.jpf.learn.classic.MemoizeTable;
-
+import gov.nasa.jpf.learn.basic.Candidate;
+import gov.nasa.jpf.learn.basic.SETException;
+import gov.nasa.jpf.learn.basic.MinimallyAdequateTeacher;
+import gov.nasa.jpf.learn.TDFA.MemoizeTable;
+import gov.nasa.jpf.learn.TDFA.TDFALearner;
+import gov.nasa.jpf.learn.basic.Learner;
+import gov.nasa.jpf.learn.basic.ThreeValues;
 
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.psyco.explore.SequenceExplorer;
@@ -37,7 +38,7 @@ import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
 import jfuzz.ConstraintsTree;
-import gov.nasa.jpf.learn.classic.Candidate;
+
 import gov.nasa.jpf.psyco.refinement.Symbol;
 import java.util.HashMap;
 import gov.nasa.jpf.psyco.Target.ProgramExecutive;
@@ -48,13 +49,14 @@ import java.lang.reflect.Method;
 /*
  * Teacher for interface generation in psyco using classic L*
  */
-public class TeacherClassic implements MinimallyAdequateTeacher {
+public class Teacher3Values implements MinimallyAdequateTeacher {
 
+  public static int maxDepth = 3;
   public static final boolean CONCR = false;
   public static final boolean SYMB = true;
   public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
   private JPFLogger logger = JPF.getLogger("teacher");
-  private SETLearner set_;
+  private Learner set_;
   private MemoizeTable memoized_;
   private String module1_, module2_;
   private Config JPFargs_;
@@ -67,7 +69,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   private static boolean optimizeQueriesNoParams = true; // enabled by default
   private int memoizeHits = 0;
 
-  public TeacherClassic(Config conf, AlphabetRefinement ref) {
+  public Teacher3Values(Config conf, AlphabetRefinement ref) {
 
     memoized_ = new MemoizeTable();
 
@@ -93,22 +95,21 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       logger.info(a);
     }
 
-    if (mode == SYMB) { 
+    if (mode == SYMB) {
       setUpJDartConfig();
     }
 
   }
 
-  
   // allow reuse of memoized table after refinements
-  public TeacherClassic(Config conf, AlphabetRefinement ref, MemoizeTable mem) {
+  public Teacher3Values(Config conf, AlphabetRefinement ref, MemoizeTable mem) {
 
     if (mem == null) {
       memoized_ = new MemoizeTable();
     } else {
       memoized_ = mem;
     }
-    
+
     /* targetArgs are no longer relevant
     
     String[] targetArgs = conf.getTargetArgs();
@@ -136,11 +137,11 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
 
   }
-  
+
   private String getPrefix(String action, HashMap hm) {
-      return ("PSYCO" + hm.get(action) + "_");
+    return ("PSYCO" + hm.get(action) + "_");
   }
-  
+
   private void resetTarget() {
 
     try {
@@ -163,26 +164,37 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
   }
 
-  public boolean query(AbstractList<String> sequence) throws SETException {
+  public ThreeValues query(AbstractList<String> sequence) throws SETException {
     return (query(sequence, true));
   }
 
-  public boolean query(AbstractList<String> sequence, boolean memoize) throws SETException {
+  private static ThreeValues negateResult(ThreeValues original) {
+    switch (original) {
+      case TRUE:
+        return ThreeValues.FALSE;
+      case FALSE:
+        return ThreeValues.TRUE;
+      default:
+        return ThreeValues.THIRD;
+    }
+  }
+
+  public ThreeValues query(AbstractList<String> sequence, boolean memoize) throws SETException {
 
     if (refine) {
-      return (true); // means we ignore all queries 
+      return (ThreeValues.TRUE); // means we ignore all queries 
     }                     // when the alphabet will be refined 
 
-    // the following assumes that initial state of target is not error
+    // the following assumes that initial state of target is OK
     if (sequence.isEmpty()) {
-      return true;
+      return (ThreeValues.TRUE);
     }
-    
-    
+
+
     logger.info("New query: ", sequence);
-    
-    Boolean recalled;
-    
+
+    ThreeValues recalled;
+
     if (mode == SYMB) {
       recalled = memoized_.getSimulatedResult(sequence);
     } else {
@@ -192,10 +204,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     if (recalled != null) { // we get the result from memoized
       logger.info("Result from memoized for sequence: ", sequence);
-      logger.info("Result is: ", !recalled.booleanValue());
+      logger.info("Result to be negated is: ", recalled);
       memoizeHits++;
-      return (!recalled.booleanValue()); // note the fact that it is the other way around      
+
+      return negateResult(recalled);
     }
+
 
     // we have not returned so we need to model check
 
@@ -205,7 +219,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     boolean parameters_involved = true;
 
     // is there any parameters involved?
-    
+
     // only perform this if optimization is enabled
     if (optimizeQueriesNoParams) {
       parameters_involved = false;
@@ -220,16 +234,21 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
         }
       }
     }
-    
-    
+
+
     String[] programArgs = null;
     int counter = 0;
 
+
+
     if (mode == CONCR || !parameters_involved) {
+      System.out.println("Mode is CONCR or no params");
+
       programArgs = new String[sequence.size() + 1];
       programArgs[0] = "sequence";
       counter = 1;
     } else if (mode == SYMB) {
+      System.out.println("Mode is symbolic");
       programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
       programArgs[0] = "sequence";
       programArgs[1] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + "init";
@@ -260,6 +279,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     }
 
     if ((mode == SYMB) && (!parameters_involved)) {
+      System.out.println("Case no params");
       logger.info("---------- NO PARAMETERS - RUN JAVA------------");
       // just execute with simple java - avoid JPF altogether
       boolean result = true;
@@ -274,15 +294,25 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
         result = false;
       }
-      if (memoize) {
-        memoized_.setResult(sequence, !result); // memoized stores them the other way around
-      }
+
       logger.info("Result from running Java is ", result);
-      return result;
+
+      if (result) {
+        if (memoize) {
+          memoized_.setResult(sequence, ThreeValues.FALSE); // memoized stores them the other way around  
+          return (ThreeValues.TRUE);
+        } else {
+          if (memoize) {
+            memoized_.setResult(sequence, ThreeValues.TRUE); // memoized stores them the other way around  
+            return (ThreeValues.FALSE);
+          }
+        }
+      }
     }
 
 
     if (mode == SYMB) {
+      System.out.println("Case concolic");
       logger.info("---------- RUN CONCOLIC ------------");
       // TODO
       // first call jpf-jdart when it is ready and get the constraints tree
@@ -295,30 +325,44 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
       logger.info("Refinement result: " + result);
       if (result.equals("OK")) {
         if (memoize) {
-          memoized_.setResult(sequence, false); // memoized stores them the other way around
+          memoized_.setResult(sequence, ThreeValues.FALSE); // memoized stores them the other way around
         }
-        return true;
+        return (ThreeValues.TRUE);
       } else if (result.equals("ERROR")) {
         if (memoize) {
-          memoized_.setResult(sequence, true); // memoized stores them the other way around
+          memoized_.setResult(sequence, ThreeValues.TRUE); // memoized stores them the other way around
         }
-        return false;
+        return (ThreeValues.FALSE);
+      } else if (result.equals("UNKNOWN")) {
+        if (memoize) {
+          memoized_.setResult(sequence, ThreeValues.THIRD); // memoized stores them the other way around
+        }
+        return (ThreeValues.THIRD);
       } else { // must refine
         refine = true;
         newAlphabet = result;
-        return (true); // will be ignored since refined was set to true
+        return (ThreeValues.TRUE); // will be ignored since refined was set to true
       }
     } else {  // mode is concrete
+      System.out.println("Case is concrete");
       logger.info("---------- RUN JPF CONCRETE MODE ------------");
       JPF jpf = createJPFInstance(programArgs); // driver for M1
       jpf.run();
-      boolean violating = jpf.foundErrors();
-      if (memoize) {
-        memoized_.setResult(sequence, violating);
+      ThreeValues violating = null;
+      if (jpf.foundErrors()) {
+        if (memoize) {
+          memoized_.setResult(sequence, ThreeValues.TRUE);
+        }
+        return ThreeValues.FALSE;
+      } else {
+        if (memoize) {
+          memoized_.setResult(sequence, ThreeValues.FALSE);
+        }
+        return ThreeValues.TRUE;
       }
-      return (!violating);
+
     }
-    
+
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {
@@ -329,104 +373,84 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     Candidate.printCandidateAssumption(cndt, alphabet_);
 
-    boolean conjRes;
-    int maxDepth = 3;
     logger.info("STARTING CONJECTURE");
 
-    Candidate.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
-    String result = Candidate.allSequences;
+    cndt.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
+    String result = cndt.allGoodSequences;
     String res = result.replaceFirst(";", "");
 
-    String bd = Candidate.allBadSequences;
+    String bd = cndt.allBadSequences;
     String bad = bd.replaceFirst(";", "");
 
-    System.out.println("Good is: " + res);
+    String dknow = cndt.allDKnowSequences;
+    String other = dknow.replaceFirst(";", "");
+
+    //System.out.println("Good is: " + res);
     //System.out.println("Bad is: " + bad);
 
-    String[] sequences = res.split(";");
+    String[] goodSequences = res.split(";");
     String[] badSequences = bad.split(";");
+    String[] otherSequences = other.split(";");
 
+    Vector cex = null;
     logger.info("START CHECK SAFE");
-    // check safety
+    cex = checkSequences(goodSequences, ThreeValues.TRUE);
+    if (cex == null) {
+      logger.info("START CHECK PERMISSIVE");
+      cex = checkSequences(badSequences, ThreeValues.FALSE);
+      if (cex == null) {
+        logger.info("START CHECK THIRD");
+        cex = checkSequences(otherSequences, ThreeValues.THIRD);
+      }
+    }
+
+    logger.info("ENDING CONJECTURE");
+    // reinitialize these
+    cndt.allGoodSequences = "";
+    cndt.allBadSequences = "";
+    cndt.allDKnowSequences = "";
+
+    return cex;
+  }
+
+  
+  private Vector checkSequences(String[] sequences, ThreeValues desired)  throws SETException {
+
     if (sequences.length == 0) {
-      logger.info("NO ACCEPTED TRACES");
-      // check permissive next
+      logger.info("NO TRACES IN SET");
     } else {
       for (String nextSeq : sequences) {
         // first convert sequence for query
-        Vector seq = new Vector();
-
-        
-        if (!nextSeq.isEmpty()) { // if empty shows no accepted traces
-          // remove first : inserted
-          String nS = nextSeq.replaceFirst(":", "");
-          String[] methods = nS.split(":");
-          for (String nextMeth : methods) {
-            seq.add(nextMeth);
-          }
-
-          conjRes = query(seq, true); // let it memoize and see what happens
-
-          if (!conjRes) // result is false so assumption does not block enough
-          {
-            logger.info("ENDING CONJECTURE");
-            // reinitialize these
-            Candidate.allSequences = "";
-            Candidate.allBadSequences = "";
-            return (seq); // refine the assumption
-          }
+        if (nextSeq.equals("")) {
+          return null;
         }
 
+        Vector seq = new Vector();
+
+        // remove first : inserted
+        String nS = nextSeq.replaceFirst(":", "");
+        String[] methods = nS.split(":");
+        for (String nextMeth : methods) {
+          seq.add(nextMeth);
+        }
+
+        ThreeValues res = query(seq, true);
+
+        if (res != desired) {
+          return seq;
+        }
       }
     }
 
-    logger.info("START CHECK PERMISSIVE");
-    // check permissiveness
-
-    if (badSequences.length == 0) {
-      logger.info("NO REJECTED TRACES");
-      logger.info("ENDING CONJECTURE");
-      // reinitialize these
-      Candidate.allSequences = "";
-      Candidate.allBadSequences = "";
-      return null;
-    }
-    for (String nextSeq : badSequences) {
-      // first convert sequence for query
-      if (nextSeq.equals("")) {
-        Candidate.allSequences = "";
-        Candidate.allBadSequences = "";
-        return null;
-      }
-
-      Vector seq = new Vector();
-
-      // remove first : inserted
-      String nS = nextSeq.replaceFirst(":", "");
-      String[] methods = nS.split(":");
-      for (String nextMeth : methods) {
-        seq.add(nextMeth);
-      }
-
-      conjRes = query(seq, true); // let it memoize and see what happens
-
-      if (conjRes) // result is true so incompatible with assumption generated
-      {
-        logger.info("ENDING CONJECTURE");
-        // reinitialize these
-        Candidate.allSequences = "";
-        Candidate.allBadSequences = "";
-        return (seq); // refine the assumption
-      }
-
-    }
-    logger.info("ENDING CONJECTURE");
-    // reinitialize these
-    Candidate.allSequences = "";
-    Candidate.allBadSequences = "";
     return null; // will need to check if there was refinement involved
+ }  
+    
+    
+    
 
-  }
+  
+
+  
 
   public Iterator getAlphabetIterator() {
     return (alphabet_.iterator());
@@ -440,7 +464,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
     return c;
   }
 
-  public void setSETLearner(SETLearner set) {
+  public void setLearner(Learner set) {
     set_ = set;
   }
 
@@ -448,7 +472,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
 
     JPFargs_.setTarget(TARGET);  // main program
     JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
-    
+
     // the following ensures state matching is off - should it be in dart jpf.properties?
     // caused memory leak so adding it here
     JPFargs_.setProperty("vm.storage.class", null);
@@ -489,7 +513,7 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   public String getNewAlphabet() {
     return newAlphabet;
   }
-  
+
   public MemoizeTable getMemoizeTable() {
     return memoized_;
   }
@@ -497,13 +521,12 @@ public class TeacherClassic implements MinimallyAdequateTeacher {
   public static void setMode(boolean m) {
     mode = m;
   }
-  
+
   public int getMemoizeHits() {
     return memoizeHits;
   }
-  
+
   public static void setOptimize(boolean o) {
     optimizeQueriesNoParams = o;
   }
-  
 }
