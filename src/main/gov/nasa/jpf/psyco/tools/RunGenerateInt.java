@@ -31,8 +31,6 @@ import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.psyco.oracles.Teacher3Values;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 
-
-import gov.nasa.jpf.psyco.oracles.TeacherClassic;
 import gov.nasa.jpf.util.LogManager;
 
 public class RunGenerateInt implements JPFShell {
@@ -131,7 +129,7 @@ public class RunGenerateInt implements JPFShell {
       System.out.print("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
-      if (mode == TeacherClassic.SYMB) {
+      if (mode == Teacher3Values.SYMB) {
         HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
         HashMap<String, String> symbolsToMethodNames = refiner.getSymbolsToMethodNames();
         Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions, symbolsToMethodNames);
