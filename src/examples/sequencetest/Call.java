@@ -64,7 +64,7 @@ public class Call implements JPFShell {
   	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
   	explore.run();
 
-  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2");
+  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3");
   	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
   	explore.run();
   }

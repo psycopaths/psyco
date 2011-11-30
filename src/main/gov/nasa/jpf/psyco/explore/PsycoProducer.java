@@ -25,9 +25,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import com.sun.tools.internal.xjc.ModelLoader;
+
 import jfuzz.ConstraintsTree;
 import jfuzz.JFuzz;
 import jfuzz.Producer;
+import jfuzz.Producer.Associator;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.jvm.ChoiceGenerator;
@@ -60,7 +63,7 @@ public class PsycoProducer extends Producer {
   
   // start re-use when set
   static boolean startReuse = false;
-
+  
   public PsycoProducer (Config conf, String keyPrefix){
     super(conf, keyPrefix);
     
@@ -172,8 +175,8 @@ public class PsycoProducer extends Producer {
       // apply all those previously stored values first before looking for
       // unknowns in the constraints tree
       if (startReuse) {
-      	populateValuations();
-      	choices = 1;
+      	choices = populateValuations();
+//      	choices = 1;
       	currentChoice = 0;
       }
     } else {
@@ -222,12 +225,12 @@ public class PsycoProducer extends Producer {
 			// map
 			choices = populateValuations(sequenceMethods, null, 0 /* index */);
 			
-//			System.out.println("We have " + choices + " choices of pre-valuated vectors");
-//			System.out.println("..and the valuations are");
-//  		for (int i = 0; i < sequenceValuations.size(); i++) {
-//  			Vector<Object> v = sequenceValuations.elementAt(i);
-//  			System.out.println("  " + v.toString());
-//  		}			
+			System.out.println("We have " + choices + " choices of pre-valuated vectors");
+			System.out.println("..and the valuations are");
+  		for (int i = 0; i < sequenceValuations.size(); i++) {
+  			Vector<Object> v = sequenceValuations.elementAt(i);
+  			System.out.println("  " + v.toString());
+  		}			
 		}
 		
 		return choices;
@@ -279,7 +282,7 @@ public class PsycoProducer extends Producer {
   // implementation. Otherwise, apply values from the set of valuations at
   // index 0, which would have been updated via a call to registerValues.
   
-  public boolean perturb(ChoiceGenerator<?>cg, StackFrame frame) {    
+  public boolean perturb(ChoiceGenerator<?>cg, StackFrame frame) {  	
     if (mi == null || inRandomMode.get(mi.getFullName())) {
     	return super.perturb(cg, frame);
     }
@@ -320,19 +323,30 @@ public class PsycoProducer extends Producer {
 
   static public void doDeferredAssignments(ClassInfo ci) {
   	if (currentChoice < sequenceValuations.size()) {
+  		boolean processedChoice = false;
   		Vector<Object> valuation = sequenceValuations.elementAt(currentChoice);
-  		
-  		for (int i = 0; i < valuation.size(); i++) {
-  			String fieldName = sequenceFields.elementAt(i);
-  			Object value = valuation.elementAt(i);
+  	
+  		if (valuation != null) {
+  			for (int i = 0; i < valuation.size(); i++) {
+  				String fieldName = sequenceFields.elementAt(i);
+  				Object value = valuation.elementAt(i);
 
-  			String className = fieldName.substring(0, fieldName.lastIndexOf('.'));
-  			if (className.equals(ci.getName()))
-  				PsycoProducer.producer.registerClassFieldValue(null, 0, fieldName, value, null);
+  				String className = fieldName.substring(0, fieldName.lastIndexOf('.'));
+  				if (className.equals(ci.getName())) {
+  					PsycoProducer.producer.registerClassFieldValue(null, 0, fieldName, value, null);
+  					processedChoice = true;
+  				}
+  			}
   		}
-//  		System.out.println("currentChoice = " + currentChoice);
-			currentChoice++;
+  		if (processedChoice) {
+  			System.out.println("currentChoice = " + currentChoice);
+  			sequenceValuations.setElementAt(null, currentChoice);
+  			currentChoice++;
+  		}
   	}
+//  	simple_refine1.Example.internalReset();
+//  	exampleProtocolSteffen2011.Protocol.internalReset();
+  	CEV.Spacecraft.init();
   	Producer.doDeferredAssignments(ci);
   }
 }

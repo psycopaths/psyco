@@ -168,7 +168,6 @@ public class JDartExplorer extends SymbolicExplorer {
     do {
       PsycoProducer.reset();
       try {
-        BytecodeUtils.resetSymVarCounter();
         JPF jpf = new JPF(config);
         jpf.run();
       } catch (Throwable t) { 

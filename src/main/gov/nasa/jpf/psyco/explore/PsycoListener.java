@@ -21,6 +21,8 @@ package gov.nasa.jpf.psyco.explore;
 
 import java.util.Vector;
 
+import solvers.PathCondition;
+
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.jdart.bytecode.BytecodeUtils;
 import gov.nasa.jpf.jvm.bytecode.ATHROW;
@@ -32,6 +34,7 @@ import gov.nasa.jpf.jvm.FieldInfo;
 import gov.nasa.jpf.jvm.JVM;
 import gov.nasa.jpf.jvm.MethodInfo;
 import gov.nasa.jpf.jvm.ThreadInfo;
+import gov.nasa.jpf.symbc.numeric.MinMax;
 import jfuzz.*;
 
 /* This class extends the Perturbator and is at the heart of the jdart
@@ -93,10 +96,8 @@ public class PsycoListener extends ConcolicListener {
       			}
         	}
         	ClassInfo ci = mi.getClassInfo();
-        	if (BytecodeUtils.doDeferredSymbolicFieldProcessing(ci)) {
-  		  		// Since we did process this class, we can now set any values that need to 
-        		// be set for class fields post initialization
-  		  		PsycoProducer.doDeferredAssignments(ci);
+        	if (BytecodeUtils.doDeferredSymbolicFieldProcessing(ci)) 
+        		PsycoProducer.doDeferredAssignments(ci);
 //  		  		if (JDartExplorer.explorer.sequenceLength() > 1) {
 //  		  			ClassInfo x = ClassInfo.getInitializedClassInfo("sequencetest.State", JVM.getVM().getCurrentThread());
 //  		  			if (x != null) {
@@ -108,7 +109,6 @@ public class PsycoListener extends ConcolicListener {
 //  		  				}
 //  		  			}
 //  		  		}
-        	}
         }
       }
     } else if (insn instanceof ATHROW) {
@@ -123,7 +123,29 @@ public class PsycoListener extends ConcolicListener {
   
 	@Override
   public void methodExited(JVM vm) {
-  	super.methodExited(vm);
+    Instruction insn = vm.getLastInstruction();
+
+    MethodInfo mi = insn.getMethodInfo();
+    if (isMethodWatched(insn, mi)) {
+      PathCondition pc = BytecodeUtils.getPC();
+      if (pc == null)
+        return;
+//      System.out.println("Adding " + pc.stringPC());
+      ThreadInfo ti = vm.getLastThreadInfo();
+      ConstraintsTree T = ConstraintsTree.getTree(ti.getTopFrame(), mi);
+      assert T != null;
+      T.insertPC(pc, latestValuation);
+      // the following calls ensure that a subsequent re-exec of the
+      // method will maintain the same symbolic names for all
+      // symbolic inputs
+      MinMax.reset();
+      
+      // the following call resets all field attributes for a potential
+      // re-exec of this symbolic method
+      BytecodeUtils.resetPC();
+
+      //      T.printConstraintsTree();
+    }
   }
 
 	@Override

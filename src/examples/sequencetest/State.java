@@ -28,7 +28,7 @@ public class State {
 		Input.reset_1();
 		if (moreResets == 1) {
 			Input.reset_2();
-//			Input.reset_3();
+			Input.reset_3();
 //			Input.reset_4();
 		}
 	}
