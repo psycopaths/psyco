@@ -83,7 +83,7 @@ public class AlphabetRefinement {
     logger.info("Refinement # " + queryCounter);
     assert constraintsTree != null;
     logger.info("Constraints tree:\n" + constraintsTree);
-    
+
     if (constraintsTree.isEmpty()) {
       if (constraintsTree.inError()) {
         return "ERROR";
@@ -94,14 +94,15 @@ public class AlphabetRefinement {
 
     HashSet<String> methodNames = new HashSet<String>();
     constraintsTree.getMentionedMethods(1, methodNames);
-    
-    if (methodNames.isEmpty()) {
-      return "OK";
-    }
+    assert !methodNames.isEmpty();
+//    if (methodNames.isEmpty()) {
+//      return "OK";
+//    }
 
     HashSet<String> refinedSymbols = new HashSet<String>();
     boolean allErrors = true;
     boolean allCovered = true;
+    boolean allDontKnow = true;
     for (String symbolName : methodNames) {
       logger.info("Processing symbol " + symbolName);
 
@@ -109,28 +110,53 @@ public class AlphabetRefinement {
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
       Formula errorPCs;
+      Formula dontKnowPCs;
       try {
         errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+        dontKnowPCs = constraintsTree.getDontKnowPathConstraints(symbolName);
       } catch (MixedParamsException e) {
         return "UNKNOWN";
       }
+
       HashMap<String, String> replacementNames = new HashMap<String, String>();
       for (int i = 0; i < oldSymbol.getNumParams(); i++) {
         String oldParamName = symbolName + "_P" + i;
         String newParamName = strippedSymbolName + "_P" + i;
         replacementNames.put(oldParamName, newParamName);
       }
-      errorPCs.replaceNames(replacementNames);      
+      errorPCs.replaceNames(replacementNames);
       logger.info("Error PCs:" + errorPCs.sourcePC());
+      dontKnowPCs.replaceNames(replacementNames);
+      logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
+
       boolean errorPCsSatisfiable = errorPCs.isSatisfiable();
       if (errorPCsSatisfiable) {
+        allCovered = false;
+        allDontKnow = false;
+      }
+
+      LogicalExpression dontKnowPCs1 = new LogicalExpression(LogicalOperator.AND);
+      dontKnowPCs1.addExpresion(dontKnowPCs);
+      try {
+        dontKnowPCs1.addExpresion(new NotExpression(errorPCs.clone()));
+      } catch (CloneNotSupportedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      logger.info("DontKnow PCs':" + dontKnowPCs1.sourcePC());
+      boolean dontKnowPCsSatisfiable = dontKnowPCs1.isSatisfiable();
+      if (dontKnowPCsSatisfiable) {
+        allErrors = false;
         allCovered = false;
       }
 
       LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
-      coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
       try {
-        coveredPCs.addExpresion(new NotExpression(errorPCs.clone()));
+        LogicalExpression tmpExpr = new LogicalExpression(LogicalOperator.OR);
+        tmpExpr.addExpresion(dontKnowPCs.clone());
+        tmpExpr.addExpresion(errorPCs.clone());
+        coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
+        coveredPCs.addExpresion(new NotExpression(tmpExpr));
       } catch (CloneNotSupportedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -139,9 +165,24 @@ public class AlphabetRefinement {
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
       if (coveredPCsSatisfiable) {
         allErrors = false;
+        allDontKnow = false;
       }
 
-      if (errorPCsSatisfiable && coveredPCsSatisfiable) {
+      if (errorPCsSatisfiable && coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
+        Precondition preconditionCovered = new Precondition(coveredPCs);
+        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+        alphabet.addSymbol(newSymbol);
+
+        Precondition preconditionError = new Precondition(errorPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+        alphabet.addSymbol(newSymbol);
+
+        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+        alphabet.addSymbol(newSymbol);
+
+        refinedSymbols.add(strippedSymbolName);        
+      } else if (errorPCsSatisfiable && coveredPCsSatisfiable) {
         Precondition preconditionCovered = new Precondition(coveredPCs);
         Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
         alphabet.addSymbol(newSymbol);
@@ -151,19 +192,43 @@ public class AlphabetRefinement {
         alphabet.addSymbol(newSymbol);
 
         refinedSymbols.add(strippedSymbolName);        
+      } else if (errorPCsSatisfiable && dontKnowPCsSatisfiable) {
+        Precondition preconditionError = new Precondition(errorPCs);
+        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+        alphabet.addSymbol(newSymbol);
+
+        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+        alphabet.addSymbol(newSymbol);
+
+        refinedSymbols.add(strippedSymbolName);        
+      } else if (coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
+        Precondition preconditionCovered = new Precondition(coveredPCs);
+        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+        alphabet.addSymbol(newSymbol);
+
+        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
+        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+        alphabet.addSymbol(newSymbol);
+
+        refinedSymbols.add(strippedSymbolName);
       }
     }
 
     if (allCovered) {
-      assert !allErrors;
+      assert !allErrors && !allDontKnow;
       return "OK";
     } else if (allErrors) {
-      assert !allCovered;
+      assert !allCovered && !allDontKnow;
       return "ERROR";
+    } else if (allDontKnow) {
+      assert !allCovered && !allErrors;
+      return "UNKNOWN";
     } else {
-      if (refinedSymbols.isEmpty()) {
-        return "ERROR";
-      }
+      assert !refinedSymbols.isEmpty();
+//      if (refinedSymbols.isEmpty()) {
+//        return "ERROR";
+//      }
       for (String refinedSymbolName : refinedSymbols) {
         alphabet.removeSymbol(refinedSymbolName);
       }
