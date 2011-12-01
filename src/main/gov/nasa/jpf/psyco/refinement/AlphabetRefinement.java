@@ -35,6 +35,7 @@ import solvers.LogicalOperator;
 import solvers.NotExpression;
 
 import jfuzz.ConstraintsTree;
+import jfuzz.MixedParamsException;
 
 public class AlphabetRefinement {
   public static final String REFINED_CLASS_NAME = "RefinedAlphabet";
@@ -107,7 +108,12 @@ public class AlphabetRefinement {
       String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
-      Formula errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      Formula errorPCs;
+      try {
+        errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      } catch (MixedParamsException e) {
+        return "UNKNOWN";
+      }
       HashMap<String, String> replacementNames = new HashMap<String, String>();
       for (int i = 0; i < oldSymbol.getNumParams(); i++) {
         String oldParamName = symbolName + "_P" + i;
