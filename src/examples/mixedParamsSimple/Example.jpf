@@ -9,12 +9,12 @@ JPF.isModeSymbolic=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=true
 
-sut.package=simple_refine1
+sut.package=mixedParamsSimple
 sut.class=Example
-example.path=src/examples/simple_refine1
+example.path=src/examples/mixedParamsSimple
 
 # format is method_name: # of parameters
-interface.alphabet=init:2,a:0,b:0
+interface.alphabet=init:1,foo:1
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntABC
@@ -31,4 +31,4 @@ report.console.property_violation=error
 
 # declare all classes in the component that implement methods in the 
 # alphabet
-symbolic.classes=simple_refine1.Example
+symbolic.classes=mixedParamsSimple.Example
