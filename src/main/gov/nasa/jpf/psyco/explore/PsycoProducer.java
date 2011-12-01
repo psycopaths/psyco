@@ -19,6 +19,7 @@ package gov.nasa.jpf.psyco.explore;
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -322,8 +323,8 @@ public class PsycoProducer extends Producer {
   // Note: The mechanism only supports static fields at this point
 
   static public void doDeferredAssignments(ClassInfo ci) {
+		boolean processedChoice = false;
   	if (currentChoice < sequenceValuations.size()) {
-  		boolean processedChoice = false;
   		Vector<Object> valuation = sequenceValuations.elementAt(currentChoice);
   	
   		if (valuation != null) {
@@ -344,9 +345,13 @@ public class PsycoProducer extends Producer {
   			currentChoice++;
   		}
   	}
-//  	simple_refine1.Example.internalReset();
-//  	exampleProtocolSteffen2011.Protocol.internalReset();
-  	CEV.Spacecraft.init();
-  	Producer.doDeferredAssignments(ci);
+  	
+  	// if there is an internalReset method in the class we want to do assignments
+  	// on, then call that method before setting a subset of the fields
+  	if (processedChoice) {
+  		JDartExplorer.internalReset();
+  	}
+
+    Producer.doDeferredAssignments(ci);
   }
 }

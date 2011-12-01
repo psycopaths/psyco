@@ -24,6 +24,7 @@ import gov.nasa.jpf.jdart.bytecode.BytecodeUtils;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -35,17 +36,25 @@ import jfuzz.termination.*;
 
 public class JDartExplorer extends SymbolicExplorer {
 
-  private Config config;
+  public Config config;
   private JFuzz jfuzz = null;
   private int sequenceLength = 0;
   private String[] sequenceMethodNames = null;
   
   public static JDartExplorer explorer = null;
+  
+  private static Method internalReset = null;
 
   public JDartExplorer (Config conf, boolean psyco) {
     this.config = conf;
 
     if (psyco) {
+    	String optimizeStr = conf.getProperty("jdart.optimize");
+    	boolean dontOptimize = false;
+    	
+    	if (optimizeStr != null && optimizeStr.equals("false"))
+    		dontOptimize = true;
+    	
     	String jpfHome = conf.getProperty("jpf.home");
     	String jdartHome = conf.getProperty("jpf-jdart");
     	String symbolicMethod = conf.getProperty("symbolic.method");
@@ -56,13 +65,41 @@ public class JDartExplorer extends SymbolicExplorer {
 
     	config.setProperty("jfuzz.time", "3,3,0,0");
     	config.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
-//    	config.setProperty("listener", "jfuzz.ConcolicListener");
-    	config.setProperty("listener", "gov.nasa.jpf.psyco.explore.PsycoListener");
+    	
+    	// by default we optimize    	
+    	if (dontOptimize)
+    		config.setProperty("listener", "jfuzz.ConcolicListener");
+    	else
+      	config.setProperty("listener", "gov.nasa.jpf.psyco.explore.PsycoListener");
+    	
     	config.setProperty("perturb.params", "foo");
-//    	config.setProperty("perturb.foo.class", "jfuzz.Producer");
-    	config.setProperty("perturb.foo.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
+    	
+    	if (dontOptimize)
+    		config.setProperty("perturb.foo.class", "jfuzz.Producer");
+    	else
+    		config.setProperty("perturb.foo.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
+    	
     	config.setProperty("perturb.foo.method", symbolicMethod);
     	config.setProperty("symbolic.dp", "yices");
+    	
+    	// now get a handle to the internalReset method of the class we want to 
+    	// explore. This handle is used to restore the state of the fields of the
+    	// class to their initialized values
+    	
+    	String module1_ = config.getString("sut.package") + "." + config.getString("sut.class"); // this is our target class
+    	try {
+    		Class<?> invokedClass = Class.forName(module1_);
+    		try {
+    			internalReset = invokedClass.getDeclaredMethod("internalReset");
+    			internalReset.setAccessible(true);
+    		} catch (NoSuchMethodException e2) {
+    			System.out.println("Cannot find internalReset in class " + module1_ + ". Ignoring.");
+    			;
+    		}
+    	} catch (ClassNotFoundException e1) {
+    		// this is serious and should not happen
+    		System.err.println("Class not found: " + module1_);
+    	}
     }
     
     String sequenceMethods = config.getProperty("sequence.methods");
@@ -128,6 +165,14 @@ public class JDartExplorer extends SymbolicExplorer {
   // method used to get the methods in the sequence
   public String[] sequenceMethodNames() {
   	return sequenceMethodNames;
+  }
+
+  static void internalReset() {
+		try {
+			internalReset.invoke(null);
+		} catch (Throwable e) {
+			System.err.println("Problem invoking internalReset. Ignoring.");
+		}
   }
   
   /* 

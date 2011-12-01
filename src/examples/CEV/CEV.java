@@ -55,10 +55,14 @@ public class CEV {
 
   public static void readyForDeorbit () {
     if (Spacecraft.readyForDeorbit())
-    	Spacecraft.init();
+    	Spacecraft.internalReset();
   }
   
   public static void lsamAscentBurn () {
   	Spacecraft.doLSAMascentBurn();
+  }
+  
+  public static void internalReset() {
+  	Spacecraft.internalReset();
   }
 }

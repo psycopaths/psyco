@@ -56,7 +56,7 @@ public class Spacecraft {
   
   //--- actions
   
-  public static void init() {
+  public static void internalReset() {
     doneStage1 = false;
     doneStage2 = false;
     lasDocked = true;

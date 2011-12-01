@@ -32,3 +32,5 @@ report.console.property_violation=error
 # declare all classes in the component that implement methods in the 
 # alphabet
 symbolic.classes=psyco.java.io.PipedOutputStream
+
+jdart.optimize=true

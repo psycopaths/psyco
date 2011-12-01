@@ -33,3 +33,4 @@ report.console.property_violation=error
 # alphabet
 symbolic.classes=CEV.CEV,CEV.Spacecraft,CEV.ErrorLog
 
+jdart.optimize=true
