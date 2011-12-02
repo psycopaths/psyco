@@ -156,7 +156,8 @@ public class IntMath {
    * @throws IllegalArgumentException if {@code k < 0}
    */
   public static int pow(int b, int k) {
-  	MathPreconditions.checkNonNegative("exponent", k);
+  	if (k < 0)
+  		assert false;
     switch (b) {
       case 0:
         return (k == 0) ? 1 : 0;

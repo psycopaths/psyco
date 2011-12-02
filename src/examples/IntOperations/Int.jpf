@@ -13,7 +13,7 @@ example.path=src/examples/IntOperations
 
 
 # format is method_name: # of parameters
-interface.alphabet=divide:3
+interface.alphabet=pow:2
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntOp
