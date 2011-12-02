@@ -193,31 +193,29 @@ public class IntMath {
    *         {@code sqrt(x)} is not an integer
    */
   @SuppressWarnings("fallthrough")
-  public static int sqrt(int x, RoundingMode mode) {
+  public static int sqrt(int x, int mode) {
   	MathPreconditions.checkNonNegative("x", x);
     int sqrtFloor = sqrtFloor(x);
-    switch (mode) {
-      case UNNECESSARY:
+    if (mode == UNNECESSARY)
       	MathPreconditions.checkRoundingUnnecessary(sqrtFloor * sqrtFloor == x); // fall through
-      case FLOOR:
-      case DOWN:
+    
+    if (mode == FLOOR || mode == DOWN)
         return sqrtFloor;
-      case CEILING:
-      case UP:
+    
+    if (mode == CEILING || mode == UP)
         return (sqrtFloor * sqrtFloor == x) ? sqrtFloor : sqrtFloor + 1;
-      case HALF_DOWN:
-      case HALF_UP:
-      case HALF_EVEN:
-        int halfSquare = sqrtFloor * sqrtFloor + sqrtFloor;
+    
+    if (mode == HALF_DOWN || mode == HALF_UP || mode == HALF_EVEN) {
+    	int halfSquare = sqrtFloor * sqrtFloor + sqrtFloor;
         /*
          * We wish to test whether or not x <= (sqrtFloor + 0.5)^2 = halfSquare + 0.25.
          * Since both x and halfSquare are integers, this is equivalent to testing whether or not
          * x <= halfSquare.  (We have to deal with overflow, though.)
          */
         return (x <= halfSquare | halfSquare < 0) ? sqrtFloor : sqrtFloor + 1;
-      default:
-        throw new AssertionError();
     }
+    assert false;
+    return 0;
   }
 
   private static int sqrtFloor(int x) {

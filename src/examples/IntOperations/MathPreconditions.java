@@ -55,21 +55,21 @@ class MathPreconditions {
 
   static long checkNonNegative(String role, long x) {
     if (x < 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be >= 0");
+      assert false: role + " (" + x + ") must be >= 0";
     }
     return x;
   }
   
   static BigInteger checkNotNull(BigInteger x) {
   	if (x == null) {
-  		throw new IllegalArgumentException(x + "(" + x + ") must be non-null");
+  		assert false: x + "(" + x + ") must be non-null";
   	}
   	return x;
   }
   
   static RoundingMode checkNotNull(RoundingMode r) {
   	if (r == null) {
-  		throw new IllegalArgumentException(r + "(" + r + ") must be non-null");
+  		assert false: r + "(" + r + ") must be non-null";
   	}
   	return r;
   }
@@ -82,7 +82,7 @@ class MathPreconditions {
 
   static BigInteger checkNonNegative(String role, BigInteger x) {
     if (checkNotNull(x).signum() < 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be >= 0");
+      assert false: role + " (" + x + ") must be >= 0";
     }
     return x;
   }
@@ -95,7 +95,7 @@ class MathPreconditions {
 
   static void checkInRange(boolean condition) {
     if (!condition) {
-      throw new ArithmeticException("not in range");
+      assert false: "not in range";
     }
   }
 
