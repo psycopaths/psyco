@@ -17,7 +17,7 @@ example.path=src/examples/CEV
 interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0
 
 # outputs results - use tmp because I ignore it during commits 
-interface.outputFile=tmp/generatedIntABC
+interface.outputFile=tmp/CEV
 
 # enable reporting for these loggers
 log.info=teacher,learning,refinement,jdart

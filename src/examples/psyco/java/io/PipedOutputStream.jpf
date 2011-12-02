@@ -17,7 +17,7 @@ example.path=src/examples/psyco/java/io
 interface.alphabet=connect:2,write:0,flush:0,close:0
 
 # outputs results - use tmp because I ignore it during commits 
-interface.outputFile=tmp/generatedIntABC
+interface.outputFile=tmp/PipedOutputStream
 
 # enable reporting for these loggers
 log.info=teacher,learning,refinement,jdart

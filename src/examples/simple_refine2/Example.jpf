@@ -6,6 +6,8 @@ target=empty
 args=empty
 
 JPF.isModeSymbolic=true
+# allow to run directly with JAVA queries that have no parameters
+optimizeQueries=true
 
 sut.package=simple_refine2
 sut.class=Example
@@ -15,7 +17,7 @@ example.path=src/examples/simple_refine2
 interface.alphabet=init:2,a:0,b:0
 
 # outputs results - use tmp because I ignore it during commits 
-interface.outputFile=tmp/generatedIntABC
+interface.outputFile=tmp/simple_refine2
 
 # enable reporting for these loggers
 log.info=teacher,learning,refinement,jdart
@@ -30,3 +32,5 @@ report.console.property_violation=error
 # declare all classes in the component that implement methods in the 
 # alphabet
 symbolic.classes=simple_refine1.Example
+
+jdart.optimize=true

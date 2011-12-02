@@ -7,9 +7,8 @@ args=empty
 
 JPF.isModeSymbolic=true
 # allow to run directly with JAVA queries that have no parameters
-# making it because because have no reset method in Signature.java 
+# making it false because because we have no reset method in Signature.java 
 optimizeQueries=false 
-
 
 sut.package=psyco.java.security
 sut.class=Signature
@@ -19,10 +18,10 @@ example.path=src/examples/psyco/java/security
 interface.alphabet=initSign:0,initVerify:0,sign:0,verify:0,update:0
 
 # outputs results - use tmp because I ignore it during commits 
-interface.outputFile=tmp/generatedIntABC
+interface.outputFile=tmp/Signature
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement
+log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker
@@ -34,3 +33,5 @@ report.console.property_violation=error
 # declare all classes in the component that implement methods in the 
 # alphabet
 symbolic.classes=psyco.java.security.Signature
+
+jdart.optimize=true

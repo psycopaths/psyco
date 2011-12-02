@@ -17,7 +17,7 @@ example.path=src/examples/mixedParamsSimple
 interface.alphabet=init:1,foo:1
 
 # outputs results - use tmp because I ignore it during commits 
-interface.outputFile=tmp/generatedIntABC
+interface.outputFile=tmp/mixedParamsSimple
 
 # enable reporting for these loggers
 log.info=teacher,learning,refinement,jdart
@@ -32,3 +32,5 @@ report.console.property_violation=error
 # declare all classes in the component that implement methods in the 
 # alphabet
 symbolic.classes=mixedParamsSimple.Example
+
+jdart.optimize=true
