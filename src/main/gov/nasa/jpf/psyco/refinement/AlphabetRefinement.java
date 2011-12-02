@@ -108,30 +108,25 @@ public class AlphabetRefinement {
 
       String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
       if (refinedSymbols.contains(strippedSymbolName)) {
-        // Don't refine again
+        // Don't refine again the same symbol
         continue;
       }
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
-
-      Formula errorPCs;
-      Formula dontKnowPCs;
-      try {
-        errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
-        dontKnowPCs = constraintsTree.getDontKnowPathConstraints(symbolName);
-      } catch (MixedParamsException e) {
-        return "UNKNOWN";
-      }
-
       HashMap<String, String> replacementNames = new HashMap<String, String>();
       for (int i = 0; i < oldSymbol.getNumParams(); i++) {
         String oldParamName = symbolName + "_P" + i;
         String newParamName = strippedSymbolName + "_P" + i;
         replacementNames.put(oldParamName, newParamName);
       }
+
+      Formula errorPCs;
+      try {
+        errorPCs = constraintsTree.getErrorPathConstraints(symbolName);
+      } catch (MixedParamsException e) {
+        return "UNKNOWN";
+      }
       errorPCs.replaceNames(replacementNames);
       logger.info("Error PCs:" + errorPCs.sourcePC());
-      dontKnowPCs.replaceNames(replacementNames);
-      logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
 
       boolean errorPCsSatisfiable = errorPCs.isSatisfiable();
       if (errorPCsSatisfiable) {
@@ -139,28 +134,46 @@ public class AlphabetRefinement {
         allDontKnow = false;
       }
 
-      LogicalExpression dontKnowPCs1 = new LogicalExpression(LogicalOperator.AND);
-      dontKnowPCs1.addExpresion(dontKnowPCs);
-      dontKnowPCs1.addExpresion(new NotExpression(errorPCs));
-      logger.info("DontKnow PCs':" + dontKnowPCs1.sourcePC());
-      boolean dontKnowPCsSatisfiable = dontKnowPCs1.isSatisfiable();
-      if (dontKnowPCsSatisfiable) {
-        allErrors = false;
-        allCovered = false;
+      LogicalExpression coveredDontKnowPCs = new LogicalExpression(LogicalOperator.AND);
+      coveredDontKnowPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
+      coveredDontKnowPCs.addExpresion(new NotExpression(errorPCs));
+
+      Formula coveredPCs;
+      LogicalExpression dontKnowPCs = null;
+      boolean dontKnowPCsSatisfiable = false;
+      try {
+        if (constraintsTree.areThereDontKnowPathConstraints(symbolName)) {
+          coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
+          coveredPCs.replaceNames(replacementNames);
+          logger.info("Covered PCs:" + coveredPCs.sourcePC());
+
+          LogicalExpression coveredPCs1 = new LogicalExpression(LogicalOperator.AND);
+          coveredPCs1.addExpresion(coveredDontKnowPCs);
+          coveredPCs1.addExpresion(coveredPCs);
+          logger.info("Covered PCs':" + coveredPCs1.sourcePC());
+
+          dontKnowPCs = new LogicalExpression(LogicalOperator.AND);
+          dontKnowPCs.addExpresion(coveredDontKnowPCs);
+          dontKnowPCs.addExpresion(new NotExpression(coveredPCs));
+          logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
+
+          dontKnowPCsSatisfiable = dontKnowPCs.isSatisfiable();
+          if (dontKnowPCsSatisfiable) {
+            allErrors = false;
+            allCovered = false;
+          }
+        } else {
+          coveredPCs = coveredDontKnowPCs;
+        }
+      } catch (MixedParamsException e1) {
+        return "UNKNOWN";
       }
 
-      LogicalExpression tmpExpr = new LogicalExpression(LogicalOperator.OR);
-      tmpExpr.addExpresion(dontKnowPCs);
-      tmpExpr.addExpresion(errorPCs);
-      LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
-      coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
-      coveredPCs.addExpresion(new NotExpression(tmpExpr));
-      logger.info("Covered PCs:" + coveredPCs.sourcePC());
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
       if (coveredPCsSatisfiable) {
         allErrors = false;
         allDontKnow = false;
-      }
+      }        
 
       try {
         if (errorPCsSatisfiable && coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
