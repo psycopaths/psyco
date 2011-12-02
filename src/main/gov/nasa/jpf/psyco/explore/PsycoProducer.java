@@ -117,14 +117,18 @@ public class PsycoProducer extends Producer {
   
   public static void addValuationVector(MethodInfo mi, Vector<Object> valuation) {
   	// if we have already fully processed this method then simply return
-  	if (exploredMethods.contains(mi.getFullName()))
+  	String toCompare = mi.getFullName();
+  	toCompare = toCompare.substring(0, toCompare.length() - 1);
+  	if (exploredMethods.contains(toCompare))
   		return;
 
   	// otherwise, clone and add the valuation vector to the methodToValuations map
-  	Vector<Vector<Object>> vectors = methodToValuations.get(mi.getFullName());
+  	String key = mi.getFullName();
+  	key = key.substring(0, key.length() - 1);
+  	Vector<Vector<Object>> vectors = methodToValuations.get(key);
   	if (vectors == null) {
   		vectors = new Vector<Vector<Object>>();
-  		methodToValuations.put(mi.getFullName(), vectors);
+  		methodToValuations.put(key, vectors);
   	}
   	if (!vectors.contains(valuation)) {
 //  	System.out.println(mi.getFullName() + " " + valuation.toString());
@@ -213,6 +217,7 @@ public class PsycoProducer extends Producer {
 			for (String methodName : methodNames) {
 				String[] tokens = methodName.split(":");
 				methodName = tokens[0];
+				methodName = methodName.substring(0, methodName.length() - 1);
 				sequenceMethods.add(methodName);
 				
 				// add fields for this method

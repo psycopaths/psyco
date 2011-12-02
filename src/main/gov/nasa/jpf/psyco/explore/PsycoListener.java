@@ -82,14 +82,12 @@ public class PsycoListener extends ConcolicListener {
         if (!methodName.equals("<clinit>") &&
         		!methodName.equals("init")) {
         	// now pick up the sequence methods and stuff them into sequenceMethods
-      		Config conf = JVM.getVM().getConfig();
-      		sequenceMethods = conf.getStringArray("sequence.methods");
-      		if (sequenceMethods != null) {
-      			for (int i = 0; i < sequenceMethods.length; i++) {
-      				sequenceMethods[i] = sequenceMethods[i].substring(0, sequenceMethods[i].indexOf(':'));
-      			}
+        	String[] sequenceMethods = JDartExplorer.explorer.sequenceMethodNames();
+        	if (sequenceMethods != null) {
       			for (String sequenceMethodName : sequenceMethods) {
-      				if (sequenceMethodName.equals(mi.getFullName())) {
+      				String toCompare = mi.getFullName();
+      				toCompare = toCompare.substring(0, toCompare.length() - 1);
+      				if (sequenceMethodName.equals(toCompare)) {
       					registerValuationVector(insn, ti, mi, true);
       					break;
       				}

@@ -110,7 +110,7 @@ public class JDartExplorer extends SymbolicExplorer {
     	for (int i = 0; i < sequenceLength; i++) {
     		String token = tokens[i];
     		String methodName = token.substring(0, token.indexOf(':'));
-    		sequenceMethodNames[i] = methodName;
+    		sequenceMethodNames[i] = methodName.substring(0, methodName.length() - 1);
     	}
     }
 
