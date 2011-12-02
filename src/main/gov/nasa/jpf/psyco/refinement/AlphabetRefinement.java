@@ -137,12 +137,7 @@ public class AlphabetRefinement {
 
       LogicalExpression dontKnowPCs1 = new LogicalExpression(LogicalOperator.AND);
       dontKnowPCs1.addExpresion(dontKnowPCs);
-      try {
-        dontKnowPCs1.addExpresion(new NotExpression(errorPCs.clone()));
-      } catch (CloneNotSupportedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      dontKnowPCs1.addExpresion(new NotExpression(errorPCs));
       logger.info("DontKnow PCs':" + dontKnowPCs1.sourcePC());
       boolean dontKnowPCsSatisfiable = dontKnowPCs1.isSatisfiable();
       if (dontKnowPCsSatisfiable) {
@@ -150,17 +145,12 @@ public class AlphabetRefinement {
         allCovered = false;
       }
 
+      LogicalExpression tmpExpr = new LogicalExpression(LogicalOperator.OR);
+      tmpExpr.addExpresion(dontKnowPCs);
+      tmpExpr.addExpresion(errorPCs);
       LogicalExpression coveredPCs = new LogicalExpression(LogicalOperator.AND);
-      try {
-        LogicalExpression tmpExpr = new LogicalExpression(LogicalOperator.OR);
-        tmpExpr.addExpresion(dontKnowPCs.clone());
-        tmpExpr.addExpresion(errorPCs.clone());
-        coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
-        coveredPCs.addExpresion(new NotExpression(tmpExpr));
-      } catch (CloneNotSupportedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      coveredPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
+      coveredPCs.addExpresion(new NotExpression(tmpExpr));
       logger.info("Covered PCs:" + coveredPCs.sourcePC());
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
       if (coveredPCsSatisfiable) {
@@ -168,50 +158,55 @@ public class AlphabetRefinement {
         allDontKnow = false;
       }
 
-      if (errorPCsSatisfiable && coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
-        Precondition preconditionCovered = new Precondition(coveredPCs);
-        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
-        alphabet.addSymbol(newSymbol);
+      try {
+        if (errorPCsSatisfiable && coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
+          Precondition preconditionCovered = new Precondition(coveredPCs.clone());
+          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+          alphabet.addSymbol(newSymbol);
 
-        Precondition preconditionError = new Precondition(errorPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
-        alphabet.addSymbol(newSymbol);
+          Precondition preconditionError = new Precondition(errorPCs.clone());
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+          alphabet.addSymbol(newSymbol);
 
-        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
-        alphabet.addSymbol(newSymbol);
+          Precondition preconditionDontKnow = new Precondition(dontKnowPCs.clone());
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+          alphabet.addSymbol(newSymbol);
 
-        refinedSymbols.add(strippedSymbolName);        
-      } else if (errorPCsSatisfiable && coveredPCsSatisfiable) {
-        Precondition preconditionCovered = new Precondition(coveredPCs);
-        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
-        alphabet.addSymbol(newSymbol);
+          refinedSymbols.add(strippedSymbolName);
+        } else if (errorPCsSatisfiable && coveredPCsSatisfiable) {
+          Precondition preconditionCovered = new Precondition(coveredPCs.clone());
+          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+          alphabet.addSymbol(newSymbol);
 
-        Precondition preconditionError = new Precondition(errorPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
-        alphabet.addSymbol(newSymbol);
+          Precondition preconditionError = new Precondition(errorPCs.clone());
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+          alphabet.addSymbol(newSymbol);
 
-        refinedSymbols.add(strippedSymbolName);        
-      } else if (errorPCsSatisfiable && dontKnowPCsSatisfiable) {
-        Precondition preconditionError = new Precondition(errorPCs);
-        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
-        alphabet.addSymbol(newSymbol);
+          refinedSymbols.add(strippedSymbolName);
+        } else if (errorPCsSatisfiable && dontKnowPCsSatisfiable) {
+          Precondition preconditionError = new Precondition(errorPCs.clone());
+          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionError);
+          alphabet.addSymbol(newSymbol);
 
-        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
-        alphabet.addSymbol(newSymbol);
+          Precondition preconditionDontKnow = new Precondition(dontKnowPCs.clone());
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+          alphabet.addSymbol(newSymbol);
 
-        refinedSymbols.add(strippedSymbolName);        
-      } else if (coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
-        Precondition preconditionCovered = new Precondition(coveredPCs);
-        Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
-        alphabet.addSymbol(newSymbol);
+          refinedSymbols.add(strippedSymbolName);
+        } else if (coveredPCsSatisfiable && dontKnowPCsSatisfiable) {
+          Precondition preconditionCovered = new Precondition(coveredPCs.clone());
+          Symbol newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionCovered);
+          alphabet.addSymbol(newSymbol);
 
-        Precondition preconditionDontKnow = new Precondition(dontKnowPCs);
-        newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
-        alphabet.addSymbol(newSymbol);
+          Precondition preconditionDontKnow = new Precondition(dontKnowPCs.clone());
+          newSymbol = new Symbol(strippedSymbolName, symbolName, originalClassName, oldSymbol.getOriginalMethodName(), oldSymbol.getNumParams(), preconditionDontKnow);
+          alphabet.addSymbol(newSymbol);
 
-        refinedSymbols.add(strippedSymbolName);
+          refinedSymbols.add(strippedSymbolName);
+        }
+      } catch (CloneNotSupportedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
 
