@@ -107,6 +107,10 @@ public class AlphabetRefinement {
       logger.info("Processing symbol " + symbolName);
 
       String strippedSymbolName = symbolName.substring(symbolName.indexOf("_") + 1);
+      if (refinedSymbols.contains(strippedSymbolName)) {
+        // Don't refine again
+        continue;
+      }
       Symbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
 
       Formula errorPCs;
