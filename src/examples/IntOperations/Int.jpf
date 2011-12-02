@@ -11,9 +11,22 @@ sut.package=IntOperations
 sut.class=IntMath
 example.path=src/examples/IntOperations
 
+# this function has a problem during refinement. mod with both operands
+# symbolic is not supported by Yices - says the constraint is non-linear
+# this has to be handled during the sat checks during refinement
+#interface.alphabet=gcd:2
 
-# format is method_name: # of parameters
-interface.alphabet=pow:2
+# this function has a different problem during refinement. There is a 
+# DontKnow in the tree because of a non-linear operation. This causes
+# a problem downstream related to simplifying a disjunct. You have an
+# expression of the form (a / b) * b, which is non-linear.
+interface.alphabet=divide:3
+
+# i am currently running this function
+#interface.alphabet=log10:2
+
+# the following methods work
+#interface.alphabet=isPowerOfTwo:1,pow:2,mod:2
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntOp

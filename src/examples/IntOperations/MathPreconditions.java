@@ -27,28 +27,28 @@ import java.math.RoundingMode;
 class MathPreconditions {
   static int checkPositive(String role, int x) {
     if (x <= 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be > 0");
+      assert false: role + " (" + x + ") must be > 0";
     }
     return x;
   }
 
   static long checkPositive(String role, long x) {
     if (x <= 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be > 0");
+      assert false: role + " (" + x + ") must be > 0";
     }
     return x;
   }
 
   static BigInteger checkPositive(String role, BigInteger x) {
     if (x.signum() <= 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be > 0");
+      assert false: role + " (" + x + ") must be > 0";
     }
     return x;
   }
 
   static int checkNonNegative(String role, int x) {
     if (x < 0) {
-      throw new IllegalArgumentException(role + " (" + x + ") must be >= 0");
+      assert false: role + " (" + x + ") must be >= 0";
     }
     return x;
   }
@@ -76,7 +76,7 @@ class MathPreconditions {
 
   public static void checkArgument(boolean expression) {
     if (!expression) {
-      throw new IllegalArgumentException();
+      assert false: "Illegal argument exception.";
     }
   }
 
@@ -89,7 +89,7 @@ class MathPreconditions {
 
   static void checkRoundingUnnecessary(boolean condition) {
     if (!condition) {
-      throw new ArithmeticException("mode was UNNECESSARY, but rounding was necessary");
+      assert false: "mode was UNNECESSARY, but rounding was necessary";
     }
   }
 
@@ -101,7 +101,7 @@ class MathPreconditions {
 
   static void checkNoOverflow(boolean condition) {
     if (!condition) {
-      throw new ArithmeticException("overflow");
+      assert false: "overflow";
     }
   }
 

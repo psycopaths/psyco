@@ -71,11 +71,11 @@ public class IntMath {
   @SuppressWarnings("fallthrough")
   public static int log2(int x, int mode) {
     MathPreconditions.checkPositive("x", x);
-//    if (mode == UNNECESSARY)
-//    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
+    if (mode == UNNECESSARY)
+    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
         // fall through
     if (mode == DOWN || mode == FLOOR) {
-//    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
+    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
     	return (Integer.SIZE - 1) - Integer.numberOfLeadingZeros(x);
     }
 
@@ -106,28 +106,26 @@ public class IntMath {
    *         is not a power of ten
    */
   @SuppressWarnings("fallthrough")
-  public static int log10(int x, RoundingMode mode) {
+  public static int log10(int x, int mode) {
   	MathPreconditions.checkPositive("x", x);
     int logFloor = log10Floor(x);
     int floorPow = POWERS_OF_10[logFloor];
-    switch (mode) {
-      case UNNECESSARY:
+
+    if (mode == UNNECESSARY)
       	MathPreconditions.checkRoundingUnnecessary(x == floorPow);
-        // fall through
-      case FLOOR:
-      case DOWN:
-        return logFloor;
-      case CEILING:
-      case UP:
-        return (x == floorPow) ? logFloor : logFloor + 1;
-      case HALF_DOWN:
-      case HALF_UP:
-      case HALF_EVEN:
+
+  	if (mode == FLOOR || mode == DOWN)
+  		return logFloor;
+  	
+  	if (mode == CEILING || mode == UP)
+  		return (x == floorPow) ? logFloor : logFloor + 1;
+  	
+  	if (mode == HALF_DOWN || mode == HALF_UP || mode == HALF_EVEN)
         // sqrt(10) is irrational, so log10(x) - logFloor is never exactly 0.5
-        return (x <= HALF_POWERS_OF_10[logFloor]) ? logFloor : logFloor + 1;
-      default:
-        throw new AssertionError();
-    }
+  		return (x <= HALF_POWERS_OF_10[logFloor]) ? logFloor : logFloor + 1;
+  	
+  	assert false: "Illegal mode.";
+    return 0;
   }
 
   private static int log10Floor(int x) {
@@ -236,67 +234,54 @@ public class IntMath {
    *         is not an integer multiple of {@code b}
    */
   public static int divide(int p, int q, int mode) {
-//  	System.out.println("In divide. p = " + p + " q = " + q + " mode = " + mode);
-//  	if (p > q) {
-//  		System.out.println("p > q");
-//  		return p - q;
-//  	} else {
-//  		System.out.println("assert false");
-//  		assert false;
-//  	}
-//  	return 0;
     if (q == 0) {
       assert false; // for GWT
-    } else {    
-    	int div = p / q;
-    	int rem = p - q * div; // equal to p % q
-
-    	return div;
     }
 
-    return p;
+    int div = p / q;
+    int rem = p - q * div; // equal to p % q
 
-//    if (rem == 0) {
-//      return div;
-//    }
-//
-//    /*
-//     * Normal Java division rounds towards 0, consistently with RoundingMode.DOWN. We just have to
-//     * deal with the cases where rounding towards 0 is wrong, which typically depends on the sign of
-//     * p / q.
-//     *
-//     * signum is 1 if p and q are both nonnegative or both negative, and -1 otherwise.
-//     */
-//    int signum = 1 | ((p ^ q) >> (Integer.SIZE - 1));
-//    boolean increment;
+    if (rem == 0) {
+      return div;
+    }
+
+    /*
+     * Normal Java division rounds towards 0, consistently with RoundingMode.DOWN. We just have to
+     * deal with the cases where rounding towards 0 is wrong, which typically depends on the sign of
+     * p / q.
+     *
+     * signum is 1 if p and q are both nonnegative or both negative, and -1 otherwise.
+     */
+    int signum = 1 | ((p ^ q) >> (Integer.SIZE - 1));
+    boolean increment = false;
     
-//    if (mode == UNNECESSARY) {
-//    	MathPreconditions.checkRoundingUnnecessary((rem == 0));
-//    }
+    if (mode == UNNECESSARY) {
+    	MathPreconditions.checkRoundingUnnecessary((rem == 0));
+    }
     // fall through
     
-//    if (mode == DOWN) {
-//    	increment = false;
-//    } else if (mode == UP) {
-//    	increment = true;
-//    } else if (mode == CEILING) {
-//    	increment = signum > 0;
-//    } else if (mode == FLOOR) {
-//    	increment = signum < 0;
-//    } else if (mode == HALF_EVEN || mode == HALF_DOWN || mode == HALF_UP) {
-//    	int absRem = abs(rem);
-//    	int cmpRemToHalfDivisor = absRem - (abs(q) - absRem);
-//    	// subtracting two nonnegative ints can't overflow
-//    	// cmpRemToHalfDivisor has the same sign as compare(abs(rem), abs(q) / 2).
-//    	if (cmpRemToHalfDivisor == 0) { // exactly on the half mark
-//    		increment = (mode == HALF_UP || (mode == HALF_EVEN & (div & 1) != 0));
-//    	} else {
-//    		increment = cmpRemToHalfDivisor > 0; // closer to the UP value
-//    	}
-//    } else {
-//    	throw new AssertionError();
-//    }
-//    return increment ? div + signum : div;
+    if (mode == DOWN) {
+    	increment = false;
+    } else if (mode == UP) {
+    	increment = true;
+    } else if (mode == CEILING) {
+    	increment = signum > 0;
+    } else if (mode == FLOOR) {
+    	increment = signum < 0;
+    } else if (mode == HALF_EVEN || mode == HALF_DOWN || mode == HALF_UP) {
+    	int absRem = abs(rem);
+    	int cmpRemToHalfDivisor = absRem - (abs(q) - absRem);
+    	// subtracting two nonnegative ints can't overflow
+    	// cmpRemToHalfDivisor has the same sign as compare(abs(rem), abs(q) / 2).
+    	if (cmpRemToHalfDivisor == 0) { // exactly on the half mark
+    		increment = (mode == HALF_UP || (mode == HALF_EVEN & (div & 1) != 0));
+    	} else {
+    		increment = cmpRemToHalfDivisor > 0; // closer to the UP value
+    	}
+    } else {
+    	assert false;
+    }
+    return increment ? div + signum : div;
   }
 
   /**
@@ -315,10 +300,14 @@ public class IntMath {
    */
   public static int mod(int x, int m) {
     if (m <= 0) {
-      throw new ArithmeticException("Modulus " + m + " must be > 0");
+      assert false: "Modulus " + m + " must be > 0";
+    }
+    if (x < 0) {
+    	assert false: "Modulus " + x + " must be >= 0";
     }
     int result = x % m;
-    return (result >= 0) ? result : result + m;
+    return result;
+//    return (result >= 0) ? result : result + m;
   }
 
   /**
@@ -350,7 +339,9 @@ public class IntMath {
    * @throws ArithmeticException if {@code a + b} overflows in signed {@code int} arithmetic
    */
   public static int checkedAdd(int a, int b) {
-    long result = (long) a + b;
+  	long la = a;
+  	long lb = b;
+  	long result = la + lb;
     MathPreconditions.checkNoOverflow(result == (int) result);
     return (int) result;
   }
