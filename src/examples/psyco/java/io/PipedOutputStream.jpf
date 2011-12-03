@@ -9,6 +9,10 @@ JPF.isModeSymbolic=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=true
 
+# this flag when set may cause jdart not to work correctly. The problem
+# is with the way we generate the Yices input underneath for bit-vectors
+#dp.use-bitvectors=true
+
 sut.package=psyco.java.io
 sut.class=PipedOutputStream
 example.path=src/examples/psyco/java/io
