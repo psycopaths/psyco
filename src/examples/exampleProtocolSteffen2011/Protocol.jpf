@@ -6,6 +6,9 @@ target=empty
 args=empty
 
 JPF.isModeSymbolic=true
+dp.use-bitvectors=true
+# allow to run directly with JAVA queries that have no parameters
+optimizeQueries=true
 conjecture.Depth=4
 
 # this flag when set will not work for this test. Yices inputs generated
