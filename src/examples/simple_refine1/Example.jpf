@@ -6,6 +6,7 @@ target=empty
 args=empty
 
 JPF.isModeSymbolic=true
+dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=true
 
