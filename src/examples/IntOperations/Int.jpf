@@ -6,6 +6,7 @@ target=empty
 args=empty
 
 JPF.isModeSymbolic=true
+dp.use-bitvectors=true
 
 sut.package=IntOperations
 sut.class=IntMath
