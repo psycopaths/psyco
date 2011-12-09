@@ -128,46 +128,46 @@ public class AlphabetRefinement {
       errorPCs.replaceNames(replacementNames);
       logger.info("Error PCs:" + errorPCs.sourcePC());
 
+      Formula coveredDontKnowPCs;
       boolean errorPCsSatisfiable = errorPCs.isSatisfiable();
       if (errorPCsSatisfiable) {
         allCovered = false;
         allDontKnow = false;
+        LogicalExpression andExpr = new LogicalExpression(LogicalOperator.AND);
+        andExpr.addExpresion(oldSymbol.getPrecondition().getFormula());
+        andExpr.addExpresion(new NotExpression(errorPCs));
+        coveredDontKnowPCs = andExpr;
+      } else {
+        coveredDontKnowPCs = oldSymbol.getPrecondition().getFormula();
       }
 
-      LogicalExpression coveredDontKnowPCs = new LogicalExpression(LogicalOperator.AND);
-      coveredDontKnowPCs.addExpresion(oldSymbol.getPrecondition().getFormula());
-      coveredDontKnowPCs.addExpresion(new NotExpression(errorPCs));
-
-      Formula coveredPCs;
-      LogicalExpression dontKnowPCs = null;
-      boolean dontKnowPCsSatisfiable = false;
+      Formula dontKnowPCsTmp;
       try {
-        if (constraintsTree.areThereDontKnowPathConstraints(symbolName)) {
-          coveredPCs = constraintsTree.getCoveredPathConstraints(symbolName);
-          coveredPCs.replaceNames(replacementNames);
-          logger.info("Covered PCs:" + coveredPCs.sourcePC());
-
-          LogicalExpression coveredPCs1 = new LogicalExpression(LogicalOperator.AND);
-          coveredPCs1.addExpresion(coveredDontKnowPCs);
-          coveredPCs1.addExpresion(coveredPCs);
-          logger.info("Covered PCs':" + coveredPCs1.sourcePC());
-
-          dontKnowPCs = new LogicalExpression(LogicalOperator.AND);
-          dontKnowPCs.addExpresion(coveredDontKnowPCs);
-          dontKnowPCs.addExpresion(new NotExpression(coveredPCs));
-          logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
-
-          dontKnowPCsSatisfiable = dontKnowPCs.isSatisfiable();
-          if (dontKnowPCsSatisfiable) {
-            allErrors = false;
-            allCovered = false;
-          }
-        } else {
-          coveredPCs = coveredDontKnowPCs;
-        }
+        dontKnowPCsTmp = constraintsTree.getDontKnowPathConstraints(symbolName);
       } catch (MixedParamsException e1) {
         return "UNKNOWN";
       }
+      dontKnowPCsTmp.replaceNames(replacementNames);
+      logger.info("DontKnow PCs Tmp:" + dontKnowPCsTmp.sourcePC());
+
+      LogicalExpression dontKnowPCs = new LogicalExpression(LogicalOperator.AND);
+      dontKnowPCs.addExpresion(coveredDontKnowPCs);
+      dontKnowPCs.addExpresion(dontKnowPCsTmp);
+      logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
+
+      Formula coveredPCs;
+      boolean dontKnowPCsSatisfiable = dontKnowPCs.isSatisfiable();
+      if (dontKnowPCsSatisfiable) {
+        allErrors = false;
+        allCovered = false;
+        LogicalExpression andExpr = new LogicalExpression(LogicalOperator.AND);
+        andExpr.addExpresion(coveredDontKnowPCs);
+        andExpr.addExpresion(new NotExpression(dontKnowPCsTmp));
+        coveredPCs = andExpr;
+      } else {
+        coveredPCs = coveredDontKnowPCs;
+      }
+      logger.info("Covered PCs:" + coveredPCs.sourcePC());
 
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
       if (coveredPCsSatisfiable) {
@@ -250,7 +250,7 @@ public class AlphabetRefinement {
       return newAlphabet;
     }
   }
-  
+
   private void writeAndCompileRefinement() {
     logger.fine(alphabet.toSource());
     BufferedWriter writer = null;
