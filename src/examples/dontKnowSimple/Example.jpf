@@ -1,0 +1,39 @@
+@using jpf-jdart
+
+shell=gov.nasa.jpf.psyco.tools.RunGenerateInt
+
+target=empty
+args=empty
+
+JPF.isModeSymbolic=true
+dp.use-bitvectors=true
+# allow to run directly with JAVA queries that have no parameters
+optimizeQueries=true
+
+sut.package=dontKnowSimple
+sut.class=Example
+example.path=src/examples/dontKnowSimple
+
+conjecture.Depth=2
+
+# format is method_name: # of parameters
+interface.alphabet=m1:2,m2:1,m3:0
+
+# outputs results - use tmp because I ignore it during commits 
+interface.outputFile=tmp/dontKnowSimple
+
+# enable reporting for these loggers
+log.info=teacher,learning,refinement,jdart
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following line
+#report.console.finished=result
+report.console.property_violation=error
+
+# declare all classes in the component that implement methods in the 
+# alphabet
+symbolic.classes=dontKnowSimple.Example
+
+jdart.optimize=true
