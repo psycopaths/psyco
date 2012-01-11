@@ -32,6 +32,6 @@ report.console.property_violation=error
 
 # declare all classes in the component that implement methods in the 
 # alphabet
-symbolic.classes=simple_refine1.Example
+symbolic.classes=simple_refine2.Example
 
 jdart.optimize=true
