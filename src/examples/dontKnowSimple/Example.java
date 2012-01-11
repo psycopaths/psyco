@@ -20,30 +20,21 @@ package dontKnowSimple;
 
 public class Example {
   private static int x = 1;
-  private static int y = 1;
 
   // reset method needed by psyco
   public static void internalReset() {
     x = 1;
-    y = 1;
   }
 
-  public static void m1(int a, int b) {
-    x = a;
-    if (x > b) {
-      y = b;
-    }
-  }
-
-  public static void m2(int c) {
-    if (x  > y * y) {
+  public static void m1(int c) {
+    if (c < 10) {
       x = c;
     } else {
       x = c * c;
     }
   }
 
-  public static void m3() {
+  public static void m2() {
     if (x <= 5) {
       assert false;
     }
