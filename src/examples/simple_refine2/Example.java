@@ -35,8 +35,6 @@ public class Example {
     x = p;
     y = q;
   }
-  
-  
 
   public static void a() {
     System.out.println("-------- In a!");
