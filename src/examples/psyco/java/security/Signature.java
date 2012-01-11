@@ -129,6 +129,11 @@ public abstract class Signature {
   // protected int state = UNINITIALIZED;
   protected static int state = UNINITIALIZED;
 
+  // only used for concrete execution
+  public static void internalReset() {
+    state = UNINITIALIZED;
+  }
+
   /**
    * Creates a Signature object for the specified algorithm.
    * 
