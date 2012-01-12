@@ -288,7 +288,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         ProgramExecutive.main(programArgs);
       } catch (Throwable e) {
         // make sure exception is due to assert false and not to some mistake...
-        if (!((e.getCause()).toString()).equals("java.lang.AssertionError")) {
+        if (!((e.getCause()).toString()).startsWith("java.lang.AssertionError")) {
           System.err.println("Unexpected exception caught during query");
         }
 
