@@ -8,14 +8,16 @@ args=empty
 JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
-optimizeQueries=false
+optimizeQueries=true
+conjecture.Depth=3
 
 sut.package=CEV
 sut.class=CEV
 example.path=src/examples/CEV
 
 # format is method_name: # of parameters
-interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0
+#interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0,srbIgnition:0,stage1Separation:0,stage2Separation:0,doEdsSeparation:0,doSMSeparation:0,readyForDeorbit:0,lsamAscentBurn:0
+interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0,stage1Separation:0
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/CEV
