@@ -229,7 +229,8 @@ public class PsycoProducer extends Producer {
 			// we now have the sequence method names in a vector. We recursively
 			// generate valuations using this sequence and the methodToValuations
 			// map
-			choices = populateValuations(sequenceMethods, null, 0 /* index */);
+			populateValuations(sequenceMethods, null, 0 /* index */);
+			choices = sequenceValuations.size();
 			
 			System.out.println("We have " + choices + " choices of pre-valuated vectors");
 			System.out.println("..and the valuations are");
@@ -244,10 +245,9 @@ public class PsycoProducer extends Producer {
   
   // The worker bee that does the recursive addition of valuations
   
-  public int populateValuations(Vector<String> sequenceMethods, Vector<Object> valuation, int index) {
-  	int choices = 0;
+  public void populateValuations(Vector<String> sequenceMethods, Vector<Object> valuation, int index) {
   	if (index >= sequenceMethods.size())
-  		return choices;
+  		return;
   	
   	String methodName = sequenceMethods.elementAt(index);
   	Vector<Vector<Object>> priorVectors = methodToValuations.get(methodName);
@@ -259,29 +259,20 @@ public class PsycoProducer extends Producer {
   				v.addAll(valuation);
 
   			v.addAll(priorVectors.elementAt(i));
-  			int k = populateValuations(sequenceMethods, v, index + 1);
-  			if (k != 0)
-  				choices += k;
-  			else
-  				choices++;
+  			populateValuations(sequenceMethods, v, index + 1);
 
-  			if (index == sequenceMethods.size() - 1)
+  			if (index == sequenceMethods.size() - 1 && v.size() > 0)
   				sequenceValuations.add(v);
   		}
   	} else {
 			Vector<Object> v = new Vector<Object>();
 			if (valuation != null)
 				v.addAll(valuation);
-			int k = populateValuations(sequenceMethods, v, index + 1);
-			if (k != 0)
-				choices += k;
-			else
-				choices++;
+			populateValuations(sequenceMethods, v, index + 1);
 			
-			if (index == sequenceMethods.size() - 1)
+			if (index == sequenceMethods.size() - 1 && v.size() > 0)
 				sequenceValuations.add(v);
   	}
-  	return choices;
   }
 
   // If we are in random perturbation mode, then revert to the base class
@@ -309,7 +300,7 @@ public class PsycoProducer extends Producer {
   // method to check if we are in random mode to do deferred assignments
   
   static public boolean hasChoices() {
-  	if (sequenceValuations == null)
+  	if (sequenceValuations == null || sequenceValuations.size() == 0)
   		return false;
   	
   	if (currentChoice < sequenceValuations.size())
