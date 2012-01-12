@@ -45,7 +45,6 @@ import gov.nasa.jpf.psyco.Target.ProgramExecutive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-
 /*
  * Teacher for interface generation in psyco using classic L*
  */
@@ -70,7 +69,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   private int memoizeHits = 0;
 
   public Teacher3Values(Config conf, AlphabetRefinement ref) {
-
     memoized_ = new MemoizeTable();
 
     /* targetArgs are no longer relevant
@@ -85,7 +83,20 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     alphaRefiner = ref;
     module1_ = conf.getString("sut.package") + "." + conf.getString("sut.class"); // this is our target class
     module2_ = null; // TODO change for compositional verification
+
     JPFargs_ = conf;
+    String packageName = JPFargs_.getProperty("sut.package");
+    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
+    JPFargs_.setProperty("symbolic.assertions", st);
+    st = JPFargs_.getProperty("symbolic.classes");
+    if (st != null) {
+    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
+    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    } else {
+      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    }
+    JPFargs_.setProperty("symbolic.classes", st);
+
     String[] alpha = conf.getStringArray("interface.alphabet");
     alphabet_ = new Vector();
 
@@ -98,12 +109,10 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     if (mode == SYMB) {
       setUpJDartConfig();
     }
-
   }
 
   // allow reuse of memoized table after refinements
   public Teacher3Values(Config conf, AlphabetRefinement ref, MemoizeTable mem) {
-
     if (mem == null) {
       memoized_ = new MemoizeTable();
     } else {
@@ -122,7 +131,20 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     alphaRefiner = ref;
     module1_ = conf.getString("sut.package") + "." + conf.getString("sut.class"); // this is our target class
     module2_ = null; // TODO change for compositional verification
+    
     JPFargs_ = conf;
+    String packageName = JPFargs_.getProperty("sut.package");
+    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
+    JPFargs_.setProperty("symbolic.assertions", st);
+    st = JPFargs_.getProperty("symbolic.classes");
+    if (st != null) {
+    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
+    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    } else {
+      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+    }
+    JPFargs_.setProperty("symbolic.classes", st);
+
     String[] alpha = conf.getStringArray("interface.alphabet");
     alphabet_ = new Vector();
 
@@ -135,7 +157,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     if (mode == SYMB) {
       setUpJDartConfig();
     }
-
   }
 
   private String getPrefix(String action, HashMap hm) {
@@ -143,7 +164,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   }
 
   private void resetTarget() {
-
     try {
       Class<?> invokedClass = Class.forName(module1_);
       try {
@@ -161,7 +181,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     } catch (ClassNotFoundException e1) {
       System.err.println("Class not found: " + module1_);
     }
-
   }
 
   public ThreeValues query(AbstractList<String> sequence) throws SETException {
@@ -180,7 +199,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   }
 
   public ThreeValues query(AbstractList<String> sequence, boolean memoize) throws SETException {
-
     if (refine) {
       return (ThreeValues.TRUE); // means we ignore all queries 
     }                     // when the alphabet will be refined 
@@ -189,7 +207,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     if (sequence.isEmpty()) {
       return (ThreeValues.TRUE);
     }
-
 
     logger.info("New query: ", sequence);
 
@@ -201,7 +218,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       recalled = memoized_.getResult(sequence);
     }
 
-
     if (recalled != null) { // we get the result from memoized
       logger.info("Result from memoized for sequence: ", sequence);
       logger.info("Result to be negated is: ", recalled);
@@ -209,7 +225,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
       return negateResult(recalled);
     }
-
 
     // we have not returned so we need to model check
 
@@ -224,7 +239,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     if (optimizeQueriesNoParams) {
       parameters_involved = false;
 
-
       if (mode == SYMB) {
         for (String nextEl : sequence) {
           if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
@@ -235,11 +249,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       }
     }
 
-
     String[] programArgs = null;
     int counter = 0;
-
-
 
     if (mode == CONCR || !parameters_involved) {
       System.out.println("Mode is CONCR or no params");
@@ -259,7 +270,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
     HashMap hm = new HashMap();
     for (String nextEl : sequence) {
-
       if (!hm.containsKey(nextEl)) {
         hm.put(nextEl, new Integer(0));
       }
@@ -291,7 +301,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         if (!((e.getCause()).toString()).startsWith("java.lang.AssertionError")) {
           System.err.println("Unexpected exception caught during query");
         }
-
         result = false;
       }
 
@@ -309,7 +318,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         }
       }
     }
-
 
     if (mode == SYMB) {
       System.out.println("Case concolic");
@@ -360,13 +368,10 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         }
         return ThreeValues.TRUE;
       }
-
     }
-
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {
-
     if (refine) {
       return null; // we need to ignore conjectures because alphabet is refined 
     }
@@ -415,7 +420,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
   
   private Vector checkSequences(String[] sequences, ThreeValues desired)  throws SETException {
-
     if (sequences.length == 0) {
       logger.info("NO TRACES IN SET");
     } else {
@@ -443,15 +447,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     }
 
     return null; // will need to check if there was refinement involved
- }  
+  }  
     
-    
-    
-
-  
-
-  
-
   public Iterator getAlphabetIterator() {
     return (alphabet_.iterator());
   }
@@ -469,7 +466,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   }
 
   private void setUpJDartConfig() {
-
     JPFargs_.setTarget(TARGET);  // main program
     JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
 
@@ -489,16 +485,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   		SequenceExplorer.ExplorationMethod explorationMethod,
   		AbstractList<String> sequence) {
     JPFargs_.setTargetArgs(programArgs); // arguments to main
-    String packageName = JPFargs_.getProperty("sut.package");
-    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
-    JPFargs_.setProperty("symbolic.assertions", st);
-    st = JPFargs_.getProperty("symbolic.classes");
-    if (st != null) {
-      st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    } else {
-      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    }
-    JPFargs_.setProperty("symbolic.classes", st);
     return (new SequenceExplorer(JPFargs_, explorationMethod, true, sequence, alphaRefiner));
   }
 
