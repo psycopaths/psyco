@@ -54,6 +54,17 @@ public class Spacecraft {
   static boolean lsamDescentDocked = false;
   static boolean edsDocked = false;
   
+  Spacecraft() {
+    doneStage1 = false;
+    doneStage2 = false;
+    lasDocked = true;
+    cmDocked = true;
+    smDocked = true;
+    lsamAscentDocked = false;
+    lsamDescentDocked = false;
+    edsDocked = false;  	
+  }
+  
   //--- actions
   
   public static void internalReset() {

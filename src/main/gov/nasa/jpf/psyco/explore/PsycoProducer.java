@@ -279,7 +279,10 @@ public class PsycoProducer extends Producer {
   // implementation. Otherwise, apply values from the set of valuations at
   // index 0, which would have been updated via a call to registerValues.
   
-  public boolean perturb(ChoiceGenerator<?>cg, StackFrame frame) {  	
+  public boolean perturb(ChoiceGenerator<?>cg, StackFrame frame) {
+  	if (hasChoices())
+  		return false;
+  	
     if (mi == null || inRandomMode.get(mi.getFullName())) {
     	return super.perturb(cg, frame);
     }
