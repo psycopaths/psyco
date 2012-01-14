@@ -50,6 +50,9 @@ public class IntMath {
 	
   // NOTE: Whenever both tests are cheap and functional, it's faster to use &, | instead of &&, ||
 
+  // only used for concrete execution
+  public static void internalReset() {}
+
   /**
    * Returns {@code true} if {@code x} represents a power of two.
    *
