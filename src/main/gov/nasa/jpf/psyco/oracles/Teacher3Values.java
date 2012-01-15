@@ -253,13 +253,13 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     int counter = 0;
 
     if (mode == CONCR || !parameters_involved) {
-      System.out.println("Mode is CONCR or no params");
+      logger.info("Mode is CONCR or no params");
 
       programArgs = new String[sequence.size() + 1];
       programArgs[0] = "sequence";
       counter = 1;
     } else if (mode == SYMB) {
-      System.out.println("Mode is symbolic");
+      logger.info("Mode is symbolic");
       programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
       programArgs[0] = "sequence";
       programArgs[1] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + "init";
@@ -289,7 +289,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     }
 
     if ((mode == SYMB) && (!parameters_involved)) {
-      System.out.println("Case no params");
+      logger.info("Case no params");
       logger.info("---------- NO PARAMETERS - RUN JAVA------------");
       // just execute with simple java - avoid JPF altogether
       boolean result = true;
@@ -299,7 +299,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       } catch (Throwable e) {
         // make sure exception is due to assert false and not to some mistake...
         if (!((e.getCause()).toString()).startsWith("java.lang.AssertionError")) {
-          System.err.println("Unexpected exception caught during query");
+          logger.severe("Unexpected exception caught during query");
         }
         result = false;
       }
@@ -320,7 +320,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     }
 
     if (mode == SYMB) {
-      System.out.println("Case concolic");
       logger.info("---------- RUN CONCOLIC ------------");
       // TODO
       // first call jpf-jdart when it is ready and get the constraints tree
@@ -352,7 +351,6 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         return (ThreeValues.TRUE); // will be ignored since refined was set to true
       }
     } else {  // mode is concrete
-      System.out.println("Case is concrete");
       logger.info("---------- RUN JPF CONCRETE MODE ------------");
       JPF jpf = createJPFInstance(programArgs); // driver for M1
       jpf.run();

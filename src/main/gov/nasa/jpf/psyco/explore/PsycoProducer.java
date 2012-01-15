@@ -34,6 +34,7 @@ import jfuzz.Producer;
 import jfuzz.Producer.Associator;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.jvm.ChoiceGenerator;
 import gov.nasa.jpf.jvm.ClassInfo;
 import gov.nasa.jpf.jvm.JVM;
@@ -41,8 +42,10 @@ import gov.nasa.jpf.jvm.MethodInfo;
 import gov.nasa.jpf.jvm.StackFrame;
 import gov.nasa.jpf.jvm.Types;
 import gov.nasa.jpf.perturb.GenericDataAbstractor.Valuation;
+import gov.nasa.jpf.util.JPFLogger;
 
 public class PsycoProducer extends Producer {
+  private static JPFLogger logger = JPF.getLogger("jdart");
   static PsycoProducer producer = null;
     
   // Hash that maps each method name to a vector of Objects that represent
@@ -232,11 +235,11 @@ public class PsycoProducer extends Producer {
 			populateValuations(sequenceMethods, null, 0 /* index */);
 			choices = sequenceValuations.size();
 			
-			System.out.println("We have " + choices + " choices of pre-valuated vectors");
-			System.out.println("..and the valuations are");
+			logger.info("We have " + choices + " choices of pre-valuated vectors");
+			logger.info("..and the valuations are");
   		for (int i = 0; i < sequenceValuations.size(); i++) {
   			Vector<Object> v = sequenceValuations.elementAt(i);
-  			System.out.println("  " + v.toString());
+  			logger.info("  " + v.toString());
   		}			
 		}
 		
@@ -339,7 +342,7 @@ public class PsycoProducer extends Producer {
   			}
   		}
   		if (processedChoice) {
-  			System.out.println("currentChoice = " + currentChoice);
+  		  logger.info("currentChoice = " + currentChoice);
   			sequenceValuations.setElementAt(null, currentChoice);
   			currentChoice++;
   		}

@@ -19,6 +19,7 @@
 package gov.nasa.jpf.psyco.tools;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.JPF;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -31,10 +32,11 @@ import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.psyco.oracles.Teacher3Values;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 
+import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 
 public class RunGenerateInt implements JPFShell {
-
+  private JPFLogger logger = JPF.getLogger("teacher");
   Config conf;
 
   public RunGenerateInt(Config conf) {
@@ -120,13 +122,13 @@ public class RunGenerateInt implements JPFShell {
 
     String storeResult = conf.getProperty("interface.outputFile");
 
-    System.out.println("\n\n Total time is: " + (time2-time1)  );
-    System.out.println("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
-    System.out.println("\n\n********************************************");
+    logger.info("\n\n Total time is: " + (time2-time1)  );
+    logger.info("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
+    logger.info("\n\n********************************************");
     if (inf == null) {
-      System.out.println("Interface is null - no environment can help");
+      logger.info("Interface is null - no environment can help");
     } else {
-      System.out.print("Interface generation completed. ");
+      logger.info("Interface generation completed. ");
       Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
       Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
       if (mode == Teacher3Values.SYMB) {
@@ -135,7 +137,6 @@ public class RunGenerateInt implements JPFShell {
         Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions, symbolsToMethodNames);
       }
     }
-    System.out.println("********************************************");
-
+    logger.info("********************************************");
   }
 }
