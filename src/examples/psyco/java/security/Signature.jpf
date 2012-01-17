@@ -8,7 +8,7 @@ args=empty
 JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
-optimizeQueries=true
+optimizeQueries=false
 
 sut.package=psyco.java.security
 sut.class=Signature
@@ -34,4 +34,4 @@ report.console.property_violation=error
 # alphabet
 symbolic.classes=psyco.java.security.Signature
 
-jdart.optimize=true
+jdart.optimize=false

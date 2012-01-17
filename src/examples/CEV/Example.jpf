@@ -8,7 +8,7 @@ args=empty
 JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
-optimizeQueries=true
+optimizeQueries=false
 
 sut.package=CEV
 sut.class=CEV
@@ -35,4 +35,4 @@ report.console.property_violation=error
 # alphabet
 symbolic.classes=CEV.CEV,CEV.Spacecraft,CEV.ErrorLog
 
-jdart.optimize=true
+jdart.optimize=false

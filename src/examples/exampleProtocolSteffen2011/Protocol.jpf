@@ -8,7 +8,7 @@ args=empty
 JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
-optimizeQueries=true
+optimizeQueries=false
 conjecture.Depth=4
 
 sut.package=exampleProtocolSteffen2011
@@ -36,4 +36,4 @@ report.console.property_violation=error
 # alphabet
 symbolic.classes=exampleProtocolSteffen2011.Protocol
 
-jdart.optimize=true
+jdart.optimize=false
