@@ -36,12 +36,13 @@ import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 
 public class RunGenerateInt implements JPFShell {
-  private JPFLogger logger = JPF.getLogger("teacher");
+  private JPFLogger logger;
   Config conf;
 
   public RunGenerateInt(Config conf) {
     this.conf = conf;
     LogManager.init(conf);
+    logger = JPF.getLogger("teacher");
   }
 
   public void start(String[] args) {
