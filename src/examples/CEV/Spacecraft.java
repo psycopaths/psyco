@@ -45,6 +45,8 @@ public class Spacecraft {
   static int LSAM_DESCENT = 6;
   static int EDS = 7;
   
+  static int dockedComponents = 0;
+  
   static boolean doneStage1 = false;
   static boolean doneStage2 = false;
   static boolean lasDocked = true;
@@ -62,7 +64,9 @@ public class Spacecraft {
     smDocked = true;
     lsamAscentDocked = false;
     lsamDescentDocked = false;
-    edsDocked = false;  	
+    edsDocked = false; 
+    
+    dockedComponents = 3; 
   }
   
   //--- actions
@@ -76,29 +80,73 @@ public class Spacecraft {
     lsamAscentDocked = false;
     lsamDescentDocked = false;
     edsDocked = false;  	
+
+    dockedComponents = 3; 
   }
   
   public static void reset(int component) {
-    if (component == LAS)
+    if (component == LAS) {
       lasDocked = true;
-    else if (component == STAGE1)
+      dockedComponents++;
+    } else if (component == STAGE1)
   		doneStage1 = false;
   	else if (component == STAGE2)
   		doneStage2 = false;
-  	else if (component == CM)
+  	else if (component == CM) {
   		cmDocked = true;
-  	else if (component == SM)
+  		dockedComponents++;
+  	} else if (component == SM)
   		smDocked = true;
-  	else if (component == LSAM_ASCENT)
+  	else if (component == LSAM_ASCENT) {
   		lsamAscentDocked = false;
-  	else if (component == LSAM_DESCENT)
+  		dockedComponents--;
+  	} else if (component == LSAM_DESCENT) {
   		lsamDescentDocked = false;
-  	else if (component == EDS)
+  		dockedComponents--;
+  	} else if (component == EDS) {
   		edsDocked = false;
+  		dockedComponents--;
+  	}
   }
   
   public static void doStage1Separation () {
   	doneStage1 = true;
+  }
+
+  public static void doStage1Abort (int altitude, int lasControlMotorFired){
+    if (lasControlMotorFired == 0) {
+      assert false: "LAS control failure";
+    }
+  }
+  
+  public static void doLowActiveAbort () {
+  	if (lasDocked)
+  		dockedComponents--;
+  	if (smDocked)
+  		dockedComponents--;
+
+  	lasDocked = false;
+  	smDocked = false;
+  	doneStage1 = true;
+  	doneStage2 = true;
+  }
+
+  public static void doLowPassiveAbort () {
+  	if (lasDocked)
+  		dockedComponents--;
+  	if (smDocked)
+  		dockedComponents--;
+
+  	lasDocked = false;
+  	smDocked = false;
+  	doneStage1 = true;
+  	doneStage2 = true;
+  }
+  
+  public static void doStage2Abort (int lasControlMotorFired){
+    if (lasControlMotorFired == 0) {
+    	assert false: "LAS control failure";
+    }
   }
   
   public static void doStage2Separation () {
@@ -113,12 +161,15 @@ public class Spacecraft {
   		assert false :"las jettison at altitudes under 100000 ft prohibited";
   	}
   	lasDocked = false;
+  	dockedComponents--;
   }
   
   public static void doLSAMrendezvous () {
   	lsamAscentDocked = true;
   	lsamDescentDocked = true;
   	edsDocked = true;
+  	
+  	dockedComponents += 3;
   }
   
   public static boolean doEDSseparation () {
@@ -127,15 +178,21 @@ public class Spacecraft {
   		return false;
   	}
     edsDocked = false;
+    dockedComponents--;
+
     return true;
   }
   
   public static void doLSAMascentBurn () {
   	lsamDescentDocked = false;
+  	
+  	dockedComponents--;
   }
   
   public static void doLSAMascentRendezvous () {
   	lsamAscentDocked = false;
+  	
+  	dockedComponents--;
   }
   
   public static void doSMseparation () {
@@ -143,8 +200,15 @@ public class Spacecraft {
   		assert false : "sm separation without sm attached";
   	}
   	smDocked = false;
+  	
+  	dockedComponents--;
   }
   
+  public static void doEiBurn (int hasCMimbalance, int hasRCSfailure){
+    if (hasRCSfailure == 0) {
+    	assert false: "CM RCS failure";
+    }
+  }
   //--- assertions
   
   public static boolean readyForLSAMrendezvous() {
@@ -159,5 +223,37 @@ public class Spacecraft {
     	assert false : "deorbit with docked components";
     }
     return true;
+  }
+  
+  public static boolean readyForTliBurn () {
+    if (!edsDocked) {
+    	assert false: "tliBurn without EDS";
+    }
+    return true;
+  }
+  
+  public static boolean readyForTeiBurn () {
+    if (lsamAscentDocked || lsamDescentDocked) {
+    	assert false: "teiBurn with LSAM components docked";
+    }
+    return true;
+  }
+  
+  public boolean readyForEiBurn () {
+    if (cmDocked && dockedComponents == 1){
+      return true;
+    } else {
+      assert false: "eiBurn with components docked to CM";
+      return false;
+    }
+  }
+  
+  public static boolean readyForChuteSequence() {
+    if (cmDocked && (dockedComponents == 1)){
+      return true;
+    } else {
+      assert false: "chute sequence with components docked to CM";
+      return false;
+    }
   }
 }
