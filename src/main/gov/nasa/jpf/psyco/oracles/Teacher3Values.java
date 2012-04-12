@@ -50,7 +50,7 @@ import java.lang.reflect.Method;
  */
 public class Teacher3Values implements MinimallyAdequateTeacher {
 
-  public static int maxDepth = 3;
+  public static int maxDepth = 1;
   public static final boolean CONCR = false;
   public static final boolean SYMB = true;
   public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
@@ -66,7 +66,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   private static boolean mode = CONCR;
   private static AlphabetRefinement alphaRefiner = null;
   private static boolean optimizeQueriesNoParams = true; // enabled by default
-  private int memoizeHits = 0;
+  private static int memoizeHits = 0;
+  private static int totalQueries = 0;
 
   public Teacher3Values(Config conf, AlphabetRefinement ref) {
     memoized_ = new MemoizeTable();
@@ -208,7 +209,10 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       return (ThreeValues.TRUE);
     }
 
+    System.out.println("Total queires = " + totalQueries);
+    System.out.println("Memoized hits = " + memoizeHits);
     logger.info("New query: ", sequence);
+    totalQueries++;
 
     ThreeValues recalled;
 
@@ -370,48 +374,55 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {
-    if (refine) {
-      return null; // we need to ignore conjectures because alphabet is refined 
-    }
-
-    Candidate.printCandidateAssumption(cndt, alphabet_);
-
-    logger.info("STARTING CONJECTURE");
-
-    cndt.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
-    String result = cndt.allGoodSequences;
-    String res = result.replaceFirst(";", "");
-
-    String bd = cndt.allBadSequences;
-    String bad = bd.replaceFirst(";", "");
-
-    String dknow = cndt.allDKnowSequences;
-    String other = dknow.replaceFirst(";", "");
-
-    //System.out.println("Good is: " + res);
-    //System.out.println("Bad is: " + bad);
-
-    String[] goodSequences = res.split(";");
-    String[] badSequences = bad.split(";");
-    String[] otherSequences = other.split(";");
-
     Vector cex = null;
-    logger.info("START CHECK SAFE");
-    cex = checkSequences(goodSequences, ThreeValues.TRUE);
-    if (cex == null) {
-      logger.info("START CHECK PERMISSIVE");
-      cex = checkSequences(badSequences, ThreeValues.FALSE);
+    while (!refine && cex == null) {
+      Candidate.printCandidateAssumption(cndt, alphabet_);
+
+      logger.info("STARTING CONJECTURE");
+      logger.info("k = " + maxDepth);
+      System.out.println("k = " + maxDepth);
+
+      cndt.DFSTraversal(cndt, 0, maxDepth, this.alphabet_, "");
+      String result = cndt.allGoodSequences;
+      String res = result.replaceFirst(";", "");
+
+      String bd = cndt.allBadSequences;
+      String bad = bd.replaceFirst(";", "");
+
+      String dknow = cndt.allDKnowSequences;
+      String other = dknow.replaceFirst(";", "");
+
+      //System.out.println("Good is: " + res);
+      //System.out.println("Bad is: " + bad);
+
+      String[] goodSequences = res.split(";");
+      String[] badSequences = bad.split(";");
+      String[] otherSequences = other.split(";");
+
+      logger.info("START CHECK SAFE");
+      cex = checkSequences(goodSequences, ThreeValues.TRUE);
       if (cex == null) {
-        logger.info("START CHECK THIRD");
-        cex = checkSequences(otherSequences, ThreeValues.THIRD);
+        logger.info("START CHECK PERMISSIVE");
+        cex = checkSequences(badSequences, ThreeValues.FALSE);
+        if (cex == null) {
+          logger.info("START CHECK THIRD");
+          cex = checkSequences(otherSequences, ThreeValues.THIRD);
+        }
+      }
+
+      logger.info("ENDING CONJECTURE");
+      logger.info("cex = " + cex);
+      logger.info("refine = " + refine);
+      System.out.println("cex = " + cex);
+      System.out.println("refine = " + refine);
+      // reinitialize these
+      cndt.allGoodSequences = "";
+      cndt.allBadSequences = "";
+      cndt.allDKnowSequences = "";
+      if (!refine && cex == null) {
+        maxDepth++;
       }
     }
-
-    logger.info("ENDING CONJECTURE");
-    // reinitialize these
-    cndt.allGoodSequences = "";
-    cndt.allBadSequences = "";
-    cndt.allDKnowSequences = "";
 
     return cex;
   }

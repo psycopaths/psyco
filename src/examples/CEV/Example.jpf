@@ -23,7 +23,7 @@ interface.alphabet=reset:1,srbIgnition:0,failure:1,stage1Separation:0,abort:2,st
 interface.outputFile=tmp/CEV
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement,jdart
+#log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

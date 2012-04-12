@@ -9,7 +9,7 @@ JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=false
-conjecture.Depth=1
+#conjecture.Depth=1
 
 sut.package=IntOperations
 sut.class=IntMath

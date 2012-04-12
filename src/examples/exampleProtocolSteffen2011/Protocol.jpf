@@ -9,12 +9,11 @@ JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=false
-conjecture.Depth=4
+#conjecture.Depth=4
 
 sut.package=exampleProtocolSteffen2011
 sut.class=Protocol
 example.path=src/examples/exampleProtocolSteffen2011
-
 
 # format is method_name: # of parameters
 interface.alphabet=msg:2,recv_ack:1
