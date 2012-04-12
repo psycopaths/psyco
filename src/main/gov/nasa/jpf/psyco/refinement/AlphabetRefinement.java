@@ -93,7 +93,7 @@ public class AlphabetRefinement {
     }
 
     HashSet<String> methodNames = new HashSet<String>();
-    constraintsTree.getMentionedMethods(1, methodNames);
+    constraintsTree.getMentionedMethods(methodNames);
     assert !methodNames.isEmpty();
 //    if (methodNames.isEmpty()) {
 //      return "OK";

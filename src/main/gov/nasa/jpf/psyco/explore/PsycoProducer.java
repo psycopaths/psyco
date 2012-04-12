@@ -314,6 +314,12 @@ public class PsycoProducer extends Producer {
   	return false;
   }
 
+  // The following method is used to get the vector of assignments
+  
+  public static Vector<Object> getAssignmentsVector() {
+  	return producer.assignments;
+  }
+
   // The following method is used to do deferred setting of values of fields
   // of classes that are outside of the class that defines the method we want
   // to execute concolically. These classes are subject to late initialization

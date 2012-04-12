@@ -75,9 +75,9 @@ public class JDartExplorer extends SymbolicExplorer {
     	config.setProperty("perturb.params", "foo");
     	
     	if (dontOptimize)
-    		config.setProperty("perturb.foo.class", "jfuzz.Producer");
+    		config.setProperty("perturb.class", "jfuzz.Producer");
     	else
-    		config.setProperty("perturb.foo.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
+    		config.setProperty("perturb.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
     	
     	config.setProperty("perturb.foo.method", symbolicMethod);
     	config.setProperty("symbolic.dp", "yices");
@@ -218,6 +218,7 @@ public class JDartExplorer extends SymbolicExplorer {
       } catch (Throwable t) { 
         // Log the exception and continue 
         logger.info("Unexception exception " + t.getMessage());
+        t.printStackTrace();
       } finally {
       }
     } while (!termination.isDone() && !ConstraintsTree.done());
