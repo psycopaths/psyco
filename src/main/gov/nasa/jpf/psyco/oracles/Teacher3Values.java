@@ -426,7 +426,53 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
     return cex;
   }
+  
+  public Vector conjecture(Candidate cndt, int useDepth) throws SETException {
+    if (refine) {
+      return null; // we need to ignore conjectures because alphabet is refined
+    }
 
+    Candidate.printCandidateAssumption(cndt, alphabet_);
+
+    logger.info("STARTING CONJECTURE");
+
+    cndt.DFSTraversal(cndt, 0, useDepth, this.alphabet_, "");
+    String result = cndt.allGoodSequences;
+    String res = result.replaceFirst(";", "");
+
+    String bd = cndt.allBadSequences;
+    String bad = bd.replaceFirst(";", "");
+
+    String dknow = cndt.allDKnowSequences;
+    String other = dknow.replaceFirst(";", "");
+
+    //System.out.println("Good is: " + res);
+    //System.out.println("Bad is: " + bad);
+
+    String[] goodSequences = res.split(";");
+    String[] badSequences = bad.split(";");
+    String[] otherSequences = other.split(";");
+
+    Vector cex = null;
+    logger.info("START CHECK SAFE");
+    cex = checkSequences(goodSequences, ThreeValues.TRUE);
+    if (cex == null) {
+      logger.info("START CHECK PERMISSIVE");
+      cex = checkSequences(badSequences, ThreeValues.FALSE);
+      if (cex == null) {
+        logger.info("START CHECK THIRD");
+        cex = checkSequences(otherSequences, ThreeValues.THIRD);
+      }
+    }
+
+    logger.info("ENDING CONJECTURE");
+    // reinitialize these
+    cndt.allGoodSequences = "";
+    cndt.allBadSequences = "";
+    cndt.allDKnowSequences = "";
+
+    return cex;
+  }
   
   private Vector checkSequences(String[] sequences, ThreeValues desired)  throws SETException {
     if (sequences.length == 0) {
