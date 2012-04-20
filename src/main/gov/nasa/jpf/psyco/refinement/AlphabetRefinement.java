@@ -150,23 +150,32 @@ public class AlphabetRefinement {
       dontKnowPCsTmp.replaceNames(replacementNames);
       logger.info("DontKnow PCs Tmp:" + dontKnowPCsTmp.sourcePC());
 
-      LogicalExpression dontKnowPCs = new LogicalExpression(LogicalOperator.AND);
-      dontKnowPCs.addExpresion(coveredDontKnowPCs);
-      dontKnowPCs.addExpresion(dontKnowPCsTmp);
-      logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
-
       Formula coveredPCs;
-      boolean dontKnowPCsSatisfiable = dontKnowPCs.isSatisfiable();
-      if (dontKnowPCsSatisfiable) {
-        allErrors = false;
-        allCovered = false;
-        LogicalExpression andExpr = new LogicalExpression(LogicalOperator.AND);
-        andExpr.addExpresion(coveredDontKnowPCs);
-        andExpr.addExpresion(new NotExpression(dontKnowPCsTmp));
-        coveredPCs = andExpr;
-      } else {
-        coveredPCs = coveredDontKnowPCs;
-      }
+      boolean dontKnowPCsSatisfiable = false;
+      LogicalExpression dontKnowPCs = null;
+      
+      // if either dontKnowPCsTmp or coveredDontKnowPCs is false, then there is nothing to be done
+      // insofar as computing dontKnowPCs. Therefore mark it as unsat and move on
+      if (!dontKnowPCsTmp.sourcePC().equals("false") && !coveredDontKnowPCs.sourcePC().equals("false")) {      	
+      	dontKnowPCs = new LogicalExpression(LogicalOperator.AND);
+      	dontKnowPCs.addExpresion(coveredDontKnowPCs);
+      	dontKnowPCs.addExpresion(dontKnowPCsTmp);
+      	logger.info("DontKnow PCs:" + dontKnowPCs.sourcePC());
+
+      	dontKnowPCsSatisfiable = dontKnowPCs.isSatisfiable();
+      	if (dontKnowPCsSatisfiable) {
+      		allErrors = false;
+      		allCovered = false;
+      		LogicalExpression andExpr = new LogicalExpression(LogicalOperator.AND);
+      		andExpr.addExpresion(coveredDontKnowPCs);
+      		andExpr.addExpresion(new NotExpression(dontKnowPCsTmp));
+      		coveredPCs = andExpr;
+      	} else {
+      		coveredPCs = coveredDontKnowPCs;
+      	}
+      } else
+      	coveredPCs = coveredDontKnowPCs;
+      
       logger.info("Covered PCs:" + coveredPCs.sourcePC());
 
       boolean coveredPCsSatisfiable = coveredPCs.isSatisfiable();
