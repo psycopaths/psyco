@@ -1,6 +1,6 @@
 package simple2;
 
-import gov.nasa.jpf.symbc.Symbolic;
+import gov.nasa.jpf.jdart.Symbolic;
 
 public class ExampleAlphabet {
 

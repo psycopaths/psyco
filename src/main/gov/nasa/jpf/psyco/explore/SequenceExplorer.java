@@ -20,8 +20,8 @@ package gov.nasa.jpf.psyco.explore;
 
 import java.util.AbstractList;
 
-import jfuzz.ConstraintsTree;
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.jdart.ConstraintsTree;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.LogManager;
 

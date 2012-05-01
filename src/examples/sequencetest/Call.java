@@ -19,7 +19,7 @@
 package sequencetest;
 
 import gov.nasa.jpf.Config;
-import jfuzz.*;
+import gov.nasa.jpf.jdart.*;
 import gov.nasa.jpf.JPFShell;
 
 import gov.nasa.jpf.psyco.explore.SequenceExplorer;

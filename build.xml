@@ -34,9 +34,6 @@
   <!-- get the jpf-learn path properties -->
   <property file="${jpf-learn}/jpf.properties"/>
 
-  <!-- get the jpf-symbc path properties -->
-  <property file="${jpf-symbc}/jpf.properties"/>
-
   <!-- get the jpf-jdart path properties -->
   <property file="${jpf-jdart}/jpf.properties"/>
 
@@ -68,9 +65,6 @@
 
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>
-
-  	<!-- add in what we need from jpf-symbc -->
-    <pathelement path="${jpf-symbc.native_classpath}"/>
   </path>
 
   <!-- init: common initialization -->

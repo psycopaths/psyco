@@ -9,7 +9,7 @@ JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=false
-#conjecture.Depth=4
+conjecture.Depth=4
 
 sut.package=exampleProtocolSteffen2011
 sut.class=Protocol
@@ -22,7 +22,7 @@ interface.alphabet=msg:2,recv_ack:1
 interface.outputFile=tmp/exampleProtocolSteffen2011
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement,jdart
+#log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

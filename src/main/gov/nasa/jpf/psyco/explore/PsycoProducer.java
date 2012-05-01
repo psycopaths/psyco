@@ -28,13 +28,13 @@ import java.util.Vector;
 
 import com.sun.tools.internal.xjc.ModelLoader;
 
-import jfuzz.ConstraintsTree;
-import jfuzz.JFuzz;
-import jfuzz.Producer;
-import jfuzz.Producer.Associator;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.jdart.ConstraintsTree;
+import gov.nasa.jpf.jdart.JFuzz;
+import gov.nasa.jpf.jdart.Producer;
+import gov.nasa.jpf.jdart.Producer.Associator;
 import gov.nasa.jpf.jvm.ChoiceGenerator;
 import gov.nasa.jpf.jvm.ClassInfo;
 import gov.nasa.jpf.jvm.JVM;

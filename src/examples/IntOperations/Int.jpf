@@ -9,7 +9,7 @@ JPF.isModeSymbolic=true
 dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=false
-#conjecture.Depth=1
+conjecture.Depth=1
 
 sut.package=IntOperations
 sut.class=IntMath
@@ -22,12 +22,13 @@ example.path=src/examples/IntOperations
 # the following methods work
 # format is method_name: # of parameters
 interface.alphabet=isPowerOfTwo:1,pow:2,mod:2,divide:3,gcd:2,factorial:1,checkedPow:2,log10:2
+#interface.alphabet=log10:2
 
 # outputs results - use tmp because I ignore it during commits 
 interface.outputFile=tmp/generatedIntOp
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement,jdart
+#log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

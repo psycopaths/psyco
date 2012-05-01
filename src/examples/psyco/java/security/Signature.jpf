@@ -10,6 +10,8 @@ dp.use-bitvectors=true
 # allow to run directly with JAVA queries that have no parameters
 optimizeQueries=false
 
+conjecture.Depth=3
+
 sut.package=psyco.java.security
 sut.class=Signature
 example.path=src/examples/psyco/java/security
@@ -21,7 +23,7 @@ interface.alphabet=initSign:0,initVerify:0,sign:0,verify:0,update:0
 interface.outputFile=tmp/Signature
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement,jdart
+#log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

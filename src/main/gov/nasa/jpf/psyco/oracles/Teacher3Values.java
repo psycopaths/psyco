@@ -20,6 +20,7 @@ package gov.nasa.jpf.psyco.oracles;
 
 // needs learning project
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.jdart.ConstraintsTree;
 import gov.nasa.jpf.learn.basic.Candidate;
 import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.learn.basic.MinimallyAdequateTeacher;
@@ -37,7 +38,6 @@ import gov.nasa.jpf.util.JPFLogger;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
-import jfuzz.ConstraintsTree;
 
 import gov.nasa.jpf.psyco.refinement.Symbol;
 import java.util.HashMap;

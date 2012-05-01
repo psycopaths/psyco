@@ -18,7 +18,7 @@
  ******************************************************************************/
 package sequencetest;
 
-import gov.nasa.jpf.symbc.Symbolic;
+import gov.nasa.jpf.jdart.*;
 
 public class Input {
 	

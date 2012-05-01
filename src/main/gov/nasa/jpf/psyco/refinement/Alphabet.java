@@ -96,7 +96,7 @@ public class Alphabet {
   public String toSource() {
     String source = "";
     source += "package " + packageName + ";\n\n";
-    source += "import gov.nasa.jpf.symbc.Symbolic;\n\n";
+    source += "import gov.nasa.jpf.jdart.Symbolic;\n\n";
     source += "public class " + className + " {\n\n";
 
     source += "  public static class TotallyPsyco extends java.lang.AssertionError {\n";

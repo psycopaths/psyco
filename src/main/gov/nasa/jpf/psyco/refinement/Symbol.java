@@ -18,7 +18,7 @@
 //
 package gov.nasa.jpf.psyco.refinement;
 
-import gov.nasa.jpf.symbc.numeric.Constraint;
+import gov.nasa.jpf.jdart.numeric.Constraint;
 
 import java.util.ArrayList;
 import java.util.HashMap;

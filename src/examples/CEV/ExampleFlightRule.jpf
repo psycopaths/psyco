@@ -14,6 +14,8 @@ sut.package=CEV
 sut.class=CEV
 example.path=src/examples/CEV
 
+conjecture.Depth=3
+
 # format is method_name: # of parameters
 #interface.alphabet=reset:1,srbIgnition:0,failure:1,stage1Separation:0,abort:2,stage2Separation:0,tliBurn:0,enterOrbitOps:1,deOrbit:0,teiBurn:0,lasJettison:1,lsamRendezvous:0,loiBurn:0,doEdsSeparation:0,doSMSeparation:0,lsamAscentBurn:0,lsamAscentRendezvous:0,eiBurn:2
 #interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0,srbIgnition:0,stage1Separation:0,stage2Separation:0,doEdsSeparation:0,doSMSeparation:0,deOrbit:0,lsamAscentBurn:0
@@ -23,7 +25,7 @@ interface.alphabet=reset:1,lasJettison:1,lsamRendezvous:0
 interface.outputFile=tmp/CEVFlightRule
 
 # enable reporting for these loggers
-log.info=teacher,learning,refinement,jdart
+#log.info=teacher,learning,refinement,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

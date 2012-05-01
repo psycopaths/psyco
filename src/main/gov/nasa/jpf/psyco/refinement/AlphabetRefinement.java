@@ -19,6 +19,8 @@
 package gov.nasa.jpf.psyco.refinement;
 
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.jdart.ConstraintsTree;
+import gov.nasa.jpf.jdart.MixedParamsException;
 import gov.nasa.jpf.util.JPFLogger;
 
 import java.io.BufferedReader;
@@ -34,8 +36,6 @@ import solvers.LogicalExpression;
 import solvers.LogicalOperator;
 import solvers.NotExpression;
 
-import jfuzz.ConstraintsTree;
-import jfuzz.MixedParamsException;
 
 public class AlphabetRefinement {
   public static final String REFINED_CLASS_NAME = "RefinedAlphabet";

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package two_calls;
 
-import gov.nasa.jpf.symbc.Symbolic;
+import gov.nasa.jpf.jdart.Symbolic;
 
 public class ExampleAlphabet {
 

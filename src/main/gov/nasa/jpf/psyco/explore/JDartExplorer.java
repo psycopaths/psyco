@@ -20,7 +20,10 @@ package gov.nasa.jpf.psyco.explore;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.jdart.ConstraintsTree;
+import gov.nasa.jpf.jdart.JFuzz;
 import gov.nasa.jpf.jdart.bytecode.BytecodeUtils;
+import gov.nasa.jpf.jdart.termination.*;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 
@@ -28,9 +31,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import jfuzz.ConstraintsTree;
-import jfuzz.JFuzz;
-import jfuzz.termination.*;
+import gov.nasa.jpf.jdart.termination.*;
 
 	/* The following class uses jdart to explore a program for psyco */
 
@@ -68,14 +69,14 @@ public class JDartExplorer extends SymbolicExplorer {
     	
     	// by default we optimize    	
     	if (dontOptimize)
-    		config.setProperty("listener", "jfuzz.ConcolicListener");
+    		config.setProperty("listener", "gov.nasa.jpf.jdart.ConcolicListener");
     	else
       	config.setProperty("listener", "gov.nasa.jpf.psyco.explore.PsycoListener");
     	
     	config.setProperty("perturb.params", "foo");
     	
     	if (dontOptimize)
-    		config.setProperty("perturb.class", "jfuzz.Producer");
+    		config.setProperty("perturb.class", "gov.nasa.jpf.jdart.Producer");
     	else
     		config.setProperty("perturb.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
     	
