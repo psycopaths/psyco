@@ -46,7 +46,7 @@ public class Call implements JPFShell {
   	conf.setProperty("jpf.basedir", jpfHome);
   	conf.setProperty("jfuzz.time", "3,3,0,0");
   	conf.setProperty("vm.insn_factory.class", "gov.nasa.jpf.jdart.ConcolicInstructionFactory");
-  	conf.setProperty("listener", "jfuzz.ConcolicListener");
+  	conf.setProperty("listener", "gov.nasa.jpf.jdart.ConcolicListener");
   	conf.setProperty("perturb.params", "foo");
   	conf.setProperty("perturb.foo.class", "jfuzz.Producer");
   	conf.setProperty("perturb.foo.method", "callingJDart.Input.foo(int,boolean)");
