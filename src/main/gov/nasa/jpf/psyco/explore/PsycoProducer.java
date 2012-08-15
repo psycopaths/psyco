@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import com.sun.tools.internal.xjc.ModelLoader;
+//import com.sun.tools.internal.xjc.ModelLoader;
 
 
 import gov.nasa.jpf.Config;
