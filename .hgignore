@@ -9,3 +9,8 @@ dist/*
 *.DS_Store
 tmp/*
 RefinedAlphabet.java
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$

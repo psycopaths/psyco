@@ -11,17 +11,10 @@
             <properties>
                 <property-file>${user.home}/.jpf/site.properties</property-file>
                 <property-file>${jpf-core}/jpf.properties</property-file>
-                <property-file>${jpf-learn}/jpf.properties</property-file>
-                <property-file>${jpf-symbc}/jpf.properties</property-file>
                 <property-file>${jpf-jdart}/jpf.properties</property-file>
-                <property-file>jpf.properties</property-file>
+                <property-file>${jpf-learn}/jpf.properties</property-file>
             </properties>
             <folders>
-                <source-folder>
-                    <label>jpf-psyco</label>
-                    <location>.</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
                 <source-folder>
                     <label>src/main</label>
                     <type>java</type>
@@ -202,12 +195,12 @@
                         <location>src/main</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>src/classes</label>
-                        <location>src/classes</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>src/peers</label>
                         <location>src/peers</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/classes</label>
+                        <location>src/classes</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>src/annotations</label>
@@ -237,7 +230,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/main</package-root>
-                <classpath mode="compile">build/main:${jpf-core.native_classpath}:${jpf-learn.native_classpath}:${jpf-symbc.native_classpath}:${jpf-jdart.native_classpath}</classpath>
+                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-jdart.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -259,7 +252,6 @@
             <compilation-unit>
                 <package-root>src/examples</package-root>
                 <unit-tests/>
-                <classpath mode="compile">${jpf-core.native_classpath};${jpf-symbc.native_classpath};${jpf-jdart.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
