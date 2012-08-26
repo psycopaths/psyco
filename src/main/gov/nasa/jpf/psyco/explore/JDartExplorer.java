@@ -210,12 +210,23 @@ public class JDartExplorer extends SymbolicExplorer {
 
     // initialize the producer
     PsycoProducer.initialize();
+
+    long _start = System.currentTimeMillis();
     
     do {
       PsycoProducer.reset();
       try {
-        JPF jpf = new JPF(config);
+        
+        long _start_jpf = System.currentTimeMillis();
+        JPF jpf = new JPF(config);               
+        long _stop_jpf = System.currentTimeMillis();
+        logger.finest("Spent " + (_stop_jpf - _start_jpf)+  " ms in jpf init");
+
+        _start_jpf = System.currentTimeMillis();
         jpf.run();
+        _stop_jpf = System.currentTimeMillis();
+        logger.finest("Spent " + (_stop_jpf - _start_jpf)+  " ms in jpf call");
+                
       } catch (Throwable t) { 
         // Log the exception and continue 
         logger.info("Unexception exception " + t.getMessage());
@@ -223,6 +234,10 @@ public class JDartExplorer extends SymbolicExplorer {
       } finally {
       }
     } while (!termination.isDone() && !ConstraintsTree.done());
+
+    long _stop = System.currentTimeMillis();
+    
+    logger.finest("Spent " + (_stop - _start)+  " ms constructing constraint tree");
     
     // now that we are done exploration of the given sequence, call cleanup methods
     PsycoProducer.cleanup();

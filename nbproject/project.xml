@@ -13,6 +13,7 @@
                 <property-file>${jpf-core}/jpf.properties</property-file>
                 <property-file>${jpf-jdart}/jpf.properties</property-file>
                 <property-file>${jpf-learn}/jpf.properties</property-file>
+                <property-file>${jpf-psyco}/jpf.properties</property-file>
             </properties>
             <folders>
                 <source-folder>
@@ -49,6 +50,17 @@
                     <label>src/examples</label>
                     <type>java</type>
                     <location>src/examples</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/resources</label>
+                    <type>java</type>
+                    <location>src/resources</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>jpf-psyco</label>
+                    <location>.</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -195,12 +207,12 @@
                         <location>src/main</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>src/peers</label>
-                        <location>src/peers</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>src/classes</label>
                         <location>src/classes</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/peers</label>
+                        <location>src/peers</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>src/annotations</label>
@@ -213,6 +225,10 @@
                     <source-folder style="packages">
                         <label>src/examples</label>
                         <location>src/examples</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/resources</label>
+                        <location>src/resources</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -230,7 +246,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/main</package-root>
-                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-jdart.native_classpath}</classpath>
+                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -252,6 +268,14 @@
             <compilation-unit>
                 <package-root>src/examples</package-root>
                 <unit-tests/>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>src/annotations</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>src/resources</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

@@ -1,0 +1,6 @@
+
+classpath=${jpf-psyco}/build/examples
+
+shell=compiler.CompilerExample
+
+vm.storage.class=null
