@@ -24,12 +24,14 @@ package exampleProtocolSteffen2011;
  *  VMCAI 2011
  */
 
+import gov.nasa.jpf.jdart.Symbolic;
+
 public class Protocol {
   
   // pdu p, ack; // pdus
   private static int expect = 0; // next expected seq. nr
   private static boolean buffer_empty = true;
-
+  
   public static void internalReset() {
     expect = 0;
     buffer_empty = true;
@@ -72,8 +74,8 @@ public class Protocol {
     msg(0, 100);
     recv_ack(0);
     
-  }
-    
+}
+
 }
 
 //while (true) {

@@ -20,6 +20,9 @@ package gov.nasa.jpf.psyco.summaries;
 
 import gov.nasa.jpf.jdart.ConstraintsTree;
 import gov.nasa.jpf.jdart.ConstraintsTree.PostCondition;
+import gov.nasa.jpf.psyco.util.MethodUtil;
+import java.lang.reflect.Method;
+import java.util.*;
 import solvers.Formula;
 import solvers.LogicalExpression;
 import solvers.LogicalOperator;
@@ -65,10 +68,53 @@ public class MethodSummary {
       return intersection.isSatisfiable();
     }
     
+    @Override
+    public String toString() {
+      return pathState + ": " + pathConstraint.sourcePC() + " -- " + postConditon;
+    }
+    
   }
   
+  private Collection<MethodPath> okPaths;
+  private Collection<MethodPath> errorPaths;
+  private Collection<MethodPath> dontKnowPaths;
   
+  private Method method;
   
+  public MethodSummary(Method m, Collection<MethodPath> paths) {
+    this.okPaths = new ArrayList<MethodPath>();
+    this.errorPaths = new ArrayList<MethodPath>();
+    this.dontKnowPaths = new ArrayList<MethodPath>();
+    this.method = m;
+            
+    for (MethodPath p : paths) {
+      switch (p.pathState) {      
+        case OK: 
+          okPaths.add(p); 
+          break;
+        case ERROR:
+          errorPaths.add(p); 
+          break;
+        case DONT_KNOW:
+          dontKnowPaths.add(p); 
+          break;                
+      }
+    }
+  }
   
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Summary of ");
+    sb.append(MethodUtil.getMethodSignature(method)).append("\n");
+    for (MethodPath p : okPaths)
+      sb.append(p).append("\n");
+    for (MethodPath p : errorPaths)
+      sb.append(p).append("\n");
+    for (MethodPath p : dontKnowPaths)
+      sb.append(p).append("\n");
+    
+    return sb.toString();
+  }
   
 }

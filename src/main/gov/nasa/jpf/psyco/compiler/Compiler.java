@@ -22,17 +22,12 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.util.JPFLogger;
 import java.io.*;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupDir;
-import org.stringtemplate.v4.STRawGroupDir;
 
 /**
- *
- * @author falk
+ * Compiles source generated from a string template
  */
 public class Compiler {
   

@@ -61,6 +61,10 @@ public class JDartExplorer extends SymbolicExplorer {
     	String symbolicMethod = conf.getProperty("symbolic.method");
     	String yicesPath = jdartHome + "/lib/libYices.so";
 
+    	String perturbMethod = conf.getProperty("perturb.foo.method");
+      if (perturbMethod == null)
+        perturbMethod = symbolicMethod;
+      
     	config.setProperty("yices.library.path", yicesPath);
     	config.setProperty("jpf.basedir", jpfHome);
 
@@ -80,7 +84,7 @@ public class JDartExplorer extends SymbolicExplorer {
     	else
     		config.setProperty("perturb.class", "gov.nasa.jpf.psyco.explore.PsycoProducer");
     	
-    	config.setProperty("perturb.foo.method", symbolicMethod);
+    	config.setProperty("perturb.foo.method", perturbMethod);
     	config.setProperty("symbolic.dp", "yices");
     	
     	// now get a handle to the internalReset method of the class we want to 
@@ -123,7 +127,7 @@ public class JDartExplorer extends SymbolicExplorer {
   }
 
   // the logger
-  public static JPFLogger logger = JPF.getLogger("jdart");
+  private static JPFLogger logger = JPF.getLogger("psyco");
 
   // the output directory
   public static final String GEN_DIR = "generated";
@@ -147,7 +151,7 @@ public class JDartExplorer extends SymbolicExplorer {
   public static final String JFUZZ_JAVA_LIB_PATH = "java.library.path";
 
   // for more debug info
-  public static boolean debug = false;
+  public static boolean debug = true;
 
   // constraints tree
   public static ConstraintsTree tree = new ConstraintsTree();
@@ -218,7 +222,7 @@ public class JDartExplorer extends SymbolicExplorer {
       try {
         
         long _start_jpf = System.currentTimeMillis();
-        JPF jpf = new JPF(config);               
+        JPF jpf = new JPF(config);  
         long _stop_jpf = System.currentTimeMillis();
         logger.finest("Spent " + (_stop_jpf - _start_jpf)+  " ms in jpf init");
 

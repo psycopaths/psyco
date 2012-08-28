@@ -6,13 +6,22 @@ package compiler;
 
 
 import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.psyco.compiler.Compiler;
+import gov.nasa.jpf.psyco.explore.MethodExplorer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import exampleProtocolSteffen2011.IntProtocol;
+import java.lang.reflect.Method;
 
+import gov.nasa.jpf.psyco.summaries.MethodSummary;
+import gov.nasa.jpf.psyco.util.MethodUtil;
+
+
+import gov.nasa.jpf.util.JPFLogger;
+import gov.nasa.jpf.util.LogManager;
 /**
  *
  * @author falk
@@ -23,49 +32,34 @@ public class CompilerExample implements JPFShell {
   
   public CompilerExample(Config conf) {
     this.conf = conf;
+    LogManager.init(conf);
+    logger = JPF.getLogger("psyco");    
   }
   
-  public static class Param {
-    private String name;
-    private String type;
+    private JPFLogger logger;
 
-    public Param(String type,String name) {
-      this.name = name;
-      this.type = type;
-    }
+    public void start(String[] strings) {
+    
+    logger.info("START...");
+    
+    try {
+      
+      Class c = IntProtocol.class;
+      Method m1 = c.getMethod("msg", int.class, int.class);
+      Method m2 = c.getMethod("recv_ack", int.class);
+                    
+      MethodExplorer mex1 = new MethodExplorer(m1,conf);
+      MethodSummary summary1 = mex1.execute();
 
-    public String getName() {
-      return name;
+      MethodExplorer mex2 = new MethodExplorer(m2,conf);
+      MethodSummary summary2 = mex2.execute();
+      
+      System.out.println(summary1);
+      System.out.println(summary2);
+      
+    } catch (NoSuchMethodException ex) {
+    } catch (SecurityException ex) {
     }
-
-    public String getType() {
-      return type;
-    }
-    
-  }
-  
-  public void start(String[] strings) {
-   
-    Map<String,Object> attributes = new HashMap<String, Object>();
-    attributes.put("testpackage", "compiler");
-    attributes.put("sutpackage","exampleProtocolSteffen2011");
-    attributes.put("sutclass","Protocol");
-    attributes.put("methodName","msg");
-    
-    List<Param> params = new ArrayList<Param>();
-    params.add(new Param("int", "P_1"));
-    params.add(new Param("int", "P_2"));
-    
-    attributes.put("params",params);
-    
-    
-    Compiler c = new Compiler(
-            "MethodTestCase", 
-            attributes, 
-            conf, 
-            "src/examples/compiler");
-    
-    c.compile();
     
   }  
   

@@ -1,6 +1,22 @@
 
 classpath=${jpf-psyco}/build/examples
-
 shell=compiler.CompilerExample
 
-vm.storage.class=null
+
+# ####################################################################
+#
+# JPF
+# 
+
+#JPF.isModeSymbolic=true
+dp.use-bitvectors=true
+jdart.optimize=false
+jfuzz.time=3,3,0,0
+
+# ####################################################################
+#
+# LOGGING
+# 
+
+log.finest=jdart
+log.finest=psyco
