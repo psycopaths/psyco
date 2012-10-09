@@ -20,7 +20,9 @@ package gov.nasa.jpf.psyco.summaries;
 
 import gov.nasa.jpf.jdart.ConstraintsTree;
 import gov.nasa.jpf.jdart.ConstraintsTree.PostCondition;
-import gov.nasa.jpf.psyco.util.MethodUtil;
+import gov.nasa.jpf.jdart.numeric.Expression;
+import gov.nasa.jpf.jdart.numeric.IntegerExpression;
+import gov.nasa.jpf.psyco.util.*;
 import java.lang.reflect.Method;
 import java.util.*;
 import solvers.Formula;
@@ -29,10 +31,9 @@ import solvers.LogicalOperator;
 
 /**
  *
- * @author falk
  */
 public class MethodSummary {
-  
+
   public static enum PathState {
     OK,ERROR, DONT_KNOW
   }
@@ -115,6 +116,34 @@ public class MethodSummary {
       sb.append(p).append("\n");
     
     return sb.toString();
+  }
+  
+  /**
+   * @return the okPaths
+   */
+  public Collection<MethodPath> getOkPaths() {
+    return okPaths;
+  }
+
+  /**
+   * @return the errorPaths
+   */
+  public Collection<MethodPath> getErrorPaths() {
+    return errorPaths;
+  }
+
+  /**
+   * @return the dontKnowPaths
+   */
+  public Collection<MethodPath> getDontKnowPaths() {
+    return dontKnowPaths;
+  }
+
+  /**
+   * @return the method
+   */
+  public Method getMethod() {
+    return method;
   }
   
 }

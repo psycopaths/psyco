@@ -128,11 +128,10 @@ public class PsycoListener extends ConcolicListener {
     MethodInfo mi = insn.getMethodInfo();
     if (isMethodWatched(insn, mi)) {
       PathCondition pc = BytecodeUtils.getPC();
-      if (pc == null)
+      if (pc == null) 
         return;
-//      System.out.println("Adding " + pc.stringPC());
       ThreadInfo ti = vm.getLastThreadInfo();
-      ConstraintsTree T = ConstraintsTree.getTree(ti.getTopFrame(), mi);
+      ConstraintsTree T = ConstraintsTree.getTree(ti.getTopFrame(), mi);      
       assert T != null;
       T.insertPC(pc, latestValuation);
       // the following calls ensure that a subsequent re-exec of the
