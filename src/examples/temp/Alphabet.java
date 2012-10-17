@@ -13,6 +13,46 @@ public class Alphabet {
   }
 
     @Symbolic("true")
+    public static int reset_C_0_i;  
+    @Symbolic("true")
+    public static int reset_C_1_i;  
+    @Symbolic("true")
+    public static int reset_C_2_i;  
+    @Symbolic("true")
+    public static int reset_C_3_i;  
+    @Symbolic("true")
+    public static int reset_C_4_i;  
+    @Symbolic("true")
+    public static int reset_C_5_i;  
+    @Symbolic("true")
+    public static int reset_C_6_i;  
+    @Symbolic("true")
+    public static int reset_C_7_i;  
+    @Symbolic("true")
+    public static int reset_C_8_i;  
+    @Symbolic("true")
+    public static int reset_C_9_i;  
+    @Symbolic("true")
+    public static int reset_E_0_i;  
+    @Symbolic("true")
+    public static int reset_E_1_i;  
+    @Symbolic("true")
+    public static int reset_E_2_i;  
+    @Symbolic("true")
+    public static int reset_E_3_i;  
+    @Symbolic("true")
+    public static int reset_E_4_i;  
+    @Symbolic("true")
+    public static int reset_E_5_i;  
+    @Symbolic("true")
+    public static int reset_E_6_i;  
+    @Symbolic("true")
+    public static int reset_E_7_i;  
+    @Symbolic("true")
+    public static int reset_E_8_i;  
+    @Symbolic("true")
+    public static int reset_E_9_i;  
+    @Symbolic("true")
     public static int lasJettison_C_0_j;  
     @Symbolic("true")
     public static int lasJettison_C_1_j;  
@@ -32,26 +72,6 @@ public class Alphabet {
     public static int lasJettison_C_8_j;  
     @Symbolic("true")
     public static int lasJettison_C_9_j;  
-    @Symbolic("true")
-    public static int reset_0_i;  
-    @Symbolic("true")
-    public static int reset_1_i;  
-    @Symbolic("true")
-    public static int reset_2_i;  
-    @Symbolic("true")
-    public static int reset_3_i;  
-    @Symbolic("true")
-    public static int reset_4_i;  
-    @Symbolic("true")
-    public static int reset_5_i;  
-    @Symbolic("true")
-    public static int reset_6_i;  
-    @Symbolic("true")
-    public static int reset_7_i;  
-    @Symbolic("true")
-    public static int reset_8_i;  
-    @Symbolic("true")
-    public static int reset_9_i;  
     @Symbolic("true")
     public static int lasJettison_E_0_j;  
     @Symbolic("true")
@@ -74,6 +94,146 @@ public class Alphabet {
     public static int lasJettison_E_9_j;  
  
 
+    public static void reset_C_0() {  
+      if (!((((((((((reset_C_0_i != 2) && (reset_C_0_i == 0)) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && ((reset_C_0_i != 3) && ((reset_C_0_i != 4) && ((reset_C_0_i != 5) && ((reset_C_0_i != 6) && (reset_C_0_i != 7))))))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && ((reset_C_0_i != 3) && ((reset_C_0_i != 4) && ((reset_C_0_i != 5) && ((reset_C_0_i != 6) && (reset_C_0_i == 7))))))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && ((reset_C_0_i != 3) && ((reset_C_0_i != 4) && ((reset_C_0_i != 5) && (reset_C_0_i == 6)))))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && ((reset_C_0_i != 3) && ((reset_C_0_i != 4) && (reset_C_0_i == 5))))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && ((reset_C_0_i != 3) && (reset_C_0_i == 4)))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && ((reset_C_0_i != 1) && (reset_C_0_i == 3))))) || ((reset_C_0_i != 2) && ((reset_C_0_i != 0) && (reset_C_0_i == 1)))))) {
+        CEV.CEV.reset(reset_C_0_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_1() {  
+      if (!((((((((((reset_C_1_i != 2) && (reset_C_1_i == 0)) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && ((reset_C_1_i != 3) && ((reset_C_1_i != 4) && ((reset_C_1_i != 5) && ((reset_C_1_i != 6) && (reset_C_1_i != 7))))))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && ((reset_C_1_i != 3) && ((reset_C_1_i != 4) && ((reset_C_1_i != 5) && ((reset_C_1_i != 6) && (reset_C_1_i == 7))))))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && ((reset_C_1_i != 3) && ((reset_C_1_i != 4) && ((reset_C_1_i != 5) && (reset_C_1_i == 6)))))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && ((reset_C_1_i != 3) && ((reset_C_1_i != 4) && (reset_C_1_i == 5))))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && ((reset_C_1_i != 3) && (reset_C_1_i == 4)))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && ((reset_C_1_i != 1) && (reset_C_1_i == 3))))) || ((reset_C_1_i != 2) && ((reset_C_1_i != 0) && (reset_C_1_i == 1)))))) {
+        CEV.CEV.reset(reset_C_1_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_2() {  
+      if (!((((((((((reset_C_2_i != 2) && (reset_C_2_i == 0)) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && ((reset_C_2_i != 3) && ((reset_C_2_i != 4) && ((reset_C_2_i != 5) && ((reset_C_2_i != 6) && (reset_C_2_i != 7))))))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && ((reset_C_2_i != 3) && ((reset_C_2_i != 4) && ((reset_C_2_i != 5) && ((reset_C_2_i != 6) && (reset_C_2_i == 7))))))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && ((reset_C_2_i != 3) && ((reset_C_2_i != 4) && ((reset_C_2_i != 5) && (reset_C_2_i == 6)))))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && ((reset_C_2_i != 3) && ((reset_C_2_i != 4) && (reset_C_2_i == 5))))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && ((reset_C_2_i != 3) && (reset_C_2_i == 4)))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && ((reset_C_2_i != 1) && (reset_C_2_i == 3))))) || ((reset_C_2_i != 2) && ((reset_C_2_i != 0) && (reset_C_2_i == 1)))))) {
+        CEV.CEV.reset(reset_C_2_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_3() {  
+      if (!((((((((((reset_C_3_i != 2) && (reset_C_3_i == 0)) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && ((reset_C_3_i != 3) && ((reset_C_3_i != 4) && ((reset_C_3_i != 5) && ((reset_C_3_i != 6) && (reset_C_3_i != 7))))))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && ((reset_C_3_i != 3) && ((reset_C_3_i != 4) && ((reset_C_3_i != 5) && ((reset_C_3_i != 6) && (reset_C_3_i == 7))))))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && ((reset_C_3_i != 3) && ((reset_C_3_i != 4) && ((reset_C_3_i != 5) && (reset_C_3_i == 6)))))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && ((reset_C_3_i != 3) && ((reset_C_3_i != 4) && (reset_C_3_i == 5))))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && ((reset_C_3_i != 3) && (reset_C_3_i == 4)))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && ((reset_C_3_i != 1) && (reset_C_3_i == 3))))) || ((reset_C_3_i != 2) && ((reset_C_3_i != 0) && (reset_C_3_i == 1)))))) {
+        CEV.CEV.reset(reset_C_3_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_4() {  
+      if (!((((((((((reset_C_4_i != 2) && (reset_C_4_i == 0)) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && ((reset_C_4_i != 3) && ((reset_C_4_i != 4) && ((reset_C_4_i != 5) && ((reset_C_4_i != 6) && (reset_C_4_i != 7))))))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && ((reset_C_4_i != 3) && ((reset_C_4_i != 4) && ((reset_C_4_i != 5) && ((reset_C_4_i != 6) && (reset_C_4_i == 7))))))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && ((reset_C_4_i != 3) && ((reset_C_4_i != 4) && ((reset_C_4_i != 5) && (reset_C_4_i == 6)))))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && ((reset_C_4_i != 3) && ((reset_C_4_i != 4) && (reset_C_4_i == 5))))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && ((reset_C_4_i != 3) && (reset_C_4_i == 4)))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && ((reset_C_4_i != 1) && (reset_C_4_i == 3))))) || ((reset_C_4_i != 2) && ((reset_C_4_i != 0) && (reset_C_4_i == 1)))))) {
+        CEV.CEV.reset(reset_C_4_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_5() {  
+      if (!((((((((((reset_C_5_i != 2) && (reset_C_5_i == 0)) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && ((reset_C_5_i != 3) && ((reset_C_5_i != 4) && ((reset_C_5_i != 5) && ((reset_C_5_i != 6) && (reset_C_5_i != 7))))))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && ((reset_C_5_i != 3) && ((reset_C_5_i != 4) && ((reset_C_5_i != 5) && ((reset_C_5_i != 6) && (reset_C_5_i == 7))))))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && ((reset_C_5_i != 3) && ((reset_C_5_i != 4) && ((reset_C_5_i != 5) && (reset_C_5_i == 6)))))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && ((reset_C_5_i != 3) && ((reset_C_5_i != 4) && (reset_C_5_i == 5))))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && ((reset_C_5_i != 3) && (reset_C_5_i == 4)))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && ((reset_C_5_i != 1) && (reset_C_5_i == 3))))) || ((reset_C_5_i != 2) && ((reset_C_5_i != 0) && (reset_C_5_i == 1)))))) {
+        CEV.CEV.reset(reset_C_5_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_6() {  
+      if (!((((((((((reset_C_6_i != 2) && (reset_C_6_i == 0)) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && ((reset_C_6_i != 3) && ((reset_C_6_i != 4) && ((reset_C_6_i != 5) && ((reset_C_6_i != 6) && (reset_C_6_i != 7))))))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && ((reset_C_6_i != 3) && ((reset_C_6_i != 4) && ((reset_C_6_i != 5) && ((reset_C_6_i != 6) && (reset_C_6_i == 7))))))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && ((reset_C_6_i != 3) && ((reset_C_6_i != 4) && ((reset_C_6_i != 5) && (reset_C_6_i == 6)))))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && ((reset_C_6_i != 3) && ((reset_C_6_i != 4) && (reset_C_6_i == 5))))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && ((reset_C_6_i != 3) && (reset_C_6_i == 4)))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && ((reset_C_6_i != 1) && (reset_C_6_i == 3))))) || ((reset_C_6_i != 2) && ((reset_C_6_i != 0) && (reset_C_6_i == 1)))))) {
+        CEV.CEV.reset(reset_C_6_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_7() {  
+      if (!((((((((((reset_C_7_i != 2) && (reset_C_7_i == 0)) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && ((reset_C_7_i != 3) && ((reset_C_7_i != 4) && ((reset_C_7_i != 5) && ((reset_C_7_i != 6) && (reset_C_7_i != 7))))))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && ((reset_C_7_i != 3) && ((reset_C_7_i != 4) && ((reset_C_7_i != 5) && ((reset_C_7_i != 6) && (reset_C_7_i == 7))))))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && ((reset_C_7_i != 3) && ((reset_C_7_i != 4) && ((reset_C_7_i != 5) && (reset_C_7_i == 6)))))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && ((reset_C_7_i != 3) && ((reset_C_7_i != 4) && (reset_C_7_i == 5))))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && ((reset_C_7_i != 3) && (reset_C_7_i == 4)))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && ((reset_C_7_i != 1) && (reset_C_7_i == 3))))) || ((reset_C_7_i != 2) && ((reset_C_7_i != 0) && (reset_C_7_i == 1)))))) {
+        CEV.CEV.reset(reset_C_7_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_8() {  
+      if (!((((((((((reset_C_8_i != 2) && (reset_C_8_i == 0)) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && ((reset_C_8_i != 3) && ((reset_C_8_i != 4) && ((reset_C_8_i != 5) && ((reset_C_8_i != 6) && (reset_C_8_i != 7))))))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && ((reset_C_8_i != 3) && ((reset_C_8_i != 4) && ((reset_C_8_i != 5) && ((reset_C_8_i != 6) && (reset_C_8_i == 7))))))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && ((reset_C_8_i != 3) && ((reset_C_8_i != 4) && ((reset_C_8_i != 5) && (reset_C_8_i == 6)))))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && ((reset_C_8_i != 3) && ((reset_C_8_i != 4) && (reset_C_8_i == 5))))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && ((reset_C_8_i != 3) && (reset_C_8_i == 4)))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && ((reset_C_8_i != 1) && (reset_C_8_i == 3))))) || ((reset_C_8_i != 2) && ((reset_C_8_i != 0) && (reset_C_8_i == 1)))))) {
+        CEV.CEV.reset(reset_C_8_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_C_9() {  
+      if (!((((((((((reset_C_9_i != 2) && (reset_C_9_i == 0)) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && ((reset_C_9_i != 3) && ((reset_C_9_i != 4) && ((reset_C_9_i != 5) && ((reset_C_9_i != 6) && (reset_C_9_i != 7))))))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && ((reset_C_9_i != 3) && ((reset_C_9_i != 4) && ((reset_C_9_i != 5) && ((reset_C_9_i != 6) && (reset_C_9_i == 7))))))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && ((reset_C_9_i != 3) && ((reset_C_9_i != 4) && ((reset_C_9_i != 5) && (reset_C_9_i == 6)))))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && ((reset_C_9_i != 3) && ((reset_C_9_i != 4) && (reset_C_9_i == 5))))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && ((reset_C_9_i != 3) && (reset_C_9_i == 4)))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && ((reset_C_9_i != 1) && (reset_C_9_i == 3))))) || ((reset_C_9_i != 2) && ((reset_C_9_i != 0) && (reset_C_9_i == 1)))))) {
+        CEV.CEV.reset(reset_C_9_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_0() {  
+      if ((((((((((reset_E_0_i != 2) && (reset_E_0_i == 0)) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && ((reset_E_0_i != 3) && ((reset_E_0_i != 4) && ((reset_E_0_i != 5) && ((reset_E_0_i != 6) && (reset_E_0_i != 7))))))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && ((reset_E_0_i != 3) && ((reset_E_0_i != 4) && ((reset_E_0_i != 5) && ((reset_E_0_i != 6) && (reset_E_0_i == 7))))))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && ((reset_E_0_i != 3) && ((reset_E_0_i != 4) && ((reset_E_0_i != 5) && (reset_E_0_i == 6)))))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && ((reset_E_0_i != 3) && ((reset_E_0_i != 4) && (reset_E_0_i == 5))))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && ((reset_E_0_i != 3) && (reset_E_0_i == 4)))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && ((reset_E_0_i != 1) && (reset_E_0_i == 3))))) || ((reset_E_0_i != 2) && ((reset_E_0_i != 0) && (reset_E_0_i == 1))))) {
+        CEV.CEV.reset(reset_E_0_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_1() {  
+      if ((((((((((reset_E_1_i != 2) && (reset_E_1_i == 0)) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && ((reset_E_1_i != 3) && ((reset_E_1_i != 4) && ((reset_E_1_i != 5) && ((reset_E_1_i != 6) && (reset_E_1_i != 7))))))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && ((reset_E_1_i != 3) && ((reset_E_1_i != 4) && ((reset_E_1_i != 5) && ((reset_E_1_i != 6) && (reset_E_1_i == 7))))))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && ((reset_E_1_i != 3) && ((reset_E_1_i != 4) && ((reset_E_1_i != 5) && (reset_E_1_i == 6)))))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && ((reset_E_1_i != 3) && ((reset_E_1_i != 4) && (reset_E_1_i == 5))))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && ((reset_E_1_i != 3) && (reset_E_1_i == 4)))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && ((reset_E_1_i != 1) && (reset_E_1_i == 3))))) || ((reset_E_1_i != 2) && ((reset_E_1_i != 0) && (reset_E_1_i == 1))))) {
+        CEV.CEV.reset(reset_E_1_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_2() {  
+      if ((((((((((reset_E_2_i != 2) && (reset_E_2_i == 0)) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && ((reset_E_2_i != 3) && ((reset_E_2_i != 4) && ((reset_E_2_i != 5) && ((reset_E_2_i != 6) && (reset_E_2_i != 7))))))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && ((reset_E_2_i != 3) && ((reset_E_2_i != 4) && ((reset_E_2_i != 5) && ((reset_E_2_i != 6) && (reset_E_2_i == 7))))))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && ((reset_E_2_i != 3) && ((reset_E_2_i != 4) && ((reset_E_2_i != 5) && (reset_E_2_i == 6)))))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && ((reset_E_2_i != 3) && ((reset_E_2_i != 4) && (reset_E_2_i == 5))))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && ((reset_E_2_i != 3) && (reset_E_2_i == 4)))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && ((reset_E_2_i != 1) && (reset_E_2_i == 3))))) || ((reset_E_2_i != 2) && ((reset_E_2_i != 0) && (reset_E_2_i == 1))))) {
+        CEV.CEV.reset(reset_E_2_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_3() {  
+      if ((((((((((reset_E_3_i != 2) && (reset_E_3_i == 0)) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && ((reset_E_3_i != 3) && ((reset_E_3_i != 4) && ((reset_E_3_i != 5) && ((reset_E_3_i != 6) && (reset_E_3_i != 7))))))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && ((reset_E_3_i != 3) && ((reset_E_3_i != 4) && ((reset_E_3_i != 5) && ((reset_E_3_i != 6) && (reset_E_3_i == 7))))))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && ((reset_E_3_i != 3) && ((reset_E_3_i != 4) && ((reset_E_3_i != 5) && (reset_E_3_i == 6)))))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && ((reset_E_3_i != 3) && ((reset_E_3_i != 4) && (reset_E_3_i == 5))))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && ((reset_E_3_i != 3) && (reset_E_3_i == 4)))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && ((reset_E_3_i != 1) && (reset_E_3_i == 3))))) || ((reset_E_3_i != 2) && ((reset_E_3_i != 0) && (reset_E_3_i == 1))))) {
+        CEV.CEV.reset(reset_E_3_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_4() {  
+      if ((((((((((reset_E_4_i != 2) && (reset_E_4_i == 0)) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && ((reset_E_4_i != 3) && ((reset_E_4_i != 4) && ((reset_E_4_i != 5) && ((reset_E_4_i != 6) && (reset_E_4_i != 7))))))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && ((reset_E_4_i != 3) && ((reset_E_4_i != 4) && ((reset_E_4_i != 5) && ((reset_E_4_i != 6) && (reset_E_4_i == 7))))))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && ((reset_E_4_i != 3) && ((reset_E_4_i != 4) && ((reset_E_4_i != 5) && (reset_E_4_i == 6)))))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && ((reset_E_4_i != 3) && ((reset_E_4_i != 4) && (reset_E_4_i == 5))))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && ((reset_E_4_i != 3) && (reset_E_4_i == 4)))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && ((reset_E_4_i != 1) && (reset_E_4_i == 3))))) || ((reset_E_4_i != 2) && ((reset_E_4_i != 0) && (reset_E_4_i == 1))))) {
+        CEV.CEV.reset(reset_E_4_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_5() {  
+      if ((((((((((reset_E_5_i != 2) && (reset_E_5_i == 0)) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && ((reset_E_5_i != 3) && ((reset_E_5_i != 4) && ((reset_E_5_i != 5) && ((reset_E_5_i != 6) && (reset_E_5_i != 7))))))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && ((reset_E_5_i != 3) && ((reset_E_5_i != 4) && ((reset_E_5_i != 5) && ((reset_E_5_i != 6) && (reset_E_5_i == 7))))))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && ((reset_E_5_i != 3) && ((reset_E_5_i != 4) && ((reset_E_5_i != 5) && (reset_E_5_i == 6)))))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && ((reset_E_5_i != 3) && ((reset_E_5_i != 4) && (reset_E_5_i == 5))))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && ((reset_E_5_i != 3) && (reset_E_5_i == 4)))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && ((reset_E_5_i != 1) && (reset_E_5_i == 3))))) || ((reset_E_5_i != 2) && ((reset_E_5_i != 0) && (reset_E_5_i == 1))))) {
+        CEV.CEV.reset(reset_E_5_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_6() {  
+      if ((((((((((reset_E_6_i != 2) && (reset_E_6_i == 0)) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && ((reset_E_6_i != 3) && ((reset_E_6_i != 4) && ((reset_E_6_i != 5) && ((reset_E_6_i != 6) && (reset_E_6_i != 7))))))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && ((reset_E_6_i != 3) && ((reset_E_6_i != 4) && ((reset_E_6_i != 5) && ((reset_E_6_i != 6) && (reset_E_6_i == 7))))))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && ((reset_E_6_i != 3) && ((reset_E_6_i != 4) && ((reset_E_6_i != 5) && (reset_E_6_i == 6)))))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && ((reset_E_6_i != 3) && ((reset_E_6_i != 4) && (reset_E_6_i == 5))))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && ((reset_E_6_i != 3) && (reset_E_6_i == 4)))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && ((reset_E_6_i != 1) && (reset_E_6_i == 3))))) || ((reset_E_6_i != 2) && ((reset_E_6_i != 0) && (reset_E_6_i == 1))))) {
+        CEV.CEV.reset(reset_E_6_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_7() {  
+      if ((((((((((reset_E_7_i != 2) && (reset_E_7_i == 0)) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && ((reset_E_7_i != 3) && ((reset_E_7_i != 4) && ((reset_E_7_i != 5) && ((reset_E_7_i != 6) && (reset_E_7_i != 7))))))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && ((reset_E_7_i != 3) && ((reset_E_7_i != 4) && ((reset_E_7_i != 5) && ((reset_E_7_i != 6) && (reset_E_7_i == 7))))))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && ((reset_E_7_i != 3) && ((reset_E_7_i != 4) && ((reset_E_7_i != 5) && (reset_E_7_i == 6)))))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && ((reset_E_7_i != 3) && ((reset_E_7_i != 4) && (reset_E_7_i == 5))))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && ((reset_E_7_i != 3) && (reset_E_7_i == 4)))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && ((reset_E_7_i != 1) && (reset_E_7_i == 3))))) || ((reset_E_7_i != 2) && ((reset_E_7_i != 0) && (reset_E_7_i == 1))))) {
+        CEV.CEV.reset(reset_E_7_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_8() {  
+      if ((((((((((reset_E_8_i != 2) && (reset_E_8_i == 0)) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && ((reset_E_8_i != 3) && ((reset_E_8_i != 4) && ((reset_E_8_i != 5) && ((reset_E_8_i != 6) && (reset_E_8_i != 7))))))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && ((reset_E_8_i != 3) && ((reset_E_8_i != 4) && ((reset_E_8_i != 5) && ((reset_E_8_i != 6) && (reset_E_8_i == 7))))))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && ((reset_E_8_i != 3) && ((reset_E_8_i != 4) && ((reset_E_8_i != 5) && (reset_E_8_i == 6)))))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && ((reset_E_8_i != 3) && ((reset_E_8_i != 4) && (reset_E_8_i == 5))))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && ((reset_E_8_i != 3) && (reset_E_8_i == 4)))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && ((reset_E_8_i != 1) && (reset_E_8_i == 3))))) || ((reset_E_8_i != 2) && ((reset_E_8_i != 0) && (reset_E_8_i == 1))))) {
+        CEV.CEV.reset(reset_E_8_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void reset_E_9() {  
+      if ((((((((((reset_E_9_i != 2) && (reset_E_9_i == 0)) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && ((reset_E_9_i != 3) && ((reset_E_9_i != 4) && ((reset_E_9_i != 5) && ((reset_E_9_i != 6) && (reset_E_9_i != 7))))))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && ((reset_E_9_i != 3) && ((reset_E_9_i != 4) && ((reset_E_9_i != 5) && ((reset_E_9_i != 6) && (reset_E_9_i == 7))))))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && ((reset_E_9_i != 3) && ((reset_E_9_i != 4) && ((reset_E_9_i != 5) && (reset_E_9_i == 6)))))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && ((reset_E_9_i != 3) && ((reset_E_9_i != 4) && (reset_E_9_i == 5))))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && ((reset_E_9_i != 3) && (reset_E_9_i == 4)))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && ((reset_E_9_i != 1) && (reset_E_9_i == 3))))) || ((reset_E_9_i != 2) && ((reset_E_9_i != 0) && (reset_E_9_i == 1))))) {
+        CEV.CEV.reset(reset_E_9_i);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
     public static void lasJettison_C_0() {  
       if ((lasJettison_C_0_j >= 100000)) {
         CEV.CEV.lasJettison(lasJettison_C_0_j);
@@ -140,76 +300,6 @@ public class Alphabet {
     public static void lasJettison_C_9() {  
       if ((lasJettison_C_9_j >= 100000)) {
         CEV.CEV.lasJettison(lasJettison_C_9_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_0() {  
-      if (true) {
-        CEV.CEV.reset(reset_0_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_1() {  
-      if (true) {
-        CEV.CEV.reset(reset_1_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_2() {  
-      if (true) {
-        CEV.CEV.reset(reset_2_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_3() {  
-      if (true) {
-        CEV.CEV.reset(reset_3_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_4() {  
-      if (true) {
-        CEV.CEV.reset(reset_4_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_5() {  
-      if (true) {
-        CEV.CEV.reset(reset_5_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_6() {  
-      if (true) {
-        CEV.CEV.reset(reset_6_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_7() {  
-      if (true) {
-        CEV.CEV.reset(reset_7_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_8() {  
-      if (true) {
-        CEV.CEV.reset(reset_8_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_9() {  
-      if (true) {
-        CEV.CEV.reset(reset_9_i);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }

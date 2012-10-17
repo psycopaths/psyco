@@ -54,7 +54,8 @@ public class CompilerExample implements JPFShell {
 //      Method m2 = c.getMethod("recv_ack", int.class);
        
       Class c = CEV.class;
-      Method m1 = c.getMethod("reset", int.class);
+      //Method m1 = c.getMethod("reset", int.class);
+      Method m1 = c.getMethod("lsamRendezvous"); 
               
       MethodExplorer mex1 = new MethodExplorer(m1,conf);
       MethodSummary summary1 = mex1.execute();
@@ -76,7 +77,7 @@ public class CompilerExample implements JPFShell {
       seq.add(summary1);
       seq.add(summary1);
       
-      o.query(seq, new Constant<Boolean>(Boolean.class, true));
+//      o.query(seq, new Constant<Boolean>(Boolean.class, true));
       
     } catch (NoSuchMethodException ex) {
     } catch (SecurityException ex) {

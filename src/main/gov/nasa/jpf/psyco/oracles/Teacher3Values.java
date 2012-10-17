@@ -380,7 +380,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
   public Vector conjecture(Candidate cndt) throws SETException {
     Vector cex = null;
-    while (!refine && cex == null && maxDepth < 5) {
+    while (!refine && cex == null && maxDepth < 4) {
       Candidate.printCandidateAssumption(cndt, alphabet_);
 
       logger.info("STARTING CONJECTURE");

@@ -3,20 +3,20 @@ classpath=${jpf-psyco}/build/examples
 shell=compiler.CompilerExample
 
 
+concolic.classes=CEV.CEV,CEV.Spacecraft,CEV.ErrorLog
+
 # ####################################################################
 #
 # JPF
 # 
 
-#JPF.isModeSymbolic=true
-dp.use-bitvectors=true
-jdart.optimize=false
-jfuzz.time=3,3,0,0
+# jpf-constraints
+symbolic.dp=z3
+symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Java.so
 
 # ####################################################################
 #
 # LOGGING
 # 
 
-log.severe=jdart
-log.finest=psyco
+log.finest=constraints,jdart,psyco

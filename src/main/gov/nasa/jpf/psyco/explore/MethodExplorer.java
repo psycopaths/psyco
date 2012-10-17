@@ -7,8 +7,10 @@ package gov.nasa.jpf.psyco.explore;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.jdart.ConcolicConfig;
 import gov.nasa.jpf.jdart.ConcolicExplorer;
 import gov.nasa.jpf.jdart.ConcolicMethodExplorer;
+import gov.nasa.jpf.jdart.JDart;
 import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
@@ -17,6 +19,7 @@ import gov.nasa.jpf.psyco.compiler.Parameter;
 import gov.nasa.jpf.psyco.summaries.MethodSummary;
 import gov.nasa.jpf.psyco.summaries.MethodSummary.MethodPath;
 import gov.nasa.jpf.psyco.util.*;
+import gov.nasa.jpf.util.ConfigUtil;
 import gov.nasa.jpf.util.JPFLogger;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -55,13 +58,13 @@ public class MethodExplorer {
     prepareTestCase();
 
     logger.finest("creating JDartExplorer");
-    JDartExplorer explorer = prepareJDart();
+    JDart explorer = prepareJDart();
       
     logger.finest("starting JDartExplorer");
-    explorer.run();    
+    explorer.run();
       
     // FIXME: there should be a better way of getting the right explorer
-    ConcolicMethodExplorer mex = ConcolicExplorer.getInstance().getMethodExplorers().iterator().next();
+    ConcolicMethodExplorer mex = explorer.getConcolicExplorer().getMethodExplorers().iterator().next();
     ConstraintsTree ct = mex.getConstraintsTree();
     logger.finest(ct);
     this.initialValues = mex.getOrininalInitialValuation();
@@ -110,24 +113,19 @@ public class MethodExplorer {
   }
   
   
-  private JDartExplorer prepareJDart() {            
-    // FIXME: create a copy of conf
-    Config jDartConf = conf;
-  
-    conf.setTarget("temp.MethodTestCase");  // main program
-    conf.setProperty("symbolic.method", MethodUtil.getSymbolicPattern(explore));
-    conf.setProperty("perturb.foo.method", MethodUtil.getPerturbPattern(explore));
-    conf.setProperty("perturb.params", "foo");
-    conf.setProperty("symbolic.classes", this.packageName + "." + this.className );
-    conf.setProperty("sut.package", this.packageName);
-    conf.setProperty("sut.class", this.className);    
-    //conf.setProperty("vm.storage.class", null);
-    conf.setProperty("jfuzz.timing","false");
-    
-    conf.setProperty("log.finest", "jdart");
-
-    //return new JDartExplorer(jDartConf, true);
-    return null;
+  private JDart prepareJDart() {
+    // copy basic config
+    //Config baseConf = ConfigUtil.createCopy(conf);
+    Config baseConf = conf;
+    baseConf.remove("shell");
+    baseConf.setProperty("concolic.method.m1","temp.MethodTestCase.sequence()");
+    baseConf.setTarget("temp.MethodTestCase");
+    // create concolic config
+    ConcolicConfig concConfig = new ConcolicConfig(conf);
+    concConfig.addConcolicClass("temp.MethodTestCase");
+    // instantiate dart
+    JDart jdart = new JDart(baseConf, concConfig);  
+    return jdart;
   }
   
   public Valuation getInitialValues() {

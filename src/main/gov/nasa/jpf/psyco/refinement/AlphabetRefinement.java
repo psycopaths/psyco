@@ -38,6 +38,7 @@ import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.SimpleProfiler;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 
 public class AlphabetRefinement {
@@ -137,20 +138,20 @@ public class AlphabetRefinement {
       }
       MethodSymbol oldSymbol = alphabet.getSymbol(strippedSymbolName);
       Map<Expression, Expression> replacements = getReplacementsForCopy(oldSymbol,copyID,true);
-//      for (Entry e : replacements.entrySet()) {
-//        logger.info(e.getKey() + " -> " + e.getValue());        
-//      }
+      for (Entry e : replacements.entrySet()) {
+        logger.finest(e.getKey() + " -> " + e.getValue());        
+      }
       Set<Variable> restriction = new HashSet(replacements.keySet());
       ExpressionRestrictor restrictor = new ExpressionRestrictor(restriction);            
 
       logger.finest("Precondition:" + oldSymbol.getPrecondition());
 
       Expression<Boolean> errorPCs = constraintsTree.getErrorConstraint();      
-//      logger.info("Error PCs:" + errorPCs);
+      logger.finest("Error PCs (orig):" + errorPCs);
       errorPCs = restrictor.restrict(errorPCs);
-//      logger.info("Error PCs:" + errorPCs);
+      logger.finest("Error PCs (rest):" + errorPCs);
       errorPCs = errorPCs.replaceTerms(replacements);      
-//      logger.info("Error PCs:" + errorPCs);
+      logger.finest("Error PCs (repl):" + errorPCs);
       if (restrictor.hasMixedParameters()) {
         return "UNKNOWN";        
       }

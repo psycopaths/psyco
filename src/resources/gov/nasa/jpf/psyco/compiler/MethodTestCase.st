@@ -11,7 +11,7 @@ public class MethodTestCase {
   public static <p.type> <p.name>;  
   }> 
           
-  public static void main(String[] args) {
+  public static void sequence() {
     // has to have default constructor ...
     <sutclass> testObject = new <sutclass>();
     testObject.<methodName>(
@@ -19,6 +19,10 @@ public class MethodTestCase {
       }> 
       <if(params)> <last(params).name> <endif>
     );
+  }
+
+  public static void main(String[] args) {
+    sequence();
   }
 } 
   

@@ -117,11 +117,7 @@ public class ExpressionRestrictor extends ExpressionVisitor<Expression> {
         return null;
       }
       
-      Expression test = (left != null) ? left : right;
-      if (countVars(test) > 0) {
-        this.mixedParameters = true;
-      }
-      return null;
+      return (left != null) ? left : right;
     }    
     return new PropositionalCompound(left, pc.getOperator(), right);
   }
