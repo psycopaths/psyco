@@ -32,7 +32,8 @@ symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Jav
 #
 # logging and jpf output
 #
-log.info=psyco,constraints,jdart
+#log.finest=psyco
+log.info=constraints,jdart,psyco
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

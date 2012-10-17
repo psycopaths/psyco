@@ -150,12 +150,14 @@ public class AlphabetRefinement {
       logger.finest("Error PCs (orig):" + errorPCs);
       errorPCs = restrictor.restrict(errorPCs);
       logger.finest("Error PCs (rest):" + errorPCs);
-      errorPCs = errorPCs.replaceTerms(replacements);      
-      logger.finest("Error PCs (repl):" + errorPCs);
       if (restrictor.hasMixedParameters()) {
         return "UNKNOWN";        
       }
 
+      errorPCs = constraintsTree.getErrorConstraintRestricted(restriction);
+      logger.finest("Error PCs (tree):" + errorPCs);
+      errorPCs = errorPCs.replaceTerms(replacements);      
+      logger.finest("Error PCs (repl):" + errorPCs);
       errorPCs = simplifier.simplify(errorPCs);
       logger.finest("Error PCs:" + errorPCs);
       
@@ -180,12 +182,14 @@ public class AlphabetRefinement {
 
       Expression<Boolean> dontKnowPCsTmp = constraintsTree.getDontKnowConstraint();
       dontKnowPCsTmp = restrictor.restrict(dontKnowPCsTmp);
-      dontKnowPCsTmp = dontKnowPCsTmp.replaceTerms(replacements);
       logger.finest("DontKnow PCs Tmp:" + dontKnowPCsTmp);
       if (restrictor.hasMixedParameters()) {
         return "UNKNOWN";        
       }
 
+      dontKnowPCsTmp = constraintsTree.getDontKnowConstraintRestricted(restriction);
+      dontKnowPCsTmp = dontKnowPCsTmp.replaceTerms(replacements);
+      dontKnowPCsTmp=  simplifier.simplify(dontKnowPCsTmp);
 
       Expression<Boolean> coveredPCs;
       Expression dontKnowPCs = null;
