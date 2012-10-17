@@ -34,6 +34,9 @@
   <!-- get the jpf-learn path properties -->
   <property file="${jpf-learn}/jpf.properties"/>
 
+  <!-- get the jpf-constraints path properties -->
+  <property file="${jpf-constraints}/jpf.properties"/>
+
   <!-- get the jpf-jdart path properties -->
   <property file="${jpf-jdart}/jpf.properties"/>
 
@@ -62,6 +65,9 @@
     
     <!-- add in what we need from jpf-learn -->
     <pathelement path="${jpf-learn.native_classpath}"/>
+
+    <!-- add in what we need from jpf-constraints -->
+    <pathelement path="${jpf-constraints.native_classpath}"/>
 
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>

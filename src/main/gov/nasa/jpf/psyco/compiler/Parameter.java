@@ -16,35 +16,27 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package gov.nasa.jpf.psyco.refinement;
+package gov.nasa.jpf.psyco.compiler;
 
-import gov.nasa.jpf.constraints.api.Expression;
-import gov.nasa.jpf.constraints.expressions.Constant;
-import java.util.HashMap;
+/**
+ * Info about method paramter
+ *
+ */
+public class Parameter {
 
+  private String name;
+  private String type;
 
-
-public class Precondition {
-  private Expression<Boolean> precond;
-
-  public Precondition() {
-    this.precond = new Constant(Boolean.class, true);
+  public Parameter(String type, String name) {
+    this.name = name;
+    this.type = type;
   }
 
-  public Precondition(Expression<Boolean> precond) {
-    this.precond = precond;
+  public String getName() {
+    return name;
   }
 
-  public Expression<Boolean> getFormula() {
-    return precond;
-  }
-
-  public String toSource() {
-    return "" + precond;
-  }
-
-  public void replaceNames(HashMap<String, String> names) {
-    throw new UnsupportedOperationException("not implemented yet");
-    //precond.replaceNames(names);
+  public String getType() {
+    return type;
   }
 }

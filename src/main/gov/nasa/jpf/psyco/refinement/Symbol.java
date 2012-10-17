@@ -17,10 +17,6 @@
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
 package gov.nasa.jpf.psyco.refinement;
-
-import gov.nasa.jpf.jdart.numeric.Constraint;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Symbol {

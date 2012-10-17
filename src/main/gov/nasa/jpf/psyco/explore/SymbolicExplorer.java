@@ -19,7 +19,7 @@
 
 package gov.nasa.jpf.psyco.explore;
 
-import gov.nasa.jpf.jdart.ConstraintsTree;
+import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 
 /* The abstract base class to do symbolic exploration of a program for psyco */
 

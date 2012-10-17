@@ -16,7 +16,7 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package gov.nasa.jpf.psyco.tools;
+package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
@@ -24,6 +24,8 @@ import gov.nasa.jpf.JPF;
 import java.util.HashMap;
 import java.util.Vector;
 import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.jdart.*;
+import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
 import gov.nasa.jpf.learn.basic.Candidate;
 import gov.nasa.jpf.learn.basic.Learner;
 import gov.nasa.jpf.learn.TDFA.MemoizeTable;
@@ -31,22 +33,37 @@ import gov.nasa.jpf.learn.TDFA.TDFALearner;
 import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.psyco.oracles.Teacher3Values;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
+import gov.nasa.jpf.util.ConfigUtil;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
+import gov.nasa.jpf.util.SimpleProfiler;
 
-public class RunGenerateInt implements JPFShell {
-  private JPFLogger logger;
-  Config conf;
+public class Psyco implements JPFShell {
 
-  public RunGenerateInt(Config conf) {
-    this.conf = conf;
+  private Config config;
+  
+  private JPFLogger logger;  
+
+  public Psyco(Config conf) {
+    this.config = conf;
     LogManager.init(conf);
-    logger = JPF.getLogger("teacher");
+    logger = JPF.getLogger("psyco");
   }
 
-  public void start(String[] args) {
+  @Override
+  public void start(String[] strings) {
+    run();
+  }
+  
+  public void run() {
+    
+    logger.finest("Psyco.run() -- begin");
 
+    // parse config
+    PsycoConfig pconf = new PsycoConfig(config);
+    
+    // prepare data structures
     Learner learnInterface = null;
     Teacher3Values teacher = null;
     Candidate inf = null;
@@ -54,47 +71,35 @@ public class RunGenerateInt implements JPFShell {
     AlphabetRefinement refiner = null;
     MemoizeTable memoize = null;
 
-
-    boolean mode = conf.getBoolean("JPF.isModeSymbolic");
-    if (conf.getProperty("optimizeQueries") != null) {
-      Teacher3Values.setOptimize(conf.getBoolean("optimizeQueries"));
-    }
+    boolean mode = true;
+//    boolean mode = config.getBoolean("JPF.isModeSymbolic");
+//  FIXME: re-enable this optimization...
+//    if (conf.getProperty("optimizeQueries") != null) {
+//      Teacher3Values.setOptimize(conf.getBoolean("optimizeQueries"));
+//    }
     
     String teacherAlpha = "";
+    SimpleProfiler.start("PSYCO-run");
     
-    long time1 = System.currentTimeMillis();
     
     if (mode == Teacher3Values.SYMB) {
       // need to initialize the refiner
-      refiner = new AlphabetRefinement(conf.getProperty("example.path"),
-              conf.getProperty("sut.package"), conf.getProperty("sut.class"));
-      for (String ap : conf.getStringArray("interface.alphabet")) {
-        // now I have pairs method_name:#parameters    
-        String[] methodFields = ap.split(":");
-        
-        if (methodFields.length == 2) {
-          teacherAlpha += (methodFields[0]);
-          teacherAlpha += ",";
-          refiner.addInitialSymbol(methodFields[0], Integer.parseInt(methodFields[1]));
-        }
+      refiner = new AlphabetRefinement(pconf,config);
+      for (MethodConfig ap : pconf.getAlphabetMethods()) {
+        refiner.addInitialSymbol(ap);
       }
       teacherAlpha = refiner.createInitialRefinement();
     } else {
-      for (String ap : conf.getStringArray("interface.alphabet")) {
-        // now I have pairs method_name:#parameters    
-        String[] methodFields = ap.split(":");
-        
-        if (methodFields.length >= 1) {
-          teacherAlpha += (methodFields[0]);
-          teacherAlpha += ",";
-        }
+      for (MethodConfig ap : pconf.getAlphabetMethods()) {
+        teacherAlpha += (ap.getClassName() + "." + ap.getMethodName());
+        teacherAlpha += ",";       
       }      
     }
 
-    conf.setProperty("interface.alphabet", teacherAlpha);
-    
+    config.setProperty("interface.alphabet", teacherAlpha);
+
     Teacher3Values.setMode(mode); 
-    int depth = conf.getInt("conjecture.Depth");
+    int depth = pconf.getMaxDepth();
     if (depth > 0) {
       Teacher3Values.maxDepth = depth;
     } 
@@ -103,7 +108,7 @@ public class RunGenerateInt implements JPFShell {
       newLearningInstance = false; // unless we need to refine
       try {
         /* run the learning algorithm */
-        teacher = new Teacher3Values(conf, refiner, memoize);
+        teacher = new Teacher3Values(config, pconf, refiner, memoize);
         learnInterface = new TDFALearner(teacher);
         inf = (Candidate) learnInterface.getAssumption();
 
@@ -112,18 +117,21 @@ public class RunGenerateInt implements JPFShell {
       }
 
       if (teacher.refine()) {
-        conf.setProperty("interface.alphabet", teacher.getNewAlphabet());
+        config.setProperty("interface.alphabet", teacher.getNewAlphabet());
         newLearningInstance = true;
         memoize = teacher.getMemoizeTable();
       }
     }
     
-    long time2 = System.currentTimeMillis();
+    SimpleProfiler.stop("PSYCO-run");
 
 
-    String storeResult = conf.getProperty("interface.outputFile");
+    String storeResult = "/tmp/psyco.result";
 
-    logger.info("\n\n Total time is: " + (time2-time1)  );
+    // post process ...    
+    logger.finest("Psyco.run() -- end");
+    logger.info("Profiling:\n" + SimpleProfiler.getResults());
+    
     logger.info("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
     logger.info("\n\n********************************************");
     if (inf == null) {
@@ -139,5 +147,5 @@ public class RunGenerateInt implements JPFShell {
       }
     }
     logger.info("********************************************");
-  }
+  }  
 }

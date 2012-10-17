@@ -21,18 +21,9 @@ package gov.nasa.jpf.psyco.tools;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFShell;
-import gov.nasa.jpf.psyco.summaries.MethodSummary;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.psyco.compiler.Compiler;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import solvers.Formula;
-import solvers.LogicalExpression;
-import solvers.LogicalOperator;
-import solvers.TrueConstant;
 
 /**
  *

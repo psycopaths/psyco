@@ -1,0 +1,46 @@
+############################################################################### 
+#
+# experiment setup
+#
+
+psyco.interface.m1=psyco.java.io.PipedOutputStream.connect(s:int,c:int)
+psyco.interface.m2=psyco.java.io.PipedOutputStream.write()
+psyco.interface.m3=psyco.java.io.PipedOutputStream.flush()
+psyco.interface.m4=psyco.java.io.PipedOutputStream.close()
+
+
+psyco.depth=1
+
+# outputs results - use tmp because I ignore it during commits 
+# interface.outputFile=tmp/exampleProtocolSteffen2011
+
+
+############################################################################### 
+#
+# default psyco tools
+#
+
+# psyco
+shell=gov.nasa.jpf.psyco.Psyco
+
+# jdart
+
+# jpf-constraints
+symbolic.dp=z3
+symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Java.so
+
+
+############################################################################### 
+#
+# logging and jpf output
+#
+log.finest=psyco
+log.fine=jdart,constraints
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=

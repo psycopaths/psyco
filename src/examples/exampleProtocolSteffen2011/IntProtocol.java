@@ -18,30 +18,35 @@
 //
 package exampleProtocolSteffen2011;
 
+import gov.nasa.jpf.jdart.Symbolic;
+
 /** This example is a modified version from:
  *  Automata Learning with Automated Alphabet Abstraction Reﬁnement
  *  Falk Howar, Bernhard Steﬀen, and Maik Merten
  *  VMCAI 2011
  */
 
-public class Protocol {
+public class IntProtocol {
+ 
+	@Symbolic("true")  
+  private int buffer_empty = 1;
   
   // pdu p, ack; // pdus
-  private static int expect = 0; // next expected seq. nr
-  private static boolean buffer_empty = true;
-  
-  public static void internalReset() {
-    expect = 0;
-    buffer_empty = true;
-  }
+	@Symbolic("true")  
+  private int expect = 0; // next expected seq. nr
+ 
 
-  public static void msg(int sequence, int content) {
-    System.out.println("Sequence is " + (sequence & 1));
-    System.out.println("Expect is " + (expect & 1));
-    
-    if ((buffer_empty) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
+  public void msg( int P1,  int P2) {
+  	if (P1 < 0) return;
+  	
+  	System.out.println("expect = " + expect);
+  	int prevExpect = expect;
+  	if (expect > 0)
+  		prevExpect--;
+  	
+    if ((buffer_empty==1) && (P1 % 7 == prevExpect % 2)) {  // this is as expected
       expect++;
-      buffer_empty = false;
+      buffer_empty = 1-buffer_empty;
       // OK message will be passed to upper layer
     } else {
       assert false;
@@ -49,30 +54,20 @@ public class Protocol {
     }
   } 
   
-  public static void recv_ack(int value) {
-    if (buffer_empty) {
+  public void recv_ack(int P1) {
+    if (buffer_empty==1) {
       assert false;
     } else {
-      if (value == ((expect-1) % 2)) {
+      if (P1 == ((expect-1) % 2)) {
          // ack is enabled, message is consumed
-        buffer_empty = true;
+        buffer_empty = 1-buffer_empty;
       } else {
-        // not the right sequence
+        // not the right P1
         assert false;
       }
     }        
   }
-  
-  public static void main(String[] args) {
-    msg(0, 6);
-    recv_ack(0);
-    msg(1, 10);
-    recv_ack(1);
-    msg(0, 100);
-    recv_ack(0);
     
-}
-
 }
 
 //while (true) {

@@ -20,29 +20,26 @@ package gov.nasa.jpf.psyco.oracles;
 
 // needs learning project
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.jdart.ConstraintsTree;
 import gov.nasa.jpf.learn.basic.Candidate;
 import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.learn.basic.MinimallyAdequateTeacher;
 import gov.nasa.jpf.learn.TDFA.MemoizeTable;
-import gov.nasa.jpf.learn.TDFA.TDFALearner;
 import gov.nasa.jpf.learn.basic.Learner;
 import gov.nasa.jpf.learn.basic.ThreeValues;
 
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
+import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.explore.SequenceExplorer;
 import gov.nasa.jpf.psyco.explore.SequenceExplorer.ExplorationMethod;
-import gov.nasa.jpf.psyco.explore.PsycoProducer;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Vector;
 
-import gov.nasa.jpf.psyco.refinement.Symbol;
 import java.util.HashMap;
-import gov.nasa.jpf.psyco.Target.ProgramExecutive;
-import java.lang.reflect.InvocationTargetException;
+import gov.nasa.jpf.psyco.target.ProgramExecutive;
 import java.lang.reflect.Method;
 
 /*
@@ -54,7 +51,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   public static final boolean CONCR = false;
   public static final boolean SYMB = true;
   public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
-  private JPFLogger logger = JPF.getLogger("teacher");
+  private JPFLogger logger = JPF.getLogger("psyco");
   private Learner set_;
   private MemoizeTable memoized_;
   private String module1_, module2_;
@@ -69,7 +66,12 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   private static int memoizeHits = 0;
   private static int totalQueries = 0;
 
-  public Teacher3Values(Config conf, AlphabetRefinement ref) {
+  private PsycoConfig psy;
+          
+  public Teacher3Values(Config conf, PsycoConfig psy, AlphabetRefinement ref) {
+    
+    this.psy = psy;
+    
     memoized_ = new MemoizeTable();
 
     /* targetArgs are no longer relevant
@@ -86,17 +88,17 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     module2_ = null; // TODO change for compositional verification
 
     JPFargs_ = conf;
-    String packageName = JPFargs_.getProperty("sut.package");
-    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
-    JPFargs_.setProperty("symbolic.assertions", st);
-    st = JPFargs_.getProperty("symbolic.classes");
-    if (st != null) {
-    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
-    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    } else {
-      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    }
-    JPFargs_.setProperty("symbolic.classes", st);
+//    String packageName = JPFargs_.getProperty("sut.package");
+//    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
+//    JPFargs_.setProperty("symbolic.assertions", st);
+//    st = JPFargs_.getProperty("symbolic.classes");
+//    if (st != null) {
+//    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
+//    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+//    } else {
+//      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+//    }
+//    JPFargs_.setProperty("symbolic.classes", st);
 
     String[] alpha = conf.getStringArray("interface.alphabet");
     alphabet_ = new Vector();
@@ -107,13 +109,16 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       logger.info(a);
     }
 
-    if (mode == SYMB) {
-      setUpJDartConfig();
-    }
+//    if (mode == SYMB) {
+//      setUpJDartConfig();
+//    }
   }
 
   // allow reuse of memoized table after refinements
-  public Teacher3Values(Config conf, AlphabetRefinement ref, MemoizeTable mem) {
+  public Teacher3Values(Config conf, PsycoConfig psy, AlphabetRefinement ref, MemoizeTable mem) {
+    
+    this.psy = psy;
+    
     if (mem == null) {
       memoized_ = new MemoizeTable();
     } else {
@@ -134,17 +139,17 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     module2_ = null; // TODO change for compositional verification
     
     JPFargs_ = conf;
-    String packageName = JPFargs_.getProperty("sut.package");
-    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
-    JPFargs_.setProperty("symbolic.assertions", st);
-    st = JPFargs_.getProperty("symbolic.classes");
-    if (st != null) {
-    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
-    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    } else {
-      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
-    }
-    JPFargs_.setProperty("symbolic.classes", st);
+//    String packageName = JPFargs_.getProperty("sut.package");
+//    String st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME + "$" + "TotallyPsyco";
+//    JPFargs_.setProperty("symbolic.assertions", st);
+//    st = JPFargs_.getProperty("symbolic.classes");
+//    if (st != null) {
+//    	if (!st.contains(AlphabetRefinement.REFINED_CLASS_NAME))
+//    		st += "," + packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+//    } else {
+//      st = packageName + "." + AlphabetRefinement.REFINED_CLASS_NAME;
+//    }
+//    JPFargs_.setProperty("symbolic.classes", st);
 
     String[] alpha = conf.getStringArray("interface.alphabet");
     alphabet_ = new Vector();
@@ -155,9 +160,9 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       logger.info(a);
     }
 
-    if (mode == SYMB) {
-      setUpJDartConfig();
-    }
+//    if (mode == SYMB) {
+//      setUpJDartConfig();
+//    }
   }
 
   private String getPrefix(String action, HashMap hm) {
@@ -240,90 +245,90 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
     // is there any parameters involved?
 
     // only perform this if optimization is enabled
-    if (optimizeQueriesNoParams) {
-      parameters_involved = false;
-
-      if (mode == SYMB) {
-        for (String nextEl : sequence) {
-          if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
-            parameters_involved = true; // there are parameters so may need to refine
-            break; // exit the loop
-          }
-        }
-      }
-    }
+//    if (optimizeQueriesNoParams) {
+//      parameters_involved = false;
+//
+//      if (mode == SYMB) {
+//        for (String nextEl : sequence) {
+//          if ((alphaRefiner.getSymbol(nextEl)).getNumParams() > 0) {
+//            parameters_involved = true; // there are parameters so may need to refine
+//            break; // exit the loop
+//          }
+//        }
+//      }
+//    }
 
     String[] programArgs = null;
     int counter = 0;
 
-    if (mode == CONCR || !parameters_involved) {
-      logger.info("Mode is CONCR or no params");
+//    if (mode == CONCR || !parameters_involved) {
+//      logger.info("Mode is CONCR or no params");
+//
+//      programArgs = new String[sequence.size() + 1];
+//      programArgs[0] = "sequence";
+//      counter = 1;
+//    } else if (mode == SYMB) {
+//      logger.info("Mode is symbolic");
+//      programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
+//      programArgs[0] = "sequence";
+//      programArgs[1] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + "init";
+//      counter = 2;
+//    }
+//
+//    // create the PSYCO names for the refiner
+//
+//    HashMap hm = new HashMap();
+//    for (String nextEl : sequence) {
+//      if (!hm.containsKey(nextEl)) {
+//        hm.put(nextEl, new Integer(0));
+//      }
+//
+//      if (mode == CONCR) {
+//        programArgs[counter] = module1_ + ":" + nextEl;
+//      } else if (!parameters_involved) {
+//        programArgs[counter] = module1_ + ":" + (alphaRefiner.getSymbol(nextEl)).getOriginalMethodName();
+//      } else { // symbolic mode and parameters involved
+//        programArgs[counter] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + getPrefix(nextEl, hm) + nextEl;
+//      }
+//
+//      counter++;
+//      Integer value = (Integer) hm.get(nextEl);
+//      value++;
+//      hm.put(nextEl, value);
+//    }
 
-      programArgs = new String[sequence.size() + 1];
-      programArgs[0] = "sequence";
-      counter = 1;
-    } else if (mode == SYMB) {
-      logger.info("Mode is symbolic");
-      programArgs = new String[sequence.size() + 2]; // also need to call init() first for jdart to work
-      programArgs[0] = "sequence";
-      programArgs[1] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + "init";
-      counter = 2;
-    }
+//    if ((mode == SYMB) && (!parameters_involved)) {
+//      logger.info("Case no params");
+//      logger.info("---------- NO PARAMETERS - RUN JAVA------------");
+//      // just execute with simple java - avoid JPF altogether
+//      boolean result = true;
+//      try {
+//        resetTarget();
+//        ProgramExecutive.main(programArgs);
+//      } catch (Throwable e) {
+//        // make sure exception is due to assert false and not to some mistake...
+//        if (!((e.getCause()).toString()).startsWith("java.lang.AssertionError")) {
+//          logger.severe("Unexpected exception caught during query");
+//        }
+//        result = false;
+//      }
+//
+//      logger.info("Result from running Java is ", result);
+//
+//      if (result) {
+//        if (memoize) {
+//          memoized_.setResult(sequence, ThreeValues.FALSE); // memoized stores them the other way around  
+//          return (ThreeValues.TRUE);
+//        } else {
+//          if (memoize) {
+//            memoized_.setResult(sequence, ThreeValues.TRUE); // memoized stores them the other way around  
+//            return (ThreeValues.FALSE);
+//          }
+//        }
+//      }
+//    }
 
-    // create the PSYCO names for the refiner
-
-    HashMap hm = new HashMap();
-    for (String nextEl : sequence) {
-      if (!hm.containsKey(nextEl)) {
-        hm.put(nextEl, new Integer(0));
-      }
-
-      if (mode == CONCR) {
-        programArgs[counter] = module1_ + ":" + nextEl;
-      } else if (!parameters_involved) {
-        programArgs[counter] = module1_ + ":" + (alphaRefiner.getSymbol(nextEl)).getOriginalMethodName();
-      } else { // symbolic mode and parameters involved
-        programArgs[counter] = JPFargs_.getProperty("sut.package") + "." + AlphabetRefinement.REFINED_CLASS_NAME + ":" + getPrefix(nextEl, hm) + nextEl;
-      }
-
-      counter++;
-      Integer value = (Integer) hm.get(nextEl);
-      value++;
-      hm.put(nextEl, value);
-    }
-
-    if ((mode == SYMB) && (!parameters_involved)) {
-      logger.info("Case no params");
-      logger.info("---------- NO PARAMETERS - RUN JAVA------------");
-      // just execute with simple java - avoid JPF altogether
-      boolean result = true;
-      try {
-        resetTarget();
-        ProgramExecutive.main(programArgs);
-      } catch (Throwable e) {
-        // make sure exception is due to assert false and not to some mistake...
-        if (!((e.getCause()).toString()).startsWith("java.lang.AssertionError")) {
-          logger.severe("Unexpected exception caught during query");
-        }
-        result = false;
-      }
-
-      logger.info("Result from running Java is ", result);
-
-      if (result) {
-        if (memoize) {
-          memoized_.setResult(sequence, ThreeValues.FALSE); // memoized stores them the other way around  
-          return (ThreeValues.TRUE);
-        } else {
-          if (memoize) {
-            memoized_.setResult(sequence, ThreeValues.TRUE); // memoized stores them the other way around  
-            return (ThreeValues.FALSE);
-          }
-        }
-      }
-    }
-
-    if (mode == SYMB) {
+//    if (mode == SYMB) {
       logger.info("---------- RUN CONCOLIC ------------");
       // TODO
       // first call jpf-jdart when it is ready and get the constraints tree
@@ -354,28 +359,28 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
         newAlphabet = result;
         return (ThreeValues.TRUE); // will be ignored since refined was set to true
       }
-    } else {  // mode is concrete
-      logger.info("---------- RUN JPF CONCRETE MODE ------------");
-      JPF jpf = createJPFInstance(programArgs); // driver for M1
-      jpf.run();
-      ThreeValues violating = null;
-      if (jpf.foundErrors()) {
-        if (memoize) {
-          memoized_.setResult(sequence, ThreeValues.TRUE);
-        }
-        return ThreeValues.FALSE;
-      } else {
-        if (memoize) {
-          memoized_.setResult(sequence, ThreeValues.FALSE);
-        }
-        return ThreeValues.TRUE;
-      }
-    }
+//    } else {  // mode is concrete
+//      logger.info("---------- RUN JPF CONCRETE MODE ------------");
+//      JPF jpf = createJPFInstance(programArgs); // driver for M1
+//      jpf.run();
+//      ThreeValues violating = null;
+//      if (jpf.foundErrors()) {
+//        if (memoize) {
+//          memoized_.setResult(sequence, ThreeValues.TRUE);
+//        }
+//        return ThreeValues.FALSE;
+//      } else {
+//        if (memoize) {
+//          memoized_.setResult(sequence, ThreeValues.FALSE);
+//        }
+//        return ThreeValues.TRUE;
+//      }
+//    }
   }
 
   public Vector conjecture(Candidate cndt) throws SETException {
     Vector cex = null;
-    while (!refine && cex == null) {
+    while (!refine && cex == null && maxDepth < 5) {
       Candidate.printCandidateAssumption(cndt, alphabet_);
 
       logger.info("STARTING CONJECTURE");
@@ -392,8 +397,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       String dknow = cndt.allDKnowSequences;
       String other = dknow.replaceFirst(";", "");
 
-      //System.out.println("Good is: " + res);
-      //System.out.println("Bad is: " + bad);
+      System.out.println("Good is: " + res);
+      System.out.println("Bad is: " + bad);
 
       String[] goodSequences = res.split(";");
       String[] badSequences = bad.split(";");
@@ -521,12 +526,12 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   }
 
   private void setUpJDartConfig() {
-    JPFargs_.setTarget(TARGET);  // main program
-    JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
+    //JPFargs_.setTarget(TARGET);  // main program
+    //JPFargs_.setProperty("symbolic.method", "gov.nasa.jpf.psyco.Target.ProgramExecutive.sequence()");
 
     // the following ensures state matching is off - should it be in dart jpf.properties?
     // caused memory leak so adding it here
-    JPFargs_.setProperty("vm.storage.class", null);
+    //JPFargs_.setProperty("vm.storage.class", null);
   }
 
   public JPF createJPFInstance(String[] programArgs) {
@@ -539,8 +544,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   public SequenceExplorer createExplorer(String[] programArgs, 
   		SequenceExplorer.ExplorationMethod explorationMethod,
   		AbstractList<String> sequence) {
-    JPFargs_.setTargetArgs(programArgs); // arguments to main
-    return (new SequenceExplorer(JPFargs_, explorationMethod, true, sequence, alphaRefiner));
+    //JPFargs_.setTargetArgs(programArgs); // arguments to main
+    return (new SequenceExplorer(JPFargs_, psy, explorationMethod, true, sequence, alphaRefiner));
   }
 
   public boolean refine() {

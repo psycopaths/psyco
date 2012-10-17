@@ -24,7 +24,6 @@ import gov.nasa.jpf.JPFShell;
 
 import gov.nasa.jpf.psyco.explore.SequenceExplorer;
 import gov.nasa.jpf.psyco.explore.SequenceExplorer.ExplorationMethod;
-import gov.nasa.jpf.psyco.explore.PsycoProducer;
 import gov.nasa.jpf.util.LogManager;
 
 public class Call implements JPFShell {
@@ -61,11 +60,11 @@ public class Call implements JPFShell {
 //  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3,sequencetest.Input.reset(I)V:sequencetest.Input.c4");
     conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1");
 
-  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
-  	explore.run();
-
-  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3");
-  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
-  	explore.run();
+//  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
+//  	explore.run();
+//
+//  	conf.setProperty("sequence.methods", "sequencetest.Input.reset(I)V:sequencetest.Input.c1,sequencetest.Input.reset(I)V:sequencetest.Input.c2,sequencetest.Input.reset(I)V:sequencetest.Input.c3");
+//  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
+//  	explore.run();
   }
 }

@@ -18,16 +18,17 @@
  ******************************************************************************/
 package gov.nasa.jpf.psyco.summaries;
 
-import gov.nasa.jpf.jdart.ConstraintsTree;
-import gov.nasa.jpf.jdart.ConstraintsTree.PostCondition;
-import gov.nasa.jpf.jdart.numeric.Expression;
-import gov.nasa.jpf.jdart.numeric.IntegerExpression;
-import gov.nasa.jpf.psyco.util.*;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
+import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.constraints.api.MinMax;
+import gov.nasa.jpf.constraints.expressions.LogicalOperator;
+import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
+import gov.nasa.jpf.jdart.constraints.PostCondition;
+import gov.nasa.jpf.psyco.util.MethodUtil;
 import java.lang.reflect.Method;
-import java.util.*;
-import solvers.Formula;
-import solvers.LogicalExpression;
-import solvers.LogicalOperator;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -40,21 +41,21 @@ public class MethodSummary {
   
   public static class MethodPath {
     
-    private Formula pathConstraint;
-    private ConstraintsTree.PostCondition postConditon;
+    private Expression<Boolean> pathConstraint;
+    private PostCondition postConditon;
     private PathState pathState;
 
-    public MethodPath(Formula pathConstraint, PostCondition postConditon, PathState pathState) {
+    public MethodPath(Expression<Boolean> pathConstraint, PostCondition postConditon, PathState pathState) {
       this.pathConstraint = pathConstraint;
       this.postConditon = postConditon;
       this.pathState = pathState;
     }
 
-    public Formula getPathConstraint() {
+    public Expression<Boolean> getPathConstraint() {
       return pathConstraint;
     }
 
-    public ConstraintsTree.PostCondition getPostConditon() {
+    public PostCondition getPostConditon() {
       return postConditon;
     }
     
@@ -62,16 +63,16 @@ public class MethodSummary {
       return pathState;
     }
 
-    public boolean intersects(Formula other) {      
-      LogicalExpression intersection = new LogicalExpression(LogicalOperator.AND);
-      intersection.addExpresion(pathConstraint);
-      intersection.addExpresion(other);
-      return intersection.isSatisfiable();
+    public boolean intersects(Expression<Boolean> other, ConstraintSolver cs, MinMax mm) {      
+      Expression<Boolean> intersection = new PropositionalCompound(
+              other, LogicalOperator.AND, this.pathConstraint);
+
+      return cs.isSatisfiable(intersection, mm).equals(Result.SAT);
     }
     
     @Override
     public String toString() {
-      return pathState + ": " + pathConstraint.sourcePC() + " -- " + postConditon;
+      return pathState + ": " + pathConstraint + " -- " + postConditon;
     }
     
   }

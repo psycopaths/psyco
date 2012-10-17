@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Map;
 import exampleProtocolSteffen2011.IntProtocol;
 import CEV.CEV;
+import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.expressions.Constant;
 import java.lang.reflect.Method;
 
-import solvers.TrueConstant;
 
 import gov.nasa.jpf.psyco.summaries.MethodSummary;
-import gov.nasa.jpf.psyco.summaries.InitialValuation;
 import gov.nasa.jpf.psyco.util.MethodUtil;
 
 import gov.nasa.jpf.psyco.oracles.SummaryOracle;
@@ -65,7 +65,7 @@ public class CompilerExample implements JPFShell {
       System.out.println(summary1);
 //      System.out.println(summary2);
   
-      InitialValuation init = new InitialValuation();
+      Valuation init = new Valuation();
 //      init.setValue("buffer_empty", 1);
 //      init.setValue("expect", 0);
       
@@ -76,7 +76,7 @@ public class CompilerExample implements JPFShell {
       seq.add(summary1);
       seq.add(summary1);
       
-      o.query(seq, new TrueConstant());
+      o.query(seq, new Constant<Boolean>(Boolean.class, true));
       
     } catch (NoSuchMethodException ex) {
     } catch (SecurityException ex) {

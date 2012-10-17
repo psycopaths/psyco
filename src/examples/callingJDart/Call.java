@@ -53,9 +53,9 @@ public class Call implements JPFShell {
   	conf.setProperty("symbolic.dp", "yices");
   	conf.setProperty("symbolic.method", "callingJDart.Input.foo(i#b)");
 
-  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
-  	explore.run();
-  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
-  	explore.run();
+//  	SequenceExplorer explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
+//  	explore.run();
+//  	explore = new SequenceExplorer(conf, ExplorationMethod.JDart, false, null, null);
+//  	explore.run();
   }
 }

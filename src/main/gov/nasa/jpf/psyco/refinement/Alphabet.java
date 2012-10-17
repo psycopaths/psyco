@@ -22,21 +22,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Alphabet {
-  private HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
-  private String packageName;
-  private String className;
+public class Alphabet implements Iterable<MethodSymbol> {
   
-  public Alphabet(String packageName, String className) {
-    this.packageName = packageName;
-    this.className = className;
+  
+  private HashMap<String, MethodSymbol> symbols = new HashMap<String, MethodSymbol>();
+  
+  public Alphabet() {    
   }
-  
-  public void addSymbol(Symbol symbol) {
+   
+  public void addSymbol(MethodSymbol symbol) {
     symbols.put(symbol.getSymbolName(), symbol);
   }
   
-  public Symbol getSymbol(String symbolName) {
+  public MethodSymbol getSymbol(String symbolName) {
     return symbols.get(symbolName);
   }
 
@@ -49,7 +47,7 @@ public class Alphabet {
     Iterator<String> itr = symbols.keySet().iterator();
     while (itr.hasNext()) {
       String symbolName = itr.next();
-      symbolsAsString += symbolName;
+      symbolsAsString += symbolName; // + "[" + symbols.get(symbolName).getPrecondition() + "]";
       if (itr.hasNext()) {
         symbolsAsString += ",";
       }
@@ -60,70 +58,56 @@ public class Alphabet {
   public String getSequenceMethodsForJDart(String[] sequence) {
     HashMap<String, Integer> sequenceSymbolCount = new HashMap<String, Integer>();
     String sequenceMethods = "";
-    for (int i = 0; i < sequence.length; i++) {
-      String symbolStr = sequence[i];
-      int symbolCount = 0;
-      if (sequenceSymbolCount.containsKey(symbolStr)) {
-        symbolCount = sequenceSymbolCount.get(symbolStr) + 1;
-      }
-      sequenceSymbolCount.put(symbolStr, symbolCount);
-      Symbol symbol = symbols.get(symbolStr);
-
-      sequenceMethods += packageName + "." + symbol.getOriginalClassName() + ".";
-      sequenceMethods += symbol.getOriginalMethodName();
-
-      sequenceMethods += "(";
-      for (int j = 0; j < symbol.getNumParams(); j++) {
-        sequenceMethods += "I";
-      }
-      sequenceMethods += ")V:";
-
-      for (int j = 0; j < symbol.getNumParams(); j++) {
-        sequenceMethods += packageName + "." + className + ".";
-        sequenceMethods += "PSYCO" + symbolCount + "_" + symbol.getSymbolName() + "_P" + j;
-        if (j < symbol.getNumParams() - 1) {
-          sequenceMethods += ":";
-        }
-      }
-
-      if (i < sequence.length - 1) {
-        sequenceMethods += ",";
-      }
-    }
+//    for (int i = 0; i < sequence.length; i++) {
+//      String symbolStr = sequence[i];
+//      int symbolCount = 0;
+//      if (sequenceSymbolCount.containsKey(symbolStr)) {
+//        symbolCount = sequenceSymbolCount.get(symbolStr) + 1;
+//      }
+//      sequenceSymbolCount.put(symbolStr, symbolCount);
+//      MethodSymbol symbol = symbols.get(symbolStr);
+//
+//      sequenceMethods += packageName + "." + symbol.getOriginalClassName() + ".";
+//      sequenceMethods += symbol.getOriginalMethodName();
+//
+//      sequenceMethods += "(";
+//      for (int j = 0; j < symbol.getNumParams(); j++) {
+//        sequenceMethods += "I";
+//      }
+//      sequenceMethods += ")V:";
+//
+//      for (int j = 0; j < symbol.getNumParams(); j++) {
+//        sequenceMethods += packageName + "." + className + ".";
+//        sequenceMethods += "PSYCO" + symbolCount + "_" + symbol.getSymbolName() + "_P" + j;
+//        if (j < symbol.getNumParams() - 1) {
+//          sequenceMethods += ":";
+//        }
+//      }
+//
+//      if (i < sequence.length - 1) {
+//        sequenceMethods += ",";
+//      }
+//    }
     return sequenceMethods;
   }
 
-  public String toSource() {
-    String source = "";
-    source += "package " + packageName + ";\n\n";
-    source += "import gov.nasa.jpf.jdart.Symbolic;\n\n";
-    source += "public class " + className + " {\n\n";
-
-    source += "  public static class TotallyPsyco extends java.lang.AssertionError {\n";
-    source += "    private static final long serialVersionUID = 1L;\n\n";
-    source += "    TotallyPsyco(String msg) {\n";
-    source += "      super(msg);\n";
-    source += "    }\n";
-    source += "  }\n\n";
-
-    source += "  public static void init() {}\n\n";
-
-    Iterator<Symbol> itr = symbols.values().iterator();
-    while (itr.hasNext()) {
-      Symbol symbol = itr.next();
-      source += symbol.toSource();
-      source += "\n";
-    }
-    source += "}\n";
-    return source;
+  public Iterator<MethodSymbol> iterator() {
+    return this.symbols.values().iterator();
   }
+
+  /* ***************************************************************************
+   * 
+   * 
+   *  methods for pretty printing ... 
+   * 
+   */
   
   public HashMap<String, String> getSymbolsToPreconditions() {
     HashMap<String, String> symbolsToPreconditions = new HashMap<String, String>();
-    Iterator<Map.Entry<String, Symbol>> itr = symbols.entrySet().iterator();
+    Iterator<Map.Entry<String, MethodSymbol>> itr = symbols.entrySet().iterator();
     while (itr.hasNext()) {
-      Map.Entry<String, Symbol> entry = itr.next();
-      String preconditionStr = entry.getValue().getSymbolToPrecondition();
+      Map.Entry<String, MethodSymbol> entry = itr.next();
+      String preconditionStr = entry.getValue().getPrecondition().toString();
       symbolsToPreconditions.put(entry.getKey(), preconditionStr);
     }
     return symbolsToPreconditions;
@@ -131,12 +115,27 @@ public class Alphabet {
   
   public HashMap<String, String> getSymbolsToMethodNames() {
     HashMap<String, String> symbolsToMethodNames = new HashMap<String, String>();
-    Iterator<Map.Entry<String, Symbol>> itr = symbols.entrySet().iterator();
+    Iterator<Map.Entry<String, MethodSymbol>> itr = symbols.entrySet().iterator();
     while (itr.hasNext()) {
-      Map.Entry<String, Symbol> entry = itr.next();
+      Map.Entry<String, MethodSymbol> entry = itr.next();
       String methodName = entry.getValue().getOriginalMethodName();
       symbolsToMethodNames.put(entry.getKey(), methodName);
     }
     return symbolsToMethodNames;
   }
+  
+
+  public String toString() {
+    String symbolsAsString = "Alphabet:\n";
+    Iterator<String> itr = symbols.keySet().iterator();
+    while (itr.hasNext()) {
+      String symbolName = itr.next();
+      symbolsAsString += symbolName + "[" + symbols.get(symbolName).getPrecondition() + "]\n";
+      if (itr.hasNext()) {
+        symbolsAsString += ",";
+      }
+    }
+    return symbolsAsString;
+  }  
+
 }

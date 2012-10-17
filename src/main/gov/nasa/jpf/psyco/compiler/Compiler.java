@@ -21,6 +21,7 @@ package gov.nasa.jpf.psyco.compiler;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.util.JPFLogger;
+import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.*;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,6 +53,7 @@ public class Compiler {
   
   public void compile(boolean removeSource) {
     
+    SimpleProfiler.start("PSYCO-compiler");
     File f = new File(tplDir + "/" + tplName + ".st");
     StringBuilder sb = new StringBuilder();
     BufferedReader r = null;
@@ -95,7 +97,7 @@ public class Compiler {
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      }
+      }      
     }
     try {
       String s = null;
@@ -121,12 +123,14 @@ public class Compiler {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }   
+    } 
     
     if (removeSource) {
       File d = new File(targetName);
       d.delete();
     }
+    
+    SimpleProfiler.stop("PSYCO-compiler");    
   }      
   
 }

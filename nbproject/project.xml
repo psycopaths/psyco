@@ -13,6 +13,7 @@
                 <property-file>${jpf-core}/jpf.properties</property-file>
                 <property-file>${jpf-jdart}/jpf.properties</property-file>
                 <property-file>${jpf-learn}/jpf.properties</property-file>
+                <property-file>${jpf-constraints}/jpf.properties</property-file>
                 <property-file>${jpf-psyco}/jpf.properties</property-file>
             </properties>
             <folders>
@@ -246,7 +247,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/main</package-root>
-                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
+                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-constraints.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -268,6 +269,7 @@
             <compilation-unit>
                 <package-root>src/examples</package-root>
                 <unit-tests/>
+                <classpath mode="compile">${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-constraints.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>

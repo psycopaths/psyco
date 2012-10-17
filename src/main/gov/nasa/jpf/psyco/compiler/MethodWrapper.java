@@ -16,44 +16,51 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package gov.nasa.jpf.psyco.test.Target;
-
-import gov.nasa.jpf.psyco.Target.ProgramExecutive;
-import gov.nasa.jpf.util.test.TestJPF;
-import org.junit.Test;
+package gov.nasa.jpf.psyco.compiler;
 
 /**
  *
  */
-public class ProgramExecutiveTest extends TestJPF {
+public class MethodWrapper {
+    
+  private String call;
+  
+  private String precondition;
+  
+  private String wrapper = null;
 
-  // import gov.nasa.jpf.psyco.Target.ProgramExecutive;
-  @Test
-  public void testSequence() {
-    String[] invokeSpecs = new String[3];
-    invokeSpecs[0] = "sequence";
-    invokeSpecs[1] = "gov.nasa.jpf.psyco.test.Target.abc:b";
-    invokeSpecs[2] = "gov.nasa.jpf.psyco.test.Target.abc:b";
-
-
-    try {
-      ProgramExecutive.main(invokeSpecs);
-      
-    } catch (Throwable x){ // we treat all unhandled exceptions as test failures
-      Throwable cause = x.getCause();
-      if (cause != null){
-        cause.printStackTrace();
-      }
-      fail("ProgramExecutive did throw unhandled exception: " + x);
-    }
-
+  public MethodWrapper(String call, String precondition) {
+    this.call = call;
+    this.precondition = precondition;
   }
 
-  @Test
-  public void testAutomaton() {
+  public MethodWrapper(String call, String precondition, String wrapper) {
+    this.call = call;
+    this.precondition = precondition;
+    this.wrapper = wrapper;
   }
+  
+  /**
+   * @return the call
+   */
+  public String getCall() {
+    return call;
+  }
+
+  /**
+   * @return the precondition
+   */
+  public String getPrecondition() {
+    return precondition;
+  }
+  
+  /**
+   * @return the wrapper
+   */
+  public String getWrapper() {
+    return wrapper;
+  }
+  
+  
+  
 }

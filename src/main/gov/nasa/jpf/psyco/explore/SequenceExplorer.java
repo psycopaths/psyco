@@ -21,55 +21,66 @@ package gov.nasa.jpf.psyco.explore;
 import java.util.AbstractList;
 
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.jdart.ConstraintsTree;
+import gov.nasa.jpf.constraints.expressions.Constant;
+import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
+import gov.nasa.jpf.psyco.PsycoConfig;
+import gov.nasa.jpf.psyco.oracles.JDartOracle;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
+import gov.nasa.jpf.psyco.refinement.ConstrainedMethodSequence;
 import gov.nasa.jpf.util.LogManager;
 
 // The main class to explore a method symbolically
 
 public class SequenceExplorer {
+
   public enum ExplorationMethod {
     Java, JPF, JDart
   }
 
   Config config;
-  SymbolicExplorer explorer = null;
 
-  public SequenceExplorer (Config conf, ExplorationMethod explorationMethod, boolean psyco,
+  SymbolicExplorer explorer = null;  
+  
+  PsycoConfig psy;
+  
+  public SequenceExplorer (Config conf, PsycoConfig psy, ExplorationMethod explorationMethod, boolean psyco,
   		AbstractList<String> sequence, AlphabetRefinement refiner) {
+
     this.config = conf;
-    LogManager.init(conf);
+    this.psy = psy;
     
     // now create a string array of methods in the sequence and use that to get
     // the sequence.methods string from the refiner
-    String sequenceMethods = null;
-    
+    String[] target_args = new String[sequence.size()+1];
+    target_args[0] = "sequence";
     if (sequence != null) {
-    	String[] sequenceStrings = new String[sequence.size()];
     	int index = 0;
     	for (String s : sequence) {
-    		sequenceStrings[index++] = s;
+    		target_args[index+1] = "temp.Alphabet:" + s + "_" + (index);
+        index++;
     	}
-    	sequenceMethods = refiner.getSequenceMethodsForJDart(sequenceStrings);
-    	config.setProperty("sequence.methods", sequenceMethods);
-    } else {
-    	sequenceMethods = config.getProperty("sequence.methods");
+      
+      this.config.setTarget("gov.nasa.jpf.psyco.target.ProgramExecutive");      
+      this.config.setTargetArgs(target_args);
     }
     
+    this.psy.addSymbolicMethod("gov.nasa.jpf.psyco.target.ProgramExecutive.sequence()");
+    this.psy.addAssertion("temp.Alphabet$TotallyPsyco");
+    this.psy.addConcolicClass("temp.Alphabet");
+
+    // create concrete explorer
     switch (explorationMethod) {
     case JDart:
-    	explorer = new JDartExplorer(config, psyco);
+      explorer = new NewDartExplorer(conf, psy);
     	break;
     default:
     	throw new IllegalArgumentException("JDart is the only symbolic exploration technique currently supported");
-    }
-    
-//    System.out.println("Sequence methods string = " + sequenceMethods);    
+    }    
   }
   
   // reset method for external use
   public void reset() {
-  	explorer.reset();
+    explorer.reset();
   }
       
   // method to start exploring
