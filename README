@@ -1,0 +1,24 @@
+*****************************************
+      jpf-psyco: Installation Guide
+*****************************************
+
+
+******** Building and Installing ********
+
+Dependencies:
+- jpf-core
+- jpf-constraints
+- jpf-jdart
+- jpf-learn
+
+JPF's site.properties file (usually residing in $HOME/.jpf/ folder) should look
+something like this:
+# JPF site configuration
+jpf-core = ${user.home}/projects/psyco/jpf-core
+
+jpf-constraints = ${user.home}/projects/psyco/jpf-constraints
+jpf-jdart = ${user.home}/projects/psyco/jpf-jdart
+jpf-learn = ${user.home}/projects/psyco/jpf-learn
+
+extensions=${jpf-core},${jpf-constraints},${jpf-jdart},${jpf-learn}
+
