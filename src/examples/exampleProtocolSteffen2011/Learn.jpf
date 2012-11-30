@@ -24,7 +24,6 @@ shell=gov.nasa.jpf.psyco.Psyco
 
 # jpf-constraints
 symbolic.dp=z3
-symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Java.so
 
 
 ############################################################################### 
