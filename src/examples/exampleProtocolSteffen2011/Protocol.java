@@ -36,8 +36,8 @@ public class Protocol {
   }
 
   public static void msg(int sequence, int content) {
-    System.out.println("Sequence is " + (sequence & 1));
-    System.out.println("Expect is " + (expect & 1));
+    //System.out.println("Sequence is " + (sequence & 1));
+    //System.out.println("Expect is " + (expect & 1));
     
     if ((buffer_empty) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
       expect++;

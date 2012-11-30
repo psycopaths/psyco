@@ -7,7 +7,7 @@ psyco.interface.m1=CEV.CEV.reset(i:int)
 psyco.interface.m2=CEV.CEV.lasJettison(j:int)
 psyco.interface.m3=CEV.CEV.lsamRendezvous()
 
-psyco.depth=1
+psyco.depth=4
 
 # outputs results - use tmp because I ignore it during commits 
 # interface.outputFile=tmp/exampleProtocolSteffen2011
@@ -32,8 +32,8 @@ symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Jav
 #
 # logging and jpf output
 #
-#log.finest=psyco
-log.info=constraints,jdart,psyco
+log.fine=psyco
+log.info=constraints,jdart
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

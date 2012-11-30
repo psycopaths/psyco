@@ -65,4 +65,8 @@ public class PsycoConfig extends ConcolicConfig {
     }    
   }  
    
+  public void addManagedException(String me) {
+    this.assertions.add(me);
+  }
+  
 }

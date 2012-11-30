@@ -5,13 +5,16 @@ import CEV.CEV;
 
 public class MethodTestCase {
 
+    @Symbolic("true")
+    public static int P1;  
  
 
   public static void sequence() {
     // has to have default constructor ...
     CEV testObject = new CEV();
-    testObject.lsamRendezvous(
+    testObject.reset(
  
+       P1 
     );
   }
 

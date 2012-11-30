@@ -9,7 +9,7 @@ psyco.interface.m3=psyco.java.io.PipedOutputStream.flush()
 psyco.interface.m4=psyco.java.io.PipedOutputStream.close()
 
 
-psyco.depth=1
+psyco.depth=4
 
 # outputs results - use tmp because I ignore it during commits 
 # interface.outputFile=tmp/exampleProtocolSteffen2011
@@ -34,8 +34,8 @@ symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Jav
 #
 # logging and jpf output
 #
-log.finest=psyco
-log.fine=jdart,constraints
+log.fine=psyco
+log.info=jdart,constraints
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker

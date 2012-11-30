@@ -12,434 +12,354 @@ public class Alphabet {
     }
   }
 
-    @Symbolic("true")
-    public static int reset_C_0_i;  
-    @Symbolic("true")
-    public static int reset_C_1_i;  
-    @Symbolic("true")
-    public static int reset_C_2_i;  
-    @Symbolic("true")
-    public static int reset_C_3_i;  
-    @Symbolic("true")
-    public static int reset_C_4_i;  
-    @Symbolic("true")
-    public static int reset_C_5_i;  
-    @Symbolic("true")
-    public static int reset_C_6_i;  
-    @Symbolic("true")
-    public static int reset_C_7_i;  
-    @Symbolic("true")
-    public static int reset_C_8_i;  
-    @Symbolic("true")
-    public static int reset_C_9_i;  
-    @Symbolic("true")
-    public static int reset_E_0_i;  
-    @Symbolic("true")
-    public static int reset_E_1_i;  
-    @Symbolic("true")
-    public static int reset_E_2_i;  
-    @Symbolic("true")
-    public static int reset_E_3_i;  
-    @Symbolic("true")
-    public static int reset_E_4_i;  
-    @Symbolic("true")
-    public static int reset_E_5_i;  
-    @Symbolic("true")
-    public static int reset_E_6_i;  
-    @Symbolic("true")
-    public static int reset_E_7_i;  
-    @Symbolic("true")
-    public static int reset_E_8_i;  
-    @Symbolic("true")
-    public static int reset_E_9_i;  
-    @Symbolic("true")
-    public static int lasJettison_C_0_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_1_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_2_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_3_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_4_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_5_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_6_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_7_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_8_j;  
-    @Symbolic("true")
-    public static int lasJettison_C_9_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_0_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_1_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_2_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_3_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_4_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_5_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_6_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_7_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_8_j;  
-    @Symbolic("true")
-    public static int lasJettison_E_9_j;  
  
 
-    public static void reset_C_0() {  
-      if ((reset_C_0_i == 2)) {
-        CEV.CEV.reset(reset_C_0_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_1() {  
-      if ((reset_C_1_i == 2)) {
-        CEV.CEV.reset(reset_C_1_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_2() {  
-      if ((reset_C_2_i == 2)) {
-        CEV.CEV.reset(reset_C_2_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_3() {  
-      if ((reset_C_3_i == 2)) {
-        CEV.CEV.reset(reset_C_3_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_4() {  
-      if ((reset_C_4_i == 2)) {
-        CEV.CEV.reset(reset_C_4_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_5() {  
-      if ((reset_C_5_i == 2)) {
-        CEV.CEV.reset(reset_C_5_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_6() {  
-      if ((reset_C_6_i == 2)) {
-        CEV.CEV.reset(reset_C_6_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_7() {  
-      if ((reset_C_7_i == 2)) {
-        CEV.CEV.reset(reset_C_7_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_8() {  
-      if ((reset_C_8_i == 2)) {
-        CEV.CEV.reset(reset_C_8_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_C_9() {  
-      if ((reset_C_9_i == 2)) {
-        CEV.CEV.reset(reset_C_9_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_0() {  
-      if ((reset_E_0_i != 2)) {
-        CEV.CEV.reset(reset_E_0_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_1() {  
-      if ((reset_E_1_i != 2)) {
-        CEV.CEV.reset(reset_E_1_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_2() {  
-      if ((reset_E_2_i != 2)) {
-        CEV.CEV.reset(reset_E_2_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_3() {  
-      if ((reset_E_3_i != 2)) {
-        CEV.CEV.reset(reset_E_3_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_4() {  
-      if ((reset_E_4_i != 2)) {
-        CEV.CEV.reset(reset_E_4_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_5() {  
-      if ((reset_E_5_i != 2)) {
-        CEV.CEV.reset(reset_E_5_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_6() {  
-      if ((reset_E_6_i != 2)) {
-        CEV.CEV.reset(reset_E_6_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_7() {  
-      if ((reset_E_7_i != 2)) {
-        CEV.CEV.reset(reset_E_7_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_8() {  
-      if ((reset_E_8_i != 2)) {
-        CEV.CEV.reset(reset_E_8_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void reset_E_9() {  
-      if ((reset_E_9_i != 2)) {
-        CEV.CEV.reset(reset_E_9_i);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_0() {  
-      if ((lasJettison_C_0_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_0_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_1() {  
-      if ((lasJettison_C_1_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_1_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_2() {  
-      if ((lasJettison_C_2_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_2_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_3() {  
-      if ((lasJettison_C_3_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_3_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_4() {  
-      if ((lasJettison_C_4_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_4_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_5() {  
-      if ((lasJettison_C_5_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_5_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_6() {  
-      if ((lasJettison_C_6_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_6_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_7() {  
-      if ((lasJettison_C_7_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_7_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_8() {  
-      if ((lasJettison_C_8_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_8_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_C_9() {  
-      if ((lasJettison_C_9_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_9_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_0() {  
-      if ((lasJettison_E_0_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_0_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_1() {  
-      if ((lasJettison_E_1_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_1_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_2() {  
-      if ((lasJettison_E_2_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_2_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_3() {  
-      if ((lasJettison_E_3_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_3_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_4() {  
-      if ((lasJettison_E_4_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_4_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_5() {  
-      if ((lasJettison_E_5_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_5_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_6() {  
-      if ((lasJettison_E_6_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_6_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_7() {  
-      if ((lasJettison_E_7_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_7_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_8() {  
-      if ((lasJettison_E_8_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_8_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_9() {  
-      if ((lasJettison_E_9_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_9_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lsamRendezvous_0() {  
+    public static void sign_0() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_1() {  
+    public static void sign_1() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_2() {  
+    public static void sign_2() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_3() {  
+    public static void sign_3() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_4() {  
+    public static void sign_4() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_5() {  
+    public static void sign_5() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_6() {  
+    public static void sign_6() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_7() {  
+    public static void sign_7() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_8() {  
+    public static void sign_8() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_9() {  
+    public static void sign_9() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.security.Signature.sign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_0() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_1() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_2() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_3() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_4() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_5() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_6() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_7() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_8() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void update_9() {  
+      if (true) {
+        psyco.java.security.Signature.update();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_0() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_1() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_2() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_3() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_4() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_5() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_6() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_7() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_8() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initVerify_9() {  
+      if (true) {
+        psyco.java.security.Signature.initVerify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_0() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_1() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_2() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_3() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_4() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_5() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_6() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_7() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_8() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void initSign_9() {  
+      if (true) {
+        psyco.java.security.Signature.initSign();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_0() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_1() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_2() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_3() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_4() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_5() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_6() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_7() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_8() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void verify_9() {  
+      if (true) {
+        psyco.java.security.Signature.verify();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }

@@ -47,7 +47,12 @@ import java.lang.reflect.Method;
  */
 public class Teacher3Values implements MinimallyAdequateTeacher {
 
-  public static int maxDepth = 1;
+  private static int maxDepth = 1;
+  
+  // FIXME: this is ugly ... 
+  // this is the real upper bound set from outside
+  public static int MAX_DEPTH = -1;
+  
   public static final boolean CONCR = false;
   public static final boolean SYMB = true;
   public static final String TARGET = "gov.nasa.jpf.psyco.Target.ProgramExecutive";
@@ -380,7 +385,7 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
 
   public Vector conjecture(Candidate cndt) throws SETException {
     Vector cex = null;
-    while (!refine && cex == null && maxDepth < 5) {
+    while (!refine && cex == null && !deepEnough()) {
       Candidate.printCandidateAssumption(cndt, alphabet_);
 
       logger.info("STARTING CONJECTURE");
@@ -418,8 +423,8 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
       logger.info("ENDING CONJECTURE");
       logger.info("cex = " + cex);
       logger.info("refine = " + refine);
-      System.out.println("cex = " + cex);
-      System.out.println("refine = " + refine);
+      //System.out.println("cex = " + cex);
+      //System.out.println("refine = " + refine);
       // reinitialize these
       cndt.allGoodSequences = "";
       cndt.allBadSequences = "";
@@ -575,4 +580,14 @@ public class Teacher3Values implements MinimallyAdequateTeacher {
   public static void setOptimize(boolean o) {
     optimizeQueriesNoParams = o;
   }
+  
+  
+  private static boolean deepEnough() {
+    if (MAX_DEPTH < 0) {
+      return false;
+    }
+    return maxDepth > MAX_DEPTH;
+  }
+  
+  
 }

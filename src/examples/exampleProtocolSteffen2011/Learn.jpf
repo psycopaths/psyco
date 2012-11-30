@@ -6,7 +6,7 @@
 psyco.interface.m1=exampleProtocolSteffen2011.Protocol.msg(s:int,c:int)
 psyco.interface.m2=exampleProtocolSteffen2011.Protocol.recv_ack(v:int)
 
-psyco.depth=1
+psyco.depth=3
 
 # outputs results - use tmp because I ignore it during commits 
 # interface.outputFile=tmp/exampleProtocolSteffen2011
@@ -31,12 +31,13 @@ symbolic.dp.z3.library.path=/home/falk/Projekte/jpf/jpf-constraints/lib/libZ3Jav
 #
 # logging and jpf output
 #
-log.finest=psyco
-log.fine=jdart,constraints
+log.info=constraints,jdart
+log.fine=psyco
 
 # following line used to track what JPF executes
 #listener=.listener.ExecTracker
 
-# avoid statistics during learning process by enabling the following line
-#report.console.finished=result
-report.console.property_violation=error
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=

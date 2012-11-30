@@ -32,14 +32,33 @@ import java.util.*;
  */
 public class ConstrainedMethodSequence {
   
-  private class ConstrainedMethod {
-    MethodSymbol symbol;
-    Expression<Boolean> assumption;
+  public static class ConstrainedMethod {
+    private MethodSymbol symbol;
+    private Expression<Boolean> assumption;
 
     ConstrainedMethod(MethodSymbol symbol, Expression<Boolean> assumption) {
       this.symbol = symbol;
       this.assumption = assumption;
-    }    
+    }
+
+    /**
+     * @return the symbol
+     */
+    public MethodSymbol getSymbol() {
+      return symbol;
+    }
+
+    /**
+     * @return the assumption
+     */
+    public Expression<Boolean> getAssumption() {
+      return assumption;
+    }
+
+    @Override
+    public String toString() {
+      return symbol + "[" + assumption + "]";
+    }
   }
   
   private List<ConstrainedMethod> sequence;
@@ -57,7 +76,7 @@ public class ConstrainedMethodSequence {
     List<Parameter> pList = new LinkedList<Parameter>();
     int i=1;
     for (ConstrainedMethod cm : sequence) {
-      for (Class<?> c : cm.symbol.getMethod().getParamTypes()) {
+      for (Class<?> c : cm.getSymbol().getMethod().getParamTypes()) {
         pList.add(new Parameter(c.getName(), "P_" + i));
         i++;
       }
@@ -70,18 +89,18 @@ public class ConstrainedMethodSequence {
     int i=1;
     for (ConstrainedMethod m : sequence) {
       // create call
-      int params = m.symbol.getMethod().getParamNames().length;
-      String call = m.symbol.getMethod().getClassName() + "." + m.symbol.getMethod().getMethodName() + "(";
+      int params = m.getSymbol().getMethod().getParamNames().length;
+      String call = m.getSymbol().getMethod().getClassName() + "." + m.getSymbol().getMethod().getMethodName() + "(";
       for (int j=i;j<i+params;j++) {
         call += "P_" + j + ",";
       }
-      if (m.symbol.getMethod().getParamNames().length > 0) {
+      if (m.getSymbol().getMethod().getParamNames().length > 0) {
         call = call.substring(0, call.length()-1);
       }
       call = call + ")";
       
       // create condition
-      Expression<Boolean> precondition = m.symbol.getPrecondition();
+      Expression<Boolean> precondition = m.getSymbol().getPrecondition();
       Set<Variable> vars = new HashSet<Variable>();
       precondition.getVariables(vars);
 
@@ -93,13 +112,22 @@ public class ConstrainedMethodSequence {
       
       precondition = precondition.replaceTerms(rename);
       precondition = new PropositionalCompound(
-              precondition, LogicalOperator.AND, m.assumption);
+              precondition, LogicalOperator.AND, m.getAssumption());
             
       MethodWrapper w = new MethodWrapper(call, precondition.toString());
       steps.add(w);
       i += params;
     }
     return steps;
+  }
+  
+  public List<ConstrainedMethod> getSymbols() {
+    return this.sequence;
+  }
+  
+  @Override
+  public String toString() {
+    return sequence.toString();
   }
   
 }

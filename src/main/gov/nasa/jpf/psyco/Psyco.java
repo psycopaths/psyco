@@ -38,6 +38,9 @@ import gov.nasa.jpf.util.ConfigUtil;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 import gov.nasa.jpf.util.SimpleProfiler;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Psyco implements JPFShell {
 
@@ -53,10 +56,14 @@ public class Psyco implements JPFShell {
 
   @Override
   public void start(String[] strings) {
-    run();
+    try {
+      run();
+    } catch (IOException ex) {
+      Logger.getLogger(Psyco.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
   
-  public void run() {
+  public void run() throws IOException {
     
     logger.finest("Psyco.run() -- begin");
 
@@ -101,7 +108,7 @@ public class Psyco implements JPFShell {
     Teacher3Values.setMode(mode); 
     int depth = pconf.getMaxDepth();
     if (depth > 0) {
-      Teacher3Values.maxDepth = depth;
+      Teacher3Values.MAX_DEPTH = depth;
     } 
     
     while (newLearningInstance) {
@@ -126,26 +133,33 @@ public class Psyco implements JPFShell {
     SimpleProfiler.stop("PSYCO-run");
 
 
-    String storeResult = "/tmp/psyco.result";
+    File storeResult = File.createTempFile("psyco","result");
 
     // post process ...    
     logger.finest("Psyco.run() -- end");
+    logger.info("\n\n===================================================================================================");
     logger.info("Profiling:\n" + SimpleProfiler.getResults());
     
     logger.info("\n\n****** NUMBER OF HITS IS: " + teacher.getMemoizeHits());
-    logger.info("\n\n********************************************");
+    logger.info("\n\n===================================================================================================");
     if (inf == null) {
       logger.info("Interface is null - no environment can help");
     } else {
       logger.info("Interface generation completed. ");
-      Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
-      Candidate.dumpCandidateStateMachine(inf, storeResult, teacher.getAlphabet());
+      //Candidate.printCandidateAssumption(inf, teacher.getAlphabet());
+      Candidate.dumpCandidateStateMachine(inf, storeResult.getAbsolutePath() , teacher.getAlphabet());
       if (mode == Teacher3Values.SYMB) {
         HashMap<String, String> symbolsToPreconditions = refiner.getSymbolsToPreconditions();
         HashMap<String, String> symbolsToMethodNames = refiner.getSymbolsToMethodNames();
-        Candidate.dumpCandidateStateMachineAsDot(inf, storeResult, teacher.getAlphabet(), symbolsToPreconditions, symbolsToMethodNames);
+        Candidate.dumpCandidateStateMachineAsDot(inf, storeResult.getAbsolutePath(), 
+                teacher.getAlphabet(), symbolsToPreconditions, symbolsToMethodNames);
+        
+        BufferedReader br = new BufferedReader(new FileReader(storeResult.getAbsolutePath() + ".dot"));
+        while (br.ready()) {
+          logger.info(br.readLine());
+        }
       }
     }
-    logger.info("********************************************");
+    logger.info("===================================================================================================");
   }  
 }

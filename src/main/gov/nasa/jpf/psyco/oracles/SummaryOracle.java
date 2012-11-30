@@ -18,10 +18,18 @@
  ******************************************************************************/
 package gov.nasa.jpf.psyco.oracles;
 
-import gov.nasa.jpf.constraints.api.Expression;
-import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.api.*;
+import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
+import gov.nasa.jpf.constraints.expressions.Constant;
+import gov.nasa.jpf.constraints.expressions.LogicalOperator;
+import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
+import gov.nasa.jpf.constraints.expressions.NumericComparator;
+import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
+import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.learn.basic.ThreeValues;
 import gov.nasa.jpf.psyco.summaries.MethodSummary;
+import gov.nasa.jpf.psyco.summaries.MethodSummary.PathState;
+import gov.nasa.jpf.psyco.util.ExpressionRestrictor;
 import java.util.*;
 
 /**
@@ -45,116 +53,117 @@ public class SummaryOracle {
   private Valuation init;
   
   
-  public SummaryOracle(Valuation init) {
+  public SummaryOracle(Valuation init, ConstraintSolver solver, MinMax mm) {
     this.init = init;
+    this.solver = solver;
+    this.minMax = mm;
   }
   
+  private ConstraintSolver solver;
+  
+  private MinMax minMax;
   
   public Set<ThreeValues> query(List<MethodSummary> sequence, Expression<Boolean> precondition) {
     
-//    Set<ThreeValues> solution = new HashSet<ThreeValues>();
-//        
-//    Set<String> globals = new HashSet<String>();
-//    Set<String> params = new HashSet<String>();
-//    // FIXME: replace by some information obtained from setup description??
-//    extractNamesFromPrecondition(precondition, globals, params);
-//    for (MethodSummary ms : sequence) {
-//      for (MethodSummary.MethodPath p : ms.getOkPaths()) {
-//        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-//      }
-//      for (MethodSummary.MethodPath p : ms.getErrorPaths()) {
-//        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-//      }
-//      for (MethodSummary.MethodPath p : ms.getDontKnowPaths()) {
-//        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-//      }
-//    }
-//    
-//    // FIXME: put initial conditions into formula (concrete data values for globals)
-//    Formula initial = new TrueConstant();
-//            
-//    // construct set of feasible paths
-//    Queue<QueueElement> queue = new LinkedList<QueueElement>();    
-//    queue.add(new QueueElement(0, 0, initial));        
-//    while (!queue.isEmpty()) {
-//      
-//      // get path prefix from queue and next method from input
-//      QueueElement prefix = queue.poll();
-//      MethodSummary next = sequence.get(prefix.length);      
-//      int paramCount = next.getMethod().getParameterTypes().length;
-//
-//      // get corresponding prefix of path condition
-//      ExpressionRestrictor pcr = new ExpressionRestrictor(getParamNames(1, prefix.paramCount + paramCount));
-//      Formula preRestricted = pcr.walkOver(precondition);
-//      
-//      // extend by all paths of next method
-//      List<MethodSummary.MethodPath> paths = new ArrayList<MethodSummary.MethodPath>();
-//      paths.addAll(next.getOkPaths());
-//      paths.addAll(next.getErrorPaths());
-//      paths.addAll(next.getDontKnowPaths());
-//      for (MethodSummary.MethodPath path : paths) {
-//        // rename parameters and globals in path segment
-//        Formula step = path.getPathConstraint();        
-//        step = prepareStep(step, prefix.length, prefix.paramCount, paramCount, globals);
-//
-//        // check if path is satisfiable
-//        LogicalExpression sat = new LogicalExpression(LogicalOperator.AND);
-//        sat.addExpresion(prefix.prefix);
-//        sat.addExpresion(step);
-//        sat.addExpresion(preRestricted);
-//        
-//        System.out.println("STEP (SAT?): " + sat.sourcePC());
-//         
-//        // not satisfiable => does not contribute to solution
-//        if (!sat.isSatisfiable()) {
-//          continue;
-//        }
-//        
-//        // max length? then add path state to solution
-//        // OR path state other than ok? stop here
-//        if (prefix.length +1 >= sequence.size() 
-//                || !path.getPathState().equals(PathState.OK)) {
-//          
-//          switch (path.getPathState()) {            
-//            case OK:
-//              solution.add(ThreeValues.TRUE);
-//              break;
-//            case ERROR: 
-//              solution.add(ThreeValues.FALSE);
-//              break;
-//            case DONT_KNOW:
-//              solution.add(ThreeValues.THIRD);
-//              break;                  
-//          }
-//          continue;
-//        }
-//        
-//        // add longer prefix to queue ...
-//        Formula glue = prepareGlue(prefix.length, path.getPostConditon(), globals);
-//        
-//        LogicalExpression prefixAndStep = new LogicalExpression(LogicalOperator.AND);
-//        prefixAndStep.addExpresion(prefix.prefix);
-//        prefixAndStep.addExpresion(step);
-//        prefixAndStep.addExpresion(glue);
-//
-//        System.out.println("NEW PREFIX: " + prefixAndStep.sourcePC());
-//        
-//        QueueElement ne = new QueueElement(
-//                prefix.length +1, prefix.paramCount + paramCount, prefixAndStep);
-//        
-//        queue.add(ne);
-//      } 
-//      
-//    }
-//    
-//    String log = "Solution: {";
-//    for (ThreeValues v : solution)
-//      log += v.toString() + ", ";
-//    log += "}";
-//    System.out.println(log);
-//    
-//    return solution;
-    return null;
+    Set<ThreeValues> solution = new HashSet<ThreeValues>();
+        
+    Set<Variable> globals = new HashSet<Variable>();
+    Set<Variable> params = new HashSet<Variable>();
+    // FIXME: replace by some information obtained from setup description??
+    extractNamesFromPrecondition(precondition, globals, params);
+    for (MethodSummary ms : sequence) {
+      for (MethodSummary.MethodPath p : ms.getOkPaths()) {
+        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
+      }
+      for (MethodSummary.MethodPath p : ms.getErrorPaths()) {
+        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
+      }
+      for (MethodSummary.MethodPath p : ms.getDontKnowPaths()) {
+        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
+      }
+    }
+    
+    // FIXME: put initial conditions into formula (concrete data values for globals)
+    Expression<Boolean> initial = new Constant<Boolean>(Boolean.class, true);
+            
+    // construct set of feasible paths
+    Queue<QueueElement> queue = new LinkedList<QueueElement>();    
+    queue.add(new QueueElement(0, 0, initial));        
+    while (!queue.isEmpty()) {
+      
+      // get path prefix from queue and next method from input
+      QueueElement prefix = queue.poll();
+      MethodSummary next = sequence.get(prefix.length);      
+      int paramCount = next.getMethod().getParameterTypes().length;
+
+      // get corresponding prefix of path condition
+      ExpressionRestrictor pcr = new ExpressionRestrictor(getParamNames(1, prefix.paramCount + paramCount));           
+      Expression preRestricted = pcr.restrict(precondition);
+      
+      // extend by all paths of next method
+      List<MethodSummary.MethodPath> paths = new ArrayList<MethodSummary.MethodPath>();
+      paths.addAll(next.getOkPaths());
+      paths.addAll(next.getErrorPaths());
+      paths.addAll(next.getDontKnowPaths());
+      for (MethodSummary.MethodPath path : paths) {
+        // rename parameters and globals in path segment
+        Expression<Boolean> step = path.getPathConstraint();        
+        step = prepareStep(step, prefix.length, prefix.paramCount, paramCount, globals);
+
+        // check if path is satisfiable
+        PropositionalCompound sat = new PropositionalCompound(
+                prefix.prefix, LogicalOperator.AND, new PropositionalCompound(
+                    step, LogicalOperator.AND, preRestricted));
+        
+        System.out.println("STEP (SAT?): " + sat);
+         
+        // not satisfiable => does not contribute to solution
+        if (!solver.isSatisfiable(sat, minMax).equals(Result.SAT)) {
+          continue;
+        }
+        
+        // max length? then add path state to solution
+        // OR path state other than ok? stop here
+        if (prefix.length +1 >= sequence.size() 
+                || !path.getPathState().equals(PathState.OK)) {
+          
+          switch (path.getPathState()) {            
+            case OK:
+              solution.add(ThreeValues.TRUE);
+              break;
+            case ERROR: 
+              solution.add(ThreeValues.FALSE);
+              break;
+            case DONT_KNOW:
+              solution.add(ThreeValues.THIRD);
+              break;                  
+          }
+          continue;
+        }
+        
+        // add longer prefix to queue ...
+        Expression<Boolean> glue = prepareGlue(prefix.length, path.getPostConditon(), globals);
+        PropositionalCompound prefixAndStep = new PropositionalCompound(
+                prefix.prefix, LogicalOperator.AND, new PropositionalCompound(
+                    step, LogicalOperator.AND, glue));
+
+        System.out.println("NEW PREFIX: " + prefixAndStep);
+        
+        QueueElement ne = new QueueElement(
+                prefix.length +1, prefix.paramCount + paramCount, prefixAndStep);
+        
+        queue.add(ne);
+      } 
+      
+    }
+    
+    String log = "Solution: {";
+    for (ThreeValues v : solution)
+      log += v.toString() + ", ";
+    log += "}";
+    System.out.println(log);
+    
+    return solution;
   }
 
   
@@ -168,79 +177,84 @@ public class SummaryOracle {
 //    }
 //    return le;
 //  }
-//  
-//  
-//  private List<String> getParamNames(int from, int to) {
-//    List<String> list = new ArrayList<String>();
-//    for (int i=from;i<=to;i++) {
-//      list.add("P" + i);
-//    }
-//    return list;
-//  }
-//          
-//  
-//  private void extractNamesFromPrecondition(final Formula precondition, Set<String> globals, Set<String> params) {
-////    System.out.println("### extract names");
-//    FormulaNameCollector pcn = new FormulaNameCollector();
-//    pcn.walkOver(precondition);
-//    Set<String> names = pcn.getNames();
-//    for (String name : names) {
-//      if(isParameter(name)) {
-////        System.out.println("param: " + name);
-//        params.add(name);        
-//      } else {
-//        globals.add(name);
-////        System.out.println("global: " + name);
-//      }      
-//    }    
-//  }
-//  
-//  private boolean isParameter(String name) {
-//    return name.matches("P\\d+");
-//  }
-//  
-//  
-//  private Formula prepareStep(Formula step, int stepNo, int prefixParams, int stepParams, Collection<String> globals) {
-//    
-//    Map<String,String> rename = new HashMap<String,String>();  
-//    for (String g : globals) {
-//      rename.put(g, g + "_" + stepNo);
-//    }
-//    for (int i=1; i <=stepParams; i++) {
-//      rename.put("P" + i, "P" + (prefixParams + i));
-//    }
-//    
-//    FormulaRenamer r = new FormulaRenamer(rename);
-//    return r.walkOver(step);
-//  }
-//  
-//  private Formula prepareGlue(int stepNo, ConstraintsTree.PostCondition post, Collection<String> globals) {
-//    
-//    Map<String,String> rename = new HashMap<String,String>();  
-//    for (String g : globals) {
-//      rename.put(g, g + "_" + stepNo);
-//    }
-//        
-//    LogicalExpression glue = new LogicalExpression(LogicalOperator.AND);    
-//    for (String g : globals) {
-//      IntegerExpression right;
+  
+  
+  private Set<Variable> getParamNames(int from, int to) {
+    Set<Variable> list = new HashSet<Variable>();
+    for (int i=from;i<=to;i++) {
+      list.add(new Variable(Integer.class, "temp.MethodTestCase.P" + i));
+    }
+    return list;
+  }
+          
+  
+  private void extractNamesFromPrecondition(final Expression precondition, Set<Variable> globals, Set<Variable> params) {
+//    System.out.println("### extract names");
+    
+    Set<Variable> vars = new HashSet<Variable>();
+    precondition.getVariables(vars);
+    for (Variable v : vars) {
+      if(isParameter(v)) {
+//        System.out.println("param: " + name);
+        params.add(v);        
+      } else {
+        globals.add(v);
+//        System.out.println("global: " + name);
+      }      
+    }    
+  }
+  
+  private boolean isParameter(Variable v) {
+    return v.getName().matches("temp.MethodTestCase.P\\d+");
+  }
+  
+  
+  private Expression<Boolean> prepareStep(Expression<Boolean> step, int stepNo, int prefixParams, int stepParams, Collection<Variable> globals) {
+    
+    Map<Expression,Expression> rename = new HashMap<Expression,Expression>();  
+    for (Variable g : globals) {
+      rename.put(g, new Variable(g.getType(),g.getName() + "_" + stepNo));
+    }
+    for (int i=1; i <=stepParams; i++) {
+      rename.put(
+              new Variable(Integer.class, "temp.MethodTestCase.P" + i), 
+              new Variable(Integer.class, "temp.MethodTestCase.P" + (prefixParams + i)));
+    }
+    
+    return step.replaceTerms(rename);
+  }
+  
+  private Expression<Boolean> prepareGlue(int stepNo, PostCondition post, Collection<Variable> globals) {
+    
+    Map<Expression,Expression> rename = new HashMap<Expression,Expression>();  
+    for (Variable g : globals) {
+      rename.put(g, new Variable(g.getType(),g.getName() + "_" + stepNo));
+    }
+        
+    Expression<Boolean> glue = null;
+    for (Variable g : globals) {
+      Expression right = post.getConditions().get(g).replaceTerms(rename);
 //      if (post.getConditions().containsKey(g)) {
-//        ExpressionRenamer expn = new ExpressionRenamer(rename);
 //        // FIXME: this cast can break in general
-//        right = expn.walkOver( (IntegerExpression) post.getConditions().get(g));
 //      } else {
 //        right = new SymbolicInteger(g + "_" +  stepNo, g + "_" + stepNo, "xx");
 //      }
-//      
-//       glue.addExpresion(new Atom(new LinearIntegerConstraint(
-//               new SymbolicInteger(g + "_" + (stepNo+1), g + "_" + (stepNo+1), "xx"), Comparator.EQ, right)));       
-//    }   
-//    
-//    if (glue.getExpressions().isEmpty()) {
-//      return new TrueConstant();
-//    }
-//            
-//    return glue;
-//  }
-//            
+      
+      NumericBooleanExpression add = new NumericBooleanExpression(
+          new Variable(g.getType(), g.getName() + "_" + (stepNo+1)), NumericComparator.EQ, right);
+      
+      if (glue == null) {
+        glue = add;
+      } else {
+        glue = new PropositionalCompound(glue, LogicalOperator.AND, add);
+      }
+    }   
+    
+    if (glue == null) {
+      return new Constant<Boolean>(Boolean.class,true);
+    }
+            
+    return glue;
+  }
+            
 }

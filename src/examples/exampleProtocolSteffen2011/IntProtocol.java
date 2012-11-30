@@ -39,7 +39,7 @@ public class IntProtocol {
   public void msg( int P1,  int P2) {
   	if (P1 < 0) return;
   	
-  	System.out.println("expect = " + expect);
+  	//System.out.println("expect = " + expect);
   	int prevExpect = expect;
   	if (expect > 0)
   		prevExpect--;

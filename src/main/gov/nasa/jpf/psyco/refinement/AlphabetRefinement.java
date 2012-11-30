@@ -266,6 +266,9 @@ public class AlphabetRefinement {
 //      if (refinedSymbols.isEmpty()) {
 //        return "ERROR";
 //      }
+      
+      logger.info(constraintsTree);
+      
       for (String refinedSymbolName : refinedSymbols) {
         alphabet.removeSymbol(refinedSymbolName);
       }

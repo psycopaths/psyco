@@ -17,6 +17,7 @@ import exampleProtocolSteffen2011.IntProtocol;
 import CEV.CEV;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.expressions.Constant;
+import gov.nasa.jpf.jdart.ConcolicConfig;
 import java.lang.reflect.Method;
 
 
@@ -41,11 +42,13 @@ public class CompilerExample implements JPFShell {
     logger = JPF.getLogger("psyco");    
   }
   
-    private JPFLogger logger;
+  private JPFLogger logger;
 
-    public void start(String[] strings) {
+  public void start(String[] strings) {
     
     logger.info("START...");
+  
+    ConcolicConfig cc = new ConcolicConfig(conf);
     
     try {
       
@@ -54,8 +57,8 @@ public class CompilerExample implements JPFShell {
 //      Method m2 = c.getMethod("recv_ack", int.class);
        
       Class c = CEV.class;
-      //Method m1 = c.getMethod("reset", int.class);
-      Method m1 = c.getMethod("lsamRendezvous"); 
+      Method m1 = c.getMethod("reset", int.class);
+//      Method m1 = c.getMethod("lsamRendezvous"); 
               
       MethodExplorer mex1 = new MethodExplorer(m1,conf);
       MethodSummary summary1 = mex1.execute();
@@ -70,14 +73,14 @@ public class CompilerExample implements JPFShell {
 //      init.setValue("buffer_empty", 1);
 //      init.setValue("expect", 0);
       
-      SummaryOracle o = new SummaryOracle(init);
+      SummaryOracle o = new SummaryOracle(init,cc.getSolver(),cc.getMinMax());
       List<MethodSummary> seq = new ArrayList<MethodSummary>();
       seq.add(summary1);
       seq.add(summary1);
-      seq.add(summary1);
-      seq.add(summary1);
+//      seq.add(summary1);
+//      seq.add(summary1);
       
-//      o.query(seq, new Constant<Boolean>(Boolean.class, true));
+      o.query(seq, new Constant<Boolean>(Boolean.class, true));
       
     } catch (NoSuchMethodException ex) {
     } catch (SecurityException ex) {
