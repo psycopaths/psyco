@@ -13,343 +13,433 @@ public class Alphabet {
   }
 
     @Symbolic("true")
-    public static int lasJettison_C_0_j;  
+    public static int connect_C_0_s;  
     @Symbolic("true")
-    public static int lasJettison_C_1_j;  
+    public static int connect_C_0_c;  
     @Symbolic("true")
-    public static int lasJettison_C_2_j;  
+    public static int connect_C_1_s;  
     @Symbolic("true")
-    public static int lasJettison_C_3_j;  
+    public static int connect_C_1_c;  
     @Symbolic("true")
-    public static int lasJettison_C_4_j;  
+    public static int connect_C_2_s;  
     @Symbolic("true")
-    public static int lasJettison_C_5_j;  
+    public static int connect_C_2_c;  
     @Symbolic("true")
-    public static int lasJettison_C_6_j;  
+    public static int connect_C_3_s;  
     @Symbolic("true")
-    public static int lasJettison_C_7_j;  
+    public static int connect_C_3_c;  
     @Symbolic("true")
-    public static int lasJettison_C_8_j;  
+    public static int connect_C_4_s;  
     @Symbolic("true")
-    public static int lasJettison_C_9_j;  
+    public static int connect_C_4_c;  
     @Symbolic("true")
-    public static int reset_0_i;  
+    public static int connect_C_5_s;  
     @Symbolic("true")
-    public static int reset_1_i;  
+    public static int connect_C_5_c;  
     @Symbolic("true")
-    public static int reset_2_i;  
+    public static int connect_C_6_s;  
     @Symbolic("true")
-    public static int reset_3_i;  
+    public static int connect_C_6_c;  
     @Symbolic("true")
-    public static int reset_4_i;  
+    public static int connect_C_7_s;  
     @Symbolic("true")
-    public static int reset_5_i;  
+    public static int connect_C_7_c;  
     @Symbolic("true")
-    public static int reset_6_i;  
+    public static int connect_C_8_s;  
     @Symbolic("true")
-    public static int reset_7_i;  
+    public static int connect_C_8_c;  
     @Symbolic("true")
-    public static int reset_8_i;  
+    public static int connect_C_9_s;  
     @Symbolic("true")
-    public static int reset_9_i;  
+    public static int connect_C_9_c;  
     @Symbolic("true")
-    public static int lasJettison_E_0_j;  
+    public static int connect_E_0_s;  
     @Symbolic("true")
-    public static int lasJettison_E_1_j;  
+    public static int connect_E_0_c;  
     @Symbolic("true")
-    public static int lasJettison_E_2_j;  
+    public static int connect_E_1_s;  
     @Symbolic("true")
-    public static int lasJettison_E_3_j;  
+    public static int connect_E_1_c;  
     @Symbolic("true")
-    public static int lasJettison_E_4_j;  
+    public static int connect_E_2_s;  
     @Symbolic("true")
-    public static int lasJettison_E_5_j;  
+    public static int connect_E_2_c;  
     @Symbolic("true")
-    public static int lasJettison_E_6_j;  
+    public static int connect_E_3_s;  
     @Symbolic("true")
-    public static int lasJettison_E_7_j;  
+    public static int connect_E_3_c;  
     @Symbolic("true")
-    public static int lasJettison_E_8_j;  
+    public static int connect_E_4_s;  
     @Symbolic("true")
-    public static int lasJettison_E_9_j;  
+    public static int connect_E_4_c;  
+    @Symbolic("true")
+    public static int connect_E_5_s;  
+    @Symbolic("true")
+    public static int connect_E_5_c;  
+    @Symbolic("true")
+    public static int connect_E_6_s;  
+    @Symbolic("true")
+    public static int connect_E_6_c;  
+    @Symbolic("true")
+    public static int connect_E_7_s;  
+    @Symbolic("true")
+    public static int connect_E_7_c;  
+    @Symbolic("true")
+    public static int connect_E_8_s;  
+    @Symbolic("true")
+    public static int connect_E_8_c;  
+    @Symbolic("true")
+    public static int connect_E_9_s;  
+    @Symbolic("true")
+    public static int connect_E_9_c;  
  
 
-    public static void lasJettison_C_0() {  
-      if ((lasJettison_C_0_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_0_j);
+    public static void connect_C_0() {  
+      if (!((((connect_C_0_s != 0) && (connect_C_0_c == 1)) || (connect_C_0_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_0_s, connect_C_0_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_1() {  
-      if ((lasJettison_C_1_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_1_j);
+    public static void connect_C_1() {  
+      if (!((((connect_C_1_s != 0) && (connect_C_1_c == 1)) || (connect_C_1_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_1_s, connect_C_1_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_2() {  
-      if ((lasJettison_C_2_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_2_j);
+    public static void connect_C_2() {  
+      if (!((((connect_C_2_s != 0) && (connect_C_2_c == 1)) || (connect_C_2_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_2_s, connect_C_2_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_3() {  
-      if ((lasJettison_C_3_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_3_j);
+    public static void connect_C_3() {  
+      if (!((((connect_C_3_s != 0) && (connect_C_3_c == 1)) || (connect_C_3_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_3_s, connect_C_3_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_4() {  
-      if ((lasJettison_C_4_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_4_j);
+    public static void connect_C_4() {  
+      if (!((((connect_C_4_s != 0) && (connect_C_4_c == 1)) || (connect_C_4_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_4_s, connect_C_4_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_5() {  
-      if ((lasJettison_C_5_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_5_j);
+    public static void connect_C_5() {  
+      if (!((((connect_C_5_s != 0) && (connect_C_5_c == 1)) || (connect_C_5_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_5_s, connect_C_5_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_6() {  
-      if ((lasJettison_C_6_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_6_j);
+    public static void connect_C_6() {  
+      if (!((((connect_C_6_s != 0) && (connect_C_6_c == 1)) || (connect_C_6_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_6_s, connect_C_6_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_7() {  
-      if ((lasJettison_C_7_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_7_j);
+    public static void connect_C_7() {  
+      if (!((((connect_C_7_s != 0) && (connect_C_7_c == 1)) || (connect_C_7_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_7_s, connect_C_7_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_8() {  
-      if ((lasJettison_C_8_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_8_j);
+    public static void connect_C_8() {  
+      if (!((((connect_C_8_s != 0) && (connect_C_8_c == 1)) || (connect_C_8_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_8_s, connect_C_8_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_C_9() {  
-      if ((lasJettison_C_9_j >= 100000)) {
-        CEV.CEV.lasJettison(lasJettison_C_9_j);
+    public static void connect_C_9() {  
+      if (!((((connect_C_9_s != 0) && (connect_C_9_c == 1)) || (connect_C_9_s == 0)))) {
+        psyco.java.io.PipedOutputStream.connect(connect_C_9_s, connect_C_9_c);
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_0() {  
+    public static void flush_0() {  
       if (true) {
-        CEV.CEV.reset(reset_0_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_1() {  
+    public static void flush_1() {  
       if (true) {
-        CEV.CEV.reset(reset_1_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_2() {  
+    public static void flush_2() {  
       if (true) {
-        CEV.CEV.reset(reset_2_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_3() {  
+    public static void flush_3() {  
       if (true) {
-        CEV.CEV.reset(reset_3_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_4() {  
+    public static void flush_4() {  
       if (true) {
-        CEV.CEV.reset(reset_4_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_5() {  
+    public static void flush_5() {  
       if (true) {
-        CEV.CEV.reset(reset_5_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_6() {  
+    public static void flush_6() {  
       if (true) {
-        CEV.CEV.reset(reset_6_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_7() {  
+    public static void flush_7() {  
       if (true) {
-        CEV.CEV.reset(reset_7_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_8() {  
+    public static void flush_8() {  
       if (true) {
-        CEV.CEV.reset(reset_8_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void reset_9() {  
+    public static void flush_9() {  
       if (true) {
-        CEV.CEV.reset(reset_9_i);
+        psyco.java.io.PipedOutputStream.flush();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lasJettison_E_0() {  
-      if ((lasJettison_E_0_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_0_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_1() {  
-      if ((lasJettison_E_1_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_1_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_2() {  
-      if ((lasJettison_E_2_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_2_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_3() {  
-      if ((lasJettison_E_3_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_3_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_4() {  
-      if ((lasJettison_E_4_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_4_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_5() {  
-      if ((lasJettison_E_5_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_5_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_6() {  
-      if ((lasJettison_E_6_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_6_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_7() {  
-      if ((lasJettison_E_7_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_7_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_8() {  
-      if ((lasJettison_E_8_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_8_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lasJettison_E_9() {  
-      if ((lasJettison_E_9_j < 100000)) {
-        CEV.CEV.lasJettison(lasJettison_E_9_j);
-      } else {
-         throw new TotallyPsyco("Odd Psyco"); 
-      }
-    }
-    public static void lsamRendezvous_0() {  
+    public static void write_0() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_1() {  
+    public static void write_1() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_2() {  
+    public static void write_2() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_3() {  
+    public static void write_3() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_4() {  
+    public static void write_4() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_5() {  
+    public static void write_5() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_6() {  
+    public static void write_6() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_7() {  
+    public static void write_7() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_8() {  
+    public static void write_8() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }
     }
-    public static void lsamRendezvous_9() {  
+    public static void write_9() {  
       if (true) {
-        CEV.CEV.lsamRendezvous();
+        psyco.java.io.PipedOutputStream.write();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_0() {  
+      if ((((connect_E_0_s != 0) && (connect_E_0_c == 1)) || (connect_E_0_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_0_s, connect_E_0_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_1() {  
+      if ((((connect_E_1_s != 0) && (connect_E_1_c == 1)) || (connect_E_1_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_1_s, connect_E_1_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_2() {  
+      if ((((connect_E_2_s != 0) && (connect_E_2_c == 1)) || (connect_E_2_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_2_s, connect_E_2_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_3() {  
+      if ((((connect_E_3_s != 0) && (connect_E_3_c == 1)) || (connect_E_3_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_3_s, connect_E_3_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_4() {  
+      if ((((connect_E_4_s != 0) && (connect_E_4_c == 1)) || (connect_E_4_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_4_s, connect_E_4_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_5() {  
+      if ((((connect_E_5_s != 0) && (connect_E_5_c == 1)) || (connect_E_5_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_5_s, connect_E_5_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_6() {  
+      if ((((connect_E_6_s != 0) && (connect_E_6_c == 1)) || (connect_E_6_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_6_s, connect_E_6_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_7() {  
+      if ((((connect_E_7_s != 0) && (connect_E_7_c == 1)) || (connect_E_7_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_7_s, connect_E_7_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_8() {  
+      if ((((connect_E_8_s != 0) && (connect_E_8_c == 1)) || (connect_E_8_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_8_s, connect_E_8_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void connect_E_9() {  
+      if ((((connect_E_9_s != 0) && (connect_E_9_c == 1)) || (connect_E_9_s == 0))) {
+        psyco.java.io.PipedOutputStream.connect(connect_E_9_s, connect_E_9_c);
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_0() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_1() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_2() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_3() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_4() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_5() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_6() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_7() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_8() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
+      } else {
+         throw new TotallyPsyco("Odd Psyco"); 
+      }
+    }
+    public static void close_9() {  
+      if (true) {
+        psyco.java.io.PipedOutputStream.close();
       } else {
          throw new TotallyPsyco("Odd Psyco"); 
       }

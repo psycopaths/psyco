@@ -12,11 +12,14 @@ public class RefinementQuery {
     }
   }
 
-  <params:{p | 
+  <symparams:{p | 
   @Symbolic("true")
   public static <p.type> <p.name>;  
   }> 
 
+  <raparams:{p | 
+  public static <p.type> <p.name>;  
+  }> 
           
   public static void sequence() {
   
