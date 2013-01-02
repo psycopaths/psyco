@@ -1,9 +1,8 @@
 
 classpath=${jpf-psyco}/build/examples
-shell=compiler.CompilerExample
+shell=compiler.TestSuiteExample
 
-
-concolic.classes=CEV.CEV,CEV.Spacecraft,CEV.ErrorLog
+target=null
 
 # ####################################################################
 #

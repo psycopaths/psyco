@@ -16,39 +16,26 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package gov.nasa.jpf.psyco.compiler;
+package gov.nasa.jpf.psyco.testing;
+
+import java.util.List;
 
 /**
- * Info about method paramter
  *
+ * @author falkhowar
  */
-public class Parameter {
+public class TestSubSuite {
+  
+  private List<TestCase> testCases;
 
-  private String type;
-  private String name;
-  private String init;
-
-  public Parameter(String type, String name) {
-    this.name = name;
-    this.type = type;
-    this.init = null;
+  public TestSubSuite(List<TestCase> subList) {
+    this.testCases = subList;
   }
 
-  public Parameter(String type, String name, String init) {
-    this.type = type;
-    this.name = name;
-    this.init = init;
-  }
-    
-  public String getInit() {
-    return init;
+  public List<TestCase> getTests() {
+    return this.testCases;
   }
   
-  public String getName() {
-    return name;
-  }
-
-  public String getType() {
-    return type;
-  }
+  
+  
 }

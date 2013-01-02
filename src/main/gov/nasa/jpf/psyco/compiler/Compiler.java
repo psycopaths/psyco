@@ -47,6 +47,13 @@ public class Compiler {
     this.tplDir = conf.getProperty("jpf-psyco") + "/src/resources/gov/nasa/jpf/psyco/compiler";
   }
   
+  public Compiler(String tplName, Map<String, Object> attributes, Config conf, String targetDir, String targetClassName) {
+    this.tplName = tplName;
+    this.attributes = attributes;
+    this.targetName = targetDir + "/" +  targetClassName + ".java";
+    this.tplDir = conf.getProperty("jpf-psyco") + "/src/resources/gov/nasa/jpf/psyco/compiler";
+  }  
+  
   public void compile() {
     compile(true);
   }

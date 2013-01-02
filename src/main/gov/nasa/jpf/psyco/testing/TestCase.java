@@ -16,39 +16,49 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package gov.nasa.jpf.psyco.compiler;
+package gov.nasa.jpf.psyco.testing;
+
+import gov.nasa.jpf.psyco.compiler.MethodWrapper;
+import gov.nasa.jpf.psyco.compiler.Parameter;
+import java.util.List;
 
 /**
- * Info about method paramter
  *
+ * @author falkhowar
  */
-public class Parameter {
+public class TestCase {
+  
+  private List<MethodWrapper> methods;
+  private List<MethodChecks> checks;
+  private List<Parameter> params;
 
-  private String type;
-  private String name;
-  private String init;
-
-  public Parameter(String type, String name) {
-    this.name = name;
-    this.type = type;
-    this.init = null;
-  }
-
-  public Parameter(String type, String name, String init) {
-    this.type = type;
-    this.name = name;
-    this.init = init;
-  }
-    
-  public String getInit() {
-    return init;
+  public TestCase(List<MethodWrapper> methods, List<MethodChecks> checks, List<Parameter> params) {
+    this.methods = methods;
+    this.checks = checks;
+    this.params = params;
   }
   
-  public String getName() {
-    return name;
+
+  /**
+   * @return the methods
+   */
+  public List<MethodWrapper> getMethods() {
+    return methods;
   }
 
-  public String getType() {
-    return type;
+  /**
+   * @return the checks
+   */
+  public List<MethodChecks> getChecks() {
+    return checks;
   }
+
+  /**
+   * @return the params
+   */
+  public List<Parameter> getParams() {
+    return params;
+  }
+  
+  
 }
