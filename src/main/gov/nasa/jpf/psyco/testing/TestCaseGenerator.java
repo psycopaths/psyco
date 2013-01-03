@@ -65,7 +65,7 @@ public class TestCaseGenerator {
       // generate sub suite
       Compiler compiler = new Compiler("TestCase", subInfo, this.compilerConfig, 
               this.outDir, "PsycoTest" + this.suiteName + "" + subInfo.get("part"));
-      compiler.compile(false);
+      compiler.generateSource();
       
     }    
     
@@ -81,7 +81,7 @@ public class TestCaseGenerator {
 
     Compiler compiler = new Compiler("TestSuite", suiteInfo, this.compilerConfig, 
             this.outDir, "PsycoTest" + this.suiteName);
-    compiler.compile(false);
+    compiler.generateSource();
         
   }
   

@@ -58,9 +58,8 @@ public class Compiler {
     compile(true);
   }
   
-  public void compile(boolean removeSource) {
-    
-    SimpleProfiler.start("PSYCO-compiler");
+  public void generateSource() {
+  
     File f = new File(tplDir + "/" + tplName + ".st");
     StringBuilder sb = new StringBuilder();
     BufferedReader r = null;
@@ -106,6 +105,13 @@ public class Compiler {
         e.printStackTrace();
       }      
     }
+  }
+
+  
+  public void compile(boolean removeSource) {
+    
+    SimpleProfiler.start("PSYCO-compiler");
+    generateSource();   
     try {
       String s = null;
       Process p = Runtime.getRuntime().exec("ant compile-examples");
