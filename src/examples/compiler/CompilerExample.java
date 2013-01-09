@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import exampleProtocolSteffen2011.IntProtocol;
+import summaries.IntProtocol;
 import CEV.CEV;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.expressions.Constant;

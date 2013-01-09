@@ -10,10 +10,10 @@ public class MethodTestCase {
   @Symbolic("true")
   public static <p.type> <p.name>;  
   }> 
-          
+
+  private static <sutclass> testObject = null;          
+
   public static void sequence() {
-    // has to have default constructor ...
-    <sutclass> testObject = new <sutclass>();
     testObject.<methodName>(
       <trunc(params):{p | <p.name>, 
       }> 
@@ -22,6 +22,8 @@ public class MethodTestCase {
   }
 
   public static void main(String[] args) {
+    // has to have default constructor ...
+    testObject = new <sutclass>();
     sequence();
   }
 } 

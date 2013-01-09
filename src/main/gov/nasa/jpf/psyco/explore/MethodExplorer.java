@@ -67,7 +67,7 @@ public class MethodExplorer {
     ConcolicMethodExplorer mex = explorer.getConcolicExplorer().getMethodExplorers().iterator().next();
     ConstraintsTree ct = mex.getConstraintsTree();
     logger.finest(ct);
-    this.initialValues = mex.getOrininalInitialValuation();
+    this.initialValues = mex.getOriginalInitialValuation();
       
     Collection<MethodPath> paths = new ArrayList<MethodPath>();
     for (Path p : ct.getCoveredPaths()) {
@@ -122,7 +122,7 @@ public class MethodExplorer {
     baseConf.setTarget("temp.MethodTestCase");
     // create concolic config
     ConcolicConfig concConfig = new ConcolicConfig(conf);
-    concConfig.addConcolicClass("temp.MethodTestCase");
+    //concConfig.addConcolicClass("temp.MethodTestCase");
     // instantiate dart
     JDart jdart = new JDart(baseConf, concConfig);  
     return jdart;

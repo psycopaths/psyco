@@ -16,7 +16,7 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package exampleProtocolSteffen2011;
+package summaries;
 
 import gov.nasa.jpf.jdart.Symbolic;
 
@@ -37,14 +37,21 @@ public class IntProtocol {
  
 
   public void msg( int P1,  int P2) {
-  	if (P1 < 0) return;
+  	//System.out.println("expect = " + expect);    
+    if (P1 < 0) {
+      return;
+    }
   	
   	//System.out.println("expect = " + expect);
   	int prevExpect = expect;
-  	if (expect > 0)
-  		prevExpect--;
-  	
-    if ((buffer_empty==1) && (P1 % 7 == prevExpect % 2)) {  // this is as expected
+  	//System.out.println("prevExpect = " + prevExpect + ", P1 = " + P1);
+  	if (expect > 0) {
+      prevExpect--;
+    }
+
+  	System.out.println("prevExpect = " + prevExpect + ", P1 = " + P1);
+    
+    if ((buffer_empty==1) && P1 == prevExpect ) {  // this is as expected
       expect++;
       buffer_empty = 1-buffer_empty;
       // OK message will be passed to upper layer
@@ -69,26 +76,3 @@ public class IntProtocol {
   }
     
 }
-
-//while (true) {
-//wait_for_event(&event); // wait for event
-//switch (event) {
-//msg:
-//from_lower_layer(&p); // read new message
-//if (buffer==0 && // if buf empty and
-//(p.seq % 2 == expect % 2)) { // and seq matches
-//buffer = p.data;
-//expect++; // increment exp. seq. nr
-//indicate_to_upper_layer(); // indicate new data
-//}
-//break;
-//recv:
-//if (buffer==0) break; // skip if buffer emtpy
-//data_to_upper_layer(&buffer); // forward data
-//ack.seq = (expect-1) % 2; // ack. delivery
-//to_lower_layer(&ack);
-//break;
-//}
-//}
-//  
-//}

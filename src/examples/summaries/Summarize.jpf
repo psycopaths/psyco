@@ -1,0 +1,42 @@
+############################################################################### 
+#
+# experiment setup
+#
+
+psyco.interface.m1=summaries.IntProtocol.msg(s:int,c:int)
+psyco.interface.m2=summaries.IntProtocol.recv_ack(v:int)
+
+psyco.depth=3
+
+# outputs results - use tmp because I ignore it during commits 
+# interface.outputFile=tmp/exampleProtocolSteffen2011
+
+
+############################################################################### 
+#
+# default psyco tools
+#
+
+# psyco
+shell=gov.nasa.jpf.psyco.MethodSummarizer
+
+# jdart
+
+# jpf-constraints
+symbolic.dp=z3
+
+
+############################################################################### 
+#
+# logging and jpf output
+#
+log.info=constraints,jdart
+log.finest=psyco
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=
