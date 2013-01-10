@@ -18,6 +18,7 @@ import CEV.CEV;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.jdart.ConcolicConfig;
+import gov.nasa.jpf.psyco.MethodSummarizer;
 import java.lang.reflect.Method;
 
 
@@ -51,36 +52,38 @@ public class CompilerExample implements JPFShell {
     ConcolicConfig cc = new ConcolicConfig(conf);
     
     try {
-      
-//      Class c = IntProtocol.class;
-//      Method m1 = c.getMethod("msg", int.class, int.class);
-//      Method m2 = c.getMethod("recv_ack", int.class);
-       
-      Class c = CEV.class;
-      Method m1 = c.getMethod("reset", int.class);
-//      Method m1 = c.getMethod("lsamRendezvous"); 
-              
-      MethodExplorer mex1 = new MethodExplorer(m1,conf);
-      MethodSummary summary1 = mex1.execute();
 
-//      MethodExplorer mex2 = new MethodExplorer(m2,conf);
-//      MethodSummary summary2 = mex2.execute();
+//      Class c = CEV.class;
+//      Method m1 = c.getMethod("reset", int.class);
+//      Method m1 = c.getMethod("lsamRendezvous"); 
       
-      System.out.println(summary1);
-//      System.out.println(summary2);
-  
-      Valuation init = new Valuation();
-//      init.setValue("buffer_empty", 1);
-//      init.setValue("expect", 0);
+      Class c = IntProtocol.class;
+      Method m1 = c.getMethod("msg", int.class, int.class);
+      Method m2 = c.getMethod("recv_ack", int.class);
+
+      List<Method> methods = new ArrayList<Method>();
+      methods.add(m1);
+      methods.add(m2);      
+      MethodSummarizer sum = new MethodSummarizer(conf, methods);
+
+      sum.start(null);  
+      Valuation init = sum.getInitialValuation();
+      MethodSummary summary1 = sum.getSummaries().get(m1);
+      MethodSummary summary2 = sum.getSummaries().get(m2);
       
       SummaryOracle o = new SummaryOracle(init,cc.getSolver(),cc.getMinMax());
       List<MethodSummary> seq = new ArrayList<MethodSummary>();
       seq.add(summary1);
-      seq.add(summary1);
-//      seq.add(summary1);
-//      seq.add(summary1);
+      seq.add(summary2);
       
       o.query(seq, new Constant<Boolean>(Boolean.class, true));
+
+//      seq.clear();
+//      seq.add(summary1);
+//      seq.add(summary1);
+//      seq.add(summary1);
+//      seq.add(summary1);
+//      o.query(seq, new Constant<Boolean>(Boolean.class, true));
       
     } catch (NoSuchMethodException ex) {
     } catch (SecurityException ex) {

@@ -83,7 +83,7 @@ public class ExpressionSimplifier extends ExpressionVisitor<Expression> {
     Expression right = visit(nbe.getRight(),nbe);    
     if (left instanceof Constant && right instanceof Constant) {
       return new Constant(Boolean.class,nbe.evaluate(null));
-    }
+    }    
     return new NumericBooleanExpression(left, nbe.getComparator(), right);
   }
 
@@ -109,7 +109,8 @@ public class ExpressionSimplifier extends ExpressionVisitor<Expression> {
     if (left instanceof Constant && right instanceof Constant) {
       Constant<Boolean> lc = (Constant<Boolean>)left;
       Constant<Boolean> rc = (Constant<Boolean>)right;
-      return new Constant<Boolean>(Boolean.class, lc.getValue() && rc.getValue());
+      Expression<Boolean> test = new PropositionalCompound(left, pc.getOperator(), right);
+      return new Constant<Boolean>(Boolean.class, test.evaluate(null));
     }
     else if (left instanceof Constant) {
       Constant<Boolean> lc = (Constant<Boolean>)left;

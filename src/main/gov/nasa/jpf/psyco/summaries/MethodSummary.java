@@ -22,6 +22,7 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.MinMax;
+import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.expressions.LogicalOperator;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
@@ -83,6 +84,13 @@ public class MethodSummary {
   
   private Method method;
   
+  private Valuation partialInitialValuation = null;
+  
+  public MethodSummary(Method m, Collection<MethodPath> paths, Valuation partialInitial) {
+    this(m, paths);
+    this.partialInitialValuation = partialInitial;
+  }
+  
   public MethodSummary(Method m, Collection<MethodPath> paths) {
     this.okPaths = new ArrayList<MethodPath>();
     this.errorPaths = new ArrayList<MethodPath>();
@@ -108,7 +116,7 @@ public class MethodSummary {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("Summary of ");
-    sb.append(MethodUtil.getMethodSignature(method)).append("\n");
+    sb.append(this.method.getName()).append("\n");
     for (MethodPath p : okPaths)
       sb.append(p).append("\n");
     for (MethodPath p : errorPaths)
@@ -147,4 +155,10 @@ public class MethodSummary {
     return method;
   }
   
+  /**
+   * @return the partialInitialValuation
+   */
+  public Valuation getPartialInitialValuation() {
+    return partialInitialValuation;
+  }
 }

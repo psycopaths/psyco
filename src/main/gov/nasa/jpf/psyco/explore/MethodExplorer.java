@@ -80,7 +80,7 @@ public class MethodExplorer {
       paths.add(new MethodPath(p.getPathCondition().getConstraint(), p.getPostCondition(), MethodSummary.PathState.DONT_KNOW));
     }
       
-    MethodSummary summary = new MethodSummary(explore,paths);
+    MethodSummary summary = new MethodSummary(explore, paths, getInitialValues());
     return summary;
   }    
 
