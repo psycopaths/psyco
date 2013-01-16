@@ -55,7 +55,7 @@ public class ExpressionRestrictor extends ExpressionVisitor<Expression> {
   protected Expression visit(Negation ngtn, Expression exprsn) {
     Expression neg = visit(ngtn.getNegated(), ngtn);
     if (neg == null) {
-      return null;
+      return new Constant(Boolean.class,false);
     }
     return new Negation(neg);
   }
