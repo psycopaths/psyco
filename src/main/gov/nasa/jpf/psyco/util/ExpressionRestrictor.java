@@ -150,5 +150,10 @@ public class ExpressionRestrictor extends ExpressionVisitor<Expression> {
   public boolean hasMixedParameters() {
     return mixedParameters;
   }
+
+  @Override
+  protected Expression visit(QuantifierExpression qe, Expression exprsn) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
   
 }

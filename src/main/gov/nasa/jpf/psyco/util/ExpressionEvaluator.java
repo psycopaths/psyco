@@ -68,4 +68,9 @@ public class ExpressionEvaluator extends ExpressionVisitor<Expression> {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  @Override
+  protected Expression visit(QuantifierExpression qe, Expression exprsn) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
 }
