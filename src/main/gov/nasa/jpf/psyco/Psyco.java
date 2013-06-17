@@ -22,9 +22,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
 import java.util.HashMap;
-import java.util.Vector;
 import gov.nasa.jpf.JPFShell;
-import gov.nasa.jpf.jdart.*;
 import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
 import gov.nasa.jpf.learn.basic.Candidate;
 import gov.nasa.jpf.learn.basic.Learner;
@@ -33,7 +31,6 @@ import gov.nasa.jpf.learn.TDFA.TDFALearner;
 import gov.nasa.jpf.learn.basic.SETException;
 import gov.nasa.jpf.psyco.oracles.Teacher3Values;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
-import gov.nasa.jpf.util.ConfigUtil;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;

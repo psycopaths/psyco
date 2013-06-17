@@ -36,11 +36,10 @@ import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.AbstractList;
 import java.util.Iterator;
-import java.util.Vector;
 
 import java.util.HashMap;
-import gov.nasa.jpf.psyco.target.ProgramExecutive;
 import java.lang.reflect.Method;
+import java.util.Vector;
 
 /*
  * Teacher for interface generation in psyco using classic L*

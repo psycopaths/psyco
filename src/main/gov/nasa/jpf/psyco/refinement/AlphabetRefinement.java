@@ -30,8 +30,8 @@ import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
 import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.compiler.MethodWrapper;
-import gov.nasa.jpf.psyco.compiler.Parameter;
+import gov.nasa.jpf.testing.compiler.MethodWrapper;
+import gov.nasa.jpf.testing.compiler.Parameter;
 import gov.nasa.jpf.psyco.util.ExpressionRestrictor;
 import gov.nasa.jpf.psyco.util.ExpressionSimplifier;
 import gov.nasa.jpf.util.JPFLogger;
@@ -318,7 +318,7 @@ public class AlphabetRefinement {
     attributes.put("symbols", symbols);
     attributes.put("package", "temp");
     
-    gov.nasa.jpf.psyco.compiler.Compiler cc = new gov.nasa.jpf.psyco.compiler.Compiler(
+    gov.nasa.jpf.testing.compiler.Compiler cc = new gov.nasa.jpf.testing.compiler.Compiler(
             "Alphabet", attributes, compilerConfig, "src/examples/temp");    
     cc.compile(false);        
   }

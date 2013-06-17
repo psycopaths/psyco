@@ -23,8 +23,6 @@
 package gov.nasa.jpf.psyco.target;
 
 import java.lang.reflect.Method;
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchMethodException;
 
 /**
  *

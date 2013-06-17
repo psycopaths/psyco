@@ -21,13 +21,9 @@ package gov.nasa.jpf.psyco.explore;
 import java.util.AbstractList;
 
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.oracles.JDartOracle;
 import gov.nasa.jpf.psyco.refinement.AlphabetRefinement;
-import gov.nasa.jpf.psyco.refinement.ConstrainedMethodSequence;
-import gov.nasa.jpf.util.LogManager;
 
 // The main class to explore a method symbolically
 
