@@ -1,24 +1,35 @@
-*****************************************
-      jpf-psyco: Installation Guide
-*****************************************
+*********************************************************
+   jpf-psyco: Installation Guide and Manual
+*********************************************************
+
+jpf-psyco generates symbolic interfaces for software 
+components using concolic execution. The ideas behind
+PSYCO are discussed in
+
+D. Giannakopoulou, Z. Rakamaric, and V. Raman. Symbolic 
+Learning of Component Interfaces. SAS 2012.
 
 
-******** Building and Installing ********
 
-Dependencies:
+******************** Dependencies ***********************
+
 - jpf-core
 - jpf-constraints
 - jpf-jdart
-- jpf-learn
+- jpf-testing
 
-JPF's site.properties file (usually residing in $HOME/.jpf/ folder) should look
-something like this:
-# JPF site configuration
-jpf-core = ${user.home}/projects/psyco/jpf-core
 
-jpf-constraints = ${user.home}/projects/psyco/jpf-constraints
-jpf-jdart = ${user.home}/projects/psyco/jpf-jdart
-jpf-learn = ${user.home}/projects/psyco/jpf-learn
 
-extensions=${jpf-core},${jpf-constraints},${jpf-jdart},${jpf-learn}
+**************** Building and Installing ****************
 
+Install project and dependencies, update your
+
+~/.jpf/site.properties 
+
+accordingly.
+
+
+
+********************** How to use ***********************
+
+Examples can be found in src/examples/
