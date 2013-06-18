@@ -27,13 +27,13 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.LogicalOperator;
 import gov.nasa.jpf.constraints.expressions.Negation;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
+import gov.nasa.jpf.constraints.util.ExpressionRestrictor;
+import gov.nasa.jpf.constraints.util.ExpressionSimplifier;
 import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
 import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.testing.compiler.MethodWrapper;
 import gov.nasa.jpf.testing.compiler.Parameter;
-import gov.nasa.jpf.psyco.util.ExpressionRestrictor;
-import gov.nasa.jpf.psyco.util.ExpressionSimplifier;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.SimpleProfiler;
 
