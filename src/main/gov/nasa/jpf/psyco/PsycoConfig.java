@@ -19,7 +19,8 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.jdart.ConcolicConfig;
+import gov.nasa.jpf.jdart.config.ConcolicConfig;
+import gov.nasa.jpf.jdart.config.ConcolicConfig.MethodConfig;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,9 +47,11 @@ public class PsycoConfig extends ConcolicConfig {
     return alphabetMethods;
   }
 
+  @Deprecated
   public void addSymbolicMethod(String s) {
     MethodConfig mc = parseMethodConfig(s);
-    this.symbolicMethods.put(mc,mc);
+    throw new IllegalStateException("field no longer exists");
+    // this.symbolicMethods.put(mc,mc);
   }
             
   private void initialize(Config conf) {
@@ -65,8 +68,10 @@ public class PsycoConfig extends ConcolicConfig {
     }    
   }  
    
+  @Deprecated
   public void addManagedException(String me) {
-    this.assertions.add(me);
+    throw new IllegalStateException("field no longer exists");
+    //this.assertions.add(me);
   }
   
 }

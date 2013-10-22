@@ -25,7 +25,7 @@
 // README-ESAS file that is included in this distribution.
 //
 
-package CEV;
+package cev;
 
 /**
  * class modeling behavior and configuration of the spacecraft

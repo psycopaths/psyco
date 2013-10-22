@@ -20,8 +20,8 @@ package gov.nasa.jpf.psyco.refinement;
 
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.expressions.Constant;
-import gov.nasa.jpf.jdart.ConcolicConfig;
-import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
+import gov.nasa.jpf.jdart.config.ConcolicConfig;
+import gov.nasa.jpf.jdart.config.ConcolicConfig.MethodConfig;
 
 /**
  *

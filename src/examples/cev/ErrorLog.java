@@ -25,7 +25,7 @@
 // README-ESAS file that is included in this distribution.
 //
 
-package CEV;
+package cev;
 
 //import java.util.ArrayList;
 

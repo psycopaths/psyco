@@ -23,17 +23,16 @@ import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.constraints.api.MinMax;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.LogicalOperator;
 import gov.nasa.jpf.constraints.expressions.Negation;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.constraints.util.ExpressionRestrictor;
 import gov.nasa.jpf.constraints.util.ExpressionSimplifier;
-import gov.nasa.jpf.jdart.ConcolicConfig.MethodConfig;
+import gov.nasa.jpf.jdart.config.ConcolicConfig.MethodConfig;
 import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.testing.compiler.MethodWrapper;
-import gov.nasa.jpf.testing.compiler.Parameter;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.SimpleProfiler;
 
@@ -165,7 +164,7 @@ public class AlphabetRefinement {
       ConstraintSolver solver = pconf.getSolver();
       
       SimpleProfiler.start("PSYCO-solve-refinement-constraint");
-      Result errorResult = solver.isSatisfiable(errorPCs, pconf.getMinMax());
+      Result errorResult = solver.isSatisfiable(errorPCs, new MinMax() );
       SimpleProfiler.stop("PSYCO-solve-refinement-constraint");
       if (errorResult.equals(Result.SAT)) {
         errorPCsSatisfiable = true;
@@ -204,7 +203,7 @@ public class AlphabetRefinement {
         logger.finest("DontKnow PCs:" + dontKnowPCs);
 
         SimpleProfiler.start("PSYCO-solve-refinement-constraint");
-        Result dontKnowResult = solver.isSatisfiable(dontKnowPCs, pconf.getMinMax());
+        Result dontKnowResult = solver.isSatisfiable(dontKnowPCs, new MinMax());
         SimpleProfiler.stop("PSYCO-solve-refinement-constraint");
       	if (dontKnowResult.equals(Result.SAT)) {
           dontKnowPCsSatisfiable = true;
@@ -226,7 +225,7 @@ public class AlphabetRefinement {
       logger.finest("Covered PCs:" + coveredPCs);
 
       SimpleProfiler.start("PSYCO-solve-refinement-constraint");
-      Result coveredPCsResult = solver.isSatisfiable(coveredPCs, pconf.getMinMax());
+      Result coveredPCsResult = solver.isSatisfiable(coveredPCs, new MinMax());
       SimpleProfiler.stop("PSYCO-solve-refinement-constraint");
       if (coveredPCsResult.equals(Result.SAT)) {
         coveredPCsSatisfiable = true;
@@ -281,46 +280,46 @@ public class AlphabetRefinement {
 
   private void writeAndCompileRefinement() {
     
-    List<Parameter> params = new LinkedList<Parameter>();
-    List<MethodWrapper> symbols = new LinkedList<MethodWrapper>();
-    
-    for (MethodSymbol ms : this.alphabet) { 
-      for (int copy=0; copy < NUMBER_OF_METHOD_COPIES; copy++) {
-        String methodName = ms.getSymbolName() + "_" + copy;
-        Map<Expression, Expression> replacements = getReplacementsForPrecondition(ms, methodName);      
-        
-        // create params
-        String[] pnames = new String[ms.getNumParams()];
-        for (int p=0;p<pnames.length;p++) {
-          String pname = methodName + "_" + ms.getMethod().getParamNames()[p];          
-          Parameter param = new Parameter(ms.getMethod().getParamTypes()[p].getName(), pname);
-          pnames[p] = pname;
-          params.add(param);
-        }
-        
-        // create invokation
-        String plist = Arrays.toString(pnames).replace("[", "").replace("]", "");        
-        String call = ms.getMethod().getClassName() + "." + ms.getMethod().getMethodName() + "(" + plist + ")";
-    
-        // create condition
-        Expression<Boolean> precondition = ms.getPrecondition();
-        Set<Variable> vars = new HashSet<Variable>();
-        precondition = precondition.replaceTerms(replacements);
-
-        // add symbol
-        symbols.add(new MethodWrapper(call, precondition.toString(), methodName));      
-      }                  
-    }
-    
-    // compile alphabet
-    Map<String,Object> attributes = new HashMap<String,Object>();        
-    attributes.put("params", params);
-    attributes.put("symbols", symbols);
-    attributes.put("package", "temp");
-    
-    gov.nasa.jpf.testing.compiler.Compiler cc = new gov.nasa.jpf.testing.compiler.Compiler(
-            "Alphabet", attributes, compilerConfig, "src/examples/temp");    
-    cc.compile(false);        
+//    List<Parameter> params = new LinkedList<Parameter>();
+//    List<MethodWrapper> symbols = new LinkedList<MethodWrapper>();
+//    
+//    for (MethodSymbol ms : this.alphabet) { 
+//      for (int copy=0; copy < NUMBER_OF_METHOD_COPIES; copy++) {
+//        String methodName = ms.getSymbolName() + "_" + copy;
+//        Map<Expression, Expression> replacements = getReplacementsForPrecondition(ms, methodName);      
+//        
+//        // create params
+//        String[] pnames = new String[ms.getNumParams()];
+//        for (int p=0;p<pnames.length;p++) {
+//          String pname = methodName + "_" + ms.getMethod().getParamNames()[p];          
+//          Parameter param = new Parameter(ms.getMethod().getParamTypes()[p].getName(), pname);
+//          pnames[p] = pname;
+//          params.add(param);
+//        }
+//        
+//        // create invokation
+//        String plist = Arrays.toString(pnames).replace("[", "").replace("]", "");        
+//        String call = ms.getMethod().getClassName() + "." + ms.getMethod().getMethodName() + "(" + plist + ")";
+//    
+//        // create condition
+//        Expression<Boolean> precondition = ms.getPrecondition();
+//        Set<Variable> vars = new HashSet<Variable>();
+//        precondition = precondition.replaceTerms(replacements);
+//
+//        // add symbol
+//        symbols.add(new MethodWrapper(call, precondition.toString(), methodName));      
+//      }                  
+//    }
+//    
+//    // compile alphabet
+//    Map<String,Object> attributes = new HashMap<String,Object>();        
+//    attributes.put("params", params);
+//    attributes.put("symbols", symbols);
+//    attributes.put("package", "temp");
+//    
+//    gov.nasa.jpf.testing.compiler.Compiler cc = new gov.nasa.jpf.testing.compiler.Compiler(
+//            "Alphabet", attributes, compilerConfig, "src/examples/temp");    
+//    cc.compile(false);        
   }
 
   

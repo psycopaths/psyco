@@ -16,12 +16,16 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package CEV;
+package cev;
 
 public class CEV {
   //--------------------------------- our controlled objects
-	
-  public static void reset(int component) {
+
+  public CEV() {
+    
+  }
+  
+  public void reset(int component) {
   	Spacecraft.reset(component);
   }
   

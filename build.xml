@@ -32,7 +32,7 @@
   <property file="${jpf-core}/jpf.properties"/>
 
   <!-- get the jpf-learn path properties -->
-  <property file="${jpf-learn}/jpf.properties"/>
+  <property file="${jpf-learnlib}/jpf.properties"/>
 
   <!-- get the jpf-constraints path properties -->
   <property file="${jpf-constraints}/jpf.properties"/>
@@ -45,7 +45,7 @@
 
 
   <!-- compiler settings -->
-  <property name="src_level"     value="6"/>
+  <property name="src_level"     value="7"/>
   <property name="debug"         value="on"/>
   <property name="deprecation"   value="on"/>
 
@@ -66,7 +66,7 @@
     <pathelement path="${jpf-core.native_classpath}"/>
     
     <!-- add in what we need from jpf-learn -->
-    <pathelement path="${jpf-learn.native_classpath}"/>
+    <pathelement path="${jpf-learnlib.native_classpath}"/>
 
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>
@@ -96,6 +96,7 @@
     <available file="src/classes"     type="dir" property="have_classes"/>
     <available file="src/tests"       type="dir" property="have_tests"/>
     <available file="src/examples"    type="dir" property="have_examples"/>
+    <available file="src/resources"   type="dir" property="have_resources" />
 
     <condition property="have_jvm_code">
       <or>
@@ -144,6 +145,13 @@
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
            classpathref="lib.path"/>
   </target>
+  
+  <target name="-copy-resources" if="have_resources">
+    <mkdir dir="build/main" />
+    <copy todir="build/main">
+      <fileset dir="src/resources" excludes="**/*~" />
+    </copy>
+  </target>  
 
   <target name="-compile-peers" if="have_peers" depends="-compile-main" >
     <mkdir dir="build/peers"/>
@@ -194,7 +202,7 @@
   <!-- ======================= MISC SECTION ================================ -->
 
   <!-- build jars -->
-  <target name="build" depends="compile,-jar-jvm,-jar-jpf,-jar-annotations"
+  <target name="build" depends="compile,-copy-resources,-jar-jvm,-jar-jpf,-jar-annotations"
         description="generate the ${ant.project.name} jar files" >
   </target>
 

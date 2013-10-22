@@ -55,6 +55,7 @@ public class NewDartExplorer extends SymbolicExplorer {
     this.psycoConf = psycoConf;
   }
   
+  @Override
   public void run() {
     JDart dart = new JDart(jpfConf, psycoConf);
     dart.run();

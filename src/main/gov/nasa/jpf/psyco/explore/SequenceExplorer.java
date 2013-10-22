@@ -61,7 +61,10 @@ public class SequenceExplorer {
     }
     
     this.psy.addSymbolicMethod("gov.nasa.jpf.psyco.target.ProgramExecutive.sequence()");
-    this.psy.addAssertion("temp.Alphabet$TotallyPsyco");
+        
+    // FIXME: field no longer exists;
+   // this.psy.addAssertion("temp.Alphabet$TotallyPsyco");
+    
     this.psy.addConcolicClass("temp.Alphabet");
 
     // create concrete explorer
