@@ -30,7 +30,13 @@
   <property name="jpf-jdart" value = "..\jdart"/>
 
   <!-- get the jpf-core path properties -->
-  <property file="${jpf-core}\jpf.properties"/>
+  <property file="${jpf-core}/jpf.properties"/>
+
+  <!-- get the jpf-learn path properties -->
+  <property file="${jpf-learnlib}/jpf.properties"/>
+
+  <!-- get the jpf-constraints path properties -->
+  <property file="${jpf-constraints}/jpf.properties"/>
 
   <!-- get the jpf-jdart path properties -->
   <property file="${jpf-jdart}\jpf.properties"/>
@@ -56,6 +62,9 @@
     <!-- add in what we need from the core -->
     <pathelement path="${jpf-core.native_classpath}"/>
     
+    <!-- add in what we need from jpf-learn -->
+    <pathelement path="${jpf-learnlib.native_classpath}"/>
+
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>
     

@@ -13,15 +13,29 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
  * specific language governing permissions and limitations under the License.
  */
-package gov.nasa.jpf.psyco.learnlib;
+package gov.nasa.jpf.psyco.filter;
 
+import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.Query;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
-import de.learnlib.api.EquivalenceOracle;
-import net.automatalib.automata.transout.MealyMachine;
+import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
+import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
+import java.util.Collection;
 
-public interface SymbolicEquivalenceTest extends 
-        EquivalenceOracle<MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput>, 
-        SymbolicMethodSymbol, SymbolicQueryOutput> {
+/**
+ *
+ * @author falkhowar
+ */
+public class PrefixClosednessFilter implements ThreeValuedFilter, ThreeValuedOracle {
 
-  public void logStatistics();
+  @Override
+  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+  
 }

@@ -30,14 +30,14 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
 
   private static class LoggingQuery extends Query<SymbolicMethodSymbol, SymbolicQueryOutput> {
 
-  private static final JPFLogger logger = JPF.getLogger("psyco");
-    
+    private static final JPFLogger logger = JPF.getLogger("psyco");
+
     private final Query<SymbolicMethodSymbol, SymbolicQueryOutput> query;
 
     public LoggingQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
       this.query = query;
     }
-    
+
     @Override
     public Word<SymbolicMethodSymbol> getPrefix() {
       return query.getPrefix();
@@ -53,15 +53,15 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
       logger.finer("MQ: " + query.getInput() + " : " + o);
       query.answer(o);
     }
-    
+
   }
-  
+
   private MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle;
 
   public QueryLogger(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle) {
     this.oracle = oracle;
   }
-  
+
   @Override
   public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
     this.oracle = mo;
@@ -75,5 +75,5 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
     }
     this.oracle.processQueries(lCol);
   }
-  
+
 }

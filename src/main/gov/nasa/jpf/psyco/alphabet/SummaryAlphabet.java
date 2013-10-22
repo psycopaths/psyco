@@ -141,5 +141,4 @@ public class SummaryAlphabet extends SymbolicMethodAlphabet {
   public Valuation getInitialValuation() {
     return initialValuation;
   }
-          
 }

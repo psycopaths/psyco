@@ -1,0 +1,43 @@
+############################################################################### 
+#
+# experiment setup
+#
+
+psyco.interface.m1=CEV.CEV.reset(i:int)
+psyco.interface.m2=CEV.CEV.lasJettison(j:int)
+psyco.interface.m3=CEV.CEV.lsamRendezvous()
+
+psyco.depth=4
+
+# outputs results - use tmp because I ignore it during commits 
+# interface.outputFile=tmp/exampleProtocolSteffen2011
+
+
+############################################################################### 
+#
+# default psyco tools
+#
+
+# psyco
+shell=gov.nasa.jpf.psyco.Psyco
+
+# jdart
+
+# jpf-constraints
+symbolic.dp=z3
+
+
+############################################################################### 
+#
+# logging and jpf output
+#
+log.fine=psyco
+log.info=constraints,jdart
+
+# following line used to track what JPF executes
+#listener=.listener.ExecTracker
+
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=

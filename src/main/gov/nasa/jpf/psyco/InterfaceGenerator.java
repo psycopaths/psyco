@@ -99,5 +99,4 @@ public class InterfaceGenerator {
       this.lstar.refineHypothesis(ce);
     }    
   }
-    
 }

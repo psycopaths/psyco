@@ -68,5 +68,4 @@ public class SymbolicExecutionResult implements Iterable<Path> {
     allpaths.addAll(this.dontKnow);
     return allpaths.iterator();
   }  
-
 }

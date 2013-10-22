@@ -51,5 +51,4 @@ public class RefinementCheckOracle implements ThreeValuedFilter, ThreeValuedOrac
       query.answer(_query.getOutput());
     }
   }
-  
 }

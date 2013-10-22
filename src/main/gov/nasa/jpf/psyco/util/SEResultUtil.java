@@ -111,7 +111,6 @@ public class SEResultUtil {
   }
   
   public static Path rename(Path in, Function<String, String> repl) {
-        
     Expression<Boolean> pc = ExpressionUtil.renameVars(in.getPathCondition(), repl);
     PathResult res = null;
     
@@ -172,5 +171,4 @@ public class SEResultUtil {
     }
     return in;
   }  
- 
 }

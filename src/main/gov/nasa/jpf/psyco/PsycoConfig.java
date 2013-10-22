@@ -132,6 +132,7 @@ public class PsycoConfig {
   public int getMaxSearchDepth(){
     return this.maxSearchDepth;
   }
+
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
