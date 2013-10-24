@@ -26,12 +26,12 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Negation;
-import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
+import gov.nasa.jpf.psyco.util.PathUtil;
 import gov.nasa.jpf.psyco.util.SEResultUtil;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,11 +91,11 @@ public class AlphabetRefiner {
     
   private Expression<Boolean> refineSymbol(SymbolicMethodSymbol sms, 
           Expression<Boolean> ok, Expression<Boolean> error, Expression<Boolean> dontknow) {
-
+   
     Expression<Boolean> precondition = sms.getPrecondition();
     Expression<Boolean> refinerOK  = getRefiner(precondition, ok);
     Expression<Boolean> refinerErr = getRefiner(precondition, error);
-
+    
     int scoreOk = (refinerOK == null ? Integer.MAX_VALUE : refinerOK.toString().length());
     int scoreErr = (refinerErr == null ? Integer.MAX_VALUE : refinerErr.toString().length());
    
@@ -113,12 +113,15 @@ public class AlphabetRefiner {
 
     Expression<Boolean> expr  = restrict(paths, predicate);
     if (expr == null) {
-      expr = ExpressionUtil.FALSE;
+      return ExpressionUtil.FALSE;
     }  
     
     Function<String, String> shift = SEResultUtil.shift(ppos, 1, arity);
     expr = ExpressionUtil.renameVars(expr, shift);
     expr = SEResultUtil.stripLeadingTrue(expr);
+    if (expr == null) {
+      return ExpressionUtil.TRUE;
+    }      
     return expr;    
   }
           
@@ -129,6 +132,7 @@ public class AlphabetRefiner {
     Expression<Boolean> ret = null;
     for (Path p : paths) {
       Expression<Boolean> pc = p.getPathCondition();
+      // FIXME: we need to replace the implementation of restrict to check for mixed parameters.
       pc = ExpressionUtil.restrict(pc, predicate);
       if (pc != null) {
         ret = (ret != null && !ret.equals(ExpressionUtil.TRUE)) ? 
@@ -141,11 +145,7 @@ public class AlphabetRefiner {
   private Expression<Boolean> getRefiner(Expression<Boolean> precondition, 
           Expression<Boolean> pathCondition) { 
   
-    if (precondition.equals(ExpressionUtil.TRUE)) {
-      return pathCondition;
-    }
-    
-    Collection<Expression<Boolean>> path = decomposePath(pathCondition);
+    Collection<Expression<Boolean>> path = PathUtil.decomposePath(pathCondition);
     ArrayList<Expression<Boolean>> retain = new ArrayList<>();
     for (Expression<Boolean> expr : path) {
       if (refines(precondition, expr)) {
@@ -168,22 +168,6 @@ public class AlphabetRefiner {
 
   private boolean sat(Expression<Boolean> test) {
     return solver.isSatisfiable(test) == Result.SAT;
-  }
-  
-  private Collection<Expression<Boolean>> decomposePath(Expression<Boolean> path) {
-    ArrayList<Expression<Boolean>> list = new ArrayList<>();
-    decomposePath(path, list);
-    return list;
-  }
-  
-  private void decomposePath(Expression<Boolean> path, Collection<Expression<Boolean>> atoms) {
-    if (!(path instanceof PropositionalCompound)) {
-      atoms.add(path);
-    } else {
-      PropositionalCompound pc = (PropositionalCompound)path;
-      decomposePath(pc.getLeft(), atoms);
-      decomposePath(pc.getRight());
-    }
   }
   
 }

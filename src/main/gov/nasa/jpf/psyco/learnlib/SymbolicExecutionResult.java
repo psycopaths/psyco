@@ -21,13 +21,16 @@
 package gov.nasa.jpf.psyco.learnlib;
 
 import gov.nasa.jpf.jdart.constraints.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
  * @author falk
  */
-public class SymbolicExecutionResult {
+public class SymbolicExecutionResult implements Iterable<Path> {
 
   private final Collection<Path> ok;
   private final Collection<Path> error;
@@ -66,6 +69,13 @@ public class SymbolicExecutionResult {
     return sb.toString();
   }
 
-  
+  @Override
+  public Iterator<Path> iterator() {
+    List<Path> allpaths = new ArrayList<>();
+    allpaths.addAll(this.ok);
+    allpaths.addAll(this.error);
+    allpaths.addAll(this.dontKnow);
+    return allpaths.iterator();
+  }  
 
 }

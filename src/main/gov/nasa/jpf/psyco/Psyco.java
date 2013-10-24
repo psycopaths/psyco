@@ -27,6 +27,8 @@ import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
 import gov.nasa.jpf.jdart.termination.TimedTermination;
+import gov.nasa.jpf.jdart.termination.UpToFixedNumber;
+import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
@@ -35,9 +37,12 @@ import gov.nasa.jpf.psyco.filter.QueryLogger;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
+import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.psyco.oracles.SymbolicExecutionOracleWrapper;
 import gov.nasa.jpf.psyco.oracles.TerminationCheckOracle;
+import gov.nasa.jpf.psyco.utils.summaries.MethodSummarizer;
 import gov.nasa.jpf.psyco.utils.summaries.SummaryConfig;
+import gov.nasa.jpf.psyco.utils.summaries.SummaryStore;
 import gov.nasa.jpf.solver.SolverWrapper;
 
 import gov.nasa.jpf.util.JPFLogger;
@@ -68,25 +73,27 @@ public class Psyco implements JPFShell {
   }
   
   public void run() throws IOException {
-    
-    SummaryConfig concolicConf = new SummaryConfig(this.config);
-    SymbolicMethodAlphabet inputs = 
-            new SymbolicMethodAlphabet(concolicConf.getSummaryMethods());
-  
-    for (SymbolicMethodSymbol sms : inputs) {
-      System.out.println(sms);
-    }
-    
-    JDartOracle seOracle = new JDartOracle(this.config, inputs);
 
-    //seOracle.compileAlphabet(2);
-    
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
     
     ConstraintSolver solver = new SolverWrapper(factory.createSolver());
     
+//    SummaryConfig concolicConf = new SummaryConfig(this.config);
+//    SymbolicMethodAlphabet inputs = 
+//            new SymbolicMethodAlphabet(concolicConf.getSummaryMethods());
+//    JDartOracle seOracle = new JDartOracle(this.config, inputs);
+
+    SummaryStore store = SummaryStore.create(config);
+    SummaryAlphabet inputs = new SummaryAlphabet(store, solver);    
+    SummaryOracle seOracle = new SummaryOracle(inputs, solver);
+
+    for (SymbolicMethodSymbol sms : inputs) {
+      System.out.println(sms);
+    }
+    
     TerminationStrategy terminate = new TimedTermination(0, 5);
+    //TerminationStrategy terminate = new UpToFixedNumber(80);
     
     // FIXME: no cache currently.
     ThreeValuedOracle eqOracle = new ValidQueryFilter(

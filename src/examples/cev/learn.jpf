@@ -3,14 +3,28 @@
 # experiment setup
 #
 
+jdart.configs.cev.symbolic.statics=cev.Spacecraft
+jdart.configs.cev.symbolic.include=cev.Spacecraft.*;cev.CEV.*
+
+
 concolic.method.reset=cev.CEV.reset(i:int)
+concolic.method.reset.config=cev
+
 concolic.method.lasJettison=cev.CEV.lasJettison(j:int)
+concolic.method.lasJettison.config=cev
+
 concolic.method.lsamRendezvous=cev.CEV.lsamRendezvous()
-concolic.method.CEV=cev.CEV.CEV()
+concolic.method.lsamRendezvous.config=cev
+
+concolic.method.CEV=cev.CEV.<init>()
+concolic.method.CEV.config=cev
 
 psyco.methods=reset,lasJettison,lsamRendezvous,CEV
 
+
 psyco.depth=4
+psyco.time=60
+psyco.queries=1000000
 
 # outputs results - use tmp because I ignore it during commits 
 # interface.outputFile=tmp/exampleProtocolSteffen2011

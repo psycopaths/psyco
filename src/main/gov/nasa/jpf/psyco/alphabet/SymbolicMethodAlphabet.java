@@ -37,7 +37,9 @@ import net.automatalib.words.Alphabet;
  */
 public class SymbolicMethodAlphabet extends ArrayList<SymbolicMethodSymbol> 
     implements Alphabet<SymbolicMethodSymbol> {
-  
+
+  protected SymbolicMethodAlphabet() {    
+  }
   
   public SymbolicMethodAlphabet(Collection<ConcolicMethodConfig> cmc) {
     for (ConcolicMethodConfig c : cmc) {
@@ -113,7 +115,7 @@ public class SymbolicMethodAlphabet extends ArrayList<SymbolicMethodSymbol>
   
   private Method loadMethodObject(ConcolicMethodConfig cmc) 
           throws ClassNotFoundException, NoSuchMethodException {
-    
+   
     Class clazz = Class.forName(cmc.getClassName());
     Method m = clazz.getMethod(cmc.getMethodName(), getParameterTypes(cmc));
     return m;
