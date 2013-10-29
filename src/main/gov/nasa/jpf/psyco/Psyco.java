@@ -34,6 +34,8 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.filter.Cache;
 import gov.nasa.jpf.psyco.filter.QueryLogger;
+import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
+import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
@@ -95,12 +97,14 @@ public class Psyco implements JPFShell {
     TerminationStrategy terminate = new TimedTermination(0, 5);
     //TerminationStrategy terminate = new UpToFixedNumber(80);
     
-    // FIXME: no cache currently.
+    
     ThreeValuedOracle eqOracle = new ValidQueryFilter(
+            new UniformOKSuffixFilter(inputs,
+            new UniformErrorFilter(inputs, 
             new Cache(
             new QueryLogger(
             new TerminationCheckOracle(terminate, 
-            new SymbolicExecutionOracleWrapper(seOracle)))));
+            new SymbolicExecutionOracleWrapper(seOracle)))))));
     
     IncreasingDepthExhaustiveTest eqtest = 
             new IncreasingDepthExhaustiveTest(

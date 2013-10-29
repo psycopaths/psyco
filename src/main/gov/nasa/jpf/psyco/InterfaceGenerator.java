@@ -22,6 +22,7 @@ import gov.nasa.jpf.psyco.alphabet.AlphabetRefiner;
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.learnlib.LStar;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
@@ -31,6 +32,8 @@ import gov.nasa.jpf.psyco.exceptions.RefinementNeeded;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
 import gov.nasa.jpf.psyco.filter.Cache;
 import gov.nasa.jpf.psyco.filter.QueryLogger;
+import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
+import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
@@ -131,7 +134,13 @@ public class InterfaceGenerator {
     // cache + prefixclosure
     Cache cache = new Cache(refine);
     
-    ValidQueryFilter valid = new ValidQueryFilter(cache);
+    UniformErrorFilter error =
+            new UniformErrorFilter( (SummaryAlphabet)inputs, cache);
+
+    UniformOKSuffixFilter uniform =
+            new UniformOKSuffixFilter( (SummaryAlphabet)inputs, error);
+    
+    ValidQueryFilter valid = new ValidQueryFilter(uniform);
     
     return valid;
   }
