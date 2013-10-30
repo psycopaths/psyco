@@ -24,12 +24,10 @@ import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
-import gov.nasa.jpf.jdart.termination.NeverTerminate;
+import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
 import gov.nasa.jpf.jdart.termination.TimedTermination;
-import gov.nasa.jpf.jdart.termination.UpToFixedNumber;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
-import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.filter.Cache;
@@ -38,13 +36,9 @@ import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
 import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
-import gov.nasa.jpf.psyco.oracles.JDartOracle;
 import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.psyco.oracles.SymbolicExecutionOracleWrapper;
 import gov.nasa.jpf.psyco.oracles.TerminationCheckOracle;
-import gov.nasa.jpf.psyco.utils.summaries.MethodSummarizer;
-import gov.nasa.jpf.psyco.utils.summaries.SummaryConfig;
-import gov.nasa.jpf.psyco.utils.summaries.SummaryStore;
 import gov.nasa.jpf.solver.SolverWrapper;
 
 import gov.nasa.jpf.util.JPFLogger;
@@ -52,6 +46,8 @@ import gov.nasa.jpf.util.LogManager;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.util.graphs.dot.GraphDOT;
 
 public class Psyco implements JPFShell {
 
@@ -94,7 +90,7 @@ public class Psyco implements JPFShell {
       System.out.println(sms);
     }
     
-    TerminationStrategy terminate = new TimedTermination(0, 5);
+    TerminationStrategy terminate = new TimedTermination(0, 1);
     //TerminationStrategy terminate = new UpToFixedNumber(80);
     
     
@@ -113,7 +109,14 @@ public class Psyco implements JPFShell {
     InterfaceGenerator gen = new InterfaceGenerator(
             inputs, seOracle, eqtest, terminate, solver);
     
-    gen.generateInterface();
+    MealyMachine model = gen.generateInterface();
+    
+    System.out.println("======================================================");
+    GraphDOT.write(model, inputs, System.out);
+    System.out.println("======================================================");
+    System.out.println("States: " + model.size());
+    System.out.println("Inputs: " + inputs.size());
+    
     
 //    
 //    logger.finest("Psyco.run() -- begin");

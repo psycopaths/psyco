@@ -1,0 +1,43 @@
+
+
+jdart.configs.accelerometer.symbolic.statics=issta2013.accelerometer.Accelerometer
+jdart.configs.accelerometer.symbolic.include=issta2013.accelerometer.Accelerometer.*
+
+concolic.method.Accelerometer=issta2013.accelerometer.Accelerometer.<init>(sam:int,sen:int)
+concolic.method.Accelerometer.config=accelerometer
+
+concolic.method.update=issta2013.accelerometer.Accelerometer.update()
+concolic.method.update.config=accelerometer
+
+concolic.method.init=issta2013.accelerometer.Accelerometer.init(ndt:int)
+concolic.method.init.config=accelerometer
+
+concolic.method.disconnect=issta2013.accelerometer.Accelerometer.disconnect()
+concolic.method.disconnect.config=accelerometer
+
+concolic.method.connect=issta2013.accelerometer.Accelerometer.connect(b:boolean)
+concolic.method.connect.config=accelerometer
+
+concolic.method.getValueX=issta2013.accelerometer.Accelerometer.getValueX()
+concolic.method.getValueX.config=accelerometer
+
+concolic.method.getValueY=issta2013.accelerometer.Accelerometer.getValueY()
+concolic.method.getValueY.config=accelerometer
+
+concolic.method.dataReceived=issta2013.accelerometer.Accelerometer.dataReceived(x:int,y:int,b:boolean)
+concolic.method.dataReceived.config=accelerometer
+
+
+summary.methods=Accelerometer,update,init,disconnect,connect,dataReceived
+
+# These lead to endless loops in jdart (seems to be related to division by zero)
+# getValueX, getValueY 
+
+
+psyco.por.config=update,100000,000000;\
+  disconnect,100000,110000;\
+  connect,100000,110000;\
+  init,000000,001000;\
+  dataReceived,010110,000110;\
+  getValueY,000011,000000;\
+  getValueX,000101,000000

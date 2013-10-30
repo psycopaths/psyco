@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package IntOperations;
+package issta2013.math;
 
 import java.math.BigInteger;
 import java.math.RoundingMode;

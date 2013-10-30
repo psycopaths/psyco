@@ -1,0 +1,6 @@
+
+
+generator.classes=issta2013.abp.Protocol
+psyco.api=issta2013.apis.Protocol_API
+
+psyco.por.config=msg,11,11;recv_ack,11,10

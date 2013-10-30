@@ -16,7 +16,9 @@
 // THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
 // DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
 //
-package exampleProtocolSteffen2011;
+package issta2013.abp;
+
+import gov.nasa.jpf.jdart.Symbolic;
 
 /** This example is a modified version from:
  *  Automata Learning with Automated Alphabet Abstraction Reﬁnement
@@ -27,21 +29,20 @@ package exampleProtocolSteffen2011;
 public class Protocol {
   
   // pdu p, ack; // pdus
-  private static int expect = 0; // next expected seq. nr
-  private static boolean buffer_empty = true;
-  
-  public static void internalReset() {
-    expect = 0;
-    buffer_empty = true;
-  }
+  @Symbolic("true")
+  private int expect = 0; // next expected seq. nr
+  @Symbolic("true")
+  private int buffer_empty = 1;
 
-  public static void msg(int sequence, int content) {
+  public Protocol() {}
+
+  public void msg(int sequence, int content) {
     //System.out.println("Sequence is " + (sequence & 1));
     //System.out.println("Expect is " + (expect & 1));
     
-    if ((buffer_empty) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
+    if ((buffer_empty == 1) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
       expect++;
-      buffer_empty = false;
+      buffer_empty = 1-buffer_empty;
       // OK message will be passed to upper layer
     } else {
       assert false;
@@ -49,13 +50,13 @@ public class Protocol {
     }
   } 
   
-  public static void recv_ack(int value) {
-    if (buffer_empty) {
+  public void recv_ack(int value) {
+    if (buffer_empty==1) {
       assert false;
     } else {
       if (value == ((expect-1) % 2)) {
          // ack is enabled, message is consumed
-        buffer_empty = true;
+        buffer_empty = 1-buffer_empty;
       } else {
         // not the right sequence
         assert false;
@@ -63,37 +64,4 @@ public class Protocol {
     }        
   }
   
-  public static void main(String[] args) {
-    msg(0, 6);
-    recv_ack(0);
-    msg(1, 10);
-    recv_ack(1);
-    msg(0, 100);
-    recv_ack(0);
-    
 }
-
-}
-
-//while (true) {
-//wait_for_event(&event); // wait for event
-//switch (event) {
-//msg:
-//from_lower_layer(&p); // read new message
-//if (buffer==0 && // if buf empty and
-//(p.seq % 2 == expect % 2)) { // and seq matches
-//buffer = p.data;
-//expect++; // increment exp. seq. nr
-//indicate_to_upper_layer(); // indicate new data
-//}
-//break;
-//recv:
-//if (buffer==0) break; // skip if buffer emtpy
-//data_to_upper_layer(&buffer); // forward data
-//ack.seq = (expect-1) % 2; // ack. delivery
-//to_lower_layer(&ack);
-//break;
-//}
-//}
-//  
-//}

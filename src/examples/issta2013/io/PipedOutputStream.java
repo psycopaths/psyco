@@ -5,9 +5,12 @@
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package psyco.java.io;
+package issta2013.io;
 
 //import java.io.*;
+
+import gov.nasa.jpf.jdart.Symbolic;
+
 
 /**
  * A piped output stream can be connected to a piped input stream to create a
@@ -34,14 +37,13 @@ public class PipedOutputStream {
    * GC).
    */
 //  private PipedInputStream sink;
-  private static int sink = 0;
-  private static int sinkConnected = 0;
+  
+  @Symbolic("true")
+  private  int sink = 0;
+  @Symbolic("true")
+  private  int sinkConnected = 0;
   
     // only used for concrete execution
-  public static void internalReset() {
-    sink = 0;
-    sinkConnected = 0;
-  }
 
   /**
    * Creates a piped output stream connected to the specified piped input
@@ -65,8 +67,8 @@ public class PipedOutputStream {
    * @see java.io.PipedInputStream#connect(java.io.PipedOutputStream)
    * @see java.io.PipedOutputStream#connect(java.io.PipedInputStream)
    */
-//  public PipedOutputStream() {
-//  }
+  public PipedOutputStream() {
+  }
 
   /**
    * Connects this piped output stream to a receiver. If this object is already
@@ -105,7 +107,7 @@ public class PipedOutputStream {
 //    snk.out = 0;
 //    snk.connected = true;
 //  }
-  public static synchronized void connect(int snk, int snkConnected) {
+  public  synchronized void connect(int snk, int snkConnected) {
     if (snk == 0) {
       assert false;
     } else if (sink != 0 || snkConnected == 1) {
@@ -133,7 +135,7 @@ public class PipedOutputStream {
 //    }
 //    sink.receive(b);
 //  }
-  public static void write() {
+  public  void write() {
     if (sink == 0) {
       assert false;
     }
@@ -189,7 +191,7 @@ public class PipedOutputStream {
 //      }
 //    }
 //  }
-  public static synchronized void flush() {
+  public  synchronized void flush() {
     if (sink != 0) {
       ;
     }
@@ -208,7 +210,7 @@ public class PipedOutputStream {
 //      sink.receivedLast();
 //    }
 //  }
-  public static void close() {
+  public  void close() {
     if (sink != 0) {
       ;
     }

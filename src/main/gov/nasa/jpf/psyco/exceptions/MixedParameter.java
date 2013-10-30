@@ -18,10 +18,25 @@
  ******************************************************************************/
 package gov.nasa.jpf.psyco.exceptions;
 
+import gov.nasa.jpf.constraints.api.Expression;
+
 /**
  *
  * @author falkhowar
  */
-public class MixedParameter {
+public class MixedParameter extends RuntimeException {
+  
+  private final Expression<Boolean> expression;
+
+  public MixedParameter(Expression<Boolean> expression) {
+    this.expression = expression;
+  }
+
+  /**
+   * @return the expression
+   */
+  public Expression<Boolean> getExpression() {
+    return expression;
+  }
   
 }

@@ -21,6 +21,7 @@ package gov.nasa.jpf.psyco;
 import gov.nasa.jpf.psyco.alphabet.AlphabetRefiner;
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.util.MixedParamsException;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.learnlib.LStar;
@@ -28,6 +29,7 @@ import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
+import gov.nasa.jpf.psyco.exceptions.MixedParameter;
 import gov.nasa.jpf.psyco.exceptions.RefinementNeeded;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
 import gov.nasa.jpf.psyco.filter.Cache;
@@ -85,6 +87,9 @@ public class InterfaceGenerator {
         learnModel();
         break;
       } catch (Terminate t) {
+        break;
+      } catch (MixedParamsException mp) {
+        System.err.println("Mixed parameter: " + mp);
         break;
       } catch (RefinementNeeded r) {
         boolean refined = this.refiner.refine(r.getQuery().getInput());

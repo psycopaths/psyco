@@ -1,0 +1,21 @@
+shell=gov.nasa.jpf.psyco.Psyco
+
+psyco.summarize.collapse=true
+#psyco.por=true
+
+psyco.time=60
+#psyco.depth=10
+
+# jpf-constraints
+symbolic.dp=z3
+
+#
+# logging and jpf output
+#
+log.info=constraints,jdart
+log.fine=psyco
+
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=

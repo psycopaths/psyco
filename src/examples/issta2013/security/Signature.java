@@ -5,9 +5,12 @@
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package psyco.java.security;
+package issta2013.security;
 
 //import java.security.spec.AlgorithmParameterSpec;
+
+import gov.nasa.jpf.jdart.Symbolic;
+
 //import java.util.*;
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.io.*;
@@ -90,8 +93,11 @@ package psyco.java.security;
  */
 
 // public abstract class Signature extends SignatureSpi {
-public abstract class Signature {
+public class Signature {
 
+  public Signature() {
+  }
+  
   // private static final Debug debug =
   // Debug.getInstance("jca", "Signature");
 
@@ -127,12 +133,8 @@ public abstract class Signature {
    * Current state of this signature object.
    */
   // protected int state = UNINITIALIZED;
-  protected static int state = UNINITIALIZED;
-
-  // only used for concrete execution
-  public static void internalReset() {
-    state = UNINITIALIZED;
-  }
+  @Symbolic("true")
+  protected int state = UNINITIALIZED;
 
   /**
    * Creates a Signature object for the specified algorithm.
@@ -435,7 +437,7 @@ public abstract class Signature {
 //    engineInitVerify(publicKey);
 //    state = VERIFY;
 //  }
-  public static final void initVerify() {
+  public final void initVerify() {
     state = VERIFY;
   }
 
@@ -500,7 +502,7 @@ public abstract class Signature {
 //    engineInitSign(privateKey);
 //    state = SIGN;
 //  }
-  public static final void initSign() {
+  public final void initSign() {
     state = SIGN;
   }
 
@@ -548,7 +550,7 @@ public abstract class Signature {
 //    }
 //    throw new SignatureException("object not initialized for " + "signing");
 //  }
-  public static final void sign() {
+  public final void sign() {
     if (state == SIGN) {
       return;
     }
@@ -627,7 +629,7 @@ public abstract class Signature {
 //    }
 //    throw new SignatureException("object not initialized for " + "verification");
 //  }
-  public static final void verify() {
+  public final void verify() {
     if (state == VERIFY) {
       return;
     }
@@ -698,7 +700,7 @@ public abstract class Signature {
 //          + "signature or verification");
 //    }
 //  }
-  public static final void update() {
+  public final void update() {
     if (state == VERIFY || state == SIGN) {
       ;
     } else {

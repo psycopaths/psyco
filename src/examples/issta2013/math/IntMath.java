@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package IntOperations;
+package issta2013.math;
 
 import static java.lang.Math.abs;
 import static java.math.RoundingMode.HALF_EVEN;
@@ -39,19 +39,22 @@ import java.math.RoundingMode;
  */
 
 public class IntMath {
-	public static int UNNECESSARY = 0;
-	public static int DOWN = 1;
-	public static int FLOOR = 2;
-	public static int UP = 3;
-	public static int CEILING = 4;
-	public static int HALF_DOWN = 5;
-	public static int HALF_UP = 6;
-	public static int HALF_EVEN = 7;
+  
+  public IntMath() {}
+  
+	public int UNNECESSARY = 0;
+	public int DOWN = 1;
+	public int FLOOR = 2;
+	public int UP = 3;
+	public int CEILING = 4;
+	public int HALF_DOWN = 5;
+	public int HALF_UP = 6;
+	public int HALF_EVEN = 7;
 	
   // NOTE: Whenever both tests are cheap and functional, it's faster to use &, | instead of &&, ||
 
   // only used for concrete execution
-  public static void internalReset() {}
+  public  void internalReset() {}
 
   /**
    * Returns {@code true} if {@code x} represents a power of two.
@@ -60,10 +63,13 @@ public class IntMath {
    * {@code Integer.bitCount(Integer.MIN_VALUE) == 1}, but {@link Integer#MIN_VALUE} is not a power
    * of two.
    */
-  public static boolean isPowerOfTwo(int x) {
-    return x > 0 & (x & (x - 1)) == 0;
+  public void isPowerOfTwo(int x) {
+    boolean ret =  x > 0 & (x & (x - 1)) == 0;
   }
 
+  private boolean _isPowerOfTwo(int x) {
+    return  x > 0 & (x & (x - 1)) == 0;
+  }  
   /**
    * Returns the base-2 logarithm of {@code x}, rounded according to the specified rounding mode.
    *
@@ -72,18 +78,18 @@ public class IntMath {
    *         is not a power of two
    */
   @SuppressWarnings("fallthrough")
-  public static int log2(int x, int mode) {
+  public  void log2(int x, int mode) {
     MathPreconditions.checkPositive("x", x);
     if (mode == UNNECESSARY)
-    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
+    	MathPreconditions.checkRoundingUnnecessary(_isPowerOfTwo(x));
         // fall through
     if (mode == DOWN || mode == FLOOR) {
-    	MathPreconditions.checkRoundingUnnecessary(isPowerOfTwo(x));
-    	return (Integer.SIZE - 1) - Integer.numberOfLeadingZeros(x);
+    	MathPreconditions.checkRoundingUnnecessary(_isPowerOfTwo(x));
+    	int ret =  (Integer.SIZE - 1) - Integer.numberOfLeadingZeros(x);
     }
 
     if (mode == UP || mode == CEILING) {
-    	return Integer.SIZE - Integer.numberOfLeadingZeros(x - 1);
+    	int ret =  Integer.SIZE - Integer.numberOfLeadingZeros(x - 1);
     }
 
     if (mode == HALF_DOWN || mode == HALF_UP || mode == HALF_EVEN) {
@@ -92,14 +98,14 @@ public class IntMath {
     	int cmp = MAX_POWER_OF_SQRT2_UNSIGNED >>> leadingZeros;
     	// floor(2^(logFloor + 0.5))
     	int logFloor = (Integer.SIZE - 1) - leadingZeros;
-    	return (x <= cmp) ? logFloor : logFloor + 1;
+    	int ret =  (x <= cmp) ? logFloor : logFloor + 1;
     }
 
     throw new AssertionError();
   }
 
   /** The biggest half power of two that can fit in an unsigned int. */
-  static final int MAX_POWER_OF_SQRT2_UNSIGNED = 0xB504F333;
+   final int MAX_POWER_OF_SQRT2_UNSIGNED = 0xB504F333;
 
   /**
    * Returns the base-10 logarithm of {@code x}, rounded according to the specified rounding mode.
@@ -109,7 +115,7 @@ public class IntMath {
    *         is not a power of ten
    */
   @SuppressWarnings("fallthrough")
-  public static int log10(int x, int mode) {
+  public  void log10(int x, int mode) {
   	MathPreconditions.checkPositive("x", x);
     int logFloor = log10Floor(x);
     int floorPow = POWERS_OF_10[logFloor];
@@ -118,33 +124,33 @@ public class IntMath {
       	MathPreconditions.checkRoundingUnnecessary(x == floorPow);
 
   	if (mode == FLOOR || mode == DOWN)
-  		return logFloor;
+      ; //ret =  logFloor;
   	
   	if (mode == CEILING || mode == UP)
-  		return (x == floorPow) ? logFloor : logFloor + 1;
+  		; // int ret =  (x == floorPow) ? logFloor : logFloor + 1;
   	
   	if (mode == HALF_DOWN || mode == HALF_UP || mode == HALF_EVEN)
         // sqrt(10) is irrational, so log10(x) - logFloor is never exactly 0.5
-  		return (x <= HALF_POWERS_OF_10[logFloor]) ? logFloor : logFloor + 1;
+  		; // int ret =  (x <= HALF_POWERS_OF_10[logFloor]) ? logFloor : logFloor + 1;
   	
   	assert false: "Illegal mode.";
-    return 0;
+    int ret =  0;
   }
 
-  private static int log10Floor(int x) {
+  private int log10Floor(int x) {
     for (int i = 1; i < POWERS_OF_10.length; i++) {
       if (x < POWERS_OF_10[i]) {
-        return i - 1;
+        int ret =  i - 1;
       }
     }
-    return POWERS_OF_10.length - 1;
+    return  POWERS_OF_10.length - 1;
   }
 
-  static final int[] POWERS_OF_10 =
+   final int[] POWERS_OF_10 =
       {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 
   // HALF_POWERS_OF_10[i] = largest int less than 10^(i + 0.5)
-  static final int[] HALF_POWERS_OF_10 =
+   final int[] HALF_POWERS_OF_10 =
       {3, 31, 316, 3162, 31622, 316227, 3162277, 31622776, 316227766, Integer.MAX_VALUE};
 
   /**
@@ -156,32 +162,34 @@ public class IntMath {
    *
    * @throws IllegalArgumentException if {@code k < 0}
    */
-  public static int pow(int b, int k) {
+  public  void pow(int b, int k) {
   	if (k < 0)
   		assert false;
-    switch (b) {
-      case 0:
-        return (k == 0) ? 1 : 0;
-      case 1:
-        return 1;
-      case (-1):
-        return ((k & 1) == 0) ? 1 : -1;
-      case 2:
-        return (k < Integer.SIZE) ? (1 << k) : 0;
-      case (-2):
+    int __x = (b) ;
+      if (__x ==  0) {
+        int ret =  (k == 0) ? 1 : 0;
+      } else if (__x ==  1) {
+        int ret =  1;
+      } else if (__x ==  (-1)) {
+         int ret =  ((k & 1) == 0) ? 1 : -1;
+      } else if (__x ==  2) {
+         int ret =  (k < Integer.SIZE) ? (1 << k) : 0;
+      } else if (__x ==  (-2)) {
         if (k < Integer.SIZE) {
-          return ((k & 1) == 0) ? (1 << k) : -(1 << k);
+          int ret =  ((k & 1) == 0) ? (1 << k) : -(1 << k);
         } else {
-          return 0;
+          int ret =  0;
         }
     }
     for (int accum = 1;; k >>= 1) {
-      switch (k) {
-        case 0:
-          return accum;
-        case 1:
-          return b * accum;
-        default:
+      __x = (k) ;
+        if (__x ==  0) {
+          int ret =  accum;
+          return;
+        } else if (__x ==  1) {
+          int ret =  b * accum;
+          return;
+        } else {
           accum *= ((k & 1) == 0) ? 1 : b;
           b *= b;
       }
@@ -196,18 +204,18 @@ public class IntMath {
    *         {@code sqrt(x)} is not an integer
    */
   @SuppressWarnings("fallthrough")
-  public static int sqrt(int x, int mode) {
+  public  void sqrt(int x, int mode) {
   	MathPreconditions.checkNonNegative("x", x);
     int sqrtFloor = sqrtFloor(x);
     if (mode == UNNECESSARY)
       	MathPreconditions.checkRoundingUnnecessary(sqrtFloor * sqrtFloor == x); // fall through
     
-    if (mode == FLOOR || mode == DOWN)
-        return sqrtFloor;
-    
-    if (mode == CEILING || mode == UP)
-        return (sqrtFloor * sqrtFloor == x) ? sqrtFloor : sqrtFloor + 1;
-    
+    if (mode == FLOOR || mode == DOWN) {
+        int ret =  sqrtFloor;
+    }
+    if (mode == CEILING || mode == UP) {
+        int ret =  (sqrtFloor * sqrtFloor == x) ? sqrtFloor : sqrtFloor + 1;
+    }
     if (mode == HALF_DOWN || mode == HALF_UP || mode == HALF_EVEN) {
     	int halfSquare = sqrtFloor * sqrtFloor + sqrtFloor;
         /*
@@ -215,13 +223,13 @@ public class IntMath {
          * Since both x and halfSquare are integers, this is equivalent to testing whether or not
          * x <= halfSquare.  (We have to deal with overflow, though.)
          */
-        return (x <= halfSquare | halfSquare < 0) ? sqrtFloor : sqrtFloor + 1;
+        int ret =  (x <= halfSquare | halfSquare < 0) ? sqrtFloor : sqrtFloor + 1;
     }
     assert false;
-    return 0;
+    int ret =  0;
   }
 
-  private static int sqrtFloor(int x) {
+  private  int sqrtFloor(int x) {
     // There is no loss of precision in converting an int to a double, according to
     // http://java.sun.com/docs/books/jls/third_edition/html/conversions.html#5.1.2
     return (int) Math.sqrt(x);
@@ -234,7 +242,7 @@ public class IntMath {
    * @throws ArithmeticException if {@code q == 0}, or if {@code mode == UNNECESSARY} and {@code a}
    *         is not an integer multiple of {@code b}
    */
-  public static int divide(int p, int q, int mode) {
+  public  void divide(int p, int q, int mode) {
     if (q == 0) {
       assert false; // for GWT
     }
@@ -243,7 +251,7 @@ public class IntMath {
     int rem = p - q * div; // equal to p % q
 
     if (rem == 0) {
-      return div;
+      int ret =  div;
     }
 
     /*
@@ -282,7 +290,7 @@ public class IntMath {
     } else {
     	assert false;
     }
-    return increment ? div + signum : div;
+    int ret =  increment ? div + signum : div;
   }
 
   /**
@@ -299,7 +307,7 @@ public class IntMath {
    *
    * @throws ArithmeticException if {@code m <= 0}
    */
-  public static int mod(int x, int m) {
+  public  void mod(int x, int m) {
     if (m <= 0) {
       assert false: "Modulus " + m + " must be > 0";
     }
@@ -307,8 +315,8 @@ public class IntMath {
     	assert false: "Modulus " + x + " must be >= 0";
     }
     int result = x % m;
-    return result;
-//    return (result >= 0) ? result : result + m;
+    int ret =  result;
+//    int ret =  (result >= 0) ? result : result + m;
   }
 
   /**
@@ -317,7 +325,7 @@ public class IntMath {
    *
    * @throws IllegalArgumentException if {@code a < 0} or {@code b < 0}
    */
-  public static int gcd(int a, int b) {
+  public  void gcd(int a, int b) {
     /*
      * The reason we require both arguments to be >= 0 is because otherwise, what do you return on
      * gcd(0, Integer.MIN_VALUE)? BigInteger.gcd would return positive 2^31, but positive 2^31
@@ -331,7 +339,7 @@ public class IntMath {
       b = a % b;
       a = t;
     }
-    return a;
+    int ret =  a;
   }
 
   /**
@@ -339,12 +347,12 @@ public class IntMath {
    *
    * @throws ArithmeticException if {@code a + b} overflows in signed {@code int} arithmetic
    */
-  public static int checkedAdd(int a, int b) {
-  	long la = a;
-  	long lb = b;
-  	long result = la + lb;
+  public  void checkedAdd(int a, int b) {
+  	int la = a;
+  	int lb = b;
+  	int result = la + lb;
     MathPreconditions.checkNoOverflow(result == (int) result);
-    return (int) result;
+    int ret =  (int) result;
   }
 
   /**
@@ -352,10 +360,10 @@ public class IntMath {
    *
    * @throws ArithmeticException if {@code a - b} overflows in signed {@code int} arithmetic
    */
-  public static int checkedSubtract(int a, int b) {
-    long result = (long) a - b;
+  public  void checkedSubtract(int a, int b) {
+    int result = (int) a - b;
     MathPreconditions.checkNoOverflow(result == (int) result);
-    return (int) result;
+    int ret =  (int) result;
   }
 
   /**
@@ -363,10 +371,10 @@ public class IntMath {
    *
    * @throws ArithmeticException if {@code a * b} overflows in signed {@code int} arithmetic
    */
-  public static int checkedMultiply(int a, int b) {
-    long result = (long) a * b;
+  public  void checkedMultiply(int a, int b) {
+    int result = (int) a * b;
     MathPreconditions.checkNoOverflow(result == (int) result);
-    return (int) result;
+    int ret =  (int) result;
   }
 
   /**
@@ -377,32 +385,32 @@ public class IntMath {
    * @throws ArithmeticException if {@code b} to the {@code k}th power overflows in signed
    *         {@code int} arithmetic
    */
-  public static int checkedPow(int b, int k) {
+  public  void checkedPow(int b, int k) {
   	MathPreconditions.checkNonNegative("exponent", k);
-    switch (b) {
-      case 0:
-        return (k == 0) ? 1 : 0;
-      case 1:
-        return 1;
-      case (-1):
-        return ((k & 1) == 0) ? 1 : -1;
-      case 2:
+    int __x = (b) ;
+      if (__x ==  0) {
+        int ret =  (k == 0) ? 1 : 0;
+      } else if (__x ==  1) {
+         int ret =  1;
+      } else if (__x ==  (-1)) {
+         int ret =  ((k & 1) == 0) ? 1 : -1;
+      } else if (__x ==  2) {
       	MathPreconditions.checkNoOverflow(k < Integer.SIZE - 1);
-        return 1 << k;
-      case (-2):
+         int ret =  1 << k;
+      } else if (__x ==  (-2)) {
       	MathPreconditions.checkNoOverflow(k < Integer.SIZE);
-        return ((k & 1) == 0) ? 1 << k : -1 << k;
+         int ret =  ((k & 1) == 0) ? 1 << k : -1 << k;
     }
     int accum = 1;
     while (true) {
-      switch (k) {
-        case 0:
-          return accum;
-        case 1:
-          return checkedMultiply(accum, b);
-        default:
+       __x = (k) ;
+        if (__x ==  0) {
+          int ret =  accum;
+        } else if (__x ==  1) {
+          checkedMultiply(accum, b);
+        } else {
           if ((k & 1) != 0) {
-            accum = checkedMultiply(accum, b);
+            checkedMultiply(accum, b);
           }
           k >>= 1;
           if (k > 0) {
@@ -413,7 +421,7 @@ public class IntMath {
     }
   }
 
-  static final int FLOOR_SQRT_MAX_INT = 46340;
+   final int FLOOR_SQRT_MAX_INT = 46340;
 
   /**
    * Returns {@code n!}, that is, the product of the first {@code n} positive
@@ -422,12 +430,12 @@ public class IntMath {
    *
    * @throws IllegalArgumentException if {@code n < 0}
    */
-  public static int factorial(int n) {
+  public  void factorial(int n) {
   	MathPreconditions.checkNonNegative("n", n);
-    return (n < FACTORIALS.length) ? FACTORIALS[n] : Integer.MAX_VALUE;
+    int ret =  (n < FACTORIALS.length) ? FACTORIALS[n] : Integer.MAX_VALUE;
   }
 
-  static final int[] FACTORIALS = {
+   final int[] FACTORIALS = {
       1,
       1,
       1 * 2,
@@ -448,7 +456,7 @@ public class IntMath {
    *
    * @throws IllegalArgumentException if {@code n < 0}, {@code k < 0} or {@code k > n}
    */
-  public static int binomial(int n, int k) {
+  public  void binomial(int n, int k) {
   	MathPreconditions.checkNonNegative("n", n);
   	MathPreconditions.checkNonNegative("k", k);
   	MathPreconditions.checkArgument(k <= n);
@@ -456,25 +464,25 @@ public class IntMath {
       k = n - k;
     }
     if (k >= BIGGEST_BINOMIALS.length || n > BIGGEST_BINOMIALS[k]) {
-      return Integer.MAX_VALUE;
+      int ret =  Integer.MAX_VALUE;
     }
-    switch (k) {
-      case 0:
-        return 1;
-      case 1:
-        return n;
-      default:
+    int __x = (k) ;
+      if (__x ==  0) {
+        int ret =  1;
+      } else if (__x ==  1) {
+         int ret =  n;
+      } else {
         long result = 1;
         for (int i = 0; i < k; i++) {
           result *= n - i;
           result /= i + 1;
         }
-        return (int) result;
+        int ret =  (int) result;
     }
   }
 
   // binomial(BIGGEST_BINOMIALS[k], k) fits in an int, but not binomial(BIGGEST_BINOMIALS[k]+1,k).
-  static int[] BIGGEST_BINOMIALS = {
+   int[] BIGGEST_BINOMIALS = {
     Integer.MAX_VALUE,
     Integer.MAX_VALUE,
     65536,
@@ -494,5 +502,4 @@ public class IntMath {
     33
   };
 
-  private IntMath() {}
 }

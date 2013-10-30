@@ -1,0 +1,54 @@
+
+
+
+psyco.por.config=isConnected,001000010,000000000;\
+    setReuseAddress,000100000,000000000;\
+    createImpl,000000101,100000100;\
+    getLocalAddress,010000100,000000000;\
+    isInputShutdown,000010000,000000000;\
+    isOutputShutdown,000001000,000000000;\
+    setSocketImplFactory,000000001,000000001;\
+    setTcpNoDelay,000100000,000000000;\
+    getSendBufferSize,000100000,000000000;\
+    getInputStream,001110010,000000000;\
+    setCreated,000000000,100000000;\
+    getTrafficClass,000000000,000000000;\
+    setOOBInline,000100000,000000000;\
+    shutdownOutput,001101010,000001000;\
+    setConnected,000000000,001000000;\
+    getChannel,000000000,000000000;\
+    setPerformancePreferences,000000000,000000000;\
+    sendUrgentData,000000000,000000000;\
+    setBound,000000000,010000000;\
+    close,000100000,000100000;\
+    getOOBInline,000100000,000000000;\
+    getLocalSocketAddress,010000010,000000000;\
+    getReuseAddress,000100000,000000000;\
+    getSoLinger,000100000,000000000;\
+    setSoTimeout,000100000,000000000;\
+    setKeepAlive,000100000,000000000;\
+    shutdownInput,001110010,000010000;\
+    setReceiveBufferSize,000100000,000000000;\
+    getPort,001000010,000000000;\
+    getKeepAlive,000100000,000000000;\
+    postAccept,000000000,111000000;\
+    setTrafficClass,000100000,000000000;\
+    isClosed,000100000,000000000;\
+    bind,010100010,010000000;\
+    connect2,101100111,111000000;\
+    getReceiveBufferSize,000100000,000000000;\
+    isOutputShutdown,000001000,000000000;\
+    getOutputStream,001101010,000000000;\
+    setSendBufferSize,000100000,000000000;\
+    setSoLinger,000100000,000000000;\
+    getImpl,100000101,100000100;\
+    isConnected,001000010,000000000;\
+    isBound,010000010,000000000;\
+    getInetAddress,001000010,000000000;\
+    getSoTimeout,000100000,000000000;\
+    setImpl,000000101,000000100;\
+    getTcpNoDelay,000100000,000000000;\
+    getLocalPort,010000010,000000000;\
+    connect1,101100111,111000100;\
+    isInputShutdown,000010000,000000000;\
+    getRemoteSocketAddress,001000010,000000000

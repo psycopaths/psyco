@@ -36,6 +36,7 @@ import gov.nasa.jpf.psyco.util.SEResultUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import net.automatalib.words.Word;
 
 /**
@@ -132,7 +133,7 @@ public class AlphabetRefiner {
     Expression<Boolean> ret = null;
     for (Path p : paths) {
       Expression<Boolean> pc = p.getPathCondition();
-      // FIXME: we need to replace the implementation of restrict to check for mixed parameters.
+      pc = removeTautologies(pc);
       pc = ExpressionUtil.restrict(pc, predicate);
       if (pc != null) {
         ret = (ret != null && !ret.equals(ExpressionUtil.TRUE)) ? 
@@ -144,22 +145,30 @@ public class AlphabetRefiner {
 
   private Expression<Boolean> getRefiner(Expression<Boolean> precondition, 
           Expression<Boolean> pathCondition) { 
-  
-    Collection<Expression<Boolean>> path = PathUtil.decomposePath(pathCondition);
+ 
+    if (refines(precondition, pathCondition)) {
+      return pathCondition;
+    } 
+    return null;
+    
+  }
+   
+  private Expression<Boolean> removeTautologies(Expression<Boolean> pc) {
+    Collection<Expression<Boolean>> path = PathUtil.decomposePath(pc);
     ArrayList<Expression<Boolean>> retain = new ArrayList<>();
     for (Expression<Boolean> expr : path) {
-      if (refines(precondition, expr)) {
+      if (sat(new Negation(expr))) {
         retain.add(expr);
       }
     }
     
     if (retain.isEmpty()) {
-      return null;
+      return ExpressionUtil.TRUE;
     }
     
     return ExpressionUtil.and(retain);
   }
-    
+  
   private boolean refines(Expression<Boolean> original, Expression<Boolean> refine) {
     Expression<Boolean> test1 = ExpressionUtil.and(original, new Negation(refine));
     Expression<Boolean> test2 = ExpressionUtil.and(original, refine);

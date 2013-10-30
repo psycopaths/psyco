@@ -23,7 +23,7 @@
 // publicly available information. For further details, please refer to the
 // README-ESAS file that is included in this distribution.
 //
-package cev;
+package issta2013.cev;
 
 import gov.nasa.jpf.jdart.Symbolic;
 
