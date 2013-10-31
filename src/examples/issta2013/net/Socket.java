@@ -52,7 +52,7 @@ public class Socket {
     setImpl();
   }
 
-  public void Socket_PSYCO(int proxy, int p, int ptype) {
+  public Socket(int proxy, int p, int ptype) {
     // Create a copy of Proxy as a security measure
     if (proxy == 0) {
       assert false;
@@ -76,7 +76,7 @@ public class Socket {
   }
 
 
-  public void Socket_PSYCO(int impl) {
+  public Socket(int impl) {
     this.impl = impl;
     if (impl != 0) {
       checkOldImpl();

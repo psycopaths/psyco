@@ -13,7 +13,7 @@ symbolic.dp=z3
 # logging and jpf output
 #
 log.info=constraints,jdart
-log.fine=psyco
+log.finer=psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

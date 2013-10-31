@@ -136,13 +136,13 @@ public class SummaryAlphabet extends SymbolicMethodAlphabet {
     }
     
     Expression<Boolean> implied = ExpressionUtil.and(
-            pc, new Negation(p.getPathCondition()));
+            p.getPathCondition(), new Negation(precondition));
             
-    if (!(solver.isSatisfiable(implied) == Result.SAT)) {
-      return p;
+    if (solver.isSatisfiable(implied) == Result.SAT) {
+      return new Path(pc, p.getPathResult());
     }
 
-    return new Path(pc, p.getPathResult());
+    return p;
   } 
   
   public Valuation getInitialValuation() {

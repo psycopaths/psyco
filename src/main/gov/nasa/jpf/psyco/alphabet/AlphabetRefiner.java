@@ -21,6 +21,7 @@ package gov.nasa.jpf.psyco.alphabet;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import de.learnlib.oracles.DefaultQuery;
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
@@ -33,10 +34,10 @@ import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.util.PathUtil;
 import gov.nasa.jpf.psyco.util.SEResultUtil;
+import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import net.automatalib.words.Word;
 
 /**
@@ -45,6 +46,8 @@ import net.automatalib.words.Word;
  */
 public class AlphabetRefiner {
   
+  private static JPFLogger logger = JPF.getLogger("psyco");  
+
   private final SymbolicExecutionOracle oracle;
   
   private final SymbolicMethodAlphabet inputs;
@@ -69,6 +72,7 @@ public class AlphabetRefiner {
       return false;
     }
      
+    logger.finer("Execution result:" + result);    
     // refine single symbols
     boolean refined = false;
     int ppos = 1;
@@ -93,6 +97,12 @@ public class AlphabetRefiner {
   private Expression<Boolean> refineSymbol(SymbolicMethodSymbol sms, 
           Expression<Boolean> ok, Expression<Boolean> error, Expression<Boolean> dontknow) {
    
+    logger.finer("Refining: " + sms);
+    logger.finer( ((SummaryAlphabet)inputs).getSummary(sms));
+    logger.finer("  ok:  " + ok);
+    logger.finer("  err: " + error);
+    logger.finer("  dk:  " + dontknow);
+    
     Expression<Boolean> precondition = sms.getPrecondition();
     Expression<Boolean> refinerOK  = getRefiner(precondition, ok);
     Expression<Boolean> refinerErr = getRefiner(precondition, error);
@@ -136,8 +146,21 @@ public class AlphabetRefiner {
       pc = removeTautologies(pc);
       pc = ExpressionUtil.restrict(pc, predicate);
       if (pc != null) {
-        ret = (ret != null && !ret.equals(ExpressionUtil.TRUE)) ? 
-                ExpressionUtil.or(ret, pc) : pc;
+        if (pc.equals(ExpressionUtil.TRUE)) {
+          return pc;
+        }
+
+        if (ret == null || implies(pc, ret)) {
+          ret = pc;
+          continue;
+        }
+        
+        if (implies(pc, ret)) {
+          ret = pc;
+          continue;
+        }
+        
+        ret = ExpressionUtil.or(ret, pc);
       }
     }
     return ret;
@@ -173,6 +196,11 @@ public class AlphabetRefiner {
     Expression<Boolean> test1 = ExpressionUtil.and(original, new Negation(refine));
     Expression<Boolean> test2 = ExpressionUtil.and(original, refine);
     return sat(test1) && sat(test2);
+  }
+  
+  private boolean implies(Expression<Boolean> phi1, Expression<Boolean> phi2) {
+    Expression<Boolean> test1 = ExpressionUtil.and(phi1, new Negation(phi2));
+    return !sat(test1);
   }
 
   private boolean sat(Expression<Boolean> test) {
