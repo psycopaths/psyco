@@ -1,6 +1,6 @@
 shell=gov.nasa.jpf.psyco.Psyco
 
-psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,60,0,0
+psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
 psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true

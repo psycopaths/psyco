@@ -20,9 +20,11 @@ package gov.nasa.jpf.psyco.filter;
 
 import de.learnlib.api.MembershipOracle;
 import de.learnlib.api.Query;
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
+import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.automatalib.words.Word;
@@ -35,6 +37,8 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
 
   private static class LoggingQuery extends Query<SymbolicMethodSymbol, SymbolicQueryOutput> {
 
+  private static final JPFLogger logger = JPF.getLogger("psyco");
+    
     private final Query<SymbolicMethodSymbol, SymbolicQueryOutput> query;
 
     public LoggingQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
@@ -53,7 +57,7 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
 
     @Override
     public void answer(SymbolicQueryOutput o) {
-      System.out.println("MQ: " + query.getInput() + " : " + o);
+      logger.finer("MQ: " + query.getInput() + " : " + o);
       query.answer(o);
     }
     
