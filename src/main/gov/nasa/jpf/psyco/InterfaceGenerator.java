@@ -23,25 +23,15 @@ import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.util.MixedParamsException;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
-import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.learnlib.LStar;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
-import gov.nasa.jpf.psyco.exceptions.MixedParameter;
 import gov.nasa.jpf.psyco.exceptions.RefinementNeeded;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
-import gov.nasa.jpf.psyco.filter.Cache;
-import gov.nasa.jpf.psyco.filter.QueryLogger;
-import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
-import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
-import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
-import gov.nasa.jpf.psyco.oracles.RefinementCheckOracle;
-import gov.nasa.jpf.psyco.oracles.SymbolicExecutionOracleWrapper;
-import gov.nasa.jpf.psyco.oracles.TerminationCheckOracle;
 import net.automatalib.automata.transout.MealyMachine;
 
 /**
@@ -68,17 +58,16 @@ public class InterfaceGenerator {
 
   private MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model = null;
 
-  public InterfaceGenerator(SymbolicMethodAlphabet inputs, SymbolicExecutionOracle seOracle,  
-          SymbolicEquivalenceTest eqTest, TerminationStrategy termination,
-          ConstraintSolver solver) {
-    this.inputs = inputs;
-    this.seOracle = seOracle;
+  public InterfaceGenerator(OracleProvider provider, PsycoConfig pconf,
+          SymbolicEquivalenceTest eqTest, ConstraintSolver solver) {
+    this.inputs = provider.getInputs();
+    this.seOracle = provider.getSymbolicExecutionOracle();
+    this.mqOrcale = provider.getThreeValuedOracle();
     this.eqTest = eqTest;
-    this.termination = termination;
+    this.termination = pconf.getTermination();
     this.solver = solver;
     this.refiner = new AlphabetRefiner(seOracle, inputs, solver);
     
-    this.mqOrcale = buildOracle(this.seOracle);
   }
   
   public MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> generateInterface() {    
@@ -117,37 +106,5 @@ public class InterfaceGenerator {
       this.lstar.refineHypothesis(ce);
     }    
   }
-  
-  private String getTerminationReason() {
-    return this.termination.getReason();
-  }
-  
-  private ThreeValuedOracle buildOracle(SymbolicExecutionOracle back) {
-    // wrap back
-    SymbolicExecutionOracleWrapper wrapper = new
-            SymbolicExecutionOracleWrapper(back);
     
-    // add logger
-    QueryLogger logger = new QueryLogger(wrapper);
-    
-    // termination and refinement filters
-    TerminationCheckOracle term = 
-            new TerminationCheckOracle(this.termination, logger);
-    
-    RefinementCheckOracle refine = new RefinementCheckOracle(term);
-    
-    // cache + prefixclosure
-    Cache cache = new Cache(refine);
-    
-    UniformErrorFilter error =
-            new UniformErrorFilter( (SummaryAlphabet)inputs, cache);
-
-    UniformOKSuffixFilter uniform =
-            new UniformOKSuffixFilter( (SummaryAlphabet)inputs, error);
-    
-    ValidQueryFilter valid = new ValidQueryFilter(uniform);
-    
-    return valid;
-  }
-  
 }

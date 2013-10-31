@@ -35,7 +35,7 @@ import net.automatalib.words.Word;
  */
 public class Cache implements ThreeValuedFilter, ThreeValuedOracle {
   
-  private static final MemoizeTable table = new MemoizeTable();
+  private final MemoizeTable table = new MemoizeTable();
   
   private MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle;
 

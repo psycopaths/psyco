@@ -17,4 +17,4 @@ summary.methods=Protocol,msg,ack
 
 
 
-psyco.por.config=msg,11,11;recv_ack,11,10
+psyco.por.config=msg,11,11;ack,11,10

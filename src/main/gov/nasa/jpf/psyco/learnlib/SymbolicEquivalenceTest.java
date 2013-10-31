@@ -29,5 +29,7 @@ import net.automatalib.automata.transout.MealyMachine;
 public interface SymbolicEquivalenceTest extends 
         EquivalenceOracle<MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput>, 
         SymbolicMethodSymbol, SymbolicQueryOutput> {
+
+  public void logStatistics();
   
 }

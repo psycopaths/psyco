@@ -16,29 +16,19 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package gov.nasa.jpf.psyco.filter;
+package gov.nasa.jpf.psyco.learnlib;
 
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.api.Query;
+import de.learnlib.oracles.CounterOracle;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
-import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
-import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
-import java.util.Collection;
 
 /**
  *
  * @author falkhowar
  */
-public class PrefixClosednessFilter implements ThreeValuedFilter, ThreeValuedOracle {
+public class QueryCounter extends CounterOracle<SymbolicMethodSymbol, SymbolicQueryOutput> 
+    implements ThreeValuedOracle {
 
-  @Override
-  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public QueryCounter(ThreeValuedOracle back, String name) {
+    super(back, name);
   }
-
-  @Override
-  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-  
 }

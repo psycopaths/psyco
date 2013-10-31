@@ -19,14 +19,17 @@
 package gov.nasa.jpf.psyco.equivalence;
 
 import de.learnlib.oracles.DefaultQuery;
-import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.psyco.OracleProvider;
+import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
+import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
-import gov.nasa.jpf.psyco.oracles.TerminationCheckOracle;
+import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +42,11 @@ import net.automatalib.words.Word;
  */
 public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   
+  private static final JPFLogger logger = JPF.getLogger("psyco");
+  
   private int k = 2;
+  
+  private int kMax = -1;
   
   private MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model;
 
@@ -47,12 +54,15 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
 
   private final SymbolicMethodAlphabet inputs;
   
-  public IncreasingDepthExhaustiveTest(ThreeValuedOracle oracle, 
-          SymbolicMethodAlphabet inputs) {
-    this.oracle = oracle;
-    this.inputs = inputs;
+  private final MethodExecutionFilter filter;
+  
+  public IncreasingDepthExhaustiveTest(OracleProvider provider, PsycoConfig pconf) {
+    this.oracle = provider.getThreeValuedOracle();
+    this.inputs = provider.getInputs();
+    this.filter = provider.getExecutionFilter();
+    this.kMax = pconf.getMaxDepth();
   }
-    
+
   @Override
   public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExample(
           MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a, 
@@ -67,8 +77,11 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
         if (ce != null) {
           return ce;
         }
-        System.out.println("========================== Completed depth " + k);
+        logger.info("==== completed depth " + k);
         k++;
+        if (deepEnough()) {
+          return null;
+        }
       }
     } catch (Terminate t) {
       return null;      
@@ -83,7 +96,7 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
               this.model.computeOutput(q.getInput()).lastSymbol();
       
       if (!refOut.equals(q.getOutput())) {
-        System.out.println("================ CE: " + q.getInput() + 
+        logger.info("================ CE: " + q.getInput() + 
                 " : " + refOut +" <> " + q.getOutput());
         return q;
       }
@@ -105,7 +118,7 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
           Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
     
     if (prefix.length() == k) {
-      words.add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(prefix));
+      add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(prefix), words);
       return;
     }
     
@@ -115,9 +128,44 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
       if (out.equals(SymbolicQueryOutput.OK)) {
         unroll(next, this.model.getSuccessor(state, a), words);
       } else {
-        words.add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(next));
+        add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(next), words);
       }      
     }
+  }
+
+  private void add(DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q,
+          Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
+
+    if (this.filter == null) {
+      words.add(q);
+      return;
+    }
+    
+    DefaultQuery<SymbolicMethodSymbol, Boolean> test = 
+            new DefaultQuery<>(q.getInput());
+    
+    this.filter.processQueries(Collections.singleton(test));
+    
+    if (test.getOutput()) {
+      words.add(q);      
+    }
+  }
+  
+  /**
+   * @return the k
+   */
+  public int getCurrentK() {
+    return k;
+  }
+  
+  private boolean deepEnough() {
+    return k > kMax;
+  }
+
+  @Override
+  public void logStatistics() {
+    logger.info("EQ Test depth completed: " + (k-1));
+    logger.info("EQ Test max depth: " + kMax);
   }
   
 }

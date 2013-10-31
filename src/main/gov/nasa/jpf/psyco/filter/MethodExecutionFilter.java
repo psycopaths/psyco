@@ -19,13 +19,53 @@
 package gov.nasa.jpf.psyco.filter;
 
 import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.Query;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
  * @author falkhowar
  */
-public interface MethodExecutionFilter extends 
+public abstract class MethodExecutionFilter implements 
         MembershipOracle.DFAMembershipOracle<SymbolicMethodSymbol> {
+
+  private final MethodExecutionFilter next;
+
+  public MethodExecutionFilter() {
+    this.next = null;
+  }
+
+  public MethodExecutionFilter(MethodExecutionFilter next) {
+    this.next = next;
+  }
+  
+  @Override
+  public final void processQueries(
+          Collection<? extends Query<SymbolicMethodSymbol, Boolean>> clctn) {
+    
+    ArrayList<Query<SymbolicMethodSymbol, Boolean>> queries = new ArrayList<>();
+    for (Query<SymbolicMethodSymbol, Boolean> q : clctn) {
+      boolean test = evaluateQuery(q);
+      if (!test) {
+        q.answer(false);
+        continue;
+      }
+      
+      if (next == null) {
+        q.answer(true);
+        continue;
+      }
+      
+      queries.add(q);
+    }
+    
+    if (!queries.isEmpty()) {
+      next.processQueries(queries);
+    }
+  }
+  
+  public abstract boolean evaluateQuery(Query<SymbolicMethodSymbol, Boolean> query); 
   
 }
