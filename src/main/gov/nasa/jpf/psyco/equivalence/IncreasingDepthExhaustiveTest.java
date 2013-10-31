@@ -159,7 +159,7 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   }
   
   private boolean deepEnough() {
-    return k > kMax;
+    return (kMax > 0 ) && (k > kMax);
   }
 
   @Override

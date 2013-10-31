@@ -118,6 +118,7 @@ public class Psyco implements JPFShell {
     logger.info("States: " + model.size());
     logger.info("Inputs: " + inputs.size());
     logger.info("Refinements: " + (inputs.size() - sigma));
+    logger.info("Termination: " + pconf.getTermination().getReason());
     provider.logStatistics();
     eqtest.logStatistics();
     logger.info("---------------------------------------------------------------");    

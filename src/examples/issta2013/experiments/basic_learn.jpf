@@ -5,7 +5,7 @@ psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true
 psyco.por=true
-psyco.depth=5
+#psyco.depth=5
 
 
 symbolic.dp=NativeZ3
