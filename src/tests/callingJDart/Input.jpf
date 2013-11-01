@@ -1,6 +1,0 @@
-@using jpf-core
-@using jpf-jdart
-
-classpath=${jpf-psyco}/build/examples
-
-shell=callingJDart.Call

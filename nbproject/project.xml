@@ -12,12 +12,17 @@
                 <property-file>${user.home}/.jpf/site.properties</property-file>
                 <property-file>${jpf-core}/jpf.properties</property-file>
                 <property-file>${jpf-jdart}/jpf.properties</property-file>
-                <property-file>${jpf-learn}/jpf.properties</property-file>
+                <property-file>${jpf-learnlib}/jpf.properties</property-file>
                 <property-file>${jpf-constraints}/jpf.properties</property-file>
                 <property-file>${jpf-testing}/jpf.properties</property-file>
                 <property-file>${jpf-psyco}/jpf.properties</property-file>
             </properties>
             <folders>
+                <source-folder>
+                    <label>jpf-psyco</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
                 <source-folder>
                     <label>src/main</label>
                     <type>java</type>
@@ -58,11 +63,6 @@
                     <label>src/resources</label>
                     <type>java</type>
                     <location>src/resources</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>jpf-psyco</label>
-                    <location>.</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -243,43 +243,45 @@
                     <ide-action name="test"/>
                 </context-menu>
             </view>
-            <subprojects/>
+            <subprojects>
+                <project>/home/falk/Workspace/jpf-v7/jpf-constraints</project>
+            </subprojects>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
             <compilation-unit>
                 <package-root>src/main</package-root>
-                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-constraints.native_classpath};${jpf-testing.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
-                <source-level>1.5</source-level>
+                <classpath mode="compile">build/main;${jpf-core.native_classpath};${jpf-learnlib.native_classpath};${jpf-constraints.native_classpath};${jpf-testing.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/peers</package-root>
                 <classpath mode="compile">build/main;build/peers;${jpf-core.native_classpath}</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/classes</package-root>
                 <classpath mode="compile">build/classes</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/tests</package-root>
                 <unit-tests/>
                 <classpath mode="compile">build/main;build/classes;${jpf-core.native_classpath};{jpf-constraints.native_classpath};${jpf-jdart.native_classpath}</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/examples</package-root>
                 <unit-tests/>
-                <classpath mode="compile">${jpf-core.native_classpath};${jpf-learn.native_classpath};${jpf-constraints.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
-                <source-level>1.5</source-level>
+                <classpath mode="compile">${jpf-core.native_classpath};${jpf-learnlib.native_classpath};${jpf-constraints.native_classpath};${jpf-jdart.native_classpath};${jpf-psyco.native_classpath}</classpath>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/annotations</package-root>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/resources</package-root>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
         </java-data>
         <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">

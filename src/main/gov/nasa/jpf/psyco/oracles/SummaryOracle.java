@@ -18,243 +18,109 @@
  ******************************************************************************/
 package gov.nasa.jpf.psyco.oracles;
 
-import gov.nasa.jpf.constraints.api.*;
+import de.learnlib.api.Query;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
-import gov.nasa.jpf.constraints.expressions.Constant;
-import gov.nasa.jpf.constraints.expressions.LogicalOperator;
-import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
-import gov.nasa.jpf.constraints.expressions.NumericComparator;
-import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
-import gov.nasa.jpf.constraints.util.ExpressionRestrictor;
-import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.learn.basic.ThreeValues;
-import gov.nasa.jpf.testing.summaries.MethodSummary;
-import gov.nasa.jpf.testing.summaries.MethodSummary.PathState;
-import java.util.*;
+import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.jdart.constraints.Path;
+import gov.nasa.jpf.jdart.constraints.PathState;
+import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
+import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
+import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
+import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
+import gov.nasa.jpf.psyco.util.PathUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import net.automatalib.words.Word;
 
 /**
  *
  */
-public class SummaryOracle {
+public class SummaryOracle implements SymbolicExecutionOracle {  
   
-  private class QueueElement {
-    
-    private int length;
-    private int paramCount;
-    private Expression<Boolean> prefix;
-
-    public QueueElement(int length, int paramCount, Expression<Boolean> prefix) {
-      this.length = length;
-      this.paramCount = paramCount;
-      this.prefix = prefix;
-    }       
-  }
-
-  private Valuation init;
-  
-  
-  public SummaryOracle(Valuation init, ConstraintSolver solver, MinMax mm) {
-    this.init = init;
-    this.solver = solver;
-    this.minMax = mm;
-  }
-  
-  private ConstraintSolver solver;
-  
-  private MinMax minMax;
-  
-  public Set<ThreeValues> query(List<MethodSummary> sequence, Expression<Boolean> precondition) {
-    
-    Set<ThreeValues> solution = new HashSet<ThreeValues>();
-        
-    Set<Variable> globals = new HashSet<Variable>();
-    Set<Variable> params = new HashSet<Variable>();
-    // FIXME: replace by some information obtained from setup description??
-    extractNamesFromPrecondition(precondition, globals, params);
-    for (MethodSummary ms : sequence) {
-      for (MethodSummary.MethodPath p : ms.getOkPaths()) {
-        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-      }
-      for (MethodSummary.MethodPath p : ms.getErrorPaths()) {
-        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-      }
-      for (MethodSummary.MethodPath p : ms.getDontKnowPaths()) {
-        extractNamesFromPrecondition(p.getPathConstraint(), globals, params);        
-      }
-    }
-    
-    // FIXME: put initial conditions into formula (concrete data values for globals)
-    Expression<Boolean> initial = new Constant<Boolean>(Boolean.class, true);
-            
-    // construct set of feasible paths
-    Queue<QueueElement> queue = new LinkedList<QueueElement>();    
-    queue.add(new QueueElement(0, 0, initial));        
-    while (!queue.isEmpty()) {
-      
-      // get path prefix from queue and next method from input
-      QueueElement prefix = queue.poll();
-      MethodSummary next = sequence.get(prefix.length);      
-      int paramCount = next.getMethod().getParameterTypes().length;
-
-      // get corresponding prefix of path condition
-      ExpressionRestrictor pcr = new ExpressionRestrictor(getParamNames(1, prefix.paramCount + paramCount));           
-      Expression preRestricted = pcr.restrict(precondition);
-      
-      // extend by all paths of next method
-      List<MethodSummary.MethodPath> paths = new ArrayList<MethodSummary.MethodPath>();
-      paths.addAll(next.getOkPaths());
-      paths.addAll(next.getErrorPaths());
-      paths.addAll(next.getDontKnowPaths());
-      for (MethodSummary.MethodPath path : paths) {
-        // rename parameters and globals in path segment
-        Expression<Boolean> step = path.getPathConstraint();        
-        step = prepareStep(step, prefix.length, prefix.paramCount, paramCount, globals);
-
-        // check if path is satisfiable
-        PropositionalCompound sat = new PropositionalCompound(
-                prefix.prefix, LogicalOperator.AND, new PropositionalCompound(
-                    step, LogicalOperator.AND, preRestricted));
-        
-        System.out.println("STEP (SAT?): " + sat);
-         
-        // not satisfiable => does not contribute to solution
-        if (!solver.isSatisfiable(sat, minMax).equals(Result.SAT)) {
-          continue;
-        }
-        
-        // max length? then add path state to solution
-        // OR path state other than ok? stop here
-        if (prefix.length +1 >= sequence.size() 
-                || !path.getPathState().equals(PathState.OK)) {
-          
-          switch (path.getPathState()) {            
-            case OK:
-              solution.add(ThreeValues.TRUE);
-              break;
-            case ERROR: 
-              solution.add(ThreeValues.FALSE);
-              break;
-            case DONT_KNOW:
-              solution.add(ThreeValues.THIRD);
-              break;                  
-          }
-          continue;
-        }
-        
-        // add longer prefix to queue ...
-        Expression<Boolean> glue = prepareGlue(prefix.length, path.getPostConditon(), globals);
-        PropositionalCompound prefixAndStep = new PropositionalCompound(
-                prefix.prefix, LogicalOperator.AND, new PropositionalCompound(
-                    step, LogicalOperator.AND, glue));
-
-        System.out.println("NEW PREFIX: " + prefixAndStep);
-        
-        QueueElement ne = new QueueElement(
-                prefix.length +1, prefix.paramCount + paramCount, prefixAndStep);
-        
-        queue.add(ne);
-      } 
-      
-    }
-    
-    String log = "Solution: {";
-    for (ThreeValues v : solution)
-      log += v.toString() + ", ";
-    log += "}";
-    System.out.println(log);
-    
-    return solution;
-  }
-
-  
-//  private Formula generateInitialValuation() {
-//    LogicalExpression le = new LogicalExpression(LogicalOperator.AND);
-//    for (Entry<String, Object> e : init.getValues().entrySet()) {
-//      //FIXME: the cast of e.getValue() will fail in general       
-//      le.addExpresion(new Atom(new LinearIntegerConstraint(
-//               new SymbolicInteger(e.getKey() + "_0", e.getKey() + "_0", "xx"), Comparator.EQ, new IntegerConstant( (Integer) e.getValue() ))));       
-//      
-//    }
-//    return le;
-//  }
-  
-  
-  private Set<Variable> getParamNames(int from, int to) {
-    Set<Variable> list = new HashSet<Variable>();
-    for (int i=from;i<=to;i++) {
-      list.add(new Variable(Integer.class, "temp.MethodTestCase.P" + i));
-    }
-    return list;
-  }
-          
-  
-  private void extractNamesFromPrecondition(final Expression precondition, Set<Variable> globals, Set<Variable> params) {
-//    System.out.println("### extract names");
-    
-    Set<Variable> vars = new HashSet<Variable>();
-    precondition.getVariables(vars);
-    for (Variable v : vars) {
-      if(isParameter(v)) {
-//        System.out.println("param: " + name);
-        params.add(v);        
-      } else {
-        globals.add(v);
-//        System.out.println("global: " + name);
-      }      
-    }    
-  }
-  
-  private boolean isParameter(Variable v) {
-    return v.getName().matches("temp.MethodTestCase.P\\d+");
-  }
-  
-  
-  private Expression<Boolean> prepareStep(Expression<Boolean> step, int stepNo, int prefixParams, int stepParams, Collection<Variable> globals) {
-    
-    Map<Expression,Expression> rename = new HashMap<Expression,Expression>();  
-    for (Variable g : globals) {
-      rename.put(g, new Variable(g.getType(),g.getName() + "_" + stepNo));
-    }
-    for (int i=1; i <=stepParams; i++) {
-      rename.put(
-              new Variable(Integer.class, "temp.MethodTestCase.P" + i), 
-              new Variable(Integer.class, "temp.MethodTestCase.P" + (prefixParams + i)));
-    }
-    
-    return step.replaceTerms(rename);
-  }
-  
-  private Expression<Boolean> prepareGlue(int stepNo, PostCondition post, Collection<Variable> globals) {
-    
-    Map<Expression,Expression> rename = new HashMap<Expression,Expression>();  
-    for (Variable g : globals) {
-      rename.put(g, new Variable(g.getType(),g.getName() + "_" + stepNo));
-    }
-        
-    Expression<Boolean> glue = null;
-    for (Variable g : globals) {
-      Expression right = post.getConditions().get(g).replaceTerms(rename);
-//      if (post.getConditions().containsKey(g)) {
-//        // FIXME: this cast can break in general
-//      } else {
-//        right = new SymbolicInteger(g + "_" +  stepNo, g + "_" + stepNo, "xx");
-//      }
-      
-      NumericBooleanExpression add = new NumericBooleanExpression(
-          new Variable(g.getType(), g.getName() + "_" + (stepNo+1)), NumericComparator.EQ, right);
-      
-      if (glue == null) {
-        glue = add;
-      } else {
-        glue = new PropositionalCompound(glue, LogicalOperator.AND, add);
-      }
+  private static class PathQuery {
+    final Word<SymbolicMethodSymbol> methods;
+    final Word<Path> paths;
+    public PathQuery(Word<SymbolicMethodSymbol> methods, Word<Path> paths) {
+      this.methods = methods;
+      this.paths = paths;
     }   
-    
-    if (glue == null) {
-      return new Constant<Boolean>(Boolean.class,true);
-    }
-            
-    return glue;
   }
-            
+ 
+  private final SummaryAlphabet inputs;
+
+  private final ConstraintSolver solver;
+
+  public SummaryOracle(SummaryAlphabet inputs, ConstraintSolver solver) {
+    this.inputs = inputs;
+    this.solver = solver;
+  }  
+  
+  @Override
+  public void processQueries(
+          Collection<? extends Query<SymbolicMethodSymbol, SymbolicExecutionResult>> clctn) {
+    for (Query<SymbolicMethodSymbol, SymbolicExecutionResult> query : clctn) {
+      processQuery(query);
+    }
+  }
+    
+  private void processQuery(
+          Query<SymbolicMethodSymbol, SymbolicExecutionResult> query) {
+    
+    ArrayList<Path> ok  = new ArrayList<>(); 
+    ArrayList<Path> err = new ArrayList<>(); 
+    ArrayList<Path> dk  = new ArrayList<>(); 
+    
+    Collection<PathQuery> paths = explode(query.getInput());
+    for (PathQuery q : paths) {      
+      Path p = PathUtil.executeSymbolically(
+              q.methods, q.paths, inputs.getInitialValuation());
+      
+      // TODO: maybe add model to path 
+      if (!sat(p.getPathCondition())) {
+        continue;
+      }
+      switch (p.getState()) {
+        case OK:
+          ok.add(p);
+          break;
+        case ERROR:
+          err.add(p);
+          break;
+        case DONT_KNOW:
+          dk.add(p);
+          break;
+      }
+    }
+    
+    query.answer(new SymbolicExecutionResult(ok, err, dk));
+  }
+
+  private Collection<PathQuery> explode(Word<SymbolicMethodSymbol> in) {
+    ArrayList<PathQuery> queries = new ArrayList<>();
+    Word<Path> eps = Word.epsilon();
+    explode(in, 0, eps, queries);
+    return queries;
+  }
+  
+  private void explode(Word<SymbolicMethodSymbol> in, int pos, 
+          Word<Path> prefix, Collection<PathQuery> queries) {
+    
+    SymbolicMethodSymbol a = in.getSymbol(pos);
+    SymbolicExecutionResult summary = this.inputs.getSummary(a);
+    pos++;
+    
+    for (Path p : summary) {
+      if (p.getState() == PathState.OK && pos < in.length()) {
+        explode(in, pos, prefix.append(p), queries);
+      } else {
+        queries.add(new PathQuery(
+                (pos < in.length() ? in.prefix(pos) : in), prefix.append(p)));
+      } 
+    }   
+  }
+  
+  private boolean sat(Expression<Boolean> expr) {
+    return solver.isSatisfiable(expr) == Result.SAT;
+  }  
 }

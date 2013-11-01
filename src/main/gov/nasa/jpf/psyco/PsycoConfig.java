@@ -1,72 +1,120 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * Copyright (C) 2008 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration
- * (NASA).  All Rights Reserved.
- * 
- * This software is distributed under the NASA Open Source Agreement
- * (NOSA), version 1.3.  The NOSA has been approved by the Open Source
- * Initiative.  See the file NOSA-1.3-JPF at the top of the distribution
- * directory tree for the complete NOSA document.
- * 
- * THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF ANY
- * KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT
- * LIMITED TO, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO
- * SPECIFICATIONS, ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR
- * A PARTICULAR PURPOSE, OR FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT
- * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
- * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
- ******************************************************************************/
+ * Administrator of the National Aeronautics and Space Administration (NASA).
+ * All Rights Reserved.
+ *
+ * This software is distributed under the NASA Open Source Agreement (NOSA),
+ * version 1.3. The NOSA has been approved by the Open Source Initiative. See
+ * the file NOSA-1.3-JPF at the top of the distribution directory tree for the
+ * complete NOSA document.
+ *
+ * THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF ANY KIND,
+ * EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY
+ * WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+ * FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL BE
+ * ERROR FREE, OR ANY WARRANTY THAT DOCUMENTATION, IF PROVIDED, WILL CONFORM TO
+ * THE SUBJECT SOFTWARE.
+ *****************************************************************************
+ */
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.jdart.ConcolicConfig;
-import java.util.HashSet;
-import java.util.Set;
+import gov.nasa.jpf.jdart.config.ConcolicConfig;
+import gov.nasa.jpf.jdart.termination.NeverTerminate;
+import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
  */
-public class PsycoConfig extends ConcolicConfig {
-  
+public class PsycoConfig {
+
+  private final Config config;
   private int maxDepth = -1;
-  
-  private Set<MethodConfig> alphabetMethods;
-  
+  private boolean usePOR = false;
+  private boolean useMemorization = false;
+  private boolean useSuffixFilter = false;
+  private boolean useSummaries = false;
+  private TerminationStrategy termination = new NeverTerminate();
+
   public PsycoConfig(Config conf) {
-    super(conf);
-    this.alphabetMethods = new HashSet<MethodConfig>();
-    initialize(conf);
+    this.config = conf;
+    initialize();
+  }
+
+  private void initialize() {
+    if (config.hasValue("psyco.depth")) {
+      maxDepth = config.getInt("psyco.depth");
+    }
+    if (config.hasValue("psyco.termination")) {
+      termination = ConcolicConfig.parseTerminationStrategy(
+              config.getProperty("psyco.termination"));
+    }
+    if (config.hasValue("psyco.summaries")) {
+      useSummaries = config.getBoolean("psyco.summaries");
+    }
+    if (config.hasValue("psyco.memorize")) {
+      useMemorization = config.getBoolean("psyco.memorize");
+    }
+    if (config.hasValue("psyco.suffixes")) {
+      useSuffixFilter = config.getBoolean("psyco.suffixes");
+    }
+    if (config.hasValue("psyco.por")) {
+      usePOR = config.getBoolean("psyco.por");
+    }
+  }
+
+  /**
+   * @return the config
+   */
+  public Config getConfig() {
+    return config;
+  }
+
+  /**
+   * @return the usePOR
+   */
+  public boolean isUsePOR() {
+    return usePOR;
+  }
+
+  /**
+   * @return the useMemorization
+   */
+  public boolean isUseMemorization() {
+    return useMemorization;
+  }
+
+  /**
+   * @return the useSuffixFilter
+   */
+  public boolean isUseSuffixFilter() {
+    return useSuffixFilter;
+  }
+
+  /**
+   * @return the useSummaries
+   */
+  public boolean isUseSummaries() {
+    return useSummaries;
+  }
+
+  /**
+   * @return the termination
+   */
+  public TerminationStrategy getTermination() {
+    return termination;
   }
   
   public int getMaxDepth() {
     return this.maxDepth;
   }  
 
-  public Set<MethodConfig> getAlphabetMethods() {
-    return alphabetMethods;
+  public Collection<String> getPOR() {
+    return Arrays.asList(this.config.getString(
+            "psyco.por.config").trim().split(";"));
   }
-
-  public void addSymbolicMethod(String s) {
-    MethodConfig mc = parseMethodConfig(s);
-    this.symbolicMethods.put(mc,mc);
-  }
-            
-  private void initialize(Config conf) {
-    // parse max depth
-    if (conf.hasValue("psyco.depth")) {
-      maxDepth = conf.getInt("psyco.depth");
-    }
-    
-    // parse symbolic method info
-    // TODO: need a better pattern once parameter min and max can be specified, too
-    for (String key : conf.getKeysStartingWith("psyco.interface.m")) {
-      MethodConfig mc = parseMethodConfig(conf.getProperty(key));
-      this.alphabetMethods.add(mc);
-    }    
-  }  
-   
-  public void addManagedException(String me) {
-    this.assertions.add(me);
-  }
-  
 }
