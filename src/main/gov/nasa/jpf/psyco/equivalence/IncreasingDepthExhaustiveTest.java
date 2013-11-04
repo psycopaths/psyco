@@ -20,7 +20,7 @@ package gov.nasa.jpf.psyco.equivalence;
 
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.psyco.OracleProvider;
+import gov.nasa.jpf.psyco.DefaultOracleProvider;
 import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
@@ -56,7 +56,7 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   
   private final MethodExecutionFilter filter;
   
-  public IncreasingDepthExhaustiveTest(OracleProvider provider, PsycoConfig pconf) {
+  public IncreasingDepthExhaustiveTest(DefaultOracleProvider provider, PsycoConfig pconf) {
     this.oracle = provider.getThreeValuedOracle();
     this.inputs = provider.getInputs();
     this.filter = provider.getExecutionFilter();

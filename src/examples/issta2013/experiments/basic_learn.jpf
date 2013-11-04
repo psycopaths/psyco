@@ -5,8 +5,9 @@ psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true
 psyco.por=true
-#psyco.depth=5
+psyco.depth=5
 
+psyco.interpolation=true
 
 symbolic.dp=NativeZ3
 symbolic.dp.z3.bitvectors=true

@@ -1,28 +1,32 @@
-//
-// Copyright (C) 2008 United States Government as represented by the
-// Administrator of the National Aeronautics and Space Administration
-// (NASA).  All Rights Reserved.
-//
-// This software is distributed under the NASA Open Source Agreement
-// (NOSA), version 1.3.  The NOSA has been approved by the Open Source
-// Initiative.  See the file NOSA-1.3-JPF at the top of the distribution
-// directory tree for the complete NOSA document.
-//
-// THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF ANY
-// KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT
-// LIMITED TO, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO
-// SPECIFICATIONS, ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR
-// A PARTICULAR PURPOSE, OR FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT
-// THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
-// DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
-//
+/**
+ * *****************************************************************************
+ * Copyright (C) 2008 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration (NASA).
+ * All Rights Reserved.
+ *
+ * This software is distributed under the NASA Open Source Agreement (NOSA),
+ * version 1.3. The NOSA has been approved by the Open Source Initiative. See
+ * the file NOSA-1.3-JPF at the top of the distribution directory tree for the
+ * complete NOSA document.
+ *
+ * THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF ANY KIND,
+ * EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY
+ * WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+ * FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL BE
+ * ERROR FREE, OR ANY WARRANTY THAT DOCUMENTATION, IF PROVIDED, WILL CONFORM TO
+ * THE SUBJECT SOFTWARE.
+ *****************************************************************************
+ */
 package gov.nasa.jpf.psyco;
 
+import gov.nasa.constraints.solvers.smtinterpol.SMTInterpolSolver;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.jdart.summaries.SummaryConfig;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
@@ -69,13 +73,15 @@ public class Psyco implements JPFShell {
   public void run() throws IOException {
 
     SimpleProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
     
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
     
-    ConstraintSolver solver = new SolverWrapper(factory.createSolver());
-
+    ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
+    InterpolationSolver iSolver = new SMTInterpolSolver();   
+    
+    PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
+    
     SymbolicMethodAlphabet inputs = null;
     SymbolicExecutionOracle seOracle = null;
     if (!pconf.isUseSummaries()) {    
@@ -86,8 +92,8 @@ public class Psyco implements JPFShell {
     }
     else {
       SummaryStore store = SummaryStore.create(config);
-      inputs = new SummaryAlphabet(store, solver);    
-      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, solver);
+      inputs = new SummaryAlphabet(store, cSolver);    
+      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, cSolver);
     }
     
     int sigma = inputs.size();
@@ -97,15 +103,13 @@ public class Psyco implements JPFShell {
     }
     logger.info("---------------------------------------------------------------");
 
-    OracleProvider provider = new OracleProvider(seOracle, inputs, pconf);
+    DefaultOracleProvider provider = new DefaultOracleProvider(seOracle, inputs, pconf);
             
     SymbolicEquivalenceTest eqtest = null;    
     // TODO: this should be parameterized later
     eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
     
-    InterfaceGenerator gen = new InterfaceGenerator(
-            provider, pconf, eqtest, solver);
-    
+    InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
     MealyMachine model = gen.generateInterface();
     
     SimpleProfiler.stop("PSYCO-run");
