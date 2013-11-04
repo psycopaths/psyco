@@ -16,6 +16,8 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
@@ -30,17 +32,24 @@ public class PsycoConfig {
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
+  private boolean useInterpolation = false;
   private TerminationStrategy termination = new NeverTerminate();
   private boolean symbolicSearch = true;
   private boolean enumerativeSearch = false;
   private String resultFolderName="default";
   private int maxSearchDepth = Integer.MIN_VALUE;
 
-  public PsycoConfig(Config conf) {
-    this.config = conf;
+  private final ConstraintSolver constraintSolver;
+  private final InterpolationSolver interpolationSolver;
+
+  public PsycoConfig(Config config, ConstraintSolver constraintSolver, 
+          InterpolationSolver interpolationSolver) {
+    this.config = config;
+    this.constraintSolver = constraintSolver;
+    this.interpolationSolver = interpolationSolver;
     initialize();
   }
-
+  
   private void initialize() {
     if (config.hasValue("psyco.depth")) {
       maxDepth = config.getInt("psyco.depth");
@@ -73,6 +82,9 @@ public class PsycoConfig {
     
     if(config.hasValue("psyco.maxSearchDepth")){
       maxSearchDepth = config.getInt("psyco.maxSearchDepth");
+    }
+    if (config.hasValue("psyco.interpolation")) {
+      useInterpolation = config.getBoolean("psyco.interpolation");
     }
   }
 
@@ -140,5 +152,25 @@ public class PsycoConfig {
 
   public String getResultFolderName() {
     return resultFolderName;
+  }
+  /**
+   * @return the useInterpolation
+   */
+  public boolean isUseInterpolation() {
+    return useInterpolation;
+  }
+
+  /**
+   * @return the constraintSolver
+   */
+  public ConstraintSolver getConstraintSolver() {
+    return constraintSolver;
+  }
+
+  /**
+   * @return the interpolationSolver
+   */
+  public InterpolationSolver getInterpolationSolver() {
+    return interpolationSolver;
   }
 }

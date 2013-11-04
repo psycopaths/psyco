@@ -7,6 +7,7 @@ psyco.suffixes=true
 psyco.por=true
 #psyco.depth=
 
+psyco.interpolation=true
 
 symbolic.dp=NativeZ3
 symbolic.dp.z3.bitvectors=true

@@ -43,22 +43,19 @@ public class InterfaceGenerator {
   
   private final SymbolicEquivalenceTest eqTest;
     
-  private final TerminationStrategy termination;
-  
   private final AlphabetRefiner refiner;
   
   private LStar lstar = null;
 
   private MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model = null;
 
-  public InterfaceGenerator(OracleProvider provider, PsycoConfig pconf,
-          SymbolicEquivalenceTest eqTest, ConstraintSolver solver) {
+  public InterfaceGenerator(DefaultOracleProvider provider, PsycoConfig pconf,
+          SymbolicEquivalenceTest eqTest) {
     this.inputs = provider.getInputs();
     this.seOracle = provider.getSymbolicExecutionOracle();
     this.mqOrcale = provider.getThreeValuedOracle();
     this.eqTest = eqTest;
-    this.termination = pconf.getTermination();
-    this.solver = solver;
+    this.solver = pconf.getConstraintSolver();
     this.refiner = new AlphabetRefiner(seOracle, inputs, solver);
     
   }
