@@ -61,13 +61,7 @@ public class DefaultOracleProvider {
    
   protected final void initialize(PsycoConfig pconf) {
 
-    ThreeValuedOracle sink;
-    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
-      sink = new InterpolationCache(pconf.getInterpolationSolver(), 
-              pconf.getConstraintSolver(), (SummaryAlphabet) inputs);
-    } else {
-      sink = new SymbolicExecutionOracleWrapper(back);
-    }
+    ThreeValuedOracle sink = new SymbolicExecutionOracleWrapper(back);
     
     oracle = new QueryLogger(
              new RefinementCheckOracle(

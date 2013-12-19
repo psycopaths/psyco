@@ -20,6 +20,8 @@ import gov.nasa.jpf.JPF;
 
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
+import gov.nasa.constraints.solvers.smtinterpol.SMTInterpolSolver;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.jdart.summaries.SummaryConfig;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
@@ -66,12 +68,14 @@ public class Psyco implements JPFShell {
   public void run() throws IOException {
 
     SimpleProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
     
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
     
-    ConstraintSolver solver = new SolverWrapper(factory.createSolver());
+    ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
+    InterpolationSolver iSolver = new SMTInterpolSolver();   
+    
+    PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
 
     SymbolicMethodAlphabet inputs = null;
     SymbolicExecutionOracle seOracle = null;
@@ -83,8 +87,8 @@ public class Psyco implements JPFShell {
     }
     else {
       SummaryStore store = SummaryStore.create(config);
-      inputs = new SummaryAlphabet(store, solver);    
-      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, solver);
+      inputs = new SummaryAlphabet(store, cSolver);    
+      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, cSolver);
     }
     
     int sigma = inputs.size();
@@ -94,14 +98,15 @@ public class Psyco implements JPFShell {
     }
     logger.info("---------------------------------------------------------------");
 
-    OracleProvider provider = new OracleProvider(seOracle, inputs, pconf);
+    DefaultOracleProvider provider = 
+            new DefaultOracleProvider(seOracle, inputs, pconf);
             
     SymbolicEquivalenceTest eqtest = null;    
     // TODO: this should be parameterized later
     eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
     
     InterfaceGenerator gen = new InterfaceGenerator(
-            provider, pconf, eqtest, solver);
+            provider, pconf, eqtest);
     
     MealyMachine model = gen.generateInterface();
     
