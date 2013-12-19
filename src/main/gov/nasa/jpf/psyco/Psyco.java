@@ -34,6 +34,7 @@ import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
@@ -105,9 +106,15 @@ public class Psyco implements JPFShell {
 
     DefaultOracleProvider provider = new DefaultOracleProvider(seOracle, inputs, pconf);
             
-    SymbolicEquivalenceTest eqtest = null;    
-    // TODO: this should be parameterized later
-    eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
+    // TODO: this should be done by a provider too
+    SymbolicEquivalenceTest eqtest = null;
+    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
+      eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
+              (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
+              cSolver, iSolver, pconf.getTermination());
+    } else {
+      eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
+    }
     
     InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
     MealyMachine model = gen.generateInterface();
