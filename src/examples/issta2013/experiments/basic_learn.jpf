@@ -5,7 +5,7 @@ psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true
 psyco.por=true
-psyco.depth=5
+psyco.depth=6
 
 psyco.interpolation=true
 
@@ -16,7 +16,7 @@ symbolic.dp.z3.bitvectors=true
 # logging and jpf output
 #
 log.severe=constraints,jdart
-log.finest=psyco
+log.fine=psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=
