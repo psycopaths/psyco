@@ -50,26 +50,27 @@ public class SEResultUtil {
 
   }
   
-  private static class Mapping implements Function<String, String> {
+  private static class Mapping<T1, T2> implements Function<T1, T2> {
 
-    private final Map<String, String> map;
+    private final Map<T1, T2> map;
 
-    public Mapping(Map<String, String> map) {
+    public Mapping(Map<T1, T2> map) {
       this.map = map;
     }
     
     @Override
-    public String apply(String f) {
-      String ret = map.get(f);
+    public T2 apply(T1 f) {
+      T2 ret = map.get(f);
       if (ret == null) {
-        return f;
+        // FIXME: this may not always work!
+        return (T2) f;
       }
       return ret;
     }
     
   }
   
-  public static Function<String, String> func(Map<String, String> map) {
+  public static <T1, T2> Function<T1, T2> func(Map<T1, T2> map) {
     return new Mapping(map);
   }
   
