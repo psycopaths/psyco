@@ -1,4 +1,4 @@
-shell=gov.nasa.jpf.psyco.Psyco
+shell=gov.nasa.jpf.psyco.path.PsycoPath
 
 psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
 psyco.summaries=true

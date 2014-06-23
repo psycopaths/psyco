@@ -35,6 +35,7 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
+import gov.nasa.jpf.psyco.equivalence.InvarianceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
@@ -108,6 +109,8 @@ public class Psyco implements JPFShell {
             
     // TODO: this should be done by a provider too
     SymbolicEquivalenceTest eqtest = null;
+//    eqtest = new InvarianceTest((SummaryAlphabet)inputs, iSolver, cSolver, 
+//            provider.getThreeValuedOracle(), pconf.getMaxDepth());
     if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
       eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
               (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
