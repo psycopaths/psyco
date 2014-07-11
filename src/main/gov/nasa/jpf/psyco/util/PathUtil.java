@@ -161,7 +161,7 @@ public class PathUtil {
     return pc;    
   } 
           
-  private static Expression<?> transformVars(Expression<?> in, 
+  public static Expression<?> transformVars(Expression<?> in, 
           final Map<Variable<?>, Expression<?>> val) {
     
     return ExpressionUtil.transformVars(

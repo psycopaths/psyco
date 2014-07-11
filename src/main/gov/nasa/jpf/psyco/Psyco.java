@@ -36,6 +36,7 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
 import gov.nasa.jpf.psyco.equivalence.InvarianceTest;
+import gov.nasa.jpf.psyco.equivalence.ProgramAnalysisTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
@@ -111,13 +112,15 @@ public class Psyco implements JPFShell {
     SymbolicEquivalenceTest eqtest = null;
 //    eqtest = new InvarianceTest((SummaryAlphabet)inputs, iSolver, cSolver, 
 //            provider.getThreeValuedOracle(), pconf.getMaxDepth());
-    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
-      eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
-              (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
-              cSolver, iSolver, pconf.getTermination());
-    } else {
-      eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
-    }
+//    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
+//      eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
+//              (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
+//              cSolver, iSolver, pconf.getTermination());
+//    } else {
+//      eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
+//    }
+  
+    eqtest = new ProgramAnalysisTest( (SummaryAlphabet)inputs );
     
     InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
     MealyMachine model = gen.generateInterface();
