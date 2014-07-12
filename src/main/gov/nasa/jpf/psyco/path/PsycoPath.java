@@ -20,7 +20,6 @@
  */
 package gov.nasa.jpf.psyco.path;
 
-import gov.nasa.constraints.solvers.smtinterpol.SMTInterpolSolver;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFShell;
@@ -95,7 +94,8 @@ public class PsycoPath implements JPFShell {
             new ConstraintSolverFactory(this.config);
     
     ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
-    InterpolationSolver iSolver = new SMTInterpolSolver();       
+    InterpolationSolver iSolver = (InterpolationSolver) 
+            factory.createSolver("smtinterpol");   
     PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
 
     SummaryStore store = SummaryStore.create(config);

@@ -6,6 +6,7 @@
 
 package gov.nasa.jpf.psyco.equivalence;
 
+import com.google.common.io.Files;
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
@@ -18,21 +19,29 @@ import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
+import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
+import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.util.SEResultUtil;
 import gov.nasa.jpf.util.TemplateBasedCompiler;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.graphs.dot.GraphDOT;
+import net.automatalib.words.Word;
 
 /**
  *
@@ -123,15 +132,18 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
   }
   
   private final SummaryAlphabet inputs; 
+  
+  private final ThreeValuedOracle oracle;
 
   private Map<SymbolicMethodSymbol, Integer> idMap = new HashMap<>();
-  
+  private Map<Integer, SymbolicMethodSymbol> inverseMap = new HashMap<>();  
   private Map<Path, Integer> pathMap = new HashMap<>();
 
   private MealyMachine<Object, SymbolicMethodSymbol, Object, SymbolicQueryOutput> hyp;
-  
-  public ProgramAnalysisTest(SummaryAlphabet inputs) {
+
+  public ProgramAnalysisTest(SummaryAlphabet inputs, ThreeValuedOracle oracle) {
     this.inputs = inputs;
+    this.oracle = oracle;
   }
   
   
@@ -140,34 +152,105 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
           MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a, 
           Collection<? extends SymbolicMethodSymbol> clctn) {
     
-    this.hyp = (MealyMachine<Object, SymbolicMethodSymbol, Object, SymbolicQueryOutput>) a;
-    
     try {
-      GraphDOT.write(this.hyp, inputs, System.out);
-    } catch (IOException ex) {
-    }
+      this.hyp = (MealyMachine<Object, SymbolicMethodSymbol, Object, SymbolicQueryOutput>) a;    
+      //GraphDOT.write(this.hyp, inputs, System.out);
     
-    Map<String, Object> config = prepareTest();
-
-    InputStream is = ProgramAnalysisTest.class.getResourceAsStream(
-            "/gov/nasa/jpf/psyco/CEncoding.st");
-      
-    TemplateBasedCompiler compiler = new TemplateBasedCompiler(new File("/tmp"));
-    try {
+      // generate c file
+      Map<String, Object> config = prepareTest();
+      InputStream is = ProgramAnalysisTest.class.getResourceAsStream(
+              "/gov/nasa/jpf/psyco/CEncoding.st");
+      File tmpDir = Files.createTempDir();
+      TemplateBasedCompiler compiler = new TemplateBasedCompiler(tmpDir);
       compiler.addDynamicSource("", "cex", config, is);
+
+      // rename file 
+      Files.move(new File(tmpDir, "cex.java"), new File(tmpDir, "cex.c"));
+      
+      // run blast
+      boolean safe = runBlast(tmpDir);
+      if (safe) {
+        return null;
+      }
+
+      System.out.println("Dir: " + tmpDir);
+      Word<SymbolicMethodSymbol> ce = Word.fromList(counterexample(tmpDir));
+      
+      DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ceQuery = 
+              new DefaultQuery<>(ce);
+      
+      this.oracle.processQueries(Collections.singletonList(ceQuery));
+      List<SymbolicQueryOutput> hypOut = new ArrayList<>();
+      hyp.trace(ce, hypOut);
+
+      System.out.println("CE: " + ce);
+      System.out.println("SYS: " + ceQuery.getOutput());
+      System.out.println("HYP: " + hypOut.get(hypOut.size() -1));
+      return ceQuery;
+      
     } catch (IOException ex) {
+      throw new RuntimeException(ex);
     }
     
-    throw new IllegalStateException("not implemented yet.");
+    //throw new IllegalStateException("should not be reachable.");
   }
     
   @Override
   public void logStatistics() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
-  private boolean runBlast() {
-    return false;
+  private List<SymbolicMethodSymbol> counterexample(File tmpDir) 
+          throws FileNotFoundException, IOException {
+    List<SymbolicMethodSymbol> ce = new ArrayList<>();
+ 
+    BufferedReader reader = new BufferedReader(
+            new InputStreamReader(new FileInputStream(
+                    new File(tmpDir, "cex.traces"))));
+    
+    String line = reader.readLine();
+    while (line != null) {
+      if (line.contains("method_id")) {
+        System.out.println(line);
+        line = line.substring(line.indexOf("=") +1, line.indexOf(";")).trim();
+        Integer id = Integer.parseInt(line);
+        ce.add(inverseMap.get(id));       
+      }
+      line = reader.readLine();
+    }
+    reader.close();
+    return ce;
+  }
+  
+  private boolean runBlast(File tmpDir) throws IOException {
+    
+    ProcessBuilder pb = new ProcessBuilder("pblast.opt", "cex.c");
+    pb.directory(tmpDir);
+    Process blast = pb.start();
+    
+    
+    BufferedReader reader = new BufferedReader(
+            new InputStreamReader(blast.getInputStream()));
+    String line = reader.readLine();
+    Boolean safe = null;
+    while (line != null) {
+      //System.out.println("[BLAST] " + line);
+      
+      if (line.contains("The system is unsafe")) {
+        safe = Boolean.FALSE;
+      }
+      if (line.contains("The system is safe")) {
+        safe = Boolean.TRUE;
+      }      
+      line = reader.readLine();
+    }
+
+    reader.close();
+    if (safe == null) {
+      throw new RuntimeException("Problem with blast");
+    }
+    
+    return safe;
   }
   
   private DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> createCounterExample() {
@@ -178,6 +261,7 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
     
     Map<String , String> renaming;
     idMap = new HashMap<>();
+    inverseMap = new HashMap<>();
     pathMap = new HashMap<>();
     Map<String, Object> config = new HashMap<>();
     Map<Object, Integer> stateMap = new HashMap<>();
@@ -201,6 +285,7 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
       //System.out.println(mid.getName() + " = " + mid.getVal());
       methodIds.add(mid);
       idMap.put(a, ids);
+      inverseMap.put(ids, a);
       ids++;
 
       // parameters
@@ -229,10 +314,12 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
     for (ValuationEntry e : this.inputs.getInitialValuation().entries()) {
       gov.nasa.jpf.constraints.api.Variable v = e.getVariable();
       if (v.getName().startsWith("this.")) {
-        String name = v.getName().replace("this.", "this_");
+        String name = v.getName().replaceAll("\\.", "_");
         renaming.put(v.getName(), name);
         Variable var = new Variable(translateType(v.getType()), name, 
-                e.getValue().toString());
+                e.getValue().toString().
+                        replaceAll("true", "1").
+                        replaceAll("false", "0"));
         //System.out.println(var.getType() + " " + var.getName() + " = " + var.getVal() + ";");
         vars.add(var);
       }
@@ -311,7 +398,8 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
   }
    
   private String translateType(Type type) {
-    if (type.equals (BuiltinTypes.SINT32)) {
+    if (type.equals (BuiltinTypes.SINT32) ||
+            type.equals(BuiltinTypes.BOOL)) {
       return "int";
     }
     throw new IllegalArgumentException("Type not supported: " + type);

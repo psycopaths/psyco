@@ -20,7 +20,7 @@
  */
 package gov.nasa.jpf.psyco;
 
-import gov.nasa.constraints.solvers.smtinterpol.SMTInterpolSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
@@ -81,7 +81,8 @@ public class Psyco implements JPFShell {
             new ConstraintSolverFactory(this.config);
     
     ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
-    InterpolationSolver iSolver = new SMTInterpolSolver();   
+    InterpolationSolver iSolver = (InterpolationSolver) 
+            factory.createSolver("smtinterpol");   
     
     PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
     
@@ -120,7 +121,7 @@ public class Psyco implements JPFShell {
 //      eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
 //    }
   
-    eqtest = new ProgramAnalysisTest( (SummaryAlphabet)inputs );
+    eqtest = new ProgramAnalysisTest( (SummaryAlphabet)inputs, provider.getThreeValuedOracle() );
     
     InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
     MealyMachine model = gen.generateInterface();
