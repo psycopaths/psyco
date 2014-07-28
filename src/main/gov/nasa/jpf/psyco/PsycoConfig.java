@@ -34,15 +34,18 @@ import java.util.Collection;
  */
 public class PsycoConfig {
 
+  public static enum EqTestType {bfs, interpolation, blast}
+  
   private final Config config;
   private int maxDepth = -1;
   private boolean usePOR = false;
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
-  private boolean useInterpolation = false;
+  private EqTestType eqTestType = EqTestType.bfs;
   private TerminationStrategy termination = new NeverTerminate();
 
+  
   private final ConstraintSolver constraintSolver;
   private final InterpolationSolver interpolationSolver;
 
@@ -74,8 +77,9 @@ public class PsycoConfig {
     if (config.hasValue("psyco.por")) {
       usePOR = config.getBoolean("psyco.por");
     }
-    if (config.hasValue("psyco.interpolation")) {
-      useInterpolation = config.getBoolean("psyco.interpolation");
+    if (config.hasValue("psyco.eqtest")) {
+      eqTestType = config.getEnum("psyco.eqtest", 
+              EqTestType.values(), eqTestType.bfs);
     }  }
 
   /**
@@ -130,10 +134,10 @@ public class PsycoConfig {
   }
 
   /**
-   * @return the useInterpolation
+   * @return type of eq test to perform
    */
-  public boolean isUseInterpolation() {
-    return useInterpolation;
+  public EqTestType getEqTestType() {
+    return eqTestType;
   }
 
   /**

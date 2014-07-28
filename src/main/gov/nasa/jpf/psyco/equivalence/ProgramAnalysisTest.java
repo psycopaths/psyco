@@ -166,6 +166,7 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
 
       // rename file 
       Files.move(new File(tmpDir, "cex.java"), new File(tmpDir, "cex.c"));
+      System.out.println("Dir: " + tmpDir);
       
       // run blast
       boolean safe = runBlast(tmpDir);
@@ -173,7 +174,6 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
         return null;
       }
 
-      System.out.println("Dir: " + tmpDir);
       Word<SymbolicMethodSymbol> ce = Word.fromList(counterexample(tmpDir));
       
       DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ceQuery = 
@@ -293,7 +293,8 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
       int pcount = 1;
       for (ParamConfig pc : a.getConcolicMethodConfig().getParams()) {
         renaming.put("P" + pcount, "P" + pid);
-        Variable param = new Variable( pc.getType(), "P" + pid, null);
+        // FIXME: what about other types ???
+        Variable param = new Variable( "int", "P" + pid, null);
         //System.out.println(param.getType() + " " + param.getName() +  ";");
         pars.add(param);
         pcount++;
@@ -365,7 +366,9 @@ public class ProgramAnalysisTest implements SymbolicEquivalenceTest {
           for (Path p : summary.getOk()) {
 
             String post = asAssignments(p.getPostCondition());
-
+            if (summary.getOk().size() > 1) {
+              pre += "&& (" + sanitize(p.getPathCondition()) + " || " + assertErr + ")";
+            }
             Transition t = new Transition( pre, "" + idMap.get(a), 
                     assertErr, post, "" + stateMap.get(succ), "" + pathMap.get(p));
 

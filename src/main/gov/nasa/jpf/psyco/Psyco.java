@@ -109,20 +109,8 @@ public class Psyco implements JPFShell {
 
     DefaultOracleProvider provider = new DefaultOracleProvider(seOracle, inputs, pconf);
             
-    // TODO: this should be done by a provider too
-    SymbolicEquivalenceTest eqtest = null;
-//    eqtest = new InvarianceTest((SummaryAlphabet)inputs, iSolver, cSolver, 
-//            provider.getThreeValuedOracle(), pconf.getMaxDepth());
-//    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
-//      eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
-//              (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
-//              cSolver, iSolver, pconf.getTermination());
-//    } else {
-//      eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
-//    }
-  
-    eqtest = new ProgramAnalysisTest( (SummaryAlphabet)inputs, provider.getThreeValuedOracle() );
-    
+    SymbolicEquivalenceTest eqtest = provider.getEqTest();
+   
     InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
     MealyMachine model = gen.generateInterface();
     

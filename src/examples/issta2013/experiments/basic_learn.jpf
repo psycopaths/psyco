@@ -7,9 +7,11 @@ psyco.suffixes=true
 psyco.por=true
 psyco.depth=12
 
-psyco.interpolation=true
+#psyco.eqtest=bfs
+psyco.eqtest=interpolation
+#psyco.eqtest=blast
 
-symbolic.dp=NativeZ3
+symbolic.dp=z3
 symbolic.dp.z3.bitvectors=true
 
 #

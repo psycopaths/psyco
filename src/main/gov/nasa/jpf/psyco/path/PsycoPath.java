@@ -107,15 +107,8 @@ public class PsycoPath implements JPFShell {
 
     int sigma = inputs.size();
             
-    PathEquivalenceTest eqtest = null;
-    if (pconf.isUseInterpolation()) {
-//      eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
-//              (SummaryAlphabet)inputs, provider.getThreeValuedOracle(), 
-//              cSolver, iSolver, pconf.getTermination());
-      throw new IllegalStateException("unsupported");
-    } else {
-      eqtest = new IncreasingDepthExhaustiveTest(oracle, inputs, pconf);
-    }
+    PathEquivalenceTest eqtest;
+    eqtest = new IncreasingDepthExhaustiveTest(oracle, inputs, pconf);
     
     ModelGenerator gen = new ModelGenerator(oracle, eqtest, inputs);    
     MealyMachine model = gen.generateModel();
