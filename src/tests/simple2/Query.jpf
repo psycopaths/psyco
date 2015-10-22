@@ -1,0 +1,24 @@
+@using jpf-jdart
+
+target=simple2.Query
+
+classpath=${jpf-psyco}/build/examples
+sourcepath=${jpf-psyco}/src/examples
+yices.library.path=${jpf-jdart}/lib/libYices.so
+
+shell=jfuzz.JFuzz
+
+jpf.basedir=${jpf-home}
+jfuzz.time=3,3,0,0
+jfuzz.cache=jfuzz.cache.NameIndependentCache
+jfuzz.timing=false
+vm.insn_factory.class=gov.nasa.jpf.jdart.ConcolicInstructionFactory
+listener=jfuzz.ConcolicListener
+perturb.params=sequence
+perturb.sequence.class=jfuzz.Producer
+perturb.sequence.method=simple2.Query.sequence()
+symbolic.dp=yices
+symbolic.method=simple2.Query.sequence()
+symbolic.classes=simple2.ExampleAlphabet
+
+symbolic.assertions=simple2.ExampleAlphabet$TotallyPsyco
