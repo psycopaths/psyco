@@ -31,18 +31,8 @@
   <!-- get the jpf-core path properties -->
   <property file="${jpf-core}/jpf.properties"/>
 
-  <!-- get the jpf-learn path properties -->
-  <property file="${jpf-learnlib}/jpf.properties"/>
-
-  <!-- get the jpf-constraints path properties -->
-  <property file="${jpf-constraints}/jpf.properties"/>
-
   <!-- get the jpf-jdart path properties -->
   <property file="${jpf-jdart}/jpf.properties"/>
-
-  <!-- get the jpf-testing path properties -->
-  <property file="${jpf-testing}/jpf.properties"/>
-
 
   <!-- compiler settings -->
   <property name="src_level"     value="7"/>
@@ -65,18 +55,9 @@
     <!-- add in what we need from the core -->
     <pathelement path="${jpf-core.native_classpath}"/>
     
-    <!-- add in what we need from jpf-learn -->
-    <pathelement path="${jpf-learnlib.native_classpath}"/>
-
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>
     
-    <!-- add in what we need from jpf-constraints -->
-    <pathelement path="${jpf-constraints.native_classpath}"/>
-
-    <!-- add in what we need from jpf-testing -->
-    <pathelement path="${jpf-testing.native_classpath}"/>
-
   </path>
 
   <!-- init: common initialization -->
