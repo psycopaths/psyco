@@ -21,21 +21,22 @@
     NOTE: this file is local - it is never in the repository!
   -->
   <property file="local.properties"/>
-
+  <property environment="env"/>
   <!-- this is where we get the 'jpf.core' location from -->
-  <property file="${user.home}/.jpf/site.properties"/>
+  <!--<property file="${user.home}/.jpf/site.properties"/>-->
 
   <!-- if there is none, default to a 'jpf-core' peer dir -->
-  <property name="jpf-core" value = "../jpf-core"/>
+  <property name="jpf-core" value = "..\jpf-core"/>
+  <property name="jpf-jdart" value = "..\jdart"/>
 
   <!-- get the jpf-core path properties -->
-  <property file="${jpf-core}/jpf.properties"/>
+  <property file="${jpf-core}\jpf.properties"/>
 
   <!-- get the jpf-jdart path properties -->
-  <property file="${jpf-jdart}/jpf.properties"/>
+  <property file="${jpf-jdart}\jpf.properties"/>
 
   <!-- compiler settings -->
-  <property name="src_level"     value="7"/>
+  <property name="src_level"     value="8"/>
   <property name="debug"         value="on"/>
   <property name="deprecation"   value="on"/>
 
@@ -168,7 +169,7 @@
     <mkdir dir="build/examples" />
     <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
-           classpathref="lib.path"/>
+           classpathref="lib.path" encoding="UTF-8"/>
   </target>
 
   <target name="compile-examples" if="have_examples" depends="-init">
@@ -176,7 +177,7 @@
     <mkdir dir="build/examples" />
     <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
-           classpathref="lib.path"/>
+           classpathref="lib.path" encoding="UTF-8"/>
   </target>
 
 
@@ -240,6 +241,7 @@
   <target name="test" depends="build"
           description="compile and run core regression tests" if="have_tests">
 
+    <property name="junit.home" value="${env.JUNIT_HOME}"/>
     <condition property="junit.usefile">
       <!-- don't set if this is running from within an IDE that collects output -->
       <not>
@@ -257,7 +259,9 @@
         <pathelement location="build/tests"/>
         <pathelement location="build/classes"/>
         <pathelement location="build/annotations"/>
-
+        <fileset dir="${junit.home}">
+          <include name="**/*.jar"/>
+        </fileset> 
       </classpath>
 
       <batchtest todir="build/tests">
