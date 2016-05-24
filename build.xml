@@ -241,7 +241,8 @@
   <target name="test" depends="build"
           description="compile and run core regression tests" if="have_tests">
 
-    <property name="junit.home" value="${env.JUNIT_HOME}"/>
+    <!--<property name="junit.home" value="${env.JUNIT_HOME}"/>-->
+    <property name="junit.home" value="./lib/"/>
     <condition property="junit.usefile">
       <!-- don't set if this is running from within an IDE that collects output -->
       <not>
@@ -249,7 +250,7 @@
       </not>
     </condition>
     
-    <junit printsummary="on" showoutput="off" haltonfailure="yes" dir="${basedir}"
+    <junit printsummary="on" showoutput="yes" haltonfailure="yes" dir="${basedir}"
            fork="yes" forkmode="perTest" maxmemory="1024m" outputtoformatters="true">
       <formatter type="plain" usefile="${junit.usefile}"/>
 
