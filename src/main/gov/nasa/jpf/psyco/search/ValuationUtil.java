@@ -43,8 +43,17 @@ public class ValuationUtil {
     }
     return regionToReturn;
   }
-
   
+  public static Valuation difference(Valuation outterRegion, Valuation excludedRegion){
+    Valuation regionToReturn = new Valuation();
+    Collection<ValuationEntry<?>> statesOfOutterRegion = 
+            outterRegion.entries();
+    Collection<ValuationEntry<?>> statesOfExcludedRegion = 
+            excludedRegion.entries();
+    regionToReturn = checkPartialDisjunction(statesOfOutterRegion,
+            statesOfExcludedRegion, regionToReturn);
+    return regionToReturn;
+  }
   private static Valuation checkPartialDisjunction(
             Collection<ValuationEntry<?>> entriesToCheck,
             Collection<ValuationEntry<?>> possibleCollisionEntries,

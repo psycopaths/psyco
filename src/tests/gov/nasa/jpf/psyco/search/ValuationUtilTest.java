@@ -85,6 +85,19 @@ public class ValuationUtilTest {
     assertEquals(3*offset, testDisjunction.entries().size());
   }
   
+  @Test
+  public void valuationDifference(){
+    Valuation differenceResultA = ValuationUtil.difference(valuationA,
+            valuationB);
+    Valuation differenceResultB = ValuationUtil.difference(valuationB,
+            valuationA);
+    assertEquals(offset, differenceResultA.entries().size());
+    assertEquals(offset, differenceResultB.entries().size());
+    Valuation conjunction = ValuationUtil.conjunction(differenceResultA,
+            differenceResultB);
+    assertTrue(ValuationUtil.isEmpty(conjunction));
+  }
+  
   private void createVariableAndAddToValuation(Valuation valuation, int idAndValue){
     Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +idAndValue);
       valuation.setValue(var, idAndValue);
