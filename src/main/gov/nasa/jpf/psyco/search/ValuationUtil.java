@@ -10,6 +10,7 @@ import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -76,6 +77,32 @@ public class ValuationUtil {
     }
     return variablesInRegion;
   }
+  
+  public static Valuation rename(Valuation region, List<Variable<?>> oldNames, List<Variable<?>> newNames){
+    Valuation resultingRegion = new Valuation();
+    Set<Variable<?>> variablesToBeConsidered = convertToVariableSet(region);
+    for(int i = 0; i < oldNames.size(); i++){
+      Variable oldName = oldNames.get(i);
+      Variable newName = newNames.get(i);
+      renameAllVariableEntrys(region, resultingRegion, oldName, newName);
+      variablesToBeConsidered.remove(oldName);
+    }
+    for(Variable notYetConsidered: variablesToBeConsidered){
+      renameAllVariableEntrys(region, resultingRegion,
+              notYetConsidered, notYetConsidered);
+    }
+    return resultingRegion;
+  }
+  
+  private static void renameAllVariableEntrys(Valuation oldRegion,
+          Valuation newRegion, Variable oldName, Variable newName){
+    for(ValuationEntry entry: oldRegion.entries()){
+        if(entry.getVariable().equals(oldName)){
+          newRegion.setValue(newName, oldRegion.getValue(oldName));
+        }
+      }
+  }
+  
   private static Valuation checkPartialDisjunction(
             Collection<ValuationEntry<?>> entriesToCheck,
             Collection<ValuationEntry<?>> possibleCollisionEntries,

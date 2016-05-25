@@ -9,7 +9,9 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -132,6 +134,119 @@ public class ValuationUtilTest {
             ValuationUtil.convertToVariableSet(valuationUnderTest).size());
   }
   
+  @Test
+  public void valuationRenameOneEntryPerVariable(){
+    List<Variable<?>> toBeRenamed = new ArrayList<Variable<?>>();
+    List<Variable<?>> newVariableNames = new ArrayList<Variable<?>>();
+    List<Variable<?>> notToBeRenamed = new ArrayList<Variable<?>>();
+    Valuation regionToBeRenamed = new Valuation();
+    int ongoingCounter = 0;
+    int countNotRenamedVariables = 3;
+    int countRenamdeVariables = 3;
+    for(int i = ongoingCounter;
+            i < ongoingCounter + countNotRenamedVariables; i++){
+      Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +i);
+      regionToBeRenamed.setValue(var, i);
+      notToBeRenamed.add(var);
+    }
+    ongoingCounter += countNotRenamedVariables;
+    for(int i = ongoingCounter; 
+            i < ongoingCounter + countRenamdeVariables; i++){
+      Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +i);
+      regionToBeRenamed.setValue(var, i);
+      toBeRenamed.add(var);
+      Variable replacementVar = Variable.create(BuiltinTypes.SINT32,
+              "var_" + (i+200));
+      newVariableNames.add(replacementVar);
+    }
+    Valuation renamedRegion = ValuationUtil.rename(regionToBeRenamed,
+            toBeRenamed, newVariableNames);
+    Set<Variable<?>> renamedVariables = ValuationUtil.
+            convertToVariableSet(renamedRegion);
+    for(int i = 0; i < toBeRenamed.size(); i++){
+      Variable oldVariable = toBeRenamed.get(i);
+      assertFalse(renamedVariables.contains(oldVariable));
+      assertEquals(regionToBeRenamed.getValue(oldVariable),
+            renamedRegion.getValue(newVariableNames.get(i)));
+    }
+    for(Variable var: notToBeRenamed){
+      assertEquals(regionToBeRenamed.getValue(var),
+              renamedRegion.getValue(var));
+    }
+  }
+
+  @Test
+  public void valuationRenameTwoEntriesPerVariable(){
+    //Preparation for this partial test case
+    List<Variable<?>> toBeRenamed = new ArrayList<Variable<?>>();
+    List<Variable<?>> newVariableNames = new ArrayList<Variable<?>>();
+    List<Variable<?>> notToBeRenamed = new ArrayList<Variable<?>>();
+    Valuation regionToBeRenamed = new Valuation();
+    int ongoingCounter = 0;
+    int countNotRenamedVariables = 3;
+    int countRenamdeVariables = 3;
+    for(int i = ongoingCounter;
+            i < ongoingCounter + countNotRenamedVariables; i++){
+      Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +i);
+      regionToBeRenamed.setValue(var, i);
+      regionToBeRenamed.setValue(var, i*2);
+      notToBeRenamed.add(var);
+    }
+    ongoingCounter += countNotRenamedVariables;
+    for(int i = ongoingCounter; 
+            i < ongoingCounter + countRenamdeVariables; i++){
+      Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +i);
+      regionToBeRenamed.setValue(var, i);
+      regionToBeRenamed.setValue(var, i*2);
+      toBeRenamed.add(var);
+      Variable replacementVar = Variable.create(BuiltinTypes.SINT32,
+              "var_" + (i+200));
+      newVariableNames.add(replacementVar);
+    }
+    Valuation renamedRegion = ValuationUtil.rename(regionToBeRenamed,
+            toBeRenamed, newVariableNames);
+    
+    //Old variable Names are removed
+    Set<Variable<?>> renamedVariables = ValuationUtil.
+            convertToVariableSet(renamedRegion);
+    for(int i = 0; i < toBeRenamed.size(); i++){
+      Variable oldVariable = toBeRenamed.get(i);
+      assertFalse(renamedVariables.contains(oldVariable));
+    }
+    //Size has not changed
+    assertEquals(regionToBeRenamed.entries().size(),
+            renamedRegion.entries().size());
+    
+    //All entries containing the old Variable name exist 
+    //now with the new variable name.
+    checkThatAllValuationEntrysExist(regionToBeRenamed, renamedRegion,
+            toBeRenamed, newVariableNames);
+    
+    //Untouched entries still exist
+    checkThatAllValuationEntrysExist(regionToBeRenamed, renamedRegion,
+            notToBeRenamed, notToBeRenamed);
+  }
+  private void checkThatAllValuationEntrysExist(Valuation oldRegion,
+          Valuation newRegion, List<Variable<?>> oldVariables, List<Variable<?>> newVariables){
+    for(int i = 0; i < oldVariables.size(); i++){
+      Variable var = oldVariables.get(i);
+      for(ValuationEntry entry: oldRegion){
+        if(entry.getVariable().equals(var)){
+          assertTrue(entryExists(newRegion,
+                newVariables.get(i), entry.getValue()));
+        }
+      }
+    }
+  }
+  
+  private boolean entryExists(Valuation region, Variable var, Object value){
+    for(ValuationEntry entry: region.entries()){
+      if(entry.getValue() == value && entry.getVariable().equals(var)){
+        return true;
+      }
+    }
+    return false;
+  }
   private void createVariableAndAddToValuation(Valuation valuation, int idAndValue){
     Variable var = Variable.create(BuiltinTypes.SINT32, "var_" +idAndValue);
       valuation.setValue(var, idAndValue);
