@@ -9,6 +9,8 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -96,6 +98,38 @@ public class ValuationUtilTest {
     Valuation conjunction = ValuationUtil.conjunction(differenceResultA,
             differenceResultB);
     assertTrue(ValuationUtil.isEmpty(conjunction));
+  }
+  
+  @Test
+  public void valuationExists(){
+    Set<Variable<?>> subsetOfVariables = new HashSet<Variable<?>>();
+    int count = 0;
+    for(ValuationEntry entry: valuationA.entries()){
+      if(count == offset){
+        break;
+      }
+      subsetOfVariables.add(entry.getVariable());
+      count++;
+    }
+    Set<Variable<?>> existingSet= ValuationUtil.exists(valuationA,
+            subsetOfVariables);
+    assertEquals(offset, existingSet.size());
+  }
+  
+  @Test
+  public void convertValuationToVariableSet(){
+    Valuation valuationUnderTest = new Valuation();
+    Variable var1 = Variable.create(BuiltinTypes.SINT32, "var1");
+    Variable var2 = Variable.create(BuiltinTypes.SINT32, "var2");
+    Variable var3 = Variable.create(BuiltinTypes.SINT32, "var3");
+    assertEquals(0, 
+            ValuationUtil.convertToVariableSet(valuationUnderTest).size());
+    valuationUnderTest.setValue(var1, 1);
+    valuationUnderTest.setValue(var1, 2);
+    valuationUnderTest.setValue(var2, 3);
+    valuationUnderTest.setValue(var3, 0);
+    assertEquals(3, 
+            ValuationUtil.convertToVariableSet(valuationUnderTest).size());
   }
   
   private void createVariableAndAddToValuation(Valuation valuation, int idAndValue){

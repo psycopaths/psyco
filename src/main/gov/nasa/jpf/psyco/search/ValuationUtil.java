@@ -9,6 +9,8 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -53,6 +55,26 @@ public class ValuationUtil {
     regionToReturn = checkPartialDisjunction(statesOfOutterRegion,
             statesOfExcludedRegion, regionToReturn);
     return regionToReturn;
+  }
+  
+  public static Set<Variable<?>> exists(Valuation aRegion, Set<Variable<?>> subsetOfVariables){
+    Set<Variable<?>> variablesNotInTheSubset = new HashSet<Variable<?>>();
+    for(ValuationEntry entry: aRegion){
+      Variable anyRegionVariable = entry.getVariable();
+      if(subsetOfVariables.contains(anyRegionVariable)){
+        continue;
+      }
+      variablesNotInTheSubset.add(anyRegionVariable);
+    }
+    return variablesNotInTheSubset;
+  }
+  
+  public static Set<Variable<?>> convertToVariableSet(Valuation region){
+    Set<Variable<?>> variablesInRegion = new HashSet<Variable<?>>();
+    for(ValuationEntry regionEntry: region){
+      variablesInRegion.add(regionEntry.getVariable());
+    }
+    return variablesInRegion;
   }
   private static Valuation checkPartialDisjunction(
             Collection<ValuationEntry<?>> entriesToCheck,
