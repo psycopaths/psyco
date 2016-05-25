@@ -30,6 +30,21 @@ public class ValuationUtil {
     return regionToReturn;
   }
   
+  public static Valuation conjunction(Valuation regionA, Valuation regionB){
+    Valuation regionToReturn = new Valuation();
+    Collection<ValuationEntry<?>> statesOfRegionA = regionA.entries();
+    Collection<ValuationEntry<?>> statesOfRegionB = regionB.entries();
+    for(ValuationEntry entry: statesOfRegionA){
+      ValuationEntry correspondingState = checkForCorrespondingState(entry,
+              statesOfRegionB);
+      if(correspondingState != null){
+        regionToReturn.addEntry(entry);
+      }
+    }
+    return regionToReturn;
+  }
+
+  
   private static Valuation checkPartialDisjunction(
             Collection<ValuationEntry<?>> entriesToCheck,
             Collection<ValuationEntry<?>> possibleCollisionEntries,
