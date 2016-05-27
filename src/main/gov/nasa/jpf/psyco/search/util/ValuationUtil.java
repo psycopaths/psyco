@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search;
+package gov.nasa.jpf.psyco.search.util;
 
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
@@ -58,16 +58,17 @@ public class ValuationUtil {
     return regionToReturn;
   }
   
-  public static Set<Variable<?>> exists(Valuation aRegion, Set<Variable<?>> subsetOfVariables){
-    Set<Variable<?>> variablesNotInTheSubset = new HashSet<Variable<?>>();
+  public static Valuation exists(Valuation aRegion, Set<Variable<?>> subsetOfVariables){
+    Valuation regionOfVariablesNotInTheSubset = new Valuation();
     for(ValuationEntry entry: aRegion){
       Variable anyRegionVariable = entry.getVariable();
       if(subsetOfVariables.contains(anyRegionVariable)){
         continue;
       }
-      variablesNotInTheSubset.add(anyRegionVariable);
+      regionOfVariablesNotInTheSubset.addEntry(entry);
     }
-    return variablesNotInTheSubset;
+    
+    return regionOfVariablesNotInTheSubset;
   }
   
   public static Set<Variable<?>> convertToVariableSet(Valuation region){

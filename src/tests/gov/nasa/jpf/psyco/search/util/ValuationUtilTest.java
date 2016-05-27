@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search;
+package gov.nasa.jpf.psyco.search.util;
 
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
@@ -65,6 +65,8 @@ public class ValuationUtilTest {
     }
     disjunctedResult = ValuationUtil.disjunction(valuationA, valuationB);
     assertTrue(ValuationUtil.isEmpty(disjunctedResult));
+    disjunctedResult = ValuationUtil.disjunction(valuationA, valuationA);
+    assertTrue(ValuationUtil.isEmpty(disjunctedResult));
   }
   
   @Test
@@ -73,6 +75,8 @@ public class ValuationUtilTest {
             valuationB);
     assertFalse(ValuationUtil.isEmpty(conjunctionResult));
     assertEquals(offset, conjunctionResult.entries().size());
+    conjunctionResult = ValuationUtil.conjunction(valuationA, valuationA);
+    assertFalse(ValuationUtil.isEmpty(conjunctionResult));
   }
   
   @Test
@@ -113,9 +117,9 @@ public class ValuationUtilTest {
       subsetOfVariables.add(entry.getVariable());
       count++;
     }
-    Set<Variable<?>> existingSet= ValuationUtil.exists(valuationA,
+    Valuation existingRegion= ValuationUtil.exists(valuationA,
             subsetOfVariables);
-    assertEquals(offset, existingSet.size());
+    assertEquals(offset, existingRegion.entries().size());
   }
   
   @Test
