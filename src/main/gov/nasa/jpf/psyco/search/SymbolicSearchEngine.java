@@ -10,7 +10,9 @@ import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
+import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
 import gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil;
+import gov.nasa.jpf.psyco.search.util.ValuationRegionUtil;
 import gov.nasa.jpf.psyco.search.util.ValuationUtil;
 import gov.nasa.jpf.solver.SolverWrapper;
 import java.io.IOException;
@@ -41,49 +43,23 @@ import java.util.logging.Logger;
  */
 public class SymbolicSearchEngine {
   
-  public static boolean symbolicBreadthFirstSearchReachability(
+  public static ValuationRegion enumerativBreadthFirstSearch(
           List<Path> transitionSystem, Valuation init,
-          Valuation propertiRegionQ, ConstraintSolver solver){
-    Valuation reachableRegion = init;
-    Valuation newRegion = init;
-    
-      System.out.println("gov.nasa.jpf.psyco.search.SymbolicSearchEngine.symbolicBreadthFirstSearchReachability()");
-      System.out.println("start:");
-      try {
-        reachableRegion.print(System.out);
-        System.out.println();
-      } catch (IOException ex) {
-        Logger.getLogger(SymbolicSearchEngine.class.getName()).log(Level.SEVERE, null, ex);
-      }
+          ConstraintSolver solver){
+    ValuationRegion reachableRegion = new ValuationRegion(init);
+    ValuationRegion newRegion = new ValuationRegion(init);
+    ValuationRegionUtil regionUtil = new ValuationRegionUtil();
+    SymbolicSearchUtil<ValuationRegion, ValuationRegionUtil> searchUtil = 
+            new SymbolicSearchUtil<> (regionUtil);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
-    while(!ValuationUtil.isEmpty(newRegion)){
-//      Valuation conjunctionNewAndPropertiQ = 
-//        ValuationUtil.conjunction(newRegion, propertiRegionQ);
-      Valuation conjunctionNewAndPropertiQ = newRegion;
-      if(ValuationUtil.isEmpty(conjunctionNewAndPropertiQ)){
-        return true;
-      }
-      Valuation nextReachableStates = SymbolicSearchUtil.post(newRegion,
-              transitionSystem, solver);
-      Expression result = ExpressionUtil.valuationToExpression(nextReachableStates);
-      newRegion = ValuationUtil.difference(nextReachableStates,
+    while(!newRegion.isEmpty()){
+      ValuationRegion nextReachableStates = searchUtil.post(newRegion,
+              transitionSystem, solver, new ValuationRegion());
+      newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion);
-      reachableRegion = ValuationUtil.disjunction(reachableRegion, newRegion);
-      System.out.println("gov.nasa.jpf.psyco.search.SymbolicSearchEngine.symbolicBreadthFirstSearchReachability()");
-      System.out.println("result:");
-      try {
-      System.out.println("new:");
-      newRegion.print(System.out);
-      System.out.println();
-      System.out.println("reachable:");
-      reachableRegion.print(System.out);
-      System.out.println();
-      System.out.flush();
-    } catch (IOException ex) {
-      Logger.getLogger(SymbolicSearchEngine.class.getName()).log(Level.SEVERE, null, ex);
+      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
     }
-    }
-    return false;
+    return reachableRegion;
   }
 }

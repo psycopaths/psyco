@@ -5,7 +5,9 @@
  */
 package gov.nasa.jpf.psyco.search.jConstraintsExtension;
 
+import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.constraints.util.AbstractPrintable;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +16,7 @@ import java.util.Set;
  * @author mmuesly
  * @param <T> Region Type. Currently it should be Valuation or Expressiation
  */
-public abstract class Region<T> {
+public abstract class Region<T> extends AbstractPrintable{
   
   public abstract void add(T toAdd);
   
@@ -22,5 +24,8 @@ public abstract class Region<T> {
   
   public abstract Set<T> getValuesForEntry(Variable entry);
   
-  public abstract boolean isEmtpy();
+  public abstract boolean isEmpty();
+  
+  public abstract Expression toExpression();
+  
 }

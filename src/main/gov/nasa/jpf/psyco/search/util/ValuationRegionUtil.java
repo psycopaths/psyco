@@ -9,6 +9,7 @@ import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.search.jConstraintsExtension.Region;
 import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,12 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
   public ValuationRegion disjunction(ValuationRegion regionA,
           ValuationRegion regionB) {
     ValuationRegion resultDisjuncted;
+    if(regionA.isEmpty()){
+      return regionB;
+    }
+    if(regionB.isEmpty()){
+      return regionA;
+    }
     resultDisjuncted = new ValuationRegion();
     resultDisjuncted= checkDisjunctionOneDirection(regionA, regionB,
             resultDisjuncted);
@@ -118,9 +125,13 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
         resultDisjuncted.add(entry);
       }
       for(ValuationEntry counterPart: counterParts){
+//        System.out.println("gov.nasa.jpf.psyco.search.util.ValuationRegionUtil.checkDisjunctionOneDirection()");
+//        System.out.println(counterPart.getVariable().getName() +": " + counterPart.getValue().toString());
+//        System.out.println(entry.getVariable().getName() +": " + entry.getValue().toString());
         if(counterPart.equals(entry)){
           continue outterLoop;
         }
+        resultDisjuncted.add(entry);
       }
     }
     return resultDisjuncted;

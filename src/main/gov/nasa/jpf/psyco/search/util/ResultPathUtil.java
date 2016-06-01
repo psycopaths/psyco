@@ -12,6 +12,7 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult;
+import gov.nasa.jpf.jdart.constraints.PathResult.ErrorResult;
 import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;
 import gov.nasa.jpf.psyco.search.Transition;
@@ -25,10 +26,13 @@ import java.util.logging.Logger;
  */
 public class ResultPathUtil {
   
-  public static Transition convertPathToTransition(Path path){
+  public static Transition convertPathToTransition(Path path, int depth){
     PathResult pathResult = path.getPathResult();
     if(pathResult instanceof OkResult){
       return convertOkPathToTransition(path);
+    }
+    if(pathResult instanceof ErrorResult){
+      return convertErrorPathToTransition(path, depth);
     }
     return null;
   }
@@ -54,6 +58,15 @@ public class ResultPathUtil {
               resultingExpression);
     }
     transition.setExpresion(transitionExpression);
+    return transition;
+  }
+
+  private static Transition convertErrorPathToTransition(Path path, int depth) {
+    Transition transition = new Transition();
+    ErrorResult result = path.getErrorResult();
+    Expression transitionExpression = path.getPathCondition();
+    transition.setExpresion(transitionExpression);
+    transition.addError(result.getExceptionClass(), depth);
     return transition;
   }
 }

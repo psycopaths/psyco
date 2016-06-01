@@ -39,6 +39,7 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 //import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
+import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.solver.SolverWrapper;
 
@@ -95,11 +96,14 @@ public class SearchShell implements JPFShell {
       System.exit(1);
     }
     logger.info("Start search");
-    SymbolicSearchEngine.symbolicBreadthFirstSearchReachability(
+    ValuationRegion searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
             convertTransitionPaths(store), 
             store.getInitialValuation(),
-            null, solver);
-    logger.info("Search done");
+            solver);
+    logger.info("Search done:");
+    StringBuilder searchResultString = new StringBuilder();
+    searchResult.print(searchResultString);
+    logger.info(searchResultString.toString());
 //    searchEngine.setInitalState(store.getInitialValuation());
 //    addTransitionPaths(store, searchEngine);
 //    StringBuilder symbolicSearchBuilder = new StringBuilder();

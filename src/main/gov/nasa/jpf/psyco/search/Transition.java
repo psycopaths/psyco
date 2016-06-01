@@ -22,13 +22,14 @@ public class Transition {
   private Expression expression;
   private Valuation transitionResult;
   private boolean success;
-
+  private StringBuilder reachedErrors;
   public Transition(){
     oldNames = new ArrayList<Variable<?>>();
     primeNames = new ArrayList<Variable<?>>();
     expression = null;
     transitionResult = null;
     success = false;
+    reachedErrors = new StringBuilder();
   }
 
   public Valuation getTransitionResult() {
@@ -76,4 +77,14 @@ public class Transition {
     return success;
   }
   
+  public void addError(String errorName, int depth){
+    reachedErrors.append("error in depth: ");
+    reachedErrors.append(depth);
+    reachedErrors.append(" error name: ");
+    reachedErrors.append(errorName);
+    reachedErrors.append("\n");
+  }
+  public String getErrors(){
+    return reachedErrors.toString();
+  }
 }
