@@ -1,4 +1,4 @@
-shell=gov.nasa.jpf.psyco.search.PsycoSearch
+shell=gov.nasa.jpf.psyco.search.SearchShell
 
 psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
 psyco.summaries=true
@@ -21,7 +21,7 @@ symbolic.dp.z3.bitvectors=true
 #log.severe=constraints,jdart
 #log.info=psyco
 log.severe=constraints
-log.severe=jdart
+log.config=jdart
 log.fine=psyco
 
 # avoid statistics during learning process by enabling the following two lines

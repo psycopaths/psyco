@@ -16,6 +16,9 @@ public class FirstExample {
   @Symbolic("true")
   private int x = 0;
   
+//  public FirstExample(){
+//  }
+  
   public void m1(){
     if(x<5){
       x = x + 1;

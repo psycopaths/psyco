@@ -26,6 +26,10 @@ public class SolverWrapper extends ConstraintSolver {
   public SolverWrapper(ConstraintSolver back) {
     this.back = back;
   }
+
+  public SolverWrapper() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
   
   @Override
   public Result solve(Expression<Boolean> exprsn, Valuation vltn) {
