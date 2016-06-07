@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search.util;
 
+import gov.nasa.jpf.psyco.search.region.util.RegionUtil;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
@@ -16,7 +17,7 @@ import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.search.Transition;
 import gov.nasa.jpf.psyco.search.collections.VariableRenamingMap;
-import gov.nasa.jpf.psyco.search.jConstraintsExtension.Region;
+import gov.nasa.jpf.psyco.search.region.Region;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ import java.util.Set;
  *
  * @author mmuesly
  */
-public class SymbolicSearchUtil<S extends Region, T extends RegionUtil<S>>{
+public class EnumerativSearchUtil<S extends Region<ValuationEntry>, T extends RegionUtil<S>>{
   private T regionUtil;
   int depth = 0;
-  public SymbolicSearchUtil(T passedRegionUtil){
+  public EnumerativSearchUtil(T passedRegionUtil){
     regionUtil = passedRegionUtil;
   }
   public S post(S newRegion, List<Path> transitionSystem,

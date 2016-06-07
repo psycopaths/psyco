@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.util;
+package gov.nasa.jpf.psyco.search.region.util;
 
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
-import gov.nasa.jpf.psyco.search.jConstraintsExtension.Region;
-import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
+import gov.nasa.jpf.psyco.search.region.Region;
+import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;

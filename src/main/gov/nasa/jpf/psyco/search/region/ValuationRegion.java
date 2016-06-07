@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.jConstraintsExtension;
+package gov.nasa.jpf.psyco.search.region;
 
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
@@ -17,9 +17,7 @@ import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.types.Type;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,53 +25,12 @@ import java.util.Set;
  * @author mmuesly
  */
 public class ValuationRegion extends Region<ValuationEntry>{
-  private Set<ValuationEntry> region;
-
   public ValuationRegion(){
-    region = new HashSet<>();
+    super();
   }
 
   public ValuationRegion(Valuation aValuation){
-    region = new HashSet<>();
-    for(ValuationEntry entry: aValuation.entries()){
-      region.add(entry);
-    }
-  }
-  @Override
-  public void add(ValuationEntry toAdd){
-    region.add(toAdd);
-  }
-
-  @Override
-  public List<ValuationEntry> getRegionEntries() {
-    return new ArrayList<>(region);
-  }
-
-  @Override
-  public Set<ValuationEntry> getValuesForEntry(Variable entry) {
-    Set<ValuationEntry> result = new HashSet<>();
-    for(ValuationEntry currentEntry: region){
-      if(currentEntry.getVariable().equals(entry)){
-        result.add(currentEntry);
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return region.isEmpty();
-  }
-
-  @Override
-  public void print(Appendable a) throws IOException {
-    for(ValuationEntry entry: region){
-      //a.append("This Region contains the following var: values :\n");
-      a.append(entry.getVariable().getName());
-      a.append(": ");
-      a.append(entry.getValue().toString());
-      a.append("\n");
-    }
+    super(aValuation);
   }
 
   /**
@@ -104,6 +61,13 @@ public class ValuationRegion extends Region<ValuationEntry>{
     result = (result == null) ? newExpr : ExpressionUtil.and(newExpr, result);
     } 
     return result;
+  }
+
+  @Override
+  protected void setInitValuation(Valuation initValue) {
+    for(ValuationEntry entry: initValue){
+      add(entry);
+    }
   }
 
 }
