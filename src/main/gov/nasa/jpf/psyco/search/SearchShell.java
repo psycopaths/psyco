@@ -27,18 +27,12 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.jdart.summaries.MethodSummary;
-import gov.nasa.jpf.jdart.summaries.SummaryConfig;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 //import gov.nasa.jpf.psyco.InterfaceGenerator;
 //import gov.nasa.jpf.psyco.OracleProvider;
 import gov.nasa.jpf.psyco.PsycoConfig;
 //import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
-import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
-//import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
-//import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
-//import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
-import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
-import gov.nasa.jpf.psyco.oracles.JDartOracle;
+import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.solver.SolverWrapper;
@@ -96,7 +90,7 @@ public class SearchShell implements JPFShell {
       System.exit(1);
     }
     logger.info("Start search");
-    ValuationRegion searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
+    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
             convertTransitionPaths(store), 
             store.getInitialValuation(),
             solver);
@@ -172,7 +166,7 @@ public class SearchShell implements JPFShell {
 //    }
 //  }
   private List<Path> convertTransitionPaths(SummaryStore store) {
-    List<Path> paths = new ArrayList<Path>();
+    List<Path> paths = new ArrayList<>();
     
     Set<String> keys = store.getConcolicMethodIds();
     for(String id: keys){

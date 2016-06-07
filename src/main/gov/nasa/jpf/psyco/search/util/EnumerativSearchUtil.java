@@ -16,6 +16,7 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.VariableRenamingMap;
 import gov.nasa.jpf.psyco.search.region.Region;
 import gov.nasa.jpf.util.JPFLogger;
@@ -26,13 +27,14 @@ import java.util.Set;
  *
  * @author mmuesly
  */
-public class EnumerativSearchUtil<S extends Region<ValuationEntry>, T extends RegionUtil<S>>{
+public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
+        T extends RegionUtil<S>> implements SearchUtil<S>{
   private T regionUtil;
   int depth = 0;
   public EnumerativSearchUtil(T passedRegionUtil){
     regionUtil = passedRegionUtil;
   }
-  public S post(S newRegion, List<Path> transitionSystem,
+  public IterationImage<S> post(S newRegion, List<Path> transitionSystem,
           ConstraintSolver solver, S resultRegion) {
     Set<Variable<?>> variablesInPreviousState = 
         regionUtil.convertToVariableSet(newRegion);
@@ -46,8 +48,10 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>, T extends Re
             convertTransitionsToVariableRenmaingMap(newStates);
     resultingStates = regionUtil.rename(existingRegion, 
             renamings.getPrimeNames(), renamings.getOldNames());
+    IterationImage<S> result = new IterationImage<>(resultingStates);
+    result.setDepth(depth);
     depth++;
-    return resultingStates;
+    return result;
   }
 
   private List<Transition> applyIterationOfTheTransitionSystem(
