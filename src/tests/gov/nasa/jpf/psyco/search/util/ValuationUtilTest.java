@@ -9,6 +9,7 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
+import gov.nasa.jpf.psyco.search.region.util.ValuationUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

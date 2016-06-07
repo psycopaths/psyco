@@ -10,10 +10,10 @@ import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
-import gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil;
-import gov.nasa.jpf.psyco.search.util.ValuationRegionUtil;
-import gov.nasa.jpf.psyco.search.util.ValuationUtil;
+import gov.nasa.jpf.psyco.search.region.ValuationRegion;
+import gov.nasa.jpf.psyco.search.util.EnumerativSearchUtil;
+import gov.nasa.jpf.psyco.search.region.util.ValuationRegionUtil;
+import gov.nasa.jpf.psyco.search.region.util.ValuationUtil;
 import gov.nasa.jpf.solver.SolverWrapper;
 import java.io.IOException;
 import java.util.List;
@@ -49,8 +49,8 @@ public class SymbolicSearchEngine {
     ValuationRegion reachableRegion = new ValuationRegion(init);
     ValuationRegion newRegion = new ValuationRegion(init);
     ValuationRegionUtil regionUtil = new ValuationRegionUtil();
-    SymbolicSearchUtil<ValuationRegion, ValuationRegionUtil> searchUtil = 
-            new SymbolicSearchUtil<> (regionUtil);
+    EnumerativSearchUtil<ValuationRegion, ValuationRegionUtil> searchUtil = 
+            new EnumerativSearchUtil<> (regionUtil);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
     while(!newRegion.isEmpty()){

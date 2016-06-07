@@ -39,7 +39,7 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 //import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
-import gov.nasa.jpf.psyco.search.jConstraintsExtension.ValuationRegion;
+import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.solver.SolverWrapper;
 
