@@ -57,7 +57,7 @@ public class ExpressionRegion extends Region<SymbolicEntry> {
   public Expression toExpression() {
     Expression<Boolean> expr = null;
     for(SymbolicEntry entry: region){
-      expr = expr != null ? ExpressionUtil.and(expr, entry.getValue()):
+      expr = expr != null ? ExpressionUtil.or(expr, entry.getValue()):
               entry.getValue();
     }
     return expr;

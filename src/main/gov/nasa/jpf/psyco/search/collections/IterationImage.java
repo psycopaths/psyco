@@ -57,20 +57,23 @@ public class IterationImage<R extends Region> {
   public StringBuilder getErrors(){
     return errors;
   }
+  public void setErrors(StringBuilder errors){
+    this.errors = errors;
+  }
   
   public void addError(String error, int depth){
     String errorString = "In :" + depth + " reached the error: " +error +"\n";
     errors.append(errorString);
   }
 
-  public void print(StringBuilder searchResultString) {
+  public void print(Appendable searchResultString) throws IOException {
     searchResultString.append("This is the iteration image of depth: ");
-    searchResultString.append(depth);
+    searchResultString.append(Integer.toString(depth));
     searchResultString.append("\n");
     searchResultString.append(
             "In case this iteration image is the search result:\n");
     searchResultString.append("A good choice for k in Psyco would be k = ");
-    searchResultString.append(depth);
+    searchResultString.append(Integer.toString(depth));
     searchResultString.append("\n");
     searchResultString.append("The reachable states are:\n");
     try {

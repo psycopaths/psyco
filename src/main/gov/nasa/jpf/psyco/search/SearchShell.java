@@ -33,6 +33,7 @@ import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
 //import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
+import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.solver.SolverWrapper;
@@ -90,10 +91,15 @@ public class SearchShell implements JPFShell {
       System.exit(1);
     }
     logger.info("Start search");
-    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
+    IterationImage<ExpressionRegion> searchResult =
+            SymbolicSearchEngine.symbolicBreadthFirstSearch(
             convertTransitionPaths(store), 
             store.getInitialValuation(),
             solver);
+//    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
+//            convertTransitionPaths(store), 
+//            store.getInitialValuation(),
+//            solver);
     logger.info("Search done:");
     StringBuilder searchResultString = new StringBuilder();
     searchResult.print(searchResultString);

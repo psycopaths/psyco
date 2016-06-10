@@ -16,6 +16,7 @@ import java.util.List;
  * @author mmuesly
  */
 public interface SearchUtil<T extends Region<?>> {
-  public IterationImage<T> post(T newRegion, List<Path> transitionSystem,
-          ConstraintSolver solver, T resultRegion);
+   public IterationImage<T> post(T newRegion, List<Path> transitionSystem,
+          ConstraintSolver solver);
+
 }

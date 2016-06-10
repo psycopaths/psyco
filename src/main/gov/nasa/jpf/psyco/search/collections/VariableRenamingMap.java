@@ -51,9 +51,14 @@ public class VariableRenamingMap extends HashMap{
   }
 
   public void convertMapToLists(){
-    for(Object key: keySet()){
-      oldNames.add((Variable) key);
-      newNames.add((Variable) get(key));
+    if(updated = true){
+      oldNames = new ArrayList<>();
+      newNames = new ArrayList<>();
+      for(Object key: keySet()){
+        oldNames.add((Variable) key);
+        newNames.add((Variable) get(key));
+      }
+      updated = false;
     }
   }
 

@@ -35,13 +35,13 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
     regionUtil = passedRegionUtil;
   }
   public IterationImage<S> post(S newRegion, List<Path> transitionSystem,
-          ConstraintSolver solver, S resultRegion) {
+          ConstraintSolver solver) {
     Set<Variable<?>> variablesInPreviousState = 
         regionUtil.convertToVariableSet(newRegion);
     List<Transition> newStates = applyIterationOfTheTransitionSystem(
             newRegion, transitionSystem, solver);
-    S resultingStates = mergeTransitionsToNewState(newStates, resultRegion);
-    
+    S resultingStates = mergeTransitionsToNewState(newStates);
+    StringBuilder errors = putErrorsTogether(newStates);
     S existingRegion = regionUtil.exists(resultingStates,
               variablesInPreviousState);
     VariableRenamingMap renamings = 
@@ -50,6 +50,7 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
             renamings.getPrimeNames(), renamings.getOldNames());
     IterationImage<S> result = new IterationImage<>(resultingStates);
     result.setDepth(depth);
+    result.setErrors(errors);
     depth++;
     return result;
   }
@@ -108,8 +109,8 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
 //      return ExpressionUtil.or(one, two);
 //  }
   
-  private S mergeTransitionsToNewState(List<Transition> transitions,
-          S resultState){
+  private S mergeTransitionsToNewState(List<Transition> transitions){
+    S resultState = regionUtil.createRegion();
     if(transitions.isEmpty()){
       return resultState;
     }
@@ -128,5 +129,13 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
       renamings.addRenamingsOfTransition(transition);
     }
     return renamings;
+  }
+
+  private StringBuilder putErrorsTogether(List<Transition> transitions) {
+    StringBuilder reachedErrors = new StringBuilder();
+    for(Transition transition: transitions){
+      reachedErrors.append(transition.getErrors());
+    }
+    return reachedErrors;
   }
 }

@@ -10,6 +10,7 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
+import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import gov.nasa.jpf.psyco.search.region.util.ExpressionRegionUtil;
 import gov.nasa.jpf.psyco.search.util.EnumerativSearchUtil;
@@ -40,23 +41,31 @@ import java.util.List;
  */
 public class SymbolicSearchEngine {
   
-  public static ExpressionRegion symbolicBreadthFirstSearch(
+  public static IterationImage<ExpressionRegion> symbolicBreadthFirstSearch(
           List<Path> transitionSystem, Valuation init,
           ConstraintSolver solver){
     ExpressionRegion reachableRegion = new ExpressionRegion(init);
     ExpressionRegion newRegion = new ExpressionRegion(init);
     ExpressionRegionUtil regionUtil = new ExpressionRegionUtil();
     SymbolicSearchUtil<ExpressionRegion, ExpressionRegionUtil> searchUtil = 
-            new SymbolicSearchUtil();
+            new SymbolicSearchUtil(new ExpressionRegionUtil());
+    int currentDepth = 0;
+    StringBuilder reachedErrors = new StringBuilder();
     while(!newRegion.isEmpty()){
       IterationImage<ExpressionRegion> newImage = searchUtil.post(newRegion,
-              transitionSystem, solver, new ExpressionRegion());
+              transitionSystem, solver);
       ExpressionRegion nextReachableStates = newImage.getReachableStates();
+      currentDepth = newImage.getDepth();
+      reachedErrors.append(newImage.getErrors());
       newRegion = regionUtil.difference(nextReachableStates,
-              reachableRegion);
-      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+              reachableRegion, solver);
+//      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+      for(SymbolicEntry entry: newRegion.getRegionEntries()){
+        reachableRegion.add(entry);
+      }
     }
-    return reachableRegion;
+    return new IterationImage<ExpressionRegion>(reachableRegion,
+            reachedErrors,currentDepth);
   }
   
   public static IterationImage<ValuationRegion> enumerativBreadthFirstSearch(
@@ -73,7 +82,7 @@ public class SymbolicSearchEngine {
     StringBuilder reachedErrors = new StringBuilder();
     while(!newRegion.isEmpty()){
       IterationImage<ValuationRegion> imageResult = searchUtil.post(newRegion,
-              transitionSystem, solver, new ValuationRegion());
+              transitionSystem, solver);
       currentDepth = imageResult.getDepth();
       reachedErrors.append(imageResult.getErrors());
       newRegion = regionUtil.difference(imageResult.getReachableStates(),

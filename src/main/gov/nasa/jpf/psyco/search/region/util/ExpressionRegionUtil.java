@@ -5,6 +5,8 @@
  */
 package gov.nasa.jpf.psyco.search.region.util;
 
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.LogicalOperator;
@@ -68,23 +70,32 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
     return connectRegionsLogical(LogicalOperator.AND, regionA, regionB);
   }
 
-  @Override
   public ExpressionRegion difference(ExpressionRegion outterRegion,
-          ExpressionRegion excludedRegion) {
-    for(SymbolicEntry entry: excludedRegion.getRegionEntries()){
-      Expression value = entry.getValue();
-      value = new Negation(value);
-      entry.setValue(value);
+          ExpressionRegion excludedRegion, ConstraintSolver solver) {
+//    for(SymbolicEntry entry: excludedRegion.getRegionEntries()){
+//      Expression value = entry.getValue();
+//      value = new Negation(value);
+//      entry.setValue(value);
+//    }
+//    return connectRegionsLogical(LogicalOperator.AND,
+//            outterRegion, excludedRegion);
+    ExpressionRegion result = new ExpressionRegion();
+    Expression notRegion = new Negation(excludedRegion.toExpression());
+    for(SymbolicEntry entry: outterRegion.getRegionEntries()){
+      Expression testDiffState = ExpressionUtil.or(entry.getValue(), notRegion);
+      Result rs = solver.isSatisfiable(testDiffState);
+      if(rs == Result.SAT){
+        result.add(entry);
+      }
     }
-    return connectRegionsLogical(LogicalOperator.AND,
-            outterRegion, excludedRegion);
+    return result;
   }
 
   @Override
   public ExpressionRegion exists(ExpressionRegion aRegion, Set<Variable<?>> subsetOfVariables) {
     ExpressionRegion resultingRegion = new ExpressionRegion();
     for(SymbolicEntry entry: aRegion.getRegionEntries()){
-      if(subsetOfVariables.contains(entry.getVariable())){
+      if(entry != null && entry.getVariable() != null && subsetOfVariables != null && subsetOfVariables.contains(entry.getVariable())){
         continue;
       }
       resultingRegion.add(entry);
@@ -137,5 +148,14 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
         }
       }
     return newRegion;
+  }
+  
+  public ExpressionRegion createRegion(){
+    return new ExpressionRegion();
+  }
+
+  @Override
+  public ExpressionRegion difference(ExpressionRegion outterRegion, ExpressionRegion excludedRegion) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

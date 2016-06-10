@@ -7,10 +7,13 @@ package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;
+import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -20,9 +23,12 @@ public class Transition {
   private List<Variable<?>> oldNames;
   private List<Variable<?>> primeNames;
   private Expression expression;
+  private SymbolicEntry newState;
+
   private Valuation transitionResult;
   private boolean success;
   private StringBuilder reachedErrors;
+  
   public Transition(){
     oldNames = new ArrayList<Variable<?>>();
     primeNames = new ArrayList<Variable<?>>();
@@ -78,13 +84,24 @@ public class Transition {
   }
   
   public void addError(String errorName, int depth){
-    reachedErrors.append("error in depth: ");
-    reachedErrors.append(depth);
-    reachedErrors.append(" error name: ");
-    reachedErrors.append(errorName);
-    reachedErrors.append("\n");
+    String errorString = "In :" + depth 
+            + " reached the error: " +errorName +"\n";
+    reachedErrors.append(errorString);
+
   }
-  public String getErrors(){
+  public String getErrorsAsString(){
     return reachedErrors.toString();
+  }
+
+  public StringBuilder getErrors(){
+    return reachedErrors;
+  }
+
+  public SymbolicEntry getNewState() {
+    return newState;
+  }
+
+  public void setNewState(SymbolicEntry newState) {
+    this.newState = newState;
   }
 }

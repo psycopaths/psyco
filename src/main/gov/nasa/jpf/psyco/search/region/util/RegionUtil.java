@@ -33,4 +33,6 @@ public interface RegionUtil<T extends Region> {
   public Set<Variable<?>> convertToVariableSet(T region);
 
   public T rename(T region, List<Variable<?>> oldNames, List<Variable<?>> newNames);
+  
+  public T createRegion();
 }

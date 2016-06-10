@@ -136,4 +136,8 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
     }
     return resultDisjuncted;
   }
+  
+  public ValuationRegion createRegion(){
+    return new ValuationRegion();
+  }
 }

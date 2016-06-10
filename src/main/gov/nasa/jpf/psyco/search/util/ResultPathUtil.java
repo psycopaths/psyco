@@ -16,6 +16,7 @@ import gov.nasa.jpf.jdart.constraints.PathResult.ErrorResult;
 import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;
 import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -13,9 +13,9 @@ import gov.nasa.jpf.constraints.api.Variable;
  *
  * @author mmuesly
  */
-public class SymbolicEntry extends ValuationEntry<Expression>{
+public class SymbolicEntry extends ValuationEntry<Expression<Boolean>>{
 
-  public SymbolicEntry(Variable<Expression> variable, Expression value) {
+  public SymbolicEntry(Variable<Expression<Boolean>> variable, Expression<Boolean> value) {
     super(variable, value);
   }
   
