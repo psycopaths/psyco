@@ -23,6 +23,14 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
   @Override
   public ValuationRegion disjunction(ValuationRegion regionA,
           ValuationRegion regionB) {
+    ValuationRegion resultDisjuncted = new ValuationRegion();
+    resultDisjuncted.add(regionA);
+    resultDisjuncted.add(regionB);
+    return resultDisjuncted;
+  }
+  
+  public ValuationRegion exklusiveDisjunction(ValuationRegion regionA,
+          ValuationRegion regionB) {
     ValuationRegion resultDisjuncted;
     if(regionA.isEmpty()){
       return regionB;
@@ -68,10 +76,14 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
       if(counterParts == null){
         difference.add(entry);
       }
+      boolean foundValue = false;
       for(ValuationEntry counterPart: counterParts){
-        if(!counterPart.equals(entry)){
-          difference.add(entry);
+        if(counterPart.equals(entry)){
+          foundValue = true;
         }
+      }
+      if(!foundValue){
+        difference.add(entry);
       }
     }
     return difference;

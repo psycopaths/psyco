@@ -38,6 +38,12 @@ public abstract class Region<T extends ValuationEntry> extends AbstractPrintable
     region.add(toAdd);
   }
   
+  public void add(Region toAdd){
+    for(Object entry: toAdd.getRegionEntries()){
+      region.add((T) entry);
+    }
+  }
+  
   public List<T> getRegionEntries(){
     return new ArrayList<>(region);
   };

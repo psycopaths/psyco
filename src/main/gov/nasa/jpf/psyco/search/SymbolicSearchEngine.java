@@ -16,7 +16,10 @@ import gov.nasa.jpf.psyco.search.region.util.ExpressionRegionUtil;
 import gov.nasa.jpf.psyco.search.util.EnumerativSearchUtil;
 import gov.nasa.jpf.psyco.search.region.util.ValuationRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *This class implements a Symbolic Breadth-First search

@@ -91,15 +91,15 @@ public class SearchShell implements JPFShell {
       System.exit(1);
     }
     logger.info("Start search");
-    IterationImage<ExpressionRegion> searchResult =
-            SymbolicSearchEngine.symbolicBreadthFirstSearch(
-            convertTransitionPaths(store), 
-            store.getInitialValuation(),
-            solver);
-//    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
+//    IterationImage<ExpressionRegion> searchResult =
+//            SymbolicSearchEngine.symbolicBreadthFirstSearch(
 //            convertTransitionPaths(store), 
 //            store.getInitialValuation(),
 //            solver);
+    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
+            convertTransitionPaths(store), 
+            store.getInitialValuation(),
+            solver);
     logger.info("Search done:");
     StringBuilder searchResultString = new StringBuilder();
     searchResult.print(searchResultString);
