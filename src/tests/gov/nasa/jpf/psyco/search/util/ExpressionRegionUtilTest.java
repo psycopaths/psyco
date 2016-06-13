@@ -104,7 +104,7 @@ public class ExpressionRegionUtilTest {
   
   @Test 
   public void testDifference() throws IOException{
-    ExpressionRegion resRegion = utilUnderTest.difference(regionA, regionB);
+    ExpressionRegion resRegion = utilUnderTest.difference(regionA, regionB, solver);
     System.out.println("gov.nasa.jpf.psyco.search.util.ExpressionRegionUtilTest.testDifference()");
     resRegion.print(System.out);
     System.out.println();
@@ -129,7 +129,7 @@ public class ExpressionRegionUtilTest {
   }
   
   @Test
-  public void testDifferenceNoSuccess(){
+  public void testDifferenceNoSuccess() throws IOException{
     Variable var = new Variable(BuiltinTypes.INTEGER, "x");
     Constant five = new Constant(BuiltinTypes.INTEGER, 5);
     Constant two = new Constant(BuiltinTypes.INTEGER, 3);
@@ -141,12 +141,10 @@ public class ExpressionRegionUtilTest {
             NumericComparator.GE, two);
     regionA.add(new SymbolicEntry(var, value));
     regionB.add(new SymbolicEntry(var, valueTwo));
-    ExpressionRegion resRegion = utilUnderTest.difference(regionA, regionB);
+    ExpressionRegion resRegion =
+            utilUnderTest.difference(regionA, regionB, solver);
     Valuation res = new Valuation();
-    Result result = solver.solve(resRegion.toExpression(), res);
-    assertEquals(Result.UNSAT, result);
-    System.out.println("gov.nasa.jpf.psyco.search.util.ExpressionRegionUtilTest.testDifferenceNoSuccess()");
-    System.out.println(result);
+    assertTrue(resRegion.isEmpty());
   }
   
   @Test
@@ -162,7 +160,8 @@ public class ExpressionRegionUtilTest {
             NumericComparator.GE, two);
     regionA.add(new SymbolicEntry(var, value));
     regionB.add(new SymbolicEntry(var, valueTwo));
-    ExpressionRegion resRegion = utilUnderTest.difference(regionA, regionB);
+    ExpressionRegion resRegion =
+            utilUnderTest.difference(regionA, regionB, solver);
     Valuation res = new Valuation();
     Result result = solver.solve(resRegion.toExpression(), res);
     assertEquals(Result.SAT, result);

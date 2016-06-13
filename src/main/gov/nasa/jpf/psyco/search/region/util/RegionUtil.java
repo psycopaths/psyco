@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search.region.util;
 
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
@@ -27,6 +28,8 @@ public interface RegionUtil<T extends Region> {
   public T conjunction(T regionA, T regionB);
 
   public T difference(T outterRegion, T excludedRegion);
+
+  public T difference(T outterRegion, T excludedRegion, ConstraintSolver solver);
 
   public T exists(T aRegion, Set<Variable<?>> subsetOfVariables);
 

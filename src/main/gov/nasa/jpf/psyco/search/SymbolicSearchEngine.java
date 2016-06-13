@@ -62,10 +62,10 @@ public class SymbolicSearchEngine {
       reachedErrors.append(newImage.getErrors());
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
-//      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
-      for(SymbolicEntry entry: newRegion.getRegionEntries()){
-        reachableRegion.add(entry);
-      }
+      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+//      for(SymbolicEntry entry: newRegion.getRegionEntries()){
+//        reachableRegion.add(entry);
+//      }
     }
     return new IterationImage<ExpressionRegion>(reachableRegion,
             reachedErrors,currentDepth);

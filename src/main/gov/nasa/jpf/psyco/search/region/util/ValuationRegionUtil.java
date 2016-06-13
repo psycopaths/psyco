@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search.region.util;
 
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.search.region.Region;
@@ -151,5 +152,10 @@ public class ValuationRegionUtil implements RegionUtil<ValuationRegion>{
   
   public ValuationRegion createRegion(){
     return new ValuationRegion();
+  }
+
+  @Override
+  public ValuationRegion difference(ValuationRegion outterRegion, ValuationRegion excludedRegion, ConstraintSolver solver) {
+    return difference(outterRegion, excludedRegion);
   }
 }

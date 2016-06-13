@@ -29,7 +29,11 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
 
   @Override
   public ExpressionRegion disjunction(ExpressionRegion regionA, ExpressionRegion regionB) {
-    return connectRegionsLogical(LogicalOperator.XOR, regionA, regionB);
+    ExpressionRegion disjunctedRegion = new ExpressionRegion();
+    disjunctedRegion.add(regionA);
+    disjunctedRegion.add(regionB);
+    return disjunctedRegion;
+    //return connectRegionsLogical(LogicalOperator.OR, regionA, regionB);
   }
 
   private ExpressionRegion connectRegionsLogical(LogicalOperator op,
@@ -70,6 +74,7 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
     return connectRegionsLogical(LogicalOperator.AND, regionA, regionB);
   }
 
+  @Override
   public ExpressionRegion difference(ExpressionRegion outterRegion,
           ExpressionRegion excludedRegion, ConstraintSolver solver) {
 //    for(SymbolicEntry entry: excludedRegion.getRegionEntries()){
@@ -82,7 +87,7 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
     ExpressionRegion result = new ExpressionRegion();
     Expression notRegion = new Negation(excludedRegion.toExpression());
     for(SymbolicEntry entry: outterRegion.getRegionEntries()){
-      Expression testDiffState = ExpressionUtil.or(entry.getValue(), notRegion);
+      Expression testDiffState = ExpressionUtil.and(entry.getValue(), notRegion);
       Result rs = solver.isSatisfiable(testDiffState);
       if(rs == Result.SAT){
         result.add(entry);

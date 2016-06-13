@@ -51,14 +51,7 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
         regionUtil.convertToVariableSet(newRegion);
     List<Transition> newStates = applyIterationOfTheTransitionSystem(
             newRegion, transitionSystem, solver);
-    //T resultingStates = 
-    //        mergeTransitionsToNewStateDescription(newStates, resultRegion);
-    
-    System.out.println("gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil.post()");
-    for(Transition tras: newStates){
-      System.out.println(tras.getExpression());
-    }
-    
+
     T resultingStates = 
             collectStateDescriptionsFromTransition(newStates);
     
@@ -75,13 +68,6 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
     result.setDepth(depth);
     depth++;
     
-    System.out.println("gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil.post()");
-    try {
-      result.print(System.out);
-    } catch (IOException ex) {
-      Logger.getLogger(SymbolicSearchUtil.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
     return result;
 //    return null;
   }
@@ -160,11 +146,8 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
           List<Transition> transitions) {
         VariableRenamingMap renamings = new VariableRenamingMap();
     for(Transition transition: transitions){
-      System.out.println("gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil.convertTransitionsToVariableRenmaingMap()");
-      System.out.println("expr: "+ transition.getExpression());
       renamings.addRenamingsOfTransition(transition);
     }
-    System.out.println("renaming size: " + renamings.size());
     return renamings;
   }
 
@@ -191,7 +174,7 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
     }
     else{
       logger.fine("cannot use the following tranformation: ");
-      logger.fine(transition);
+      logger.fine(transition.getExpression());
       transition.setSuccess(false);
     }
     return transition;
@@ -207,13 +190,10 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
 
   private T rename(T existingRegion, List<Variable<?>> primeNames, List<Variable<?>> oldNames) {
     T newRegion = regionUtil.createRegion();
-    System.out.println("size: " + primeNames.size());
     for (int i = 0; i < primeNames.size(); i++){
       Variable name = primeNames.get(i);
       Set<SymbolicEntry> entries = existingRegion.getValuesForEntry(name);
       for(SymbolicEntry entry: entries){
-        System.out.println("gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil.rename()");
-        System.out.println(entry.getVariable().getName() + " : " + entry.getValue());
         Expression value = entry.getValue();
         NameMap renameFunc = new NameMap();
         String uniqueName = "unique_" + uniqueCount;
