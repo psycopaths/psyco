@@ -100,7 +100,9 @@ public class ExpressionRegionUtil implements RegionUtil<ExpressionRegion>{
   public ExpressionRegion exists(ExpressionRegion aRegion, Set<Variable<?>> subsetOfVariables) {
     ExpressionRegion resultingRegion = new ExpressionRegion();
     for(SymbolicEntry entry: aRegion.getRegionEntries()){
-      if(entry != null && entry.getVariable() != null && subsetOfVariables != null && subsetOfVariables.contains(entry.getVariable())){
+      if(entry.getVariable() != null 
+              && subsetOfVariables != null 
+              && subsetOfVariables.contains(entry.getVariable())){
         continue;
       }
       resultingRegion.add(entry);

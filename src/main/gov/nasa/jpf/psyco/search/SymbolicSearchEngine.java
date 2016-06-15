@@ -9,12 +9,16 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
+import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
+import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import gov.nasa.jpf.psyco.search.region.util.ExpressionRegionUtil;
+import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.EnumerativSearchUtil;
 import gov.nasa.jpf.psyco.search.region.util.ValuationRegionUtil;
+import gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil;
 import gov.nasa.jpf.psyco.search.util.SymbolicSearchUtil;
 import java.io.IOException;
 import java.util.List;
@@ -52,7 +56,8 @@ public class SymbolicSearchEngine {
     ExpressionRegionUtil regionUtil = new ExpressionRegionUtil();
     SymbolicSearchUtil<ExpressionRegion, ExpressionRegionUtil> searchUtil = 
             new SymbolicSearchUtil(new ExpressionRegionUtil());
-    int currentDepth = 0;
+    //We start to count interation based on 1. 0 is skipped.
+    int currentDepth = 1;
     StringBuilder reachedErrors = new StringBuilder();
     while(!newRegion.isEmpty()){
       IterationImage<ExpressionRegion> newImage = searchUtil.post(newRegion,
@@ -71,6 +76,31 @@ public class SymbolicSearchEngine {
             reachedErrors,currentDepth);
   }
   
+    public static SymbolicImage symbolicBreadthFirstSearchV2(
+          List<Path> transitionSystem, Valuation init,
+          ConstraintSolver solver){
+    SymbolicRegion reachableRegion = new SymbolicRegion(init);
+    SymbolicRegion newRegion = new SymbolicRegion(init);
+    SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
+    SymbolicRegionSearchUtil searchUtil = 
+            new SymbolicRegionSearchUtil(solver);
+    //We start to count interation based on 1. 0 is skipped.
+    int currentDepth = 0;
+    StringBuilder reachedErrors = new StringBuilder();
+    while(!newRegion.isEmpty()){
+      ++currentDepth;
+      SymbolicImage newImage = searchUtil.post(newRegion,
+              transitionSystem);
+      SymbolicRegion nextReachableStates = newImage.getReachableStates();
+      reachedErrors.append("In depth " + currentDepth + ":\n");
+      reachedErrors.append(newImage.getErrors());
+      newRegion = regionUtil.difference(nextReachableStates,
+              reachableRegion, solver);
+      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+    }
+    return new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
+  }
+    
   public static IterationImage<ValuationRegion> enumerativBreadthFirstSearch(
           List<Path> transitionSystem, Valuation init,
           ConstraintSolver solver){
@@ -81,7 +111,7 @@ public class SymbolicSearchEngine {
             new EnumerativSearchUtil<> (regionUtil);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
-    int currentDepth = 0;
+    int currentDepth = 1;
     StringBuilder reachedErrors = new StringBuilder();
     while(!newRegion.isEmpty()){
       IterationImage<ValuationRegion> imageResult = searchUtil.post(newRegion,

@@ -31,6 +31,8 @@ public class PsycoConfig {
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
   private TerminationStrategy termination = new NeverTerminate();
+  private boolean symbolicSearch = true;
+  private boolean enumerativeSearch = false;
 
   public PsycoConfig(Config conf) {
     this.config = conf;
@@ -56,6 +58,12 @@ public class PsycoConfig {
     }
     if (config.hasValue("psyco.por")) {
       usePOR = config.getBoolean("psyco.por");
+    }
+    if(config.hasValue("psyco.symbolicSearch")){
+      symbolicSearch = config.getBoolean("psyco.symbolicSearch");
+    }
+    if(config.hasValue("psyco.enumerativeSearch")){
+      enumerativeSearch = config.getBoolean("psyco.enumerativeSearch");
     }
   }
 
@@ -94,6 +102,13 @@ public class PsycoConfig {
     return useSummaries;
   }
 
+  public boolean shouldUseSymbolicSearch(){
+    return symbolicSearch;
+  }
+  
+  public boolean shouldUseEnumerativeSearch(){
+    return enumerativeSearch;
+  }
   /**
    * @return the termination
    */

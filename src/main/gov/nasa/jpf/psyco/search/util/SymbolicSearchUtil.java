@@ -45,12 +45,12 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
   }
   
   @Override
-  public IterationImage<T> post(T newRegion, List<Path> transitionSystem,
+  public IterationImage<T> post(T baseRegion, List<Path> transitionSystem,
           ConstraintSolver solver) {
     Set<Variable<?>> variablesInPreviousState = 
-        regionUtil.convertToVariableSet(newRegion);
+        regionUtil.convertToVariableSet(baseRegion);
     List<Transition> newStates = applyIterationOfTheTransitionSystem(
-            newRegion, transitionSystem, solver);
+            baseRegion, transitionSystem, solver);
 
     T resultingStates = 
             collectStateDescriptionsFromTransition(newStates);
@@ -81,7 +81,7 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
       Transition transitionResult =
             applySingleTransition(inputRegionExpression, possibleTransition,
               solver);
-      if(transitionResult != null && transitionResult.isSuccess()){
+      if(transitionResult != null && transitionResult.isApplied()){
         transitions.add(transitionResult);
       }
     }
@@ -136,8 +136,10 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
          collectStateDescriptionsFromTransition(List<Transition> transitions) {
     T resultingRegion = regionUtil.createRegion();
     for(Transition transition: transitions){
-      SymbolicEntry resultingState = transition.getNewState();
-      resultingRegion.add(resultingState);
+      if(transition.isApplied() && !transition.isErrorTransition()){
+        SymbolicEntry resultingState = transition.getNewState();
+        resultingRegion.add(resultingState);
+      }
     }
     return resultingRegion;
   }
@@ -167,15 +169,16 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
       logger.fine(possibleTransition);
       logger.fine("reachableStates in this Iteration");
       logger.fine(resultExpression);
-      transition.setSuccess(true);
-      if(!transition.getPrimeNames().isEmpty()){
+      transition.setApplied(true);
+      if(!transition.isErrorTransition() 
+              && !transition.getPrimeNames().isEmpty()){
       transition.setNewState(new SymbolicEntry((Variable<Expression<Boolean>>) transition.getPrimeNames().get(0), resultExpression));
       }
     }
     else{
       logger.fine("cannot use the following tranformation: ");
       logger.fine(transition.getExpression());
-      transition.setSuccess(false);
+      transition.setApplied(false);
     }
     return transition;
   }

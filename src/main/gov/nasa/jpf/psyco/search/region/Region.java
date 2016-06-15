@@ -35,6 +35,14 @@ public abstract class Region<T extends ValuationEntry> extends AbstractPrintable
   protected abstract void setInitValuation(Valuation initValue);
   
   public void add(T toAdd){
+    if(toAdd == null){
+      System.out.println("gov.nasa.jpf.psyco.search.region.Region.add()");
+      try{
+        throw new Exception("cannot add null to region");
+      }catch(Exception e){
+        e.printStackTrace();
+      }
+    }
     region.add(toAdd);
   }
   

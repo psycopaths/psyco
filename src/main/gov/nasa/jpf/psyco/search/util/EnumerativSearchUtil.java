@@ -64,7 +64,7 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
       Transition transitionResult =
             applySingleTransition(inputRegionExpression, possibleTransition,
               solver);
-      if(transitionResult != null && transitionResult.isSuccess()){
+      if(transitionResult != null && transitionResult.isApplied()){
         transitions.add(transitionResult);
       }
     }
@@ -92,12 +92,12 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
       logger.fine("reachableStates in this Iteration");
       logger.fine(nextStepResult);
       transition.setTransitionResult(nextStepResult);
-      transition.setSuccess(true);
+      transition.setApplied(true);
     }
     else{
       logger.fine("cannot use the following tranformation: ");
       logger.fine(transition);
-      transition.setSuccess(false);
+      transition.setApplied(false);
     }
     return transition;
   }

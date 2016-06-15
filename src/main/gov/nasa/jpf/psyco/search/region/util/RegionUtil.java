@@ -21,7 +21,7 @@ import java.util.Set;
  * @author mmuesly
  * @param <T> The specific region type. For example ValuationRegion.
  */
-public interface RegionUtil<T extends Region> {
+public interface RegionUtil<T> {
 
   public T disjunction(T regionA, T regionB);
 

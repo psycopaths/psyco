@@ -6,8 +6,14 @@
 package gov.nasa.jpf.psyco.search.region;
 
 import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.constraints.expressions.Constant;
+import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
+import gov.nasa.jpf.constraints.expressions.NumericComparator;
+import gov.nasa.jpf.constraints.types.BuiltinTypes;
+import gov.nasa.jpf.constraints.util.ExpressionUtil;
 
 /**
  *
@@ -18,11 +24,18 @@ public class SymbolicEntry extends ValuationEntry<Expression<Boolean>>{
   public SymbolicEntry(Variable<Expression<Boolean>> variable, Expression<Boolean> value) {
     super(variable, value);
   }
-  
-  
   @Override
   public boolean equals(Object obj) {
     throw new UnsupportedOperationException("Equals on expression"+
             " Entrys is not defined yet");
+  }
+  
+  public static SymbolicEntry create(ValuationEntry entry){
+    Variable entryVariable = entry.getVariable();
+    Valuation singleValueToTransform = new Valuation();
+    singleValueToTransform.addEntry(entry);
+    Expression<Boolean> value = 
+            ExpressionUtil.valuationToExpression(singleValueToTransform);
+    return new SymbolicEntry(entryVariable, value);
   }
 }

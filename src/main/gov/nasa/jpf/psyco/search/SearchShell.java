@@ -33,6 +33,7 @@ import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
 //import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
+import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
@@ -90,47 +91,10 @@ public class SearchShell implements JPFShell {
     if(store == null){
       System.exit(1);
     }
-    logger.info("Start search");
-    IterationImage<ExpressionRegion> searchResult =
-            SymbolicSearchEngine.symbolicBreadthFirstSearch(
-            convertTransitionPaths(store), 
-            store.getInitialValuation(),
-            solver);
-//    IterationImage<ValuationRegion> searchResult = SymbolicSearchEngine.enumerativBreadthFirstSearch(
-//            convertTransitionPaths(store), 
-//            store.getInitialValuation(),
-//            solver);
-    logger.info("Search done:");
-    StringBuilder searchResultString = new StringBuilder();
-    searchResult.print(searchResultString);
-    logger.info(searchResultString.toString());
-//    searchEngine.setInitalState(store.getInitialValuation());
-//    addTransitionPaths(store, searchEngine);
-//    StringBuilder symbolicSearchBuilder = new StringBuilder();
-//    searchEngine.print(symbolicSearchBuilder);
-//
-//    logger.info("TransitionSystem--------------------------------------------");
-//    logger.info(symbolicSearchBuilder.toString());
-//    searchEngine.startSearch();
-//    logger.info("-----------------------------------------------------------");
 
-//    InterfaceGenerator gen = new InterfaceGenerator(
-//            provider, pconf, eqtest, solver);
-//    
-//    MealyMachine model = gen.generateInterface();
-    
+    executeSearch(pconf, store, solver);
+
     SimpleProfiler.stop("PSYCO-run");
-
-//    logger.info("Model ---------------------------------------------------------");
-//    GraphDOT.write(model, inputs, System.out);
-//    logger.info("---------------------------------------------------------------");
-//    logger.info();
-//    logger.info("Stats ---------------------------------------------------------");
-//    logger.info("States: " + model.size());
-//    logger.info("Inputs: " + inputs.size());
-//    logger.info("Refinements: " + (inputs.size() - sigma));
-//    logger.info("Termination: " + pconf.getTermination().getReason());
-//    logger.info("---------------------------------------------------------------");    
     logger.info("Profiling:\n" + SimpleProfiler.getResults());
   } 
   
@@ -164,13 +128,73 @@ public class SearchShell implements JPFShell {
     return returnedBuilder.toString();
   }
 
-//  private void addTransitionPaths(SummaryStore store, SymbolicSearchEngine searchEngine) {
-//    Set<String> keys = store.getConcolicMethodIds();
-//    for(String id: keys){
-//      MethodSummary summary = store.getSummary(id);
-//      searchEngine.addMethodSummaryToTransitionSystem(summary);
-//    }
-//  }
+  private void executeSearch(PsycoConfig pconf, SummaryStore store,
+          ConstraintSolver solver){
+    if(pconf.shouldUseEnumerativeSearch()){
+      executeEnumerativeSearch(store, solver);
+    }
+    if(pconf.shouldUseSymbolicSearch()){
+      executeSymbolicSearchV2(store, solver);
+    }
+  }
+  
+  private void executeSymbolicSearch(SummaryStore store,
+          ConstraintSolver solver){
+    logger.info("Start symbolic search");
+    IterationImage<ExpressionRegion> searchResult =
+            SymbolicSearchEngine.symbolicBreadthFirstSearch(
+            convertTransitionPaths(store), 
+            store.getInitialValuation(),
+            solver);
+    logger.info("symbolic search done. Here is the result:");
+    StringBuilder searchResultString = new StringBuilder();
+    try {
+      searchResult.print(searchResultString);
+    } catch (IOException ex) {
+      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    logger.info(searchResultString.toString());
+    logger.info("");
+  }
+  
+  private void executeEnumerativeSearch(SummaryStore store,
+          ConstraintSolver solver){
+    logger.info("Start enumerative search");
+    IterationImage<ValuationRegion> searchResult =
+            SymbolicSearchEngine.enumerativBreadthFirstSearch(
+              convertTransitionPaths(store), 
+              store.getInitialValuation(),
+              solver);
+    logger.info("Enumerative search done. Here is the result:");
+    StringBuilder searchResultString = new StringBuilder();
+    try {
+      searchResult.print(searchResultString);
+    } catch (IOException ex) {
+      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    logger.info(searchResultString.toString());
+    logger.info();
+  }
+
+  private void executeSymbolicSearchV2(SummaryStore store,
+          ConstraintSolver solver){
+    logger.info("Start symbolic search");
+    SymbolicImage searchResult =
+            SymbolicSearchEngine.symbolicBreadthFirstSearchV2(
+            convertTransitionPaths(store), 
+            store.getInitialValuation(),
+            solver);
+    logger.info("symbolic search done. Here is the result:");
+    StringBuilder searchResultString = new StringBuilder();
+    try {
+      searchResult.print(searchResultString);
+    } catch (IOException ex) {
+      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    logger.info(searchResultString.toString());
+    logger.info("");
+  }
+
   private List<Path> convertTransitionPaths(SummaryStore store) {
     List<Path> paths = new ArrayList<>();
     

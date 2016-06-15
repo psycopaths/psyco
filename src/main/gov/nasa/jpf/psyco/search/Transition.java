@@ -26,7 +26,9 @@ public class Transition {
   private SymbolicEntry newState;
 
   private Valuation transitionResult;
-  private boolean success;
+  private boolean applied;
+  private boolean errorTransition;
+
   private StringBuilder reachedErrors;
   
   public Transition(){
@@ -34,7 +36,7 @@ public class Transition {
     primeNames = new ArrayList<Variable<?>>();
     expression = null;
     transitionResult = null;
-    success = false;
+    applied = false;
     reachedErrors = new StringBuilder();
   }
 
@@ -76,11 +78,11 @@ public class Transition {
     return primeNames;
   }
   
-  public void setSuccess(boolean success){
-    this.success = success;
+  public void setApplied(boolean applied){
+    this.applied = applied;
   }
-  public boolean isSuccess(){
-    return success;
+  public boolean isApplied(){
+    return applied;
   }
   
   public void addError(String errorName, int depth){
@@ -103,5 +105,12 @@ public class Transition {
 
   public void setNewState(SymbolicEntry newState) {
     this.newState = newState;
+  }
+  public boolean isErrorTransition() {
+    return errorTransition;
+  }
+
+  public void setErrorTransition(boolean errorTransition) {
+    this.errorTransition = errorTransition;
   }
 }

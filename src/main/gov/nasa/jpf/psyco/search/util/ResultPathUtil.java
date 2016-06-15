@@ -68,6 +68,7 @@ public class ResultPathUtil {
     Expression transitionExpression = path.getPathCondition();
     transition.setExpresion(transitionExpression);
     transition.addError(result.getExceptionClass(), depth);
+    transition.setErrorTransition(true);
     return transition;
   }
 }
