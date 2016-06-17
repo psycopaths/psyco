@@ -1,0 +1,16 @@
+
+jdart.configs.stream.symbolic.statics=symbolicsearch.quantifierelimination.simpleexample.FirstExample
+jdart.configs.stream.symbolic.include=symbolicsearch.quantifierelimination.simpleexample.FirstExample.*
+
+concolic.method.FirstExample=symbolicsearch.quantifierelimination.simpleexample.FirstExample.<init>()
+concolic.method.PipedOutputStream.config=stream
+
+concolic.method.m1=symbolicsearch.quantifierelimination.simpleexample.FirstExample.m1(p:int)
+concolic.method.close.config=stream
+
+#Important: the ',' is not allowed to be followed by a whitespace!
+summary.methods=m1
+
+psyco.por.config=m1,10,00
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false

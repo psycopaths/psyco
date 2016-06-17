@@ -116,11 +116,12 @@ public class SymbolicRegionSearchUtil {
     Set<Variable<?>> stateVariable = util.convertToVariableSet(testState);
     Map<Variable<?>, Expression<?>> transitionEffekts = postCondition.getConditions();
     for(Variable var: stateVariable){
-       Expression transitionEffekt = transitionEffekts.getOrDefault(var, null);
-       Set<SymbolicEntry> entriesForVar = testState.getEntriesForVariable(var);
-       SymbolicEntry newEntry = 
+      Expression transitionEffekt = transitionEffekts.getOrDefault(var, null);
+      Set<SymbolicEntry> entriesForVar = testState.getEntriesForVariable(var);
+      SymbolicEntry newEntry = 
               applyTranisitionResultOnVariable(var, entriesForVar, testState,
                       pathCondition, transitionEffekt);
+      Expression value = newEntry.getValue();
       resultState.add(newEntry);
     }
     return resultState;

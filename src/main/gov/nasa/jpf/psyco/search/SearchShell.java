@@ -23,6 +23,7 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
@@ -83,7 +84,7 @@ public class SearchShell implements JPFShell {
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
     
-    ConstraintSolver solver = new SolverWrapper(factory.createSolver());
+    ConstraintSolver solver = factory.createSolver();
 
 //    SymbolicMethodAlphabet inputs = null;
 //    SymbolicExecutionOracle seOracle = null;
@@ -141,10 +142,11 @@ public class SearchShell implements JPFShell {
   private void executeSymbolicSearch(SummaryStore store,
           ConstraintSolver solver){
     logger.info("Start symbolic search");
+    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     IterationImage<ExpressionRegion> searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearch(
             convertTransitionPaths(store), 
-            store.getInitialValuation(),
+            initValuation,
             solver);
     logger.info("symbolic search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();
@@ -160,10 +162,11 @@ public class SearchShell implements JPFShell {
   private void executeEnumerativeSearch(SummaryStore store,
           ConstraintSolver solver){
     logger.info("Start enumerative search");
+    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     IterationImage<ValuationRegion> searchResult =
             SymbolicSearchEngine.enumerativBreadthFirstSearch(
               convertTransitionPaths(store), 
-              store.getInitialValuation(),
+              initValuation,
               solver);
     logger.info("Enumerative search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();
@@ -179,10 +182,11 @@ public class SearchShell implements JPFShell {
   private void executeSymbolicSearchV2(SummaryStore store,
           ConstraintSolver solver){
     logger.info("Start symbolic search");
+    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     SymbolicImage searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearchV2(
             convertTransitionPaths(store), 
-            store.getInitialValuation(),
+            initValuation,
             solver);
     logger.info("symbolic search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();
@@ -206,5 +210,19 @@ public class SearchShell implements JPFShell {
       }
     }
     return paths;
+  }
+
+  /**
+  *Fix me! The jDart transition system includes method parameter to the
+  * inital state right know. This should not happen.
+  */
+  private Valuation fix_init_valuation(Valuation initialValuation) {
+    Valuation result = new Valuation();
+    for(ValuationEntry entry: initialValuation){
+      if(entry.getVariable().getName().startsWith("this")){
+        result.addEntry(entry);
+      }
+    }
+    return result;
   }
 }

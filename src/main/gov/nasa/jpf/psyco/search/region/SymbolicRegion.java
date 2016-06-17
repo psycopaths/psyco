@@ -26,6 +26,8 @@ public class SymbolicRegion extends HashMap<String, SymbolicState>{
     this();
     SymbolicState initState = new SymbolicState(initValuation);
     put("initState", initState);
+    System.out.println("gov.nasa.jpf.psyco.search.region.SymbolicRegion.<init>()");
+    System.out.println(initState.toExpression());
   }
   
   public Expression<Boolean> toExpression(){
