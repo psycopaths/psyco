@@ -205,6 +205,7 @@ public class SymbolicRegionSearchUtil {
     Result res = solver.isSatisfiable(transitionConditionTest);
     long stop = System.currentTimeMillis();
     logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.testPathCondition()");
+    logger.finer(pathCondition.getClass().toString());
     logger.finer("Time condition test: " + Long.toString(stop - start) + " in millis");
     return res;
   }

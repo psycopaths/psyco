@@ -12,6 +12,7 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
+import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 
@@ -32,10 +33,11 @@ public class SymbolicEntry extends ValuationEntry<Expression<Boolean>>{
   
   public static SymbolicEntry create(ValuationEntry entry){
     Variable entryVariable = entry.getVariable();
-    Valuation singleValueToTransform = new Valuation();
-    singleValueToTransform.addEntry(entry);
+    Expression entryValue = 
+            new Constant(entryVariable.getType(), entry.getValue());
     Expression<Boolean> value = 
-            ExpressionUtil.valuationToExpression(singleValueToTransform);
+            new NumericBooleanExpression(entryVariable,
+                    NumericComparator.EQ, entryValue);
     return new SymbolicEntry(entryVariable, value);
   }
 }
