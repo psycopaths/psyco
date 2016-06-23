@@ -67,7 +67,7 @@ concolic.method.eiBurn.config=cev
 #  teiBurn,deOrbit,enterOrbitOps,tliBurn,stage2Separation,abort,\
 #  stage1Separation,failure,srbIgnition
 
-summary.methods=loiBurn
+summary.methods=loiBurn,stage1Separation,stage2Separation
 
 psyco.por.config=stage2Separation,000000000,010000000;\
   doEdsSeparation,001100000,001100000;\
