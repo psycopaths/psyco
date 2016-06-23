@@ -8,7 +8,7 @@ psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true
 psyco.por=true
-psyco.depth=5
+
 
 
 symbolic.dp=NativeZ3
@@ -21,8 +21,8 @@ symbolic.dp.z3.bitvectors=true
 #log.severe=constraints,jdart
 #log.info=psyco
 log.severe=constraints
-log.config=jdart
-log.fine=psyco
+log.fine=jdart
+log.finest=psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

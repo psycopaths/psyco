@@ -84,21 +84,23 @@ public class SymbolicRegionSearchUtil {
 
   private void applyOkPath(Path p, SymbolicRegion alreadyReachedStates, SymbolicRegion iterationResult) {
     for(SymbolicState possibleState: alreadyReachedStates.values()){
+      logger.finer("nextPath: " + p.toString());
       applyOkPathOnState(p, possibleState, iterationResult);
     }
   }
 
   private void applyOkPathOnState(Path p, SymbolicState testState,
           SymbolicRegion iterationResult){
-    Expression<Boolean> transitionConditionTest =
-            testState.toExpression();
-    Expression<Boolean> pathCondition = p.getPathCondition();
-    transitionConditionTest = 
-            ExpressionUtil.and(transitionConditionTest, pathCondition);
-    Result solverResult = solver.isSatisfiable(transitionConditionTest);
+    Result solverResult = testPathCondition(testState, p.getPathCondition());
     if(solverResult == Result.SAT){
       SymbolicState resultState = applyOkPostCondition(testState,
-              pathCondition, p.getPostCondition());
+              p.getPathCondition(), p.getPostCondition());
+            logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPathOnState()");
+            logger.finer("applyTransition: " + p.toString());
+            Expression res = resultState.toExpression();
+            if(res != null){
+              logger.finer(res.toString());
+            }
       String stateName = getStateName();
       iterationResult.put(stateName, resultState);
     }
@@ -122,6 +124,8 @@ public class SymbolicRegionSearchUtil {
               applyTranisitionResultOnVariable(var, entriesForVar, testState,
                       pathCondition, transitionEffekt);
       Expression value = newEntry.getValue();
+      logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPostCondition()");
+      logger.finest(newEntry.getVariable() + ": " + newEntry.getValue());
       resultState.add(newEntry);
     }
     return resultState;
@@ -139,13 +143,16 @@ public class SymbolicRegionSearchUtil {
       newValue = newValue == null? entryValue :
               ExpressionUtil.and(newValue, entryValue);
     }
+    if(transitionEffekt != null){
     transitionEffekt = 
             NumericBooleanExpression.create(newVar,
                     NumericComparator.EQ, transitionEffekt);
-    if(transitionEffekt != null){
-      newValue = (newValue == null ? transitionEffekt :
+    newValue = (newValue == null ? transitionEffekt :
               ExpressionUtil.and(newValue, transitionEffekt));
     }
+    logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyTranisitionResultOnVariable()");
+    logger.finest("newVar:" + newVar.getName().toString());
+    logger.finest("newValue:" + newValue.toString());
     return new SymbolicEntry(newVar, newValue);
   }
 
@@ -156,10 +163,7 @@ public class SymbolicRegionSearchUtil {
   }
 
   private void applyErrorPathOnState(Path p, SymbolicState state, StringBuilder errors){
-    Expression condition = p.getPathCondition();
-    Expression testCondition = state.toExpression();
-    testCondition = ExpressionUtil.and(testCondition, condition);
-    Result solverResult = solver.isSatisfiable(testCondition);
+    Result solverResult = testPathCondition(state, p.getPathCondition());
     if(solverResult == Result.SAT){
       errors.append(p.getErrorResult().getExceptionClass());
       errors.append("\n");
@@ -190,5 +194,19 @@ public class SymbolicRegionSearchUtil {
     return util.rename(existingRegion, primeNames, variableNames);
   }
 
+  private Result testPathCondition(SymbolicState testState, Expression<Boolean> pathCondition){
+    Expression<Boolean> transitionConditionTest = 
+            testState.isEmpty()? null : testState.toExpression();
+    transitionConditionTest = 
+            transitionConditionTest != null ?
+            ExpressionUtil.and(transitionConditionTest, pathCondition) 
+            : pathCondition;
+    long start = System.currentTimeMillis();
+    Result res = solver.isSatisfiable(transitionConditionTest);
+    long stop = System.currentTimeMillis();
+    logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.testPathCondition()");
+    logger.finer("Time condition test: " + Long.toString(stop - start) + " in millis");
+    return res;
+  }
 
 }

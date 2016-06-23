@@ -15,6 +15,6 @@ concolic.method.Protocol.config=abp
 
 summary.methods=Protocol,msg,ack
 
-
+psyco.symbolicSearch=true
 
 psyco.por.config=msg,11,11;ack,11,10

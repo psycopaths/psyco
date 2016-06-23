@@ -8,6 +8,7 @@ package gov.nasa.jpf.psyco.search.region;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
+import gov.nasa.jpf.psyco.search.region.util.ValuationUtil;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +25,14 @@ public class SymbolicRegion extends HashMap<String, SymbolicState>{
   
   public SymbolicRegion(Valuation initValuation){
     this();
-    SymbolicState initState = new SymbolicState(initValuation);
+    SymbolicState initState;
+    if(!ValuationUtil.isEmpty(initValuation)){
+    initState = new SymbolicState(initValuation);
+    }else{
+      initState = new SymbolicState();
+    }
     put("initState", initState);
+
     System.out.println("gov.nasa.jpf.psyco.search.region.SymbolicRegion.<init>()");
     System.out.println(initState.toExpression());
   }

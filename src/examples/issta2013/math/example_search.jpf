@@ -1,0 +1,36 @@
+
+
+concolic.method.IntMath=issta2013.math.IntMath.<init>()
+concolic.method.isPowerOfTwo=issta2013.math.IntMath.isPowerOfTwo(x:int)
+concolic.method.log2=issta2013.math.IntMath.log2(x:int,mode:int)
+concolic.method.log10=issta2013.math.IntMath.log10(x:int,mode:int)
+concolic.method.pow=issta2013.math.IntMath.pow(b:int,k:int)
+concolic.method.sqrt=issta2013.math.IntMath.sqrt(x:int,mode:int)
+concolic.method.divide=issta2013.math.IntMath.divide(p:int,q:int,mode:int)
+concolic.method.mod=issta2013.math.IntMath.mod(x:int,m:int)
+concolic.method.gcd=issta2013.math.IntMath.gcd(a:int,b:int)
+concolic.method.checkedAdd=issta2013.math.IntMath.checkedAdd(a:int,b:int)
+concolic.method.checkedSubtract=issta2013.math.IntMath.checkedSubtract(a:int,b:int)
+concolic.method.checkedMultiply=issta2013.math.IntMath.checkedMultiply(a:int,b:int)
+concolic.method.checkedPow=issta2013.math.IntMath.checkedPow(b:int,k:int)
+concolic.method.factorial=issta2013.math.IntMath.factorial(n:int)
+concolic.method.binomial=issta2013.math.IntMath.binomial(n:int,k:int)
+
+
+summary.methods=IntMath,log10,checkedAdd,checkedSubtract,checkedMultiply,mod,\
+  factorial,log2,isPowerOfTwo
+
+# These do not compute:
+# binomial,gcd,pow,checkedPow
+
+# These lead to exceptions
+# sqrt,divide
+
+psyco.por.config=log10,0,0;\
+  mod,0,0;\
+  checkedAdd,0,0;\
+  checkedSubtract,0,0;\
+  checkedMultiply,0,0;\
+  factorial,0,0
+
+psyco.symbolicSearch=true

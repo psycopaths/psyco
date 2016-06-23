@@ -7,6 +7,7 @@ package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
@@ -51,6 +52,7 @@ public class SymbolicSearchEngine {
   public static IterationImage<ExpressionRegion> symbolicBreadthFirstSearch(
           List<Path> transitionSystem, Valuation init,
           ConstraintSolver solver){
+    Logger logger = Logger.getLogger("psyco");
     ExpressionRegion reachableRegion = new ExpressionRegion(init);
     ExpressionRegion newRegion = new ExpressionRegion(init);
     ExpressionRegionUtil regionUtil = new ExpressionRegionUtil();
@@ -79,8 +81,15 @@ public class SymbolicSearchEngine {
     public static SymbolicImage symbolicBreadthFirstSearchV2(
           List<Path> transitionSystem, Valuation init,
           ConstraintSolver solver){
-    SymbolicRegion reachableRegion = new SymbolicRegion(init);
-    SymbolicRegion newRegion = new SymbolicRegion(init);
+    Logger logger = Logger.getLogger("psyco");
+    Valuation res = new Valuation();
+    //transform the initial valuation into a form with explicit values.
+    //logger statements are needed.
+    logger.finest((solver.solve(
+            ExpressionUtil.valuationToExpression(init), res)).toString());
+    logger.finest(res.toString());
+    SymbolicRegion reachableRegion = new SymbolicRegion(res);
+    SymbolicRegion newRegion = new SymbolicRegion(res);
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
     SymbolicRegionSearchUtil searchUtil = 
             new SymbolicRegionSearchUtil(solver);
@@ -97,6 +106,15 @@ public class SymbolicSearchEngine {
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+      //print
+      StringBuilder builder= new StringBuilder();
+      try {
+        newImage.setDepth(currentDepth);
+        newImage.print(builder);
+      } catch (IOException ex) {
+        Logger.getLogger(SymbolicSearchEngine.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      logger.fine(builder.toString());
     }
     return new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
   }

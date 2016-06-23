@@ -34,9 +34,11 @@ import java.util.logging.Logger;
 public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   private long unique;
   ConstraintSolver solver;
+  private Logger logger;
   public SymbolicRegionUtil(ConstraintSolver solver){
     this.solver = solver;
     this.unique = 1L;
+    logger = Logger.getLogger("psyco");
   }
   @Override
   public SymbolicRegion disjunction(SymbolicRegion regionA, SymbolicRegion regionB) {
@@ -66,10 +68,16 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   @Override
   public SymbolicRegion difference(SymbolicRegion outterRegion, SymbolicRegion excludedRegion, ConstraintSolver solver) {
     SymbolicRegion result = new SymbolicRegion();
-    Expression notRegion = new Negation(excludedRegion.toExpression());
+    Expression excludedRegionExpr = excludedRegion.toExpression();
+    Expression notRegion = null;
+    if(null != excludedRegionExpr){
+      notRegion = new Negation(excludedRegionExpr);
+    }else{
+      return outterRegion;
+    }
     Set<Variable<?>> stateVariables = convertToVariableSet(excludedRegion);
     notRegion = bindParameters(notRegion, stateVariables, Quantifier.FORALL);
-    System.out.println("notRegion: " + notRegion);
+    logger.finest("notRegion: " + notRegion);
     for(String key : outterRegion.keySet()){
         SymbolicState state = outterRegion.get(key);
         Expression stateRegion = state.toExpression();
@@ -78,22 +86,24 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
         stateRegion =
                 bindParameters(stateRegion, newStateVariables, Quantifier.EXISTS);
         Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
-//        System.out.println("testDiffState: " + testDiffState);
-//        //System.out.println("solver parent:" + (solver instanceof NativeZ3Solver));
-//        System.out.println(solver.getClass());
+        logger.finer("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.difference()");
+        logger.finest("testDiffState: " + testDiffState);
 //        if(solver instanceof NativeZ3Solver){
-//          System.out.println("call quantifierElem");
+//          logger.finer("call quantifierElem");
 //          testDiffState = 
 //                  ((gov.nasa.jpf.constraints.solvers.nativez3.NativeZ3Solver) solver).
 //                          eliminateQuantifiers(testDiffState);
 //        }
-        System.out.println("testDiffState: " + testDiffState);
+//        logger.finer("testDiffState: " + testDiffState);
+        long start = System.currentTimeMillis();
         ConstraintSolver.Result rs = solver.isSatisfiable(testDiffState);
+        long stop = System.currentTimeMillis();
+        logger.finer("Time needed for difference: " + Long.toString(stop - start) + "in Millis");
         if(rs == ConstraintSolver.Result.SAT){
           result.put(key, state);
         }
         else{
-          System.out.println("result: " + rs);
+          logger.finer("result: " + rs);
         }
     }
     return result;
@@ -167,14 +177,14 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
         String newParameterName = getUniqueParameterName(var);
         Variable newParameter = 
                 new Variable(var.getType(), newParameterName);
-        System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
-        System.out.println(newParameterName);
+        logger.finest("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+        logger.finest(newParameterName);
         renamedState = 
                 renameParameterInEntrys(renamedState, var, newParameter);
       }
     }
-    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
-    System.out.println(renamedState.toExpression());
+    logger.finest("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+    logger.finest(renamedState.toExpression().toString());
     return renamedState;
   }
   private SymbolicState renameAllVariableEntrys(
@@ -222,8 +232,8 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
     ArrayList<Variable<?>> bound = new ArrayList<>();
     for(Variable var: freeVars){
       if(!stateVariables.contains(var) && !var.getName().startsWith("uVarReplacement")){
-        System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.bindParameters()");
-        System.out.println(var.getName());
+        logger.finest("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.bindParameters()");
+        logger.finest(var.getName());
         bound.add(var);
       }
     }

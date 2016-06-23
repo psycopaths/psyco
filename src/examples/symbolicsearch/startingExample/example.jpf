@@ -13,4 +13,4 @@ summary.methods=m1
 
 psyco.por.config=m1,10,00
 psyco.symbolicSearch=true
-psyco.enumerativeSearch=false
+psyco.enumerativeSearch=true

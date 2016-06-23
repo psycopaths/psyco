@@ -41,3 +41,5 @@ psyco.por.config=update,100000,000000;\
   dataReceived,010110,000110;\
   getValueY,000011,000000;\
   getValueX,000101,000000
+
+psyco.symbolicSearch=true
