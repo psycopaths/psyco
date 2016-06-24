@@ -5,21 +5,17 @@
  */
 package gov.nasa.jpf.psyco.search.region.util;
 
-import gov.nasa.jpf.constraints.solvers.nativez3.NativeZ3Solver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Expression;
-import gov.nasa.jpf.constraints.api.QuantifierEliminator;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Negation;
 import gov.nasa.jpf.constraints.expressions.Quantifier;
 import gov.nasa.jpf.constraints.expressions.QuantifierExpression;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.collections.NameMap;
-import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +30,7 @@ import java.util.logging.Logger;
 public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   private long unique;
   ConstraintSolver solver;
-  private Logger logger;
+  private final Logger logger;
   public SymbolicRegionUtil(ConstraintSolver solver){
     this.solver = solver;
     this.unique = 1L;
@@ -77,7 +73,8 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
     }
     Set<Variable<?>> stateVariables = convertToVariableSet(excludedRegion);
     notRegion = bindParameters(notRegion, stateVariables, Quantifier.FORALL);
-    logger.finest("notRegion: " + notRegion);
+    logger.finer("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.difference()");
+    logger.log(Level.FINEST, "notRegion: {0}", notRegion);
     for(String key : outterRegion.keySet()){
         SymbolicState state = outterRegion.get(key);
         Expression stateRegion = state.toExpression();
@@ -86,24 +83,16 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
         stateRegion =
                 bindParameters(stateRegion, newStateVariables, Quantifier.EXISTS);
         Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
-        logger.finer("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.difference()");
-        logger.finest("testDiffState: " + testDiffState);
-//        if(solver instanceof NativeZ3Solver){
-//          logger.finer("call quantifierElem");
-//          testDiffState = 
-//                  ((gov.nasa.jpf.constraints.solvers.nativez3.NativeZ3Solver) solver).
-//                          eliminateQuantifiers(testDiffState);
-//        }
-//        logger.finer("testDiffState: " + testDiffState);
+        logger.log(Level.FINEST, "testDiffState: {0}", testDiffState);
         long start = System.currentTimeMillis();
         ConstraintSolver.Result rs = solver.isSatisfiable(testDiffState);
         long stop = System.currentTimeMillis();
-        logger.finer("Time needed for difference: " + Long.toString(stop - start) + "in Millis");
+        logger.log(Level.FINER, "Time needed for difference: {0}in Millis", Long.toString(stop - start));
         if(rs == ConstraintSolver.Result.SAT){
           result.put(key, state);
         }
         else{
-          logger.finer("result: " + rs);
+          logger.log(Level.FINER, "result: {0}", rs);
         }
     }
     return result;

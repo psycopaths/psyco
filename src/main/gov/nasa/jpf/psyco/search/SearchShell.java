@@ -75,7 +75,7 @@ public class SearchShell implements JPFShell {
       Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+
   public void run() throws IOException {
 
     SimpleProfiler.start("PSYCO-run");
@@ -98,7 +98,7 @@ public class SearchShell implements JPFShell {
     SimpleProfiler.stop("PSYCO-run");
     logger.info("Profiling:\n" + SimpleProfiler.getResults());
   } 
-  
+
   private String processPath(Path p, Valuation init){
     StringBuilder returnedBuilder = new StringBuilder();
     returnedBuilder.append(p.getPathCondition().getClass().toString());
@@ -135,36 +135,16 @@ public class SearchShell implements JPFShell {
       executeEnumerativeSearch(store, solver);
     }
     if(pconf.shouldUseSymbolicSearch()){
-      executeSymbolicSearchV2(store, solver);
+      executeSymbolicSearch(store, solver);
     }
   }
-  
-  private void executeSymbolicSearch(SummaryStore store,
-          ConstraintSolver solver){
-    logger.info("Start symbolic search");
-    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
-    IterationImage<ExpressionRegion> searchResult =
-            SymbolicSearchEngine.symbolicBreadthFirstSearch(
-            convertTransitionPaths(store), 
-            initValuation,
-            solver);
-    logger.info("symbolic search done. Here is the result:");
-    StringBuilder searchResultString = new StringBuilder();
-    try {
-      searchResult.print(searchResultString);
-    } catch (IOException ex) {
-      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    logger.info(searchResultString.toString());
-    logger.info("");
-  }
-  
+
   private void executeEnumerativeSearch(SummaryStore store,
           ConstraintSolver solver){
     logger.info("Start enumerative search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     IterationImage<ValuationRegion> searchResult =
-            SymbolicSearchEngine.enumerativBreadthFirstSearch(
+            EnumerativeSearchEngine.enumerativBreadthFirstSearch(
               convertTransitionPaths(store), 
               initValuation,
               solver);
@@ -179,12 +159,12 @@ public class SearchShell implements JPFShell {
     logger.info();
   }
 
-  private void executeSymbolicSearchV2(SummaryStore store,
+  private void executeSymbolicSearch(SummaryStore store,
           ConstraintSolver solver){
     logger.info("Start symbolic search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     SymbolicImage searchResult =
-            SymbolicSearchEngine.symbolicBreadthFirstSearchV2(
+            SymbolicSearchEngine.symbolicBreadthFirstSearch(
             convertTransitionPaths(store), 
             initValuation,
             solver);
