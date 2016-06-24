@@ -13,21 +13,17 @@ import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.jdart.constraints.PathResult;
-import gov.nasa.jpf.jdart.constraints.PathResult.ErrorResult;
-import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
+import gov.nasa.jpf.psyco.search.TransitionSystem;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -47,11 +43,12 @@ public class SymbolicRegionSearchUtil {
   }
   
   public SymbolicImage post(SymbolicRegion alreadyReachedStates,
-          List<Path> transitionSystem){
+          TransitionSystem transitionSystem){
     Set<Variable<?>> variablesInPreviousState = 
             util.convertToVariableSet(alreadyReachedStates);
     SymbolicImage iterationResult = 
-            applyIterationOfTheTransitionSystem(alreadyReachedStates, transitionSystem);
+            applyIterationOfTheTransitionSystem(alreadyReachedStates,
+                    transitionSystem);
     SymbolicRegion existingRegion = 
             util.exists(iterationResult.getReachableStates(),
                     variablesInPreviousState);
@@ -61,25 +58,17 @@ public class SymbolicRegionSearchUtil {
   }
 
   private SymbolicImage applyIterationOfTheTransitionSystem(
-          SymbolicRegion alreadyReachedStates, List<Path> transitionSystem) {
+          SymbolicRegion alreadyReachedStates,
+          TransitionSystem transitionSystem) {
     SymbolicRegion iterationResult = new SymbolicRegion();
     StringBuilder errors = new StringBuilder();
-    for(Path p : transitionSystem){
-      applySingleTransition(p, alreadyReachedStates, iterationResult, errors);
-    }
-    return new SymbolicImage(iterationResult, errors, -1);
-  }
-
-  private void applySingleTransition(Path p,
-          SymbolicRegion alreadyReachedStates,
-          SymbolicRegion iterationResult, StringBuilder errors) {
-    PathResult result = p.getPathResult();
-    if(result instanceof OkResult){
+    for(Path p : transitionSystem.getConsideredOKPaths()){
       applyOkPath(p, alreadyReachedStates, iterationResult);
     }
-    if(result instanceof ErrorResult){
+    for(Path p: transitionSystem.getConsideredErrorPaths()){
       applyErrorPath(p, alreadyReachedStates, errors);
     }
+    return new SymbolicImage(iterationResult, errors, -1);
   }
 
   private void applyOkPath(Path p, SymbolicRegion alreadyReachedStates, SymbolicRegion iterationResult) {
@@ -99,7 +88,7 @@ public class SymbolicRegionSearchUtil {
             logger.finer("applyTransition: " + p.toString());
             Expression res = resultState.toExpression();
             if(res != null){
-              logger.finer(res.toString());
+              logger.finest("transitionResult: " + res.toString());
             }
       String stateName = getStateName();
       iterationResult.put(stateName, resultState);

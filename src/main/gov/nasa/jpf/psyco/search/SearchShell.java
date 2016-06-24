@@ -99,36 +99,6 @@ public class SearchShell implements JPFShell {
     logger.info("Profiling:\n" + SimpleProfiler.getResults());
   } 
 
-  private String processPath(Path p, Valuation init){
-    StringBuilder returnedBuilder = new StringBuilder();
-    returnedBuilder.append(p.getPathCondition().getClass().toString());
-    returnedBuilder.append("\n");
-    returnedBuilder.append(p.getPathCondition().evaluate(init));
-    returnedBuilder.append("\n");
-    if(p.getPathCondition().evaluate(init)){
-      returnedBuilder.append("PathResult:\n");
-      Map<Variable<?>, Expression<?>> postConditions = ((OkResult) p.getPathResult()).
-          getPostCondition().getConditions();
-      for(Variable<?> key: postConditions.keySet()){
-        Expression<?> variableStateChange = postConditions.get(key);
-        returnedBuilder.append(key);
-        returnedBuilder.append(" ");
-        returnedBuilder.append(variableStateChange.getClass());
-        returnedBuilder.append("\n");
-//        returnedBuilder.append(variableStateChange.evaluate(init));
-        returnedBuilder.append(init);
-        try {
-          variableStateChange.print(returnedBuilder);
-        } catch (IOException ex) {
-          Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        returnedBuilder.append("\n");
-      }
-      returnedBuilder.append("\n");
-    }
-    return returnedBuilder.toString();
-  }
-
   private void executeSearch(PsycoConfig pconf, SummaryStore store,
           ConstraintSolver solver){
     if(pconf.shouldUseEnumerativeSearch()){
@@ -163,10 +133,12 @@ public class SearchShell implements JPFShell {
           ConstraintSolver solver){
     logger.info("Start symbolic search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
+    TransitionSystem transitionSystem = 
+            new TransitionSystem(initValuation, convertTransitionPaths(store));
+    logger.info(transitionSystem.toString());
     SymbolicImage searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearch(
-            convertTransitionPaths(store), 
-            initValuation,
+            transitionSystem,
             solver);
     logger.info("symbolic search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();

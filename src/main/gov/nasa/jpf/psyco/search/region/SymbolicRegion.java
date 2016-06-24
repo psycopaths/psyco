@@ -58,6 +58,7 @@ public class SymbolicRegion extends HashMap<String, SymbolicState>{
         a.append(entry.getValue().toString());
         a.append("\n");
       }
+      a.append("\n");
     }
   }
 }

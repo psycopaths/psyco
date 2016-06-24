@@ -41,17 +41,12 @@ import java.util.logging.Logger;
 public class SymbolicSearchEngine {
 
     public static SymbolicImage symbolicBreadthFirstSearch(
-          List<Path> transitionSystem, Valuation init,
+          TransitionSystem transitionSystem,
           ConstraintSolver solver){
-    Logger logger = Logger.getLogger("psyco");
-    Valuation res = new Valuation();
-    //transform the initial valuation into a form with explicit values.
-    //logger statements are needed.
-//    logger.finest((solver.solve(
-//            ExpressionUtil.valuationToExpression(init), res)).toString());
-//    logger.finest(res.toString());
-    SymbolicRegion reachableRegion = new SymbolicRegion(init);
-    SymbolicRegion newRegion = new SymbolicRegion(init);
+    SymbolicRegion reachableRegion = 
+            new SymbolicRegion(transitionSystem.getInitValuation());
+    SymbolicRegion newRegion = 
+            new SymbolicRegion(transitionSystem.getInitValuation());
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
     SymbolicRegionSearchUtil searchUtil = 
             new SymbolicRegionSearchUtil(solver);
@@ -62,24 +57,35 @@ public class SymbolicSearchEngine {
       ++currentDepth;
       SymbolicImage newImage = searchUtil.post(newRegion,
               transitionSystem);
+      newImage.setDepth(currentDepth);
+      reachedErrors = appendErrors(newImage, reachedErrors);
       SymbolicRegion nextReachableStates = newImage.getReachableStates();
-      reachedErrors.append("In depth ");
-      reachedErrors.append(currentDepth);
-      reachedErrors.append(":\n");
-      reachedErrors.append(newImage.getErrors());
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
-      //print
-      StringBuilder builder= new StringBuilder();
-      try {
-        newImage.setDepth(currentDepth);
-        newImage.print(builder);
-      } catch (IOException ex) {
-        Logger.getLogger(SymbolicSearchEngine.class.getName()).log(Level.SEVERE, null, ex);
-      }
-      logger.fine(builder.toString());
+      logState(newImage);
     }
     return new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
+  }
+    
+  private static void logState(SymbolicImage newImage){
+    Logger logger = Logger.getLogger("psyco");
+    StringBuilder builder= new StringBuilder();
+    try {
+      newImage.print(builder);
+      logger.fine(builder.toString());
+    } catch (IOException ex) {
+      Logger.getLogger(SymbolicSearchEngine.class.getName())
+              .log(Level.SEVERE, null, ex);
+    }
+  }
+  
+  private static StringBuilder appendErrors(SymbolicImage newImage,
+          StringBuilder reachedErrors){
+    reachedErrors.append("In depth ");
+    reachedErrors.append(newImage.getDepth());
+    reachedErrors.append(":\n");
+    reachedErrors.append(newImage.getErrors());
+    return reachedErrors;
   }
 }
