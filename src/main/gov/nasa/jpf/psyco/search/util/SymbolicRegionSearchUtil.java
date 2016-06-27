@@ -9,8 +9,10 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
+import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
@@ -34,7 +36,7 @@ public class SymbolicRegionSearchUtil {
   private SymbolicRegionUtil util;
   private ConstraintSolver solver;
   private long uniqueCount = 1L;
-  
+  private long uniqueStateCount;
   private Logger logger;
   public SymbolicRegionSearchUtil(ConstraintSolver solver){
     this.solver = solver;
@@ -44,6 +46,7 @@ public class SymbolicRegionSearchUtil {
   
   public SymbolicImage post(SymbolicRegion alreadyReachedStates,
           TransitionSystem transitionSystem){
+    //uniqueStateCount = 0L;
     Set<Variable<?>> variablesInPreviousState = 
             util.convertToVariableSet(alreadyReachedStates);
     SymbolicImage iterationResult = 
@@ -71,7 +74,8 @@ public class SymbolicRegionSearchUtil {
     return new SymbolicImage(iterationResult, errors, -1);
   }
 
-  private void applyOkPath(Path p, SymbolicRegion alreadyReachedStates, SymbolicRegion iterationResult) {
+  private void applyOkPath(Path p, SymbolicRegion alreadyReachedStates,
+          SymbolicRegion iterationResult) {
     for(SymbolicState possibleState: alreadyReachedStates.values()){
       logger.finer("nextPath: " + p.toString());
       applyOkPathOnState(p, possibleState, iterationResult);
@@ -110,7 +114,7 @@ public class SymbolicRegionSearchUtil {
       Expression transitionEffekt = transitionEffekts.getOrDefault(var, null);
       Set<SymbolicEntry> entriesForVar = testState.getEntriesForVariable(var);
       SymbolicEntry newEntry = 
-              applyTranisitionResultOnVariable(var, entriesForVar, testState,
+              applyTranisitionResultOnVariable(var, entriesForVar,
                       pathCondition, transitionEffekt);
       Expression value = newEntry.getValue();
       logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPostCondition()");
@@ -121,18 +125,35 @@ public class SymbolicRegionSearchUtil {
   }
   
   private SymbolicEntry applyTranisitionResultOnVariable(Variable var,
-          Set<SymbolicEntry> oldValues,
-          SymbolicState testState, Expression preCondition,
+          Set<SymbolicEntry> oldValues, Expression preCondition,
           Expression transitionEffekt){
     String newName = var.getName() + "'";
     Variable newVar = new Variable(var.getType(), newName);
-    Expression newValue = preCondition;
+    Expression newValue = null;
+    //Just add the pre condition if it differs from constant true.
+    if(!isPathConditionConstantTrue(preCondition)){
+      newValue = preCondition;
+    }
     for(SymbolicEntry setEntry: oldValues){
       Expression entryValue = setEntry.getValue();
       newValue = newValue == null? entryValue :
               ExpressionUtil.and(newValue, entryValue);
     }
-    if(transitionEffekt != null){
+    logger.finest("transitionEffekt: " + transitionEffekt);
+    logger.finest("transitionEffektClass: " + transitionEffekt.getClass());
+//    if(transitionEffekt instanceof Constant){
+//      newValue = NumericBooleanExpression.create(newVar,
+//                    NumericComparator.EQ, transitionEffekt);
+//    }else 
+//    if(transitionEffekt instanceof Variable && transitionEffekt.equals(var)){
+//      //There is no new effekt
+//      if(newValue instanceof NumericBooleanExpression){
+//        NumericBooleanExpression test = (NumericBooleanExpression) newValue;
+//        newValue = NumericBooleanExpression.create(newVar,
+//                    NumericComparator.EQ, test.getRight());
+//      }
+//    }else 
+      if(transitionEffekt != null){
     transitionEffekt = 
             NumericBooleanExpression.create(newVar,
                     NumericComparator.EQ, transitionEffekt);
@@ -166,8 +187,8 @@ public class SymbolicRegionSearchUtil {
   }
 
   private String getStateName() {
-    String stateName = "state_" + uniqueCount;
-    ++uniqueCount;
+    String stateName = "state_" + uniqueStateCount;
+    ++uniqueStateCount;
     return stateName;
   }
 
@@ -183,7 +204,12 @@ public class SymbolicRegionSearchUtil {
     return util.rename(existingRegion, primeNames, variableNames);
   }
 
-  private Result testPathCondition(SymbolicState testState, Expression<Boolean> pathCondition){
+  private Result testPathCondition(SymbolicState testState,
+          Expression<Boolean> pathCondition){
+    logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.testPathCondition()");
+    if(isPathConditionConstantTrue(pathCondition)){
+      return Result.SAT;
+    }
     Expression<Boolean> transitionConditionTest = 
             testState.isEmpty()? null : testState.toExpression();
     transitionConditionTest = 
@@ -193,10 +219,20 @@ public class SymbolicRegionSearchUtil {
     long start = System.currentTimeMillis();
     Result res = solver.isSatisfiable(transitionConditionTest);
     long stop = System.currentTimeMillis();
-    logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.testPathCondition()");
     logger.finer(pathCondition.getClass().toString());
     logger.finer("Time condition test: " + Long.toString(stop - start) + " in millis");
     return res;
   }
 
+  private boolean isPathConditionConstantTrue(
+          Expression<Boolean> pathCondition){
+    if(pathCondition instanceof Constant 
+            && pathCondition.getType() == BuiltinTypes.BOOL){
+      Constant constant = ((Constant)pathCondition);
+      if (constant.getValue() == Boolean.TRUE){
+        return true;
+      }
+    }
+    return false;
+  }
 }

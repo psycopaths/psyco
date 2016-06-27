@@ -67,8 +67,16 @@ concolic.method.eiBurn.config=cev
 #  teiBurn,deOrbit,enterOrbitOps,tliBurn,stage2Separation,abort,\
 #  stage1Separation,failure,srbIgnition
 
-summary.methods=loiBurn,stage1Separation,stage2Separation
+#summary.methods=lasJettison,lsamRendezvous,CEV,lsamAscentBurn,\
+#  lsamAscentRendezvous,eiBurn,doSMSeparation,doEdsSeparation,loiBurn,\
+#  teiBurn,deOrbit,enterOrbitOps,tliBurn,stage2Separation,abort,\
+#  stage1Separation,failure,srbIgnition
 
+summary.methods=loiBurn,stage1Separation,stage2Separation,doSMSeparation,\
+  deOrbit,srbIgnition,teiBurn,doEdsSeparation,tliBurn,\
+  eiBurn,abort,enterOrbitOps,lasJettison
+#summary.methods=loiBurn
+#summary.methods=reset
 psyco.por.config=stage2Separation,000000000,010000000;\
   doEdsSeparation,001100000,001100000;\
   lasJettison,000110000,000110000;\
