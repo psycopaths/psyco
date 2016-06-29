@@ -75,6 +75,8 @@ public class SymbolicImage {
     searchResultString.append("A good choice for k in Psyco would be k = ");
     searchResultString.append(Integer.toString(depth));
     searchResultString.append("\n");
+    searchResultString.append("There are: " + reachableStates.size() 
+            + " states reachable\n");
     searchResultString.append("The reachable states are:\n");
     try {
       reachableStates.print(searchResultString);
