@@ -89,365 +89,125 @@ public class CEV {
   static int lunarLandingLSAMStatesLunarAscent = 2;
   //public enum LunarLandingLSAMStates{LunarDescent, SurfaceOps, LunarAscent};
 
-  @Symbolic("true")
   int internalState = cevStatesAscent;
 
-  @Symbolic("true")
   int internalAscentState = ascentStatesPrelaunchCheck;
 
-  @Symbolic("true")
   int internalEarthOrbitState = earthOrbitStatesInsertion;
 
-  @Symbolic("true")
   int internalLunarOpsState = lunarOpsStatesInsertion;
 
-  @Symbolic("true")
   int internalEntryState = entryStatesEntryInterface;
 
-  @Symbolic("true")
   int internalLunarLandingCEVState = 
           lunarLandingCEVStatesOrbitOpsLoiter;
 
-  @Symbolic("true")
   int internalLunarLandingLSAMState = 
           lunarLandingLSAMStatesLunarDescent;
   
   public void srbIgnition(){
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesPrelaunchCheck){
-        internalAscentState = ascentStatesFirstStage;
-        return;
-      }
-    }
-    assert false;
   }
   
   //@Params("10|1") - This was in the state model,
   //but is not add to the new modelation.
   public void failure (int tminus) {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesPrelaunchCheck){  
-        if (tminus <= 5) {
-          internalAscentState = ascentStatesPadAbort;
-        } else {
-          internalAscentState = ascentStatesHoldLaunch;
-        }
-        return;
-      }
+    if (tminus <= 5) {
+      assert false: "PAD abort";
+    } else {
+      assert false: "Hold launch";
     }
-    assert false;
   }
 
   public void stage1Separation() {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesFirstStage){
         spacecraft.doStage1Separation();
-        internalAscentState = ascentStatesSecondStage;
-        return;
-      }
-    }
-    assert false;
   }
 
   //@Params("<5000|120000|200000>, <true|false>") -not yet in the model
   public void abort (int altitude, boolean controlMotorFired) {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesFirstStage){
-        spacecraft.doStage1Abort(altitude,controlMotorFired);
-        if (altitude <= 120000) {
-          if (controlMotorFired) {
-            internalAscentState = ascentStatesAbortLowActiveLAS;
-          } else {
-            internalAscentState = ascentStatesAbortPassiveLAS;
-          }
-        }
-        if (altitude >= 120000) { // <ERR> interval overlap -> ambiguity
-          //TODO: Are this errors supposed to be found?
-          //Should this reamin or not?
-            internalAscentState = ascentStatesAbortHighActiveLAS;
-          // <ERR> forgotten controlMotor branch
-        }
-        return;
-      }
-      if(internalAscentState == ascentStatesSecondStage){
-        spacecraft.doStage2Abort(controlMotorFired);
-        
-        if (controlMotorFired) {
-          internalAscentState = ascentStatesAbortHighActiveLAS;
-        } else {
-          internalAscentState = ascentStatesAbortPassiveLAS;
-        }
-        return;
-      }
-      
-    }
-    //assert hasNextState() : errors.log("abort command did not enter abort state");
-    //TODO: What does hasNextState?
-    assert false : errors.log("abort command did not enter abort state");
+    if (!spacecraft.isDoneStage1()) {
+      spacecraft.doStage1Abort(altitude, controlMotorFired);
+    if (controlMotorFired)
+      spacecraft.doLowActiveAbort();
+    else
+      spacecraft.doLowPassiveAbort();
+  	}else if (!spacecraft.isDoneStage2()) {
+      spacecraft.doStage2Abort(controlMotorFired);
+      if (controlMotorFired)
+        spacecraft.doLowPassiveAbort();
+  	}
+  	assert false: "Mission aborted";
   }
 
   public void lasJettison() {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesSecondStage){
       spacecraft.doLASjettison();
-      return;
-      }
-    }
-    assert false;
-  }
+   }
   
   public void stage2Separation () {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesSecondStage){
-        spacecraft.doStage2Separation();
-        internalState = cevStatesEarthOrbit;
-        return;
-      }
-    }
-    assert false;
+    spacecraft.doStage2Separation();
   }
 
   public void abortPassiveLAScompletion() {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesAbortPassiveLAS){
-        spacecraft.doLowPassiveAbort();
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-    }
-    assert false;
+    spacecraft.doLowPassiveAbort();
   }
 
   public void completion() {
-    if(internalState == cevStatesAscent){
-      if(internalAscentState == ascentStatesHoldLaunch){
-        internalState = cevStatesEndState;
-        return;
-      }
-      if(internalAscentState == ascentStatesPadAbort){
-        internalState = cevStatesEndState;
-        return;
-      }
-      if(internalAscentState == ascentStatesAbortPassiveLAS){
-        spacecraft.doLowPassiveAbort();
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-      if(internalAscentState == ascentStatesAbortLowActiveLAS){
         assert failures.noLAS_CNTRLfailure() : errors.log("active LAS with failed control motor");
         spacecraft.doLowActiveAbort();
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-      if(internalAscentState == ascentStatesAbortHighActiveLAS){
-        assert failures.noLAS_CNTRLfailure() : errors.log("active LAS with failed control motor");
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-    }
-    if(internalState == cevStatesEarthOrbit){
-      if(internalEarthOrbitState == earthOrbitStatesInsertion){
-       if (failures.noEARTH_SENSORfailure()){
-          internalEarthOrbitState = earthOrbitStatesOrbitOps;
-        } else {
-          internalEarthOrbitState = earthOrbitStatesSafeHold;
-          // <ERR> never reached
-        }
-        return;
-      }
-    }
-    if(internalState == cevStatesLunarOps){
-      if(internalLunarOpsState == lunarOpsStatesInsertion){
-        internalLunarOpsState = lunarOpsStatesLunarOrbit;
-        return;
-      }
-      if(internalLunarOpsState == lunarOpsStatesLunarLanding){
-        internalLunarOpsState = lunarOpsStatesLunarOrbit;
-      }
-    }
-    if(internalState == cevStatesEntry){
-      if(internalEntryState == entryStatesEntryInterface){
-        internalEntryState = entryStatesNominalEntry;
-        return;
-      }
-      if(internalEntryState == entryStatesNominalEntry){
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-      if(internalEntryState == entryStatesChuteSequence){
-        assert spacecraft.readyForChuteSequence() : errors.last();
-        internalEntryState = entryStatesLanding;
-        return;
-      }
-      if(internalEntryState == entryStatesLanding){
-        internalState = cevStatesEndState;
-        return;
-      }
-      if(internalEntryState == entryStatesAbortEntryBallistic){
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-      if(internalEntryState == entryStatesAbortEntryFixedBank){
-        internalEntryState = entryStatesChuteSequence;
-        return;
-      }
-      if(internalState == cevStatesLunarOps){
-        if(internalLunarOpsState == lunarOpsStatesLunarLanding){
-          if(internalLunarLandingLSAMState 
-                  == lunarLandingLSAMStatesLunarDescent){
-            internalLunarLandingLSAMState = lunarLandingLSAMStatesSurfaceOps;
-            return;
-          }
-        }
-      }
-    }
-    assert false;
+       if (!failures.noEARTH_SENSORfailure()){
+         assert false;
+       }
+//       assert spacecraft.readyForChuteSequence() : errors.last();
   }
 
   public void lsamRendezvous() {
-    if(internalState == cevStatesEarthOrbit){
-      if(internalEarthOrbitState == earthOrbitStatesOrbitOps){
-        assert spacecraft.readyForLSAMrendezvous() : errors.last();
-        spacecraft.doLSAMrendezvous();
-        return;
-      }
-    }
-    assert false;
+    assert spacecraft.readyForLSAMrendezvous() : errors.last();
+    spacecraft.doLSAMrendezvous();
   }
 
   public void tliBurn() {
-    if(internalState == cevStatesEarthOrbit){
-      if(internalEarthOrbitState == earthOrbitStatesOrbitOps){
-        assert spacecraft.readyForTliBurn() : errors.last();
-        internalState=cevStatesTransitEarthMoon;
-        return;
-      }
-    }
-    assert false;
+    assert spacecraft.readyForTliBurn() : errors.last();
   }
 
   public void deOrbit() {
-    if(internalState == cevStatesEarthOrbit){
-      if(internalEarthOrbitState == earthOrbitStatesOrbitOps){
-        assert spacecraft.readyForDeorbit() : errors.last();
-        internalState = cevStatesEntry;
-        return;
-      }
-      if(internalEarthOrbitState == earthOrbitStatesSafeHold){
-        assert spacecraft.readyForDeorbit() : errors.last();
-        internalState = cevStatesEntry;
-        return;
-      }
-    }
-    assert false;
+    assert spacecraft.readyForDeorbit() : errors.last();
   }
 
   public void enterOrbitOps() {
-    if(internalState == cevStatesEarthOrbit){
-      if(internalEarthOrbitState == earthOrbitStatesSafeHold){
-        if (failures.noEARTH_SENSORfailure()){
-          internalEarthOrbitState = earthOrbitStatesOrbitOps;
-        }
-        return;
-      }
+    if (!failures.noEARTH_SENSORfailure()){
+      assert false: "Earth sensor failure. Cannot enter orbit ops";
     }
-    assert false;
   }
 
   public void edsSeparation() {
-    if(internalState == cevStatesTransitEarthMoon){
-      spacecraft.doEDSseparation();
-      return;
-    }
-    assert false;
+    spacecraft.doEDSseparation();
   }
 
   public void loiBurn () {
-    if(internalState == cevStatesTransitEarthMoon){
-      internalState = cevStatesLunarOps;
-      return;
-    }
-    assert false;
   }
 
   public void lsamSeparation() {
-    if(internalState == cevStatesLunarOps){
-      if(internalLunarOpsState == lunarOpsStatesLunarOrbit){
-        internalLunarOpsState = lunarOpsStatesLunarLanding;
-        return;
-      }
-    }
-    assert false;
   }
 
   public void teiBurn() {
-    if(internalState == cevStatesLunarOps){
-      if(internalLunarOpsState == lunarOpsStatesLunarOrbit){
-        assert spacecraft.readyForTeiBurn() : errors.last();
-        internalState = cevStatesTransitMoonEarth;
-      }
-    }
-    assert false;
+    assert spacecraft.readyForTeiBurn() : errors.last();
   }
 
   public void smSeparation() {
-    if(internalState == cevStatesTransitMoonEarth){
-      spacecraft.doSMseparation();
-      return;
-    }
-    assert false;
+    spacecraft.doSMseparation();
   }
 
   public void eiBurn (boolean cmImbalance, boolean rcsFailure) {
-    if(internalState == cevStatesTransitMoonEarth){
-      // spacecraft should now only consist of CM
-      assert spacecraft.readyForEiBurn() : errors.last();
+    if(spacecraft.readyForEiBurn()){
       spacecraft.doEiBurn(cmImbalance, rcsFailure);
-      if (cmImbalance) {
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesAbortEntryBallistic;
-      } else if (rcsFailure) {
-        internalState = cevStatesEntry;
-        internalEntryState = entryStatesAbortEntryFixedBank;
-      } else {
-        internalState = cevStatesEntry;
-      }
-      return;
     }
-    assert false;
   }
 
   public void lsamAscentBurn () {
-    if(internalState == cevStatesLunarOps){
-      if(internalLunarOpsState == lunarOpsStatesLunarLanding){
-        if(internalLunarLandingLSAMState == lunarLandingLSAMStatesSurfaceOps){
-          spacecraft.doLSAMascentBurn();
-          internalLunarLandingLSAMState = lunarLandingLSAMStatesLunarAscent;
-          return;
-        }
-      }
-    }
-    assert false;
+    spacecraft.doLSAMascentBurn();
   }
   
   public void lsamAscentRendezvous () {
-    if(internalState == cevStatesLunarOps){
-      if(internalLunarOpsState == lunarOpsStatesLunarLanding){
-        if(internalLunarLandingCEVState == lunarLandingCEVStatesOrbitOpsLoiter){
-          internalState = cevStatesEndState;
-        }
-        if(internalLunarLandingLSAMState == lunarLandingLSAMStatesLunarAscent){
-          spacecraft.doLSAMascentRendezvous();
-          internalState = cevStatesEndState;
-        }
-        return;
-      }
-    }
-    assert false;
+    spacecraft.doLSAMascentRendezvous();
   }
   
 //  class LunarOps extends State {
