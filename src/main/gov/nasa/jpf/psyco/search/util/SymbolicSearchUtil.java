@@ -13,7 +13,7 @@ import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransformationRepresentation;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.NameMap;
 import gov.nasa.jpf.psyco.search.collections.VariableRenamingMap;
@@ -49,7 +49,7 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
           ConstraintSolver solver) {
     Set<Variable<?>> variablesInPreviousState = 
         regionUtil.convertToVariableSet(baseRegion);
-    List<Transition> newStates = applyIterationOfTheTransitionSystem(
+    List<TransformationRepresentation> newStates = applyIterationOfTheTransitionSystem(
             baseRegion, transitionSystem, solver);
 
     T resultingStates = 
@@ -73,12 +73,12 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
   }
   
 
-  private List<Transition> applyIterationOfTheTransitionSystem(T inputRegion,
+  private List<TransformationRepresentation> applyIterationOfTheTransitionSystem(T inputRegion,
           List<Path> transitionSystem, ConstraintSolver solver) {
-    List<Transition> transitions = new ArrayList<>();
+    List<TransformationRepresentation> transitions = new ArrayList<>();
     Expression inputRegionExpression = inputRegion.toExpression();
     for(Path possibleTransition: transitionSystem){
-      Transition transitionResult =
+      TransformationRepresentation transitionResult =
             applySingleTransition(inputRegionExpression, possibleTransition,
               solver);
       if(transitionResult != null && transitionResult.isApplied()){
@@ -133,9 +133,9 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
   }
 
   private T
-         collectStateDescriptionsFromTransition(List<Transition> transitions) {
+         collectStateDescriptionsFromTransition(List<TransformationRepresentation> transitions) {
     T resultingRegion = regionUtil.createRegion();
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       if(transition.isApplied() && !transition.isErrorTransition()){
         SymbolicEntry resultingState = transition.getNewState();
         resultingRegion.add(resultingState);
@@ -145,17 +145,17 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
   }
 
   private VariableRenamingMap convertTransitionsToVariableRenmaingMap(
-          List<Transition> transitions) {
+          List<TransformationRepresentation> transitions) {
         VariableRenamingMap renamings = new VariableRenamingMap();
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       renamings.addRenamingsOfTransition(transition);
     }
     return renamings;
   }
 
-  private Transition applySingleTransition(Expression inputRegionExpression, Path possibleTransition, ConstraintSolver solver) {
+  private TransformationRepresentation applySingleTransition(Expression inputRegionExpression, Path possibleTransition, ConstraintSolver solver) {
     JPFLogger logger = JPF.getLogger("psyco");
-    Transition transition = ResultPathUtil
+    TransformationRepresentation transition = ResultPathUtil
             .convertPathToTransition(possibleTransition, depth);
     if(transition == null){
       return null;
@@ -183,9 +183,9 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
     return transition;
   }
 
-  private StringBuilder mergeErrorsOfTransitions(List<Transition> transitions) {
+  private StringBuilder mergeErrorsOfTransitions(List<TransformationRepresentation> transitions) {
     StringBuilder reachedErrors = new StringBuilder();
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       reachedErrors.append(transition.getErrors());
     }
     return reachedErrors;

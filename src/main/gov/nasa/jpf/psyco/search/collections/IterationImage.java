@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author mmuesly
  */
-public class IterationImage<R extends Region> {
+public class IterationImage<R extends Region> extends StateImage{
   private R reachableStates;
   private StringBuilder errors;
   private int depth;

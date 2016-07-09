@@ -7,7 +7,7 @@ package gov.nasa.jpf.psyco.search.collections;
 
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;
-import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransformationRepresentation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public class VariableRenamingMap extends HashMap{
     }
   }
 
-  public void addRenamingsOfTransition(Transition transition){
+  public void addRenamingsOfTransition(TransformationRepresentation transition){
     List<Variable<?>> oldNames = transition.getOldNames();
     List<Variable<?>> primeNames = transition.getPrimeNames();
     for(int i = 0; i < oldNames.size(); i++){

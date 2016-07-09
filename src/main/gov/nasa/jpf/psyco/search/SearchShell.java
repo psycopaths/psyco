@@ -15,6 +15,7 @@
  */
 package gov.nasa.jpf.psyco.search;
 
+import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
@@ -37,6 +38,8 @@ import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
+import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
 //import gov.nasa.jpf.psyco.oracles.SummaryOracle;
 import gov.nasa.jpf.solver.SolverWrapper;
 
@@ -133,8 +136,11 @@ public class SearchShell implements JPFShell {
           ConstraintSolver solver){
     logger.info("Start symbolic search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
+    TransitionHelper helper = new SymbolicTransitionHelper();
+    SolverInstance.getInstance().setSolver(solver);
     TransitionSystem transitionSystem = 
-            new TransitionSystem(initValuation, convertTransitionPaths(store));
+            new TransitionSystem(initValuation,
+                    convertTransitionPaths(store), helper);
     logger.info(transitionSystem.toString());
     SymbolicImage searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearch(

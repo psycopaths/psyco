@@ -15,7 +15,7 @@ import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransformationRepresentation;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.VariableRenamingMap;
 import gov.nasa.jpf.psyco.search.region.Region;
@@ -38,7 +38,7 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
           ConstraintSolver solver) {
     Set<Variable<?>> variablesInPreviousState = 
         regionUtil.convertToVariableSet(newRegion);
-    List<Transition> newStates = applyIterationOfTheTransitionSystem(
+    List<TransformationRepresentation> newStates = applyIterationOfTheTransitionSystem(
             newRegion, transitionSystem, solver);
     S resultingStates = mergeTransitionsToNewState(newStates);
     StringBuilder errors = putErrorsTogether(newStates);
@@ -55,13 +55,13 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
     return result;
   }
 
-  private List<Transition> applyIterationOfTheTransitionSystem(
+  private List<TransformationRepresentation> applyIterationOfTheTransitionSystem(
           Region inputRegion, List<Path> transitionSystem,
           ConstraintSolver solver){
-    List<Transition> transitions = new ArrayList<>();
+    List<TransformationRepresentation> transitions = new ArrayList<>();
     Expression inputRegionExpression = inputRegion.toExpression();
     for(Path possibleTransition: transitionSystem){
-      Transition transitionResult =
+      TransformationRepresentation transitionResult =
             applySingleTransition(inputRegionExpression, possibleTransition,
               solver);
       if(transitionResult != null && transitionResult.isApplied()){
@@ -71,11 +71,11 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
     return transitions;
   }
   
-  private Transition applySingleTransition(
+  private TransformationRepresentation applySingleTransition(
           Expression inputRegionExpression, Path possibleTransition,
           ConstraintSolver solver) {
     JPFLogger logger = JPF.getLogger("psyco");
-    Transition transition = ResultPathUtil
+    TransformationRepresentation transition = ResultPathUtil
             .convertPathToTransition(possibleTransition, depth);
     if (transition == null){
       return null;
@@ -109,12 +109,12 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
 //      return ExpressionUtil.or(one, two);
 //  }
   
-  private S mergeTransitionsToNewState(List<Transition> transitions){
+  private S mergeTransitionsToNewState(List<TransformationRepresentation> transitions){
     S resultState = regionUtil.createRegion();
     if(transitions.isEmpty()){
       return resultState;
     }
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       Valuation resultingValuation = transition.getTransitionResult();
       for(ValuationEntry entry: resultingValuation.entries()){
         resultState.add(entry);
@@ -123,17 +123,17 @@ public class EnumerativSearchUtil<S extends Region<ValuationEntry>,
     return resultState;
   }
   private VariableRenamingMap convertTransitionsToVariableRenmaingMap(
-          List<Transition> transitions){
+          List<TransformationRepresentation> transitions){
     VariableRenamingMap renamings = new VariableRenamingMap();
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       renamings.addRenamingsOfTransition(transition);
     }
     return renamings;
   }
 
-  private StringBuilder putErrorsTogether(List<Transition> transitions) {
+  private StringBuilder putErrorsTogether(List<TransformationRepresentation> transitions) {
     StringBuilder reachedErrors = new StringBuilder();
-    for(Transition transition: transitions){
+    for(TransformationRepresentation transition: transitions){
       reachedErrors.append(transition.getErrors());
     }
     return reachedErrors;

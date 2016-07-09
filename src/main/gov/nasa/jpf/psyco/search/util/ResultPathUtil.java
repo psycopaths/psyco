@@ -15,7 +15,7 @@ import gov.nasa.jpf.jdart.constraints.PathResult;
 import gov.nasa.jpf.jdart.constraints.PathResult.ErrorResult;
 import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;
-import gov.nasa.jpf.psyco.search.Transition;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransformationRepresentation;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class ResultPathUtil {
   
-  public static Transition convertPathToTransition(Path path, int depth){
+  public static TransformationRepresentation convertPathToTransition(Path path, int depth){
     PathResult pathResult = path.getPathResult();
     if(pathResult instanceof OkResult){
       return convertOkPathToTransition(path);
@@ -37,8 +37,8 @@ public class ResultPathUtil {
     }
     return null;
   }
-  public static Transition convertOkPathToTransition(Path path){
-    Transition transition = new Transition();
+  public static TransformationRepresentation convertOkPathToTransition(Path path){
+    TransformationRepresentation transition = new TransformationRepresentation();
     Expression transitionExpression = path.getPathCondition();
     OkResult result = path.getOkResult();
     Map<Variable<?>,Expression<?>> postConditions = 
@@ -62,8 +62,8 @@ public class ResultPathUtil {
     return transition;
   }
 
-  private static Transition convertErrorPathToTransition(Path path, int depth) {
-    Transition transition = new Transition();
+  private static TransformationRepresentation convertErrorPathToTransition(Path path, int depth) {
+    TransformationRepresentation transition = new TransformationRepresentation();
     ErrorResult result = path.getErrorResult();
     Expression transitionExpression = path.getPathCondition();
     transition.setExpresion(transitionExpression);

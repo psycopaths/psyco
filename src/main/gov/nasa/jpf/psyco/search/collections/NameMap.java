@@ -26,5 +26,19 @@ public class NameMap implements Function<String, String>{
   public String apply(String f) {
     return map.getOrDefault(f, f);
   }
-  
+
+  @Override
+  public String toString(){
+    StringBuilder resultingString = new StringBuilder();
+    resultingString.append("[ ");
+    for(String key: map.keySet()){
+      String entry = key;
+      entry += ": ";
+      entry += map.get(key);
+      entry += ",";
+      resultingString.append(entry);
+    }
+    resultingString.append("]");
+    return resultingString.toString();
+  }
 }

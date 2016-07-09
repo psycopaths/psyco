@@ -16,7 +16,8 @@ import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.psyco.search.TransitionSystem;
+import gov.nasa.jpf.psyco.search.collections.NameMap;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
@@ -44,40 +45,33 @@ public class SymbolicRegionSearchUtil {
     this.logger = Logger.getLogger("psyco");
   }
   
-  public SymbolicImage post(SymbolicRegion alreadyReachedStates,
+  public SymbolicImage post(SymbolicImage currentSearchState,
           TransitionSystem transitionSystem){
-    //uniqueStateCount = 0L;
     Set<Variable<?>> variablesInPreviousState = 
-            util.convertToVariableSet(alreadyReachedStates);
+            util.convertToVariableSet(currentSearchState.getReachableStates());
     SymbolicImage iterationResult = 
-            applyIterationOfTheTransitionSystem(alreadyReachedStates,
+            applyIterationOfTheTransitionSystem(currentSearchState,
                     transitionSystem);
     SymbolicRegion existingRegion = 
-            util.exists(iterationResult.getReachableStates(),
+            util.exists(iterationResult.getNewStates(),
                     variablesInPreviousState);
     SymbolicRegion renamedRegion = 
             rename(existingRegion, variablesInPreviousState);
-    return new SymbolicImage(renamedRegion, iterationResult.getErrors(), -1);
+    iterationResult.setNewStates(renamedRegion);
+    return iterationResult;
   }
 
   private SymbolicImage applyIterationOfTheTransitionSystem(
-          SymbolicRegion alreadyReachedStates,
+          SymbolicImage alreadyReachedStates,
           TransitionSystem transitionSystem) {
-    SymbolicRegion iterationResult = new SymbolicRegion();
-    StringBuilder errors = new StringBuilder();
-    for(Path p : transitionSystem.getConsideredOKPaths()){
-      applyOkPath(p, alreadyReachedStates, iterationResult);
-    }
-    for(Path p: transitionSystem.getConsideredErrorPaths()){
-      applyErrorPath(p, alreadyReachedStates, errors);
-    }
-    return new SymbolicImage(iterationResult, errors, -1);
+    alreadyReachedStates = (SymbolicImage) transitionSystem.applyOn(alreadyReachedStates);
+    return alreadyReachedStates;
   }
 
   private void applyOkPath(Path p, SymbolicRegion alreadyReachedStates,
           SymbolicRegion iterationResult) {
     for(SymbolicState possibleState: alreadyReachedStates.values()){
-      logger.finer("nextPath: " + p.toString());
+//      logger.finer("nextPath: " + p.toString());
       applyOkPathOnState(p, possibleState, iterationResult);
     }
   }
@@ -86,14 +80,14 @@ public class SymbolicRegionSearchUtil {
           SymbolicRegion iterationResult){
     Result solverResult = testPathCondition(testState, p.getPathCondition());
     if(solverResult == Result.SAT){
+      logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPathOnState()");
+      logger.finer("applyTransition: " + p.toString());
       SymbolicState resultState = applyOkPostCondition(testState,
-              p.getPathCondition(), p.getPostCondition());
-            logger.finer("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPathOnState()");
-            logger.finer("applyTransition: " + p.toString());
-            Expression res = resultState.toExpression();
-            if(res != null){
-              logger.finest("transitionResult: " + res.toString());
-            }
+                p.getPathCondition(), p.getPostCondition());
+      Expression res = resultState.toExpression();
+      if(res != null){
+  //              logger.finest("transitionResult: " + res.toString());
+      }
       String stateName = getStateName();
       iterationResult.put(stateName, resultState);
     }
@@ -117,8 +111,8 @@ public class SymbolicRegionSearchUtil {
               applyTranisitionResultOnVariable(var, entriesForVar,
                       pathCondition, transitionEffekt);
       Expression value = newEntry.getValue();
-      logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPostCondition()");
-      logger.finest(newEntry.getVariable() + ": " + newEntry.getValue());
+//      logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyOkPostCondition()");
+//      logger.finest(newEntry.getVariable() + ": " + newEntry.getValue());
       resultState.add(newEntry);
     }
     return resultState;
@@ -130,39 +124,41 @@ public class SymbolicRegionSearchUtil {
     String newName = var.getName() + "'";
     Variable newVar = new Variable(var.getType(), newName);
     Expression newValue = null;
+    Expression oldVarValue = null;
     //Just add the pre condition if it differs from constant true.
     if(!isPathConditionConstantTrue(preCondition)){
       newValue = preCondition;
     }
     for(SymbolicEntry setEntry: oldValues){
       Expression entryValue = setEntry.getValue();
-      newValue = newValue == null? entryValue :
+      oldVarValue = oldVarValue == null? entryValue :
               ExpressionUtil.and(newValue, entryValue);
     }
-    logger.finest("transitionEffekt: " + transitionEffekt);
+    newValue = newValue == null? oldVarValue :
+              ExpressionUtil.and(newValue, oldVarValue);
+    logger.finest("var: " + var.getName() + " transitionEffekt: " + transitionEffekt);
     logger.finest("transitionEffektClass: " + transitionEffekt.getClass());
-//    if(transitionEffekt instanceof Constant){
-//      newValue = NumericBooleanExpression.create(newVar,
-//                    NumericComparator.EQ, transitionEffekt);
-//    }else 
-//    if(transitionEffekt instanceof Variable && transitionEffekt.equals(var)){
-//      //There is no new effekt
-//      if(newValue instanceof NumericBooleanExpression){
-//        NumericBooleanExpression test = (NumericBooleanExpression) newValue;
-//        newValue = NumericBooleanExpression.create(newVar,
-//                    NumericComparator.EQ, test.getRight());
-//      }
-//    }else 
-      if(transitionEffekt != null){
-    transitionEffekt = 
+    if(transitionEffekt instanceof Constant){
+      newValue = NumericBooleanExpression.create(newVar,
+                    NumericComparator.EQ, transitionEffekt);
+    }else 
+    if(transitionEffekt instanceof Variable && transitionEffekt.equals(var)){
+      //There is no new effekt
+      logger.finest("oldVarValue: " + oldVarValue.toString());
+      NameMap rename = new NameMap();
+      rename.mapNames(var.getName(), newVar.getName());
+      newValue = ExpressionUtil.renameVars(oldVarValue, rename);
+      logger.finest("newValue: " + newValue.toString());
+    }else if(transitionEffekt != null){
+      transitionEffekt = 
             NumericBooleanExpression.create(newVar,
                     NumericComparator.EQ, transitionEffekt);
     newValue = (newValue == null ? transitionEffekt :
               ExpressionUtil.and(newValue, transitionEffekt));
     }
-    logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyTranisitionResultOnVariable()");
-    logger.finest("newVar:" + newVar.getName().toString());
-    logger.finest("newValue:" + newValue.toString());
+//    logger.finest("gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil.applyTranisitionResultOnVariable()");
+//    logger.finest("newVar:" + newVar.getName().toString());
+//    logger.finest("newValue:" + newValue.toString());
     return new SymbolicEntry(newVar, newValue);
   }
 
@@ -219,7 +215,6 @@ public class SymbolicRegionSearchUtil {
     long start = System.currentTimeMillis();
     Result res = solver.isSatisfiable(transitionConditionTest);
     long stop = System.currentTimeMillis();
-    logger.finer(pathCondition.getClass().toString());
     logger.finer("Time condition test: " + Long.toString(stop - start) + " in millis");
     return res;
   }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search;
+package gov.nasa.jpf.psyco.search.transitionSystem;
 
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author mmuesly
  */
-public class Transition {
+public class TransformationRepresentation {
   private List<Variable<?>> oldNames;
   private List<Variable<?>> primeNames;
   private Expression expression;
@@ -31,7 +31,7 @@ public class Transition {
 
   private StringBuilder reachedErrors;
   
-  public Transition(){
+  public TransformationRepresentation(){
     oldNames = new ArrayList<Variable<?>>();
     primeNames = new ArrayList<Variable<?>>();
     expression = null;

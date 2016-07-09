@@ -287,4 +287,12 @@ public class Spacecraft {
     }
     return config;
   }
+  
+  public boolean isDoneStage1(){
+    return cStage1;
+  }
+  
+  public boolean isDoneStage2(){
+    return cStage2;
+  }
 }

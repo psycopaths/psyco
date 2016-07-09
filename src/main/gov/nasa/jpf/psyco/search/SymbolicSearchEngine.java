@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search;
 
+import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.jdart.constraints.Path;
@@ -39,33 +40,49 @@ import java.util.logging.Logger;
  *@author mmuesly
  */
 public class SymbolicSearchEngine {
-
-    public static SymbolicImage symbolicBreadthFirstSearch(
+  Logger logger = Logger.getLogger("psyco");
+  public static SymbolicImage symbolicBreadthFirstSearch(
           TransitionSystem transitionSystem,
           ConstraintSolver solver){
     SymbolicRegion reachableRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
     SymbolicRegion newRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
+    boolean isLimitedTransitionSystem = transitionSystem.isLimited();
+//    System.out.println("This transition System is limited: " + isLimitedTransitionSystem);
+    logLimit(isLimitedTransitionSystem);
+//      System.out.println("\n\n\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//      System.out.println("gov.nasa.jpf.psyco.search.SymbolicSearchEngine.symbolicBreadthFirstSearch()");
+//      System.out.println("The system is not limitied. This search never terminates, therefore it is not executed");
+//      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n\n");
+//      return new SymbolicImage(reachableRegion, new StringBuilder(), -1);
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
     SymbolicRegionSearchUtil searchUtil = 
             new SymbolicRegionSearchUtil(solver);
     //We start to count interation based on 1. 0 is skipped.
     int currentDepth = 0;
     StringBuilder reachedErrors = new StringBuilder();
-    while(!newRegion.isEmpty()){
-      ++currentDepth;
-      SymbolicImage newImage = searchUtil.post(newRegion,
+    SymbolicImage currentSearchState = 
+            new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
+    currentSearchState.setPreviousNewStates(newRegion);
+    while(!currentSearchState.getPreviousNewStates().isEmpty()){
+      SymbolicImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
-      newImage.setDepth(currentDepth);
-      reachedErrors = appendErrors(newImage, reachedErrors);
-      SymbolicRegion nextReachableStates = newImage.getReachableStates();
+      //newImage.setDepth(currentDepth);
+      //reachedErrors = appendErrors(newImage, reachedErrors);
+      SymbolicRegion nextReachableStates = newImage.getNewStates();
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
-      logState(newImage);
+      newImage.setReachableStates(reachableRegion);
+      newImage.setPreviousNewStates(newRegion);
+      newImage.setNewStates(null);
+      currentSearchState = newImage;
+      logState(currentSearchState);
+//      if(currentDepth == 2)
+//        break;
     }
-    return new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
+    return currentSearchState;
   }
     
   private static void logState(SymbolicImage newImage){
@@ -87,5 +104,20 @@ public class SymbolicSearchEngine {
     reachedErrors.append(":\n");
     reachedErrors.append(newImage.getErrors());
     return reachedErrors;
+  }
+
+  private static void logLimit(boolean limitedTransitionSystem) {
+    Logger logger = Logger.getLogger("psyco");
+    if(!limitedTransitionSystem){
+      logger.info("");
+      logger.info("The Transition system is not finite.");
+      logger.info("It is very likely, that the search does not terminate.");
+      logger.info("");
+    }else{
+      logger.info("");
+      logger.info("The Transition system seems to be finite.");
+      logger.info("The search should terminate.");
+      logger.info("");
+    }
   }
 }

@@ -5,6 +5,8 @@
  */
 package gov.nasa.jpf.psyco.search.region;
 
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
@@ -15,6 +17,9 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
+import gov.nasa.jpf.psyco.search.SolverInstance;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,8 +32,29 @@ public class SymbolicEntry extends ValuationEntry<Expression<Boolean>>{
   }
   @Override
   public boolean equals(Object obj) {
-    throw new UnsupportedOperationException("Equals on expression"+
-            " Entrys is not defined yet");
+    if(obj instanceof SymbolicEntry){
+      SymbolicEntry testEntry = (SymbolicEntry) obj;
+      if(testEntry.getVariable().equals(this.getVariable())){
+        Expression test = new NumericBooleanExpression(
+                testEntry.getValue() , NumericComparator.EQ, this.getValue());
+        System.out.println("gov.nasa.jpf.psyco.search.region.SymbolicEntry.equals()");
+        System.out.println("this Value: " + this.getValue());
+        System.out.println("testEntryValue: " + testEntry.getValue());
+        Result res = SolverInstance.getInstance().isSatisfiable(test);
+        System.out.println("Solver Res: " + res);
+        if (res == Result.SAT){
+          return true;
+        }else if(res == Result.DONT_KNOW){
+          try {
+            throw new Exception("Cannot decide Equality");
+          } catch (Exception ex) {
+            Logger.getLogger(SymbolicEntry.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(42);
+          }
+        }
+      }
+    }
+    return false;
   }
   
   public static SymbolicEntry create(ValuationEntry entry){
