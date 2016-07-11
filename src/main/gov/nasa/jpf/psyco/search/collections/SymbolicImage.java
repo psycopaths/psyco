@@ -80,7 +80,7 @@ public class SymbolicImage extends StateImage{
   }
 
   public void addError(String error, int depth){
-    String errorString = "In :" + depth + " reached the error: " +error +"\n";
+    String errorString = "In: " + depth + " reached the error: " +error +"\n";
     errors.append(errorString);
   }
   

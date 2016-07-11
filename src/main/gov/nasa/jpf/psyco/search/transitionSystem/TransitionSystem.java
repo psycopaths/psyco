@@ -164,10 +164,10 @@ public class TransitionSystem<T extends TransitionHelper> {
   }
 
   public StateImage applyOn(StateImage alreadyReachedStates) {
+    alreadyReachedStates.increaseDepth(1);
     for(Transition t: transitions){
       alreadyReachedStates = t.applyOn(alreadyReachedStates, helper);
     }
-    alreadyReachedStates.increaseDepth(1);
     return alreadyReachedStates;
   }
 }

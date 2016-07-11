@@ -6,26 +6,13 @@
 package gov.nasa.jpf.psyco.search.util;
 
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
-import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
-import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
-import gov.nasa.jpf.constraints.expressions.Constant;
-import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
-import gov.nasa.jpf.constraints.expressions.NumericComparator;
-import gov.nasa.jpf.constraints.types.BuiltinTypes;
-import gov.nasa.jpf.constraints.util.ExpressionUtil;
-import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.psyco.search.collections.NameMap;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
-import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
-import gov.nasa.jpf.psyco.search.region.SymbolicState;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 

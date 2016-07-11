@@ -166,6 +166,11 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   private SymbolicState renameState(SymbolicState state, 
           List<Variable<?>> primeNames, List<Variable<?>> variableNames ){
     SymbolicState renamedState = state;
+    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+    System.out.println("stateToRename: " );
+    for(SymbolicEntry entry: state){
+      System.out.println("Var: " + entry.getVariable() + " : " + entry.getValue());
+    }
     Set<Variable<?>> variablesInTheState = 
             ExpressionUtil.freeVariables(state.toExpression());
     logger.finest("gov.nasa.jpf.psyco.search.region"
