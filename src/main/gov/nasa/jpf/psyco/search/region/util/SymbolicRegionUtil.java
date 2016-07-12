@@ -94,14 +94,14 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
 //        ConstraintSolver.Result rs = solver.isSatisfiable(testDiffState);
         ConstraintSolver.Result rs = solver.solve(testDiffState, val);
         long stop = System.currentTimeMillis();
-        logger.finest("Test diff state: " + testDiffState);
+        //logger.finest("Test diff state: " + testDiffState);
         logger.finer("Time needed for difference: " 
                 + Long.toString(stop - start) + " in Millis");
         if(rs == ConstraintSolver.Result.SAT){
           result.put(key, state);
           toExclude.add(state);
           logger.finer("excludedSize: " + toExclude.size());
-          logger.finest("RES SAT: " + ExpressionUtil.valuationToExpression(val).toString());
+          //logger.finest("RES SAT: " + ExpressionUtil.valuationToExpression(val).toString());
         }
         else{
           logger.finer("result: " + rs);
@@ -114,6 +114,9 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   @Override
   public SymbolicRegion exists(SymbolicRegion aRegion, Set<Variable<?>> subsetOfVariables) {
     SymbolicRegion existingRegion = new SymbolicRegion();
+    if(aRegion.isEmpty()){
+      return existingRegion;
+    }
     for(String key: aRegion.keySet()){
       SymbolicState state = aRegion.get(key);
       //SymbolicState newState = new SymbolicState();
@@ -166,11 +169,11 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   private SymbolicState renameState(SymbolicState state, 
           List<Variable<?>> primeNames, List<Variable<?>> variableNames ){
     SymbolicState renamedState = state;
-    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
-    System.out.println("stateToRename: " );
-    for(SymbolicEntry entry: state){
-      System.out.println("Var: " + entry.getVariable() + " : " + entry.getValue());
-    }
+//    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+//    System.out.println("stateToRename: " );
+//    for(SymbolicEntry entry: state){
+//      System.out.println("Var: " + entry.getVariable() + " : " + entry.getValue());
+//    }
     Set<Variable<?>> variablesInTheState = 
             ExpressionUtil.freeVariables(state.toExpression());
     logger.finest("gov.nasa.jpf.psyco.search.region"

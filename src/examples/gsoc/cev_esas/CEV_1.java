@@ -89,26 +89,26 @@ public class CEV_1 {
   static int lunarLandingLSAMStatesLunarAscent = 2;
   //public enum LunarLandingLSAMStates{LunarDescent, SurfaceOps, LunarAscent};
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalState = cevStatesAscent;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalAscentState = ascentStatesPrelaunchCheck;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalEarthOrbitState = earthOrbitStatesInsertion;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalLunarOpsState = lunarOpsStatesInsertion;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalEntryState = entryStatesEntryInterface;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalLunarLandingCEVState = 
           lunarLandingCEVStatesOrbitOpsLoiter;
 
-  //@Symbolic("true")
+  @Symbolic("true")
   int internalLunarLandingLSAMState = 
           lunarLandingLSAMStatesLunarDescent;
   

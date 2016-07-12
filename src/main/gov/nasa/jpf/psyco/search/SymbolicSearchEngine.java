@@ -13,6 +13,7 @@ import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil;
+import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,7 +41,10 @@ import java.util.logging.Logger;
  *@author mmuesly
  */
 public class SymbolicSearchEngine {
-  Logger logger = Logger.getLogger("psyco");
+  static String loggerName = "psyco";
+  Logger logger = Logger.getLogger(loggerName);
+  private static String currentProfilerRun = null;
+
   public static SymbolicImage symbolicBreadthFirstSearch(
           TransitionSystem transitionSystem,
           ConstraintSolver solver){
@@ -49,13 +53,7 @@ public class SymbolicSearchEngine {
     SymbolicRegion newRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
     boolean isLimitedTransitionSystem = transitionSystem.isLimited();
-//    System.out.println("This transition System is limited: " + isLimitedTransitionSystem);
     logLimit(isLimitedTransitionSystem);
-//      System.out.println("\n\n\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//      System.out.println("gov.nasa.jpf.psyco.search.SymbolicSearchEngine.symbolicBreadthFirstSearch()");
-//      System.out.println("The system is not limitied. This search never terminates, therefore it is not executed");
-//      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n\n");
-//      return new SymbolicImage(reachableRegion, new StringBuilder(), -1);
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
     SymbolicRegionSearchUtil searchUtil = 
             new SymbolicRegionSearchUtil(solver);
@@ -68,18 +66,18 @@ public class SymbolicSearchEngine {
     while(!currentSearchState.getPreviousNewStates().isEmpty()){
       SymbolicImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
-      //newImage.setDepth(currentDepth);
-      //reachedErrors = appendErrors(newImage, reachedErrors);
       SymbolicRegion nextReachableStates = newImage.getNewStates();
+      startDifferenceProfiler(newImage.getDepth());
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
+      stopDifferenceProfiler();
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);
       newImage.setNewStates(null);
       currentSearchState = newImage;
       logState(currentSearchState);
-//      if(currentDepth == 2)
+//      if(currentSearchState.getDepth() == 4)
 //        break;
     }
     return currentSearchState;
@@ -119,5 +117,22 @@ public class SymbolicSearchEngine {
       logger.info("The search should terminate.");
       logger.info("");
     }
+  }
+  
+  public static String getSearchLoggerName(){
+    return loggerName;
+  }
+
+    private static void startDifferenceProfiler(int depth){
+    if(currentProfilerRun != null){
+      SimpleProfiler.stop(currentProfilerRun);
+    }
+    currentProfilerRun = "differencInDepth-" + depth;
+    SimpleProfiler.start(currentProfilerRun);
+  }
+
+  private static void stopDifferenceProfiler(){
+    SimpleProfiler.stop(currentProfilerRun);
+    currentProfilerRun = null;
   }
 }

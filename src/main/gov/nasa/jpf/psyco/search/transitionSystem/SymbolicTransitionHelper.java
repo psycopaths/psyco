@@ -61,20 +61,45 @@ public class SymbolicTransitionHelper implements TransitionHelper{
     if(!transition.isGuardSymbolicConstant()){
       newValue = transition.getGuardCondition();
     }
+    VariableReplacementMap replacements = 
+            extractValueReplacements(state);
     for(SymbolicEntry entry: state){
       SymbolicEntry primeEntry =
-              executeTransitionOnEntry(entry, transition, newValue);
+              executeTransitionOnEntry(
+                      entry, transition, newValue, replacements);
       resultingState.add(primeEntry);
     }
     return resultingState;
   }
 
+  private VariableReplacementMap extractValueReplacements(SymbolicState state){
+    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.extractValueReplacements()");
+    VariableReplacementMap replacements = new VariableReplacementMap();
+    for(SymbolicEntry entry: state){
+      Expression replacement = 
+            extractValueForReplacement(entry.getVariable(), entry.getValue());
+      if(!replacements.containsKey(entry.getVariable())){
+        System.out.println("var: " + entry.getVariable() + " replacement: " + replacement);
+        replacements.put(entry.getVariable(), replacement);
+      }else{
+        logger.severe("IT IS NOT POSSIBLE TO REPLACE A VARIABLE WITH TWO VALUES");
+        System.exit(42);
+      }
+    }
+    return replacements;
+  }
   private SymbolicEntry executeTransitionOnEntry(SymbolicEntry entry,
-          Transition transition, Expression prefix){
+          Transition transition, Expression prefix,
+          VariableReplacementMap replacements){
     Variable oldVariable = entry.getVariable(),
             primeVariable = createPrimeVariable(oldVariable);
     Expression transitionEffekt = transition.getTransitionEffect(oldVariable);
-    Expression newValue = prefix;
+    Expression newValue = 
+            prefix != null ?
+            (Expression) prefix.accept(replacementVisitor, replacements)
+            : prefix;
+    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
+    System.out.println("prefix: " + newValue);
     if(isStutterEffektForVariable(oldVariable, transitionEffekt) || transitionEffekt == null){
       newValue = createStutterTransition(oldVariable,
                           primeVariable, entry.getValue());
@@ -82,12 +107,12 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       Expression assignment = 
               createConstantAssignment(primeVariable, transitionEffekt);
       newValue = appendNewValue(newValue, assignment);
-    }else if(transitionEffekt != null){
+    }else{
       newValue = createResultValue(oldVariable, primeVariable,
-              transitionEffekt, entry.getValue(), newValue);
+              transitionEffekt, replacements, newValue);
     }
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
-    System.out.println("primeVariable: " + primeVariable + " newValue: " + newValue + " oldValue: " + entry.getValue());
+    logger.finer("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
+    logger.finer("primeVariable: " + primeVariable + " newValue: " + newValue + " oldValue: " + entry.getValue());
     return new SymbolicEntry(primeVariable, newValue);
   }
 
@@ -115,22 +140,15 @@ public class SymbolicTransitionHelper implements TransitionHelper{
 
   private Expression createResultValue(Variable oldVariable, 
           Variable primeVariable,
-          Expression transitionEffekt, Expression oldValue, Expression prefix){
-    //TODO: Here is some replacement needed.
-    VariableReplacementMap replacements = new VariableReplacementMap();
-    Expression replacementValue = 
-            extractValueForReplacement(oldVariable, oldValue);
-    replacements.put(oldVariable, replacementValue);
+          Expression transitionEffekt,
+          VariableReplacementMap replacements,
+          Expression prefix){
     System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.createResultValue()");
-    System.out.println("transitionEffekt: " + transitionEffekt + ", " + oldValue + ", " + replacementValue);
-    System.out.println("prefix: " + prefix + ", " + replacementValue);
+    System.out.println("transitionEffekt: " + transitionEffekt + ", " + replacements.get(oldVariable));
 //    transitionEffekt = ExpressionUtil.and(oldValue, transitionEffekt);
 //    System.out.println("transitionEffektAndOld: " + transitionEffekt);
     transitionEffekt = (Expression) 
             transitionEffekt.accept(replacementVisitor, replacements);
-    prefix = (Expression) 
-            prefix.accept(replacementVisitor, replacements);
-//    transitionEffekt = ExpressionUtil.transformVars(oldVariable, replacements);
     System.out.println("transitionEffektAfterReplacement: " + transitionEffekt);
     System.out.println("prefix replacement: " + prefix);
     Expression newValuePart = NumericBooleanExpression.create(primeVariable,

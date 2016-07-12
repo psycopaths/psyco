@@ -14,7 +14,8 @@ import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
  */
 public abstract class StateImage {
   protected int depth = 0;
-  
+  protected StringBuilder errors = new StringBuilder();
+
   public int getDepth() {
     return depth;
   }
@@ -25,6 +26,7 @@ public abstract class StateImage {
 
   public void increaseDepth(int amount){
     this.depth += amount;
+    errors.append("\n");
   }
   
 }

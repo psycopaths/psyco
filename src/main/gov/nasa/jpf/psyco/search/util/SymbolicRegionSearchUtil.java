@@ -7,6 +7,7 @@ package gov.nasa.jpf.psyco.search.util;
 
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
@@ -29,7 +30,7 @@ public class SymbolicRegionSearchUtil {
   public SymbolicRegionSearchUtil(ConstraintSolver solver){
     this.solver = solver;
     this.util = new SymbolicRegionUtil(solver);
-    this.logger = Logger.getLogger("psyco");
+    this.logger = Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
   }
   
   public SymbolicImage post(SymbolicImage currentSearchState,

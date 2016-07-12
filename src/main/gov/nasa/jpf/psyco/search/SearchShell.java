@@ -21,27 +21,18 @@ import gov.nasa.jpf.JPF;
 
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
-import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
-import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.jdart.constraints.PathResult.OkResult;
 import gov.nasa.jpf.jdart.summaries.MethodSummary;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
-//import gov.nasa.jpf.psyco.InterfaceGenerator;
-//import gov.nasa.jpf.psyco.OracleProvider;
 import gov.nasa.jpf.psyco.PsycoConfig;
-//import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.search.collections.IterationImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
-import gov.nasa.jpf.psyco.search.region.ExpressionRegion;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
-//import gov.nasa.jpf.psyco.oracles.SummaryOracle;
-import gov.nasa.jpf.solver.SolverWrapper;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
@@ -49,21 +40,18 @@ import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import net.automatalib.automata.transout.MealyMachine;
-//import net.automatalib.util.graphs.dot.GraphDOT;
 /**
  *
  * @author mmuesly
  */
 public class SearchShell implements JPFShell {
 
-  private Config config;
+  private final Config config;
   
-  private JPFLogger logger; 
+  private final JPFLogger logger; 
   public SearchShell(Config conf) {
     this.config = conf;
     LogManager.init(conf);
@@ -75,7 +63,7 @@ public class SearchShell implements JPFShell {
     try {
       run();
     } catch (IOException ex) {
-      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
+      logger.log(Level.SEVERE, null, ex);
     }
   }
 
@@ -96,7 +84,7 @@ public class SearchShell implements JPFShell {
       System.exit(1);
     }
 
-    executeSearch(pconf, store, solver);
+    //executeSearch(pconf, store, solver);
 
     SimpleProfiler.stop("PSYCO-run");
     logger.info("Profiling:\n" + SimpleProfiler.getResults());

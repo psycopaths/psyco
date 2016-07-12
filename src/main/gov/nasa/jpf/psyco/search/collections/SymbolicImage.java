@@ -18,14 +18,9 @@ public class SymbolicImage extends StateImage{
   private SymbolicRegion reachableStates;
   private SymbolicRegion newStates;
   private SymbolicRegion previousNewStates;
-  private StringBuilder errors;
-
-  public SymbolicImage(){
-    errors = new StringBuilder();
-  }
 
   public SymbolicImage(SymbolicRegion reachableStates){
-    this();
+    super();
     this.reachableStates = reachableStates;
   }
 
@@ -44,7 +39,10 @@ public class SymbolicImage extends StateImage{
   }
 
   public SymbolicRegion getNewStates() {
-    return newStates;
+    if(this.newStates == null){
+      return new SymbolicRegion();
+    }
+    return this.newStates;
   }
 
   public void setNewStates(SymbolicRegion newStates) {
@@ -60,7 +58,10 @@ public class SymbolicImage extends StateImage{
   }
 
   public SymbolicRegion getPreviousNewStates() {
-    return previousNewStates;
+    if(this.previousNewStates == null){
+      return new SymbolicRegion();
+    }
+    return this.previousNewStates;
   }
 
   public void setPreviousNewStates(SymbolicRegion previousNewStates) {

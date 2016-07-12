@@ -13,6 +13,7 @@ import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.search.collections.StateImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
+import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class TransitionSystem<T extends TransitionHelper> {
   private List<Transition> transitions;
   private Valuation initValuation;
   private T helper;
+  private String currentProfilerRun = null;
   public TransitionSystem(T helper){
     transitions = new ArrayList<>();
     initValuation = new Valuation();
@@ -137,17 +139,17 @@ public class TransitionSystem<T extends TransitionHelper> {
             + stutterPath.size() + "\n";
     transitionSystem += "errorTransitions: " 
             + errors.size() + "\n";
-    transitionSystem += "OkPaths:\n";
-    transitionSystem += convertPathListToString(okPaths);
-    transitionSystem += "stutterPaths:\n";
-    transitionSystem += convertPathListToString(stutterPath);
-    transitionSystem += "ErrorPaths:\n";
-    transitionSystem += convertPathListToString(errors);
-    transitionSystem += "Init Variables: ";
-    for(Variable var:  initValuation.getVariables()){
-      transitionSystem += var.getName() + ",";
-    }
-    transitionSystem += "\n\n";
+//    transitionSystem += "OkPaths:\n";
+//    transitionSystem += convertPathListToString(okPaths);
+//    transitionSystem += "stutterPaths:\n";
+//    transitionSystem += convertPathListToString(stutterPath);
+//    transitionSystem += "ErrorPaths:\n";
+//    transitionSystem += convertPathListToString(errors);
+//    transitionSystem += "Init Variables: ";
+//    for(Variable var:  initValuation.getVariables()){
+//      transitionSystem += var.getName() + ",";
+//    }
+//    transitionSystem += "\n\n";
     return transitionSystem;
   }
   private String convertPathListToString(List<Path> paths){
@@ -165,9 +167,24 @@ public class TransitionSystem<T extends TransitionHelper> {
 
   public StateImage applyOn(StateImage alreadyReachedStates) {
     alreadyReachedStates.increaseDepth(1);
+    startProfiler(alreadyReachedStates.getDepth());
     for(Transition t: transitions){
       alreadyReachedStates = t.applyOn(alreadyReachedStates, helper);
     }
+    stopProfiler();
     return alreadyReachedStates;
+  }
+
+  private void startProfiler(int depth){
+    if(currentProfilerRun != null){
+      SimpleProfiler.stop(currentProfilerRun);
+    }
+    currentProfilerRun = "applyTransitionSystem-" + depth;
+    SimpleProfiler.start(currentProfilerRun);
+  }
+
+  private void stopProfiler(){
+    SimpleProfiler.stop(currentProfilerRun);
+    currentProfilerRun = null;
   }
 }

@@ -8,6 +8,7 @@ package gov.nasa.jpf.psyco.search.transitionSystem;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.AbstractExpressionVisitor;
+import gov.nasa.jpf.constraints.expressions.Negation;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.expressions.NumericCompound;
@@ -51,7 +52,13 @@ public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expres
     expr = new NumericBooleanExpression(left, expr.getComparator(), right);
     return expr;
   }
-  
+
+  @Override
+  public Expression visit(Negation expr, VariableReplacementMap data){
+    Expression innerValue = expr.getNegated();
+    innerValue = check(innerValue, data);
+    return new Negation(innerValue);
+  }
   @Override
   protected <E> Expression<?> defaultVisit(Expression<E> expression, VariableReplacementMap data) {
     System.out.println("defaultVisit: " + expression + " class: " + expression.getClass());
@@ -72,6 +79,8 @@ public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expres
       return visit((PropositionalCompound) expr, data);
     }else if(expr instanceof NumericBooleanExpression){
       return visit((NumericBooleanExpression) expr, data);
+    }else if(expr instanceof Negation){
+      return visit((Negation) expr, data);
     }
     return expr;
   }

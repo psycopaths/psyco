@@ -17,12 +17,14 @@ import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
+import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.collections.StateImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,6 +38,8 @@ public class Transition {
   List<Variable> stateVariables;
   Map<Variable, Boolean> lowerBound;
   Map<Variable, Boolean> upperBound;
+  private static final Logger logger = 
+          Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
 
 
   public Transition(Path p){
@@ -82,12 +86,12 @@ public class Transition {
     List<NumericBooleanExpression> guardLimitations = new ArrayList<>();
     guard.accept(visitor,guardLimitations);
     analyzeVariableLimitations(guardLimitations);
-    System.out.println("\ngov.nasa.jpf.psyco.search.Transition.calculateGuardVariables()");
-    System.out.println("path: " + path.toString());
-    System.out.println("guard Variables: " + guardLimitations.toString());
-    System.out.println("upperBounds: " + upperBound.toString());
-    System.out.println("lowerBonds: " + lowerBound.toString());
-    System.out.println();
+    logger.finest("\ngov.nasa.jpf.psyco.search.Transition.calculateGuardVariables()");
+    logger.finest("path: " + path.toString());
+    logger.finest("guard Variables: " + guardLimitations.toString());
+    logger.finest("upperBounds: " + upperBound.toString());
+    logger.finest("lowerBonds: " + lowerBound.toString());
+    logger.finest("");
     return;
   }
 
@@ -159,15 +163,15 @@ public class Transition {
   public boolean isLimitedTransition(){
     if(isOK()){
       Map<Variable<?>, Expression<?>> pathEffects = path.getPostCondition().getConditions();
-      System.out.println("\n\ngov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
-      System.out.println(path.toString());
+//      System.out.println("\n\ngov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
+//      System.out.println(path.toString());
       for(Variable var: pathEffects.keySet()){
         Expression result = pathEffects.get(var);
-        System.out.println("var: " + var+ " result: " + result.toString() + " class: " + result.getClass());
+//        System.out.println("var: " + var+ " result: " + result.toString() + " class: " + result.getClass());
         if(result instanceof NumericCompound){
           boolean limit = analyzeNumericCompound(var,(NumericCompound) result);
-          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
-          System.out.println("NumericCompound: " + result.toString() + "limit: " + limit);
+//          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
+//          System.out.println("NumericCompound: " + result.toString() + "limit: " + limit);
           return limit;
         }
       }
@@ -254,9 +258,7 @@ public class Transition {
 
   public StateImage applyOn(StateImage alreadyReachedStates, TransitionHelper helper) {
     if(isOK()){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.applyOn()");
-      System.out.println("helper: " + helper);
-      System.out.println("image: " + alreadyReachedStates);
+      logger.fine(path.toString());
       return helper.applyTransition(alreadyReachedStates, this);
     }else if(isError()){
       return helper.applyError(alreadyReachedStates, this);
