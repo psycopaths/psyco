@@ -73,9 +73,8 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
     for(SymbolicState state: excludedRegion.values()){
       toExclude.add(state);
     }
-    logger.finest("gov.nasa.jpf.psyco.search.region."
+    logger.finer("gov.nasa.jpf.psyco.search.region."
             + "util.SymbolicRegionUtil.difference()");
-    //logger.finest("notRegion: " + notRegion.toString());
     for(String key : outterRegion.keySet()){
         Expression excludedRegionExpr = convertSetToExpression(toExclude);
         Set<Variable<?>> stateVariables = convertToVariableSet(excludedRegion);
@@ -91,23 +90,19 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
         Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
         long start = System.currentTimeMillis();
         Valuation val = new Valuation();
-//        ConstraintSolver.Result rs = solver.isSatisfiable(testDiffState);
         ConstraintSolver.Result rs = solver.solve(testDiffState, val);
         long stop = System.currentTimeMillis();
-        //logger.finest("Test diff state: " + testDiffState);
         logger.finer("Time needed for difference: " 
                 + Long.toString(stop - start) + " in Millis");
         if(rs == ConstraintSolver.Result.SAT){
           result.put(key, state);
           toExclude.add(state);
           logger.finer("excludedSize: " + toExclude.size());
-          //logger.finest("RES SAT: " + ExpressionUtil.valuationToExpression(val).toString());
         }
         else{
           logger.finer("result: " + rs);
         }
     }
-    logger.finest("Difference Result" + result.toString());
     return result;
   }
 
@@ -119,18 +114,12 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
     }
     for(String key: aRegion.keySet()){
       SymbolicState state = aRegion.get(key);
-      //SymbolicState newState = new SymbolicState();
       for(SymbolicEntry entry: state){
         if(!subsetOfVariables.contains(entry.getVariable())){
           existingRegion.put(key, state);
           break;
-          //continue;
         }
-        //newState.add(entry);
       }
-//      if(!newState.isEmpty()){
-//        existingRegion.put(key, newState);
-//      }
     }
     return existingRegion;
   }
@@ -169,11 +158,11 @@ public class SymbolicRegionUtil implements RegionUtil<SymbolicRegion>{
   private SymbolicState renameState(SymbolicState state, 
           List<Variable<?>> primeNames, List<Variable<?>> variableNames ){
     SymbolicState renamedState = state;
-//    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
-//    System.out.println("stateToRename: " );
-//    for(SymbolicEntry entry: state){
-//      System.out.println("Var: " + entry.getVariable() + " : " + entry.getValue());
-//    }
+    System.out.println("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+    System.out.println("stateToRename: " );
+    for(SymbolicEntry entry: state){
+      System.out.println("Var: " + entry.getVariable() + " : " + entry.getValue());
+    }
     Set<Variable<?>> variablesInTheState = 
             ExpressionUtil.freeVariables(state.toExpression());
     logger.finest("gov.nasa.jpf.psyco.search.region"

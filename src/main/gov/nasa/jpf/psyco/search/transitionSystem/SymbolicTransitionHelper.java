@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import static gov.nasa.jpf.constraints.api.ConstraintSolver.Result.SAT;
 import gov.nasa.jpf.constraints.api.Expression;
@@ -12,9 +13,9 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
-import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SolverInstance;
+import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.collections.NameMap;
 import gov.nasa.jpf.psyco.search.collections.StateImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
@@ -23,10 +24,10 @@ import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
+import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
@@ -34,9 +35,15 @@ import java.util.logging.Logger;
  */
 public class SymbolicTransitionHelper implements TransitionHelper{
   SolverInstance solver = SolverInstance.getInstance();
-  Logger logger = Logger.getLogger("psyco");
-  VariableReplacementVisitor replacementVisitor = new VariableReplacementVisitor();
-  VariableAssignmentVisitor assignmentVisitor = new VariableAssignmentVisitor();
+  private final JPFLogger logger;
+  private final VariableReplacementVisitor replacementVisitor;
+  private final VariableAssignmentVisitor assignmentVisitor;
+
+  public SymbolicTransitionHelper() {
+    this.assignmentVisitor = new VariableAssignmentVisitor();
+    this.replacementVisitor = new VariableReplacementVisitor();
+    this.logger = JPF.getLogger(SymbolicSearchEngine.getSearchLoggerName());
+  }
   @Override
   public StateImage applyTransition(StateImage image, Transition transition) {
     if(image instanceof SymbolicImage){
@@ -73,13 +80,11 @@ public class SymbolicTransitionHelper implements TransitionHelper{
   }
 
   private VariableReplacementMap extractValueReplacements(SymbolicState state){
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.extractValueReplacements()");
     VariableReplacementMap replacements = new VariableReplacementMap();
     for(SymbolicEntry entry: state){
       Expression replacement = 
             extractValueForReplacement(entry.getVariable(), entry.getValue());
       if(!replacements.containsKey(entry.getVariable())){
-        System.out.println("var: " + entry.getVariable() + " replacement: " + replacement);
         replacements.put(entry.getVariable(), replacement);
       }else{
         logger.severe("IT IS NOT POSSIBLE TO REPLACE A VARIABLE WITH TWO VALUES");
@@ -98,21 +103,18 @@ public class SymbolicTransitionHelper implements TransitionHelper{
             prefix != null ?
             (Expression) prefix.accept(replacementVisitor, replacements)
             : prefix;
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
-    System.out.println("prefix: " + newValue);
     if(isStutterEffektForVariable(oldVariable, transitionEffekt) || transitionEffekt == null){
       newValue = createStutterTransition(oldVariable,
                           primeVariable, entry.getValue());
     }else if(isConstantAssignment(transitionEffekt)){
-      Expression assignment = 
+        newValue = 
               createConstantAssignment(primeVariable, transitionEffekt);
-      newValue = appendNewValue(newValue, assignment);
     }else{
       newValue = createResultValue(oldVariable, primeVariable,
               transitionEffekt, replacements, newValue);
     }
-    logger.finer("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
-    logger.finer("primeVariable: " + primeVariable + " newValue: " + newValue + " oldValue: " + entry.getValue());
+    logger.finest("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
+    logger.finest("primeVariable: " + primeVariable + " newValue: " + newValue + " oldValue: " + entry.getValue());
     return new SymbolicEntry(primeVariable, newValue);
   }
 

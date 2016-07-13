@@ -5,7 +5,13 @@
  */
 package gov.nasa.jpf.psyco.search.collections;
 
+import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.constraints.expressions.Constant;
+import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
+import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
+import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
+import gov.nasa.jpf.psyco.search.region.SymbolicState;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -110,5 +116,62 @@ public class SymbolicImage extends StateImage{
     searchResultString.append("Further the following errors are reached:\n");
     searchResultString.append(errors);
     searchResultString.append("\niteration image end\n");
+  }
+
+//  public String toCSV(){
+//    SymbolicState state = reachableStates.get("initState");
+//    
+//    String csv = "cLAS, cEDS, cLSAM_DESCENT, cStage2, cCM, cStage1, cLSAM_ASCENT, cSM\n";
+//    for(SymbolicState state: reachableStates.values()){
+//      String[] values = new String[8];
+//      for(SymbolicEntry entry: state){
+//        if(entry.getVariable().getName().endsWith("cLAS")){
+//          values[0] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cEDS")){
+//          values[1] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cLSAM_DESCENT")){
+//          values[2] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cStage2")){
+//          values[3] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cCM")){
+//          values[4] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cStage1")){
+//          values[5] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cLSAM_ASCENT")){
+//          values[6] = getValue(entry.getValue());
+//        }
+//        if(entry.getVariable().getName().endsWith("cSM")){
+//          values[7] = getValue(entry.getValue());
+//        }
+//      }
+//      for(String value: values){
+//        csv+=value +",";
+//      }
+//      csv = csv.substring(0, csv.length() - 1) + "\n";
+//    }
+//    return csv;
+//  }
+
+  private String getValue(Expression expr){
+    if(expr instanceof PropositionalCompound){
+      Expression right = ((PropositionalCompound) expr).getRight();
+      return getValue(right);
+    }
+    if(expr instanceof NumericBooleanExpression){
+      Expression right = ((NumericBooleanExpression) expr).getRight();
+      return getValue(right);
+    }
+    if(expr instanceof Constant){
+      return expr.toString();
+    }
+    System.out.println("gov.nasa.jpf.psyco.search.collections.SymbolicImage.getValue()");
+    System.out.println(expr.getClass() + " value: " + expr.toString());
+    return null;
   }
 }
