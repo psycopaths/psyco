@@ -34,6 +34,7 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
+import gov.nasa.jpf.constraints.util.collections.NameMap;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
@@ -47,10 +48,12 @@ import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.util.PathUtil;
 import gov.nasa.jpf.psyco.util.SEResultUtil;
 import gov.nasa.jpf.util.JPFLogger;
+import gov.nasa.jpf.util.SimpleProfiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -68,7 +71,6 @@ public final class InterpolationUtil {
   private final SummaryAlphabet inputs;
   private final MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model;  
   private final InterpolationCache cache;
-
   
   public InterpolationUtil(InterpolationSolver iSolver, ConstraintSolver cSolver, SummaryAlphabet inputs, 
           MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model) {
@@ -97,7 +99,7 @@ public final class InterpolationUtil {
   public Expression<Boolean> expand(Word<SymbolicMethodSymbol> prefix, 
           Word<Path> path, int depth) throws CounterexampleFound {
     List<Expression<Boolean>> interpolants = new ArrayList<>();
-    logger.finer("Expanding prefix " + prefix);
+    logger.finer("Depth: " + depth + "Expanding prefix " + prefix);
     Object state = model.getState(prefix);
     Expression<Boolean> itp = cache.lookup(depth, state, 
             InterpolationUtil.asExpression(prefix, path, this.inputs.getInitialValuation()));
@@ -142,7 +144,7 @@ public final class InterpolationUtil {
       boolean conforms = conforms(p, out);
       // found ce?
       if (sat && !conforms) {
-        logger.finer("Found counerexample: " + nextPrefix + " : " + 
+        logger.finer("Found counterexample: " + nextPrefix + " : " + 
                 out + " : " + SymbolicQueryOutput.forPath(p));
         
         throw new CounterexampleFound(nextPrefix);
@@ -174,6 +176,7 @@ public final class InterpolationUtil {
     Path combined = PathUtil.executeSymbolically(
             word, path, this.inputs.getInitialValuation());
     
+    logger.finest("path condition: " + combined.getPathCondition());
     ConstraintSolver.Result sat = cSolver.isSatisfiable(combined.getPathCondition());
     return sat == ConstraintSolver.Result.SAT;
   }
@@ -197,7 +200,7 @@ public final class InterpolationUtil {
    */
   public Expression<Boolean> interpolate(Word<SymbolicMethodSymbol> prefix, Word<Path> path, 
           SymbolicMethodSymbol a, Expression<Boolean> unsatUnconformant) {
-
+    logger.finest("interpolate prefix: " + prefix);
     List<Expression<Boolean>> terms = new ArrayList<>();
     terms.add(asExpression(prefix, path, initial));         
 
@@ -206,11 +209,30 @@ public final class InterpolationUtil {
       ppos += s.getArity();
     }
     
-    Function<String, String> shift = SEResultUtil.shift(1, ppos, a.getArity());        
-    unsatUnconformant = ExpressionUtil.renameVars(unsatUnconformant, shift);   
+    Function<String, String> shift = SEResultUtil.shift(1, ppos, a.getArity());
+    Set<Variable<?>> variables = 
+            ExpressionUtil.freeVariables(unsatUnconformant);
+    boolean undo =false;
+    if(checkFunction(variables, shift)){
+      undo = true;
+//      logger.finest("Renaming Variables old: "+ unsatUnconformant.toString());
+      
+      unsatUnconformant = ExpressionUtil.renameVars(unsatUnconformant, shift);   
+      printFunction(variables, shift);
+//      unsatUnconformant = ExpressionUtil.renameVarsInPlace(unsatUnconformant, shift);   
+//    logger.finest("Renaming Variables new: "+ unsatUnconformant.toString());
+    }
+
     terms.add(unsatUnconformant);
-    
+
+    SimpleProfiler.start("interpolant solver");
     List<Expression<Boolean>> itp = iSolver.getInterpolants(terms);
+    SimpleProfiler.stop("interpolant solver");
+//    if(undo){
+//      Function<String,String> reversedShift = reverseMapping(variables, shift);
+//      unsatUnconformant = ExpressionUtil.renameVarsInPlace(unsatUnconformant, reversedShift);
+//      logger.finest("Renaming Variables reestablished: "+ unsatUnconformant.toString());
+//    }
     return itp.get(0);
   }  
   
@@ -302,5 +324,35 @@ public final class InterpolationUtil {
   public InterpolationCache getCache() {
     return cache;
   }
-    
+
+  public Function<String,String> reverseMapping(Set<Variable<?>> variables, Function<String,String> toReverse){
+    NameMap reversedMapping = new NameMap();
+    for(Variable key: variables){
+      String oldName = key.getName();
+      String value = toReverse.apply(oldName);
+      reversedMapping.mapNames(value, oldName);
+    }
+    return reversedMapping;
+  }
+  
+  private void printFunction(Set<Variable<?>> variables,
+          Function<String, String> function){
+    System.out.println("gov.nasa.jpf.psyco.interpolation.InterpolationUtil.printFunction()");
+    for(Variable var: variables){
+      String replacement = function.apply(var.getName());
+      System.out.println("var: " + var.getName() 
+              + " replacement: " + replacement);
+    }
+  }
+
+  private boolean checkFunction(Set<Variable<?>> variables,
+          Function<String, String> function){
+    for(Variable var: variables){
+      String replacement = function.apply(var.getName());
+      if(!replacement.equals(var.getName())){
+        return true;
+      }
+    }
+    return false;
+  }
 }

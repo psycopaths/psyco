@@ -108,7 +108,11 @@ public class PathUtil {
       SymbolicMethodSymbol sms = sword.getSymbol(spos);      
       Function<String, String> shift = 
               SEResultUtil.shift(1, ppos, sms.getArity());
-      Path pShifted = SEResultUtil.rename(p, shift);
+      Path pShifted = p;
+//      if(shift != null){
+      //Assumption: This abbuse the copy behavior of rename...
+      pShifted = SEResultUtil.rename(p, shift);
+//      }
       Expression<Boolean> fragment = executeSymbolically(pShifted, val);
       Collection<Expression<Boolean>> atoms = decomposePath(fragment);
       pc.addAll(atoms);

@@ -34,6 +34,7 @@ import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.util.JPFLogger;
+import gov.nasa.jpf.util.SimpleProfiler;
 import java.util.Collection;
 import java.util.Collections;
 import net.automatalib.automata.transout.MealyMachine;
@@ -103,6 +104,7 @@ public class IncreasingDepthInterpolationTest implements SymbolicEquivalenceTest
         if (ce != null) {
           return ce;
         }
+        logger.finest(SimpleProfiler.getResults());
         logger.info("==== completed depth " + k);
         logger.fine(this.util.getCache());
         k++;
