@@ -16,31 +16,31 @@
  * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
  * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
  ******************************************************************************/
-package gov.nasa.jpf.psyco.equivalence;
+package gov.nasa.jpf.psyco.path.equivalence;
 
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.psyco.DefaultOracleProvider;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
-import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
-import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
-import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
+import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
-import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
+import gov.nasa.jpf.psyco.path.learnlib.PathEquivalenceTest;
+import gov.nasa.jpf.psyco.path.learnlib.PathQueryOracle;
+import gov.nasa.jpf.psyco.path.learnlib.PathQueryOutput;
+import gov.nasa.jpf.psyco.path.learnlib.PathSymbol;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
 /**
  *
  * @author falkhowar
  */
-public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
+public class IncreasingDepthExhaustiveTest implements PathEquivalenceTest {
   
   private static final JPFLogger logger = JPF.getLogger("psyco");
   
@@ -48,28 +48,26 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   
   private int kMax = -1;
   
-  private MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model;
+  private MealyMachine<Object, PathSymbol, ?, PathQueryOutput> model;
 
-  private final ThreeValuedOracle oracle;
+  private final PathQueryOracle oracle;
 
-  private final SymbolicMethodAlphabet inputs;
-  
-  private final MethodExecutionFilter filter;
-  
-  public IncreasingDepthExhaustiveTest(DefaultOracleProvider provider, PsycoConfig pconf) {
-    this.oracle = provider.getThreeValuedOracle();
-    this.inputs = provider.getInputs();
-    this.filter = provider.getExecutionFilter();
+  private final Alphabet<PathSymbol> inputs;
+    
+  public IncreasingDepthExhaustiveTest(PathQueryOracle oracle, 
+          Alphabet<PathSymbol> inputs, PsycoConfig pconf) {
+    this.oracle = oracle;
+    this.inputs = inputs;
     this.kMax = pconf.getMaxDepth();
   }
 
   @Override
-  public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExample(
-          MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a, 
-          Collection<? extends SymbolicMethodSymbol> clctn) {
+  public DefaultQuery<PathSymbol, PathQueryOutput> findCounterExample(
+          MealyMachine<?, PathSymbol, ?, PathQueryOutput> a, 
+          Collection<? extends PathSymbol> clctn) {
 
-    this.model = (MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput>)a;
-    DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce = null;
+    this.model = (MealyMachine<Object, PathSymbol, ?, PathQueryOutput>)a;
+    DefaultQuery<PathSymbol, PathQueryOutput> ce = null;
     
     try {
       while (true) {
@@ -88,11 +86,11 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     }
   }
   
-  private DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExampleAtDepthK() {
-    Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> queries = unroll();
-    for (DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q : queries) {      
+  private DefaultQuery<PathSymbol, PathQueryOutput> findCounterExampleAtDepthK() {
+    Collection<DefaultQuery<PathSymbol, PathQueryOutput>> queries = unroll();
+    for (DefaultQuery<PathSymbol, PathQueryOutput> q : queries) {      
       this.oracle.processQueries(Collections.singleton(q));
-      SymbolicQueryOutput refOut = 
+      PathQueryOutput refOut = 
               this.model.computeOutput(q.getInput()).lastSymbol();
       
       if (!refOut.equals(q.getOutput())) {
@@ -104,50 +102,40 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     return null;
   }
 
-  private Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> unroll() {
-    ArrayList<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> ret = 
+  private Collection<DefaultQuery<PathSymbol, PathQueryOutput>> unroll() {
+    ArrayList<DefaultQuery<PathSymbol, PathQueryOutput>> ret = 
             new ArrayList<>();
     
     Object init = this.model.getInitialState();
-    Word<SymbolicMethodSymbol> eps = Word.epsilon();
+    Word<PathSymbol> eps = Word.epsilon();
     unroll(eps, init, ret);
     return ret;
   }
   
-  private void unroll(Word<SymbolicMethodSymbol> prefix, Object state,
-          Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
+  private void unroll(Word<PathSymbol> prefix, Object state,
+          Collection<DefaultQuery<PathSymbol, PathQueryOutput>> words) {
     
     if (prefix.length() == k) {
-      add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(prefix), words);
+      add(new DefaultQuery<PathSymbol, PathQueryOutput>(prefix), words);
       return;
     }
     
-    for (SymbolicMethodSymbol a : this.inputs) {
-      Word<SymbolicMethodSymbol> next = prefix.append(a);
-      SymbolicQueryOutput out = this.model.getOutput(state, a);
+    for (PathSymbol a : this.inputs) {
+      Word<PathSymbol> next = prefix.append(a);
+      PathQueryOutput out = this.model.getOutput(state, a);
       if (out.equals(SymbolicQueryOutput.OK)) {
         unroll(next, this.model.getSuccessor(state, a), words);
       } else {
-        add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(next), words);
+        add(new DefaultQuery<PathSymbol, PathQueryOutput>(next), words);
       }      
     }
   }
 
-  private void add(DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q,
-          Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
+  private void add(DefaultQuery<PathSymbol, PathQueryOutput> q,
+          Collection<DefaultQuery<PathSymbol, PathQueryOutput>> words) {
 
-    if (this.filter == null) {
+    if (PathQueryOracle.isValidWord(q.getInput())) {
       words.add(q);
-      return;
-    }
-    
-    DefaultQuery<SymbolicMethodSymbol, Boolean> test = 
-            new DefaultQuery<>(q.getInput());
-    
-    this.filter.processQueries(Collections.singleton(test));
-    
-    if (test.getOutput()) {
-      words.add(q);      
     }
   }
   

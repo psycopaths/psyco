@@ -68,23 +68,26 @@
             </folders>
             <ide-actions>
                 <action name="build">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>build</target>
                 </action>
                 <action name="clean">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                 </action>
                 <action name="test">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test-project</target>
                 </action>
                 <action name="rebuild">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                     <target>build</target>
                 </action>
                 <!--  run single file actions -->
                 <!-- run stuff in examples -->
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-example</target>
                     <context>
                         <property>run.class</property>
@@ -97,7 +100,7 @@
                     </context>
                 </action>
                 <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-selected-example</target>
                     <context>
                         <property>debug.class</property>
@@ -110,7 +113,7 @@
                     </context>
                 </action>
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-example-jpf</target>
                     <context>
                         <property>jpf.config</property>
@@ -123,7 +126,7 @@
                     </context>
                 </action>
                 <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-selected-example-jpf</target>
                     <context>
                         <property>jpf.config</property>
@@ -137,7 +140,7 @@
                 </action>
                 <!-- run stuff in test -->
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-test</target>
                     <context>
                         <property>run.class</property>
@@ -150,7 +153,7 @@
                     </context>
                 </action>
                 <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-selected-test</target>
                     <context>
                         <property>debug.class</property>
@@ -163,7 +166,7 @@
                     </context>
                 </action>
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-test-jpf</target>
                     <context>
                         <property>jpf.config</property>
@@ -176,7 +179,7 @@
                     </context>
                 </action>
                 <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-selected-test-jpf</target>
                     <context>
                         <property>jpf.config</property>
@@ -189,7 +192,7 @@
                     </context>
                 </action>
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-file-in-classes</target>
                     <context>
                         <property>run.class</property>
@@ -243,9 +246,7 @@
                     <ide-action name="test"/>
                 </context-menu>
             </view>
-            <subprojects>
-                <project>/home/falk/Workspace/jpf-v7/jpf-constraints</project>
-            </subprojects>
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
             <compilation-unit>

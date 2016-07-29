@@ -21,7 +21,11 @@ package gov.nasa.jpf.psyco;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
+import gov.nasa.jpf.psyco.equivalence.ProgramAnalysisTest;
 import gov.nasa.jpf.psyco.filter.Cache;
+import gov.nasa.jpf.psyco.filter.InterpolationCache;
 import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
 import gov.nasa.jpf.psyco.filter.PORFilter;
 import gov.nasa.jpf.psyco.filter.QueryLogger;
@@ -29,6 +33,7 @@ import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
 import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.QueryCounter;
+import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.oracles.RefinementCheckOracle;
@@ -43,7 +48,7 @@ import java.util.List;
  * 
  * @author falkhowar
  */
-public class OracleProvider {
+public class DefaultOracleProvider {
   
   protected static final JPFLogger logger = JPF.getLogger("psyco");  
     
@@ -57,7 +62,9 @@ public class OracleProvider {
   
   private final SymbolicMethodAlphabet inputs;
 
-  public OracleProvider(SymbolicExecutionOracle back, SymbolicMethodAlphabet inputs, PsycoConfig pconf) {
+  private SymbolicEquivalenceTest eqtest;
+  
+  public DefaultOracleProvider(SymbolicExecutionOracle back, SymbolicMethodAlphabet inputs, PsycoConfig pconf) {
     this.back = back;
     this.inputs = inputs;
     initialize(pconf);
@@ -65,10 +72,11 @@ public class OracleProvider {
    
   protected final void initialize(PsycoConfig pconf) {
 
+    ThreeValuedOracle sink = new SymbolicExecutionOracleWrapper(back);
+    
     oracle = new QueryLogger(
              new RefinementCheckOracle(
-             new TerminationCheckOracle(pconf.getTermination(),
-             new SymbolicExecutionOracleWrapper(back))));
+             new TerminationCheckOracle(pconf.getTermination(), sink)));
     
     QueryCounter count;
     
@@ -98,6 +106,32 @@ public class OracleProvider {
     if (pconf.isUsePOR()) {
       this.filter = new PORFilter(pconf.getPOR(), inputs);
     }
+    
+    // eq-test
+//    eqtest = new InvarianceTest((SummaryAlphabet)inputs, iSolver, cSolver, 
+//            provider.getThreeValuedOracle(), pconf.getMaxDepth());
+
+    switch (pconf.getEqTestType()) {
+      case bfs:
+        eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+        break;
+      case interpolation:
+        if (pconf.isUseSummaries()) {
+          eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
+                  (SummaryAlphabet)inputs, oracle, 
+                  pconf.getConstraintSolver(), 
+                  pconf.getInterpolationSolver(), 
+                  pconf.getTermination());          
+        }
+        else {
+          eqtest = new IncreasingDepthExhaustiveTest(this, pconf);        
+        }
+        break;
+      case blast:
+        eqtest = new ProgramAnalysisTest((SummaryAlphabet)inputs, oracle);
+        break;
+    }  
+           
   }
   
   /**
@@ -129,6 +163,10 @@ public class OracleProvider {
     for (QueryCounter counter : this.logs) {
       logger.info(counter.getStatisticalData().getSummary());
     }
+  }
+  
+  public SymbolicEquivalenceTest getEqTest() {
+    return eqtest;
   }
   
 }

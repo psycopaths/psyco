@@ -4,22 +4,19 @@ psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
 psyco.summaries=true
 psyco.memorize=true
 psyco.suffixes=true
-psyco.por=true
+psyco.por=false
 psyco.depth=12
 
-#psyco.eqtest=bfs
-psyco.eqtest=interpolation
-#psyco.eqtest=blast
+psyco.interpolation=true
 
-symbolic.dp=z3
+symbolic.dp=NativeZ3
 symbolic.dp.z3.bitvectors=true
 
 #
 # logging and jpf output
 #
-log.severe=jdart
-log.finer=constraints
-log.finest=psyco
+log.severe=constraints,jdart
+log.fine=psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

@@ -21,6 +21,8 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
@@ -32,19 +34,29 @@ import java.util.Collection;
  */
 public class PsycoConfig {
 
+  public static enum EqTestType {bfs, interpolation, blast}
+  
   private final Config config;
   private int maxDepth = -1;
   private boolean usePOR = false;
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
+  private EqTestType eqTestType = EqTestType.bfs;
   private TerminationStrategy termination = new NeverTerminate();
 
-  public PsycoConfig(Config conf) {
-    this.config = conf;
+  
+  private final ConstraintSolver constraintSolver;
+  private final InterpolationSolver interpolationSolver;
+
+  public PsycoConfig(Config config, ConstraintSolver constraintSolver, 
+          InterpolationSolver interpolationSolver) {
+    this.config = config;
+    this.constraintSolver = constraintSolver;
+    this.interpolationSolver = interpolationSolver;
     initialize();
   }
-
+  
   private void initialize() {
     if (config.hasValue("psyco.depth")) {
       maxDepth = config.getInt("psyco.depth");
@@ -65,7 +77,10 @@ public class PsycoConfig {
     if (config.hasValue("psyco.por")) {
       usePOR = config.getBoolean("psyco.por");
     }
-  }
+    if (config.hasValue("psyco.eqtest")) {
+      eqTestType = config.getEnum("psyco.eqtest", 
+              EqTestType.values(), eqTestType.bfs);
+    }  }
 
   /**
    * @return the config
@@ -116,5 +131,26 @@ public class PsycoConfig {
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
+  }
+
+  /**
+   * @return type of eq test to perform
+   */
+  public EqTestType getEqTestType() {
+    return eqTestType;
+  }
+
+  /**
+   * @return the constraintSolver
+   */
+  public ConstraintSolver getConstraintSolver() {
+    return constraintSolver;
+  }
+
+  /**
+   * @return the interpolationSolver
+   */
+  public InterpolationSolver getInterpolationSolver() {
+    return interpolationSolver;
   }
 }

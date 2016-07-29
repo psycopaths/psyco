@@ -19,6 +19,9 @@
 package gov.nasa.jpf.psyco.learnlib;
 
 import gov.nasa.jpf.jdart.constraints.Path;
+import static gov.nasa.jpf.jdart.constraints.PathState.DONT_KNOW;
+import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
+import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
@@ -40,12 +43,26 @@ public class SymbolicQueryOutput {
   public static final SymbolicQueryOutput DONT_KNOW = 
           new SymbolicQueryOutput(Output.DONT_KNOW);
 
+  public static final SymbolicQueryOutput NONE = 
+          new SymbolicQueryOutput();
+
   private final EnumSet<Output> output;
   
-  public SymbolicQueryOutput(Output ... out) {
+  private SymbolicQueryOutput() {
+    this.output = EnumSet.noneOf(Output.class);
+  }
+  
+  private SymbolicQueryOutput(Output ... out) {
     this.output = EnumSet.copyOf(Arrays.asList(out));
   }
   
+  public SymbolicQueryOutput(SymbolicQueryOutput ... out) {
+    EnumSet<Output> temp = EnumSet.noneOf(Output.class);
+    for (SymbolicQueryOutput o : out) {
+      temp.addAll(o.output);
+    }
+    this.output = temp;
+  }
   
   public SymbolicQueryOutput(SymbolicExecutionResult result) {
     
@@ -104,4 +121,12 @@ public class SymbolicQueryOutput {
     return Arrays.toString(this.output.toArray());
   }
   
+  public static SymbolicQueryOutput forPath(Path p) {
+    switch (p.getState()) {
+      case OK:        return SymbolicQueryOutput.OK;
+      case ERROR:     return SymbolicQueryOutput.ERROR;
+      case DONT_KNOW: return SymbolicQueryOutput.DONT_KNOW;
+      default:        return SymbolicQueryOutput.NONE;
+    }    
+  }
 }

@@ -10,7 +10,6 @@
         <pathelement location="build/peers"/>
         <pathelement location="build/annotations"/>
         <pathelement location="build/classes"/>
-        
         <fileset dir=".">
             <include name="lib/*.jar"/>
         </fileset>
