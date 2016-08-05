@@ -1,3 +1,6 @@
 
 @include=../../symbolicsearch/basic_search.jpf
 @include=./example_1.jpf
+
+psyco.maxSearchDepth=3
+psyco.resultFolderName=accelerometer

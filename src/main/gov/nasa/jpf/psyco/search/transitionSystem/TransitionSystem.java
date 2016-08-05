@@ -13,6 +13,7 @@ import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.search.collections.StateImage;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -167,24 +168,11 @@ public class TransitionSystem<T extends TransitionHelper> {
 
   public StateImage applyOn(StateImage alreadyReachedStates) {
     alreadyReachedStates.increaseDepth(1);
-    startProfiler(alreadyReachedStates.getDepth());
+    PsycoProfiler.startTransitionProfiler(alreadyReachedStates.getDepth());
     for(Transition t: transitions){
       alreadyReachedStates = t.applyOn(alreadyReachedStates, helper);
     }
-    stopProfiler();
+    PsycoProfiler.stopTransitionProfiler(alreadyReachedStates.getDepth());
     return alreadyReachedStates;
-  }
-
-  private void startProfiler(int depth){
-    if(currentProfilerRun != null){
-      SimpleProfiler.stop(currentProfilerRun);
-    }
-    currentProfilerRun = "applyTransitionSystem-" + depth;
-    SimpleProfiler.start(currentProfilerRun);
-  }
-
-  private void stopProfiler(){
-    SimpleProfiler.stop(currentProfilerRun);
-    currentProfilerRun = null;
   }
 }

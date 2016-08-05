@@ -28,7 +28,10 @@ concolic.method.dataReceived=issta2013.accelerometer.Accelerometer.dataReceived(
 concolic.method.dataReceived.config=accelerometer
 
 
-summary.methods=Accelerometer,update,init,disconnect,connect,dataReceived
+#summary.methods=Accelerometer,update,init,disconnect,connect,dataReceived
+
+#summary.methods=connect,dataReceived
+summary.methods=update,init,disconnect,connect,dataReceived
 
 # These lead to endless loops in jdart (seems to be related to division by zero)
 # getValueX, getValueY 

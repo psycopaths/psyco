@@ -4,3 +4,5 @@
 
 psyco.symbolicSearch=true
 psyco.enumerativeSearch=false
+psyco.depth=8
+psyco.resultFolderName=gsocCEV

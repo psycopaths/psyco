@@ -13,6 +13,7 @@ import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
 import java.util.List;
@@ -43,11 +44,11 @@ import java.util.logging.Logger;
 public class SymbolicSearchEngine {
   static String loggerName = "psyco";
   Logger logger = Logger.getLogger(loggerName);
-  private static String currentProfilerRun = null;
 
   public static SymbolicImage symbolicBreadthFirstSearch(
           TransitionSystem transitionSystem,
-          ConstraintSolver solver){
+          ConstraintSolver solver,
+          int maxSearchDepth){
     SymbolicRegion reachableRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
     SymbolicRegion newRegion = 
@@ -67,18 +68,25 @@ public class SymbolicSearchEngine {
       SymbolicImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
       SymbolicRegion nextReachableStates = newImage.getNewStates();
-      startDifferenceProfiler(newImage.getDepth());
+      
+      PsycoProfiler.startDiffProfiler(newImage.getDepth());
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
-      stopDifferenceProfiler();
+      PsycoProfiler.stopDiffProfieler(newImage.getDepth());
+      
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+      
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);
       newImage.setNewStates(null);
       currentSearchState = newImage;
+
       logState(currentSearchState);
-//      if(currentSearchState.getDepth() == 4)
-//        break;
+      if(maxSearchDepth != Integer.MIN_VALUE 
+              && currentSearchState.getDepth() == maxSearchDepth){
+        currentSearchState.setDepth(Integer.MAX_VALUE);
+        break;
+      }
     }
     return currentSearchState;
   }
@@ -95,14 +103,14 @@ public class SymbolicSearchEngine {
     }
   }
   
-  private static StringBuilder appendErrors(SymbolicImage newImage,
-          StringBuilder reachedErrors){
-    reachedErrors.append("In depth ");
-    reachedErrors.append(newImage.getDepth());
-    reachedErrors.append(":\n");
-    reachedErrors.append(newImage.getErrors());
-    return reachedErrors;
-  }
+//  private static StringBuilder appendErrors(SymbolicImage newImage,
+//          StringBuilder reachedErrors){
+//    reachedErrors.append("In depth ");
+//    reachedErrors.append(newImage.getDepth());
+//    reachedErrors.append(":\n");
+//    reachedErrors.append(newImage.getErrors());
+//    return reachedErrors;
+//  }
 
   private static void logLimit(boolean limitedTransitionSystem) {
     Logger logger = Logger.getLogger("psyco");
@@ -121,18 +129,5 @@ public class SymbolicSearchEngine {
   
   public static String getSearchLoggerName(){
     return loggerName;
-  }
-
-    private static void startDifferenceProfiler(int depth){
-    if(currentProfilerRun != null){
-      SimpleProfiler.stop(currentProfilerRun);
-    }
-    currentProfilerRun = "differencInDepth-" + depth;
-    SimpleProfiler.start(currentProfilerRun);
-  }
-
-  private static void stopDifferenceProfiler(){
-    SimpleProfiler.stop(currentProfilerRun);
-    currentProfilerRun = null;
   }
 }

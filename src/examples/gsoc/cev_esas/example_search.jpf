@@ -10,6 +10,9 @@ concolic.method.abort.config=cev
 concolic.method.abortPassiveLAScompletion=gsoc.cev_esas.CEV.abortPassiveLAScompletion()
 concolic.method.abortPassiveLAScompletion.config=cev
 
+concolic.method.CEV=gsoc.cev_esas.CEV.<init>()
+concolic.method.CEV.config=cev
+
 concolic.method.completion=gsoc.cev_esas.CEV.completion()
 concolic.method.completion.config=cev
 
@@ -67,35 +70,36 @@ concolic.method.tliBurn.config=cev
 concolic.method.init=gsoc.cev_esas.CEV.<init>()
 concolic.method.init.config=cev
 
-summary.methods=abort,abortPassiveLAScompletion,completion,deOrbit,\
+summary.methods=CEV,abort,abortPassiveLAScompletion,completion,deOrbit,\
   edsSeparation,eiBurn,enterOrbitOps,failure,lasJettison,loiBurn,\
   lsamAscentBurn,lsamAscentRendezvous,lsamRendezvous,lsamSeparation,\
   smSeparation,srbIgnition,stage1Separation,stage2Separation,teiBurn,\
   tliBurn
 
+#summary.methods=lasJettison,lsamRendezvous
+
 psyco.symbolicSearch=true
 
 #method, read, writte
-#parameterOrder: internalState, internalAscentState, internalEarthOrbitState, internalLunarOpsState,
-# internalEntryState, internalLunarLandingCEVState, internalLunarLandingLSAMState,
+#parameterOrder: 
 #cStage1, cStage2, cLAS, cCM, cSM, cEDS, cLSAM_ASCENT, cLSAM_DESCENT
-psyco.por.config=abort,000000000000000,010000000000000,\
-  abortPassiveLAScompletion,110000000000000, 100010011101000,\
-  completion,111110111111111,101110111101000,\
-  deOrbit,101000000101110,100000000000000,\
-  edsSeparation,100000000000000,000000000000100,\
-  eiBurn,100000011111111,100010000000000,\
-  enterOrbitOps,101000000000000,001000000000000,\
-  failure,110000000000000,010000000000000,\
-  lasJettison,110000000000000,000000000100000,\
-  loiBurn,100000000000000,100000000000000,\
-  lsamAscentBurn,100100100000000,000000100000001,\
-  lsamAscentRendezvous,100101100000000,100000000000010,\
-  lsamRendezvous,101000000100000,000000000000111,\
-  lsamSeparation,100100000000000,000100000000000,\
-  smSeparation,100000000000000,000000000001000,\
-  srbIgnition,110000000000000,010000000000000,\
-  stage1Separation,110000000000000,010000010000000,\
-  stage2Separation,110000000000000,100000001000000,\
-  teiBurn,100100000000011,100000000000000,\
-  tliBurn,101000000000100,100000000000000
+psyco.por.config=abort,11000000,11101000;\
+  abortPassiveLAScompletion,00000000, 11101000;\
+  completion,00000000,11101000;\
+  deOrbit,00101110,00000000;\
+  edsSeparation,00000000,00000100;\
+  eiBurn,11111111,00000000;\
+  enterOrbitOps,00000000,00000000;\
+  failure,00000000,00000000;\
+  lasJettison,00000000,00100000;\
+  loiBurn,00000000,00000000;\
+  lsamAscentBurn,00000000,00000001;\
+  lsamAscentRendezvous,00000000,00000010;\
+  lsamRendezvous,00100000,00000111;\
+  lsamSeparation,00000000,00000000;\
+  smSeparation,00000000,00001000;\
+  srbIgnition,00000000,0000000;\
+  stage1Separation,00000000,10000000;\
+  stage2Separation,00000000,01000000;\
+  teiBurn,00000011,00000000;\
+  tliBurn,00000100,00000000

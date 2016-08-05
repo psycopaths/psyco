@@ -4,3 +4,4 @@
 
 psyco.symbolicSearch=true
 psyco.enumerativeSearch=false
+psyco.resultFolderName=gsoc_cev_state_machine

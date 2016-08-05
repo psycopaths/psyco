@@ -20,6 +20,7 @@ import gov.nasa.jpf.psyco.search.collections.VariableRenamingMap;
 import gov.nasa.jpf.psyco.search.region.Region;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.util.RegionUtil;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -59,10 +60,13 @@ public class SymbolicSearchUtil<T extends Region<SymbolicEntry>,
     T existingRegion = regionUtil.exists(resultingStates,
               variablesInPreviousState);
     
+    PsycoProfiler.startRenamingProfiler(depth);
     VariableRenamingMap renamings = 
             convertTransitionsToVariableRenmaingMap(newStates);
     resultingStates = rename(existingRegion, 
             renamings.getPrimeNames(), renamings.getOldNames());
+    PsycoProfiler.stopRenamingProfiler(depth);
+    
     IterationImage<T> result = new IterationImage<>(resultingStates);
     result.setErrors(errors);
     result.setDepth(depth);

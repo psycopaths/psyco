@@ -12,6 +12,7 @@ import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,11 +41,15 @@ public class SymbolicRegionSearchUtil {
     SymbolicImage iterationResult = 
             applyIterationOfTheTransitionSystem(currentSearchState,
                     transitionSystem);
+    PsycoProfiler.newStates(iterationResult.getDepth(),
+            iterationResult.getNewStates().size());
     SymbolicRegion existingRegion = 
             util.exists(iterationResult.getNewStates(),
                     variablesInPreviousState);
+    PsycoProfiler.startRenamingProfiler(currentSearchState.getDepth());
     SymbolicRegion renamedRegion = 
             rename(existingRegion, variablesInPreviousState);
+    PsycoProfiler.stopRenamingProfiler(currentSearchState.getDepth());
     iterationResult.setNewStates(renamedRegion);
     return iterationResult;
   }

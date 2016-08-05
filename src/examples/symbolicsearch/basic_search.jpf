@@ -20,13 +20,8 @@ symbolic.dp.z3.bitvectors=true
 #original:
 #log.severe=constraints,jdart
 #log.info=psyco
-log.config=jdart
-log.fine=psyco
-
-log.fine=jdart
-log.finer=psyco
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+log.info=jdart
+log.info=psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

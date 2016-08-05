@@ -1,2 +1,4 @@
 @include=../basic_search.jpf
 @include=./example.jpf
+
+psyco.resultFolderName=first_Example

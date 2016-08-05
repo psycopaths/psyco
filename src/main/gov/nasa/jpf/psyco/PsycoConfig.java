@@ -33,6 +33,8 @@ public class PsycoConfig {
   private TerminationStrategy termination = new NeverTerminate();
   private boolean symbolicSearch = true;
   private boolean enumerativeSearch = false;
+  private String resultFolderName="default";
+  private int maxSearchDepth = Integer.MIN_VALUE;
 
   public PsycoConfig(Config conf) {
     this.config = conf;
@@ -64,6 +66,13 @@ public class PsycoConfig {
     }
     if(config.hasValue("psyco.enumerativeSearch")){
       enumerativeSearch = config.getBoolean("psyco.enumerativeSearch");
+    }
+    if(config.hasValue("psyco.resultFolderName")){
+      resultFolderName = config.getString("psyco.resultFolderName");
+    }
+    
+    if(config.hasValue("psyco.maxSearchDepth")){
+      maxSearchDepth = config.getInt("psyco.maxSearchDepth");
     }
   }
 
@@ -120,8 +129,15 @@ public class PsycoConfig {
     return this.maxDepth;
   }  
 
+  public int getMaxSearchDepth(){
+    return this.maxSearchDepth;
+  }
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
+  }
+
+  public String getResultFolderName() {
+    return resultFolderName;
   }
 }

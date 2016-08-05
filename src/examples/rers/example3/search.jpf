@@ -1,0 +1,2 @@
+@include=../../symbolicsearch/basic_search.jpf
+@include=./example.jpf

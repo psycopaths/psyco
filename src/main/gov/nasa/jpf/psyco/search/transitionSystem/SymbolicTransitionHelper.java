@@ -24,6 +24,7 @@ import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +50,9 @@ public class SymbolicTransitionHelper implements TransitionHelper{
     if(image instanceof SymbolicImage){
       SymbolicRegion newRegion = new SymbolicRegion();
       SymbolicImage currentState = (SymbolicImage) image;
+      int depth = currentState.getDepth();
       for(SymbolicState state: currentState.getPreviousNewStates().values()){
-        if(satisfiesGuardCondition(state, transition)){
+        if(satisfiesGuardCondition(state, transition, depth)){
           SymbolicState newState = executeTransition(state, transition);
           newRegion.put(HelperMethods.getUniqueStateName(), newState);
         }
@@ -189,8 +191,9 @@ public class SymbolicTransitionHelper implements TransitionHelper{
     if(alreadyReachedStates instanceof SymbolicImage){
       SymbolicImage currentState = (SymbolicImage) alreadyReachedStates;
       String error = transition.getError();
+      int depth =  alreadyReachedStates.getDepth();
       for(SymbolicState state: currentState.getReachableStates().values()){
-        if(satisfiesGuardCondition(state, transition)){
+        if(satisfiesGuardCondition(state, transition, depth)){
           ((SymbolicImage) alreadyReachedStates).addErrorInCurrentDepth(error);
         }
       }
@@ -200,13 +203,15 @@ public class SymbolicTransitionHelper implements TransitionHelper{
   }
 
   private boolean satisfiesGuardCondition(SymbolicState state,
-          Transition transition) {
+          Transition transition, int depth) {
+    PsycoProfiler.startGuardProfiler(depth);
     Expression guard = transition.getGuardCondition();
     Expression stateExpression = state.toExpression();
     Expression guardTest = 
             stateExpression != null?
             ExpressionUtil.and(guard, stateExpression) : guard;
     Result res = solver.isSatisfiable(guardTest);
+    PsycoProfiler.stopGuardProfiler(depth);
     if(res == SAT){
       return true;
     }else if(res == Result.DONT_KNOW){

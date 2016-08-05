@@ -1,3 +1,6 @@
 
 @include=../experiments/basic_learn.jpf
 @include=./example.jpf
+
+psyco.depth=8
+psyco.por=false
