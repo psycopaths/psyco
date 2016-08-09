@@ -5,13 +5,15 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
-import gov.nasa.jpf.psyco.search.collections.StateImage;
+import gov.nasa.jpf.psyco.search.SolverInstance;
+import gov.nasa.jpf.psyco.search.datastructures.StateImage;
 
 /**
  *
  * @author mmuesly
  */
 public interface TransitionHelper {
+  SolverInstance solver = SolverInstance.getInstance();
   public StateImage applyTransition(StateImage image, Transition transition);
 
   public StateImage applyError(StateImage alreadyReachedStates, Transition aThis);

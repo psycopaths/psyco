@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.collections;
+package gov.nasa.jpf.psyco.search.datastructures;
 
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.exceptions.RenamingException;

@@ -12,7 +12,7 @@ import gov.nasa.jpf.constraints.expressions.Negation;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
-import gov.nasa.jpf.psyco.search.collections.VariableReplacementMap;
+import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 
 /**
  *

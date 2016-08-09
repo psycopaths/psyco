@@ -56,7 +56,7 @@ public class SymbolicEntry extends ValuationEntry<Expression<Boolean>>{
     }
     return false;
   }
-  
+
   public static SymbolicEntry create(ValuationEntry entry){
     Variable entryVariable = entry.getVariable();
     Expression entryValue = 

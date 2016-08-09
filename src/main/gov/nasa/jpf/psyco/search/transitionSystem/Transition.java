@@ -18,7 +18,7 @@ import gov.nasa.jpf.jdart.constraints.Path;
 import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.collections.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.StateImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +38,7 @@ public class Transition {
   List<Variable> stateVariables;
   Map<Variable, Boolean> lowerBound;
   Map<Variable, Boolean> upperBound;
+  private boolean isReached = false;
   private static final Logger logger = 
           Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
 
@@ -160,18 +161,27 @@ public class Transition {
     this.path = path;
   }
 
+  public boolean isReached() {
+    return isReached;
+  }
+
+  public void setIsReached(boolean isReached) {
+    this.isReached = isReached;
+  }
+
+/*
+  FIX ME: This is currently a first try to analyze the transition system 
+  regarding limitiations for the state space. It may be extended and 
+  improved in near future.
+  */
   public boolean isLimitedTransition(){
     if(isOK()){
-      Map<Variable<?>, Expression<?>> pathEffects = path.getPostCondition().getConditions();
-//      System.out.println("\n\ngov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
-//      System.out.println(path.toString());
+      Map<Variable<?>, Expression<?>> pathEffects = 
+              path.getPostCondition().getConditions();
       for(Variable var: pathEffects.keySet()){
         Expression result = pathEffects.get(var);
-//        System.out.println("var: " + var+ " result: " + result.toString() + " class: " + result.getClass());
         if(result instanceof NumericCompound){
           boolean limit = analyzeNumericCompound(var,(NumericCompound) result);
-//          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.isLimitedTransition()");
-//          System.out.println("NumericCompound: " + result.toString() + "limit: " + limit);
           return limit;
         }
       }
@@ -179,7 +189,7 @@ public class Transition {
     return true;
   }
 
-  private boolean analyzeNumericCompound(Variable var, NumericCompound result) {
+  private boolean analyzeNumericCompound(Variable var, NumericCompound result){
     Set<Variable<?>> variables  = ExpressionUtil.freeVariables(result);
     variables.remove(var);
     if(!variables.isEmpty()){
@@ -231,9 +241,6 @@ public class Transition {
       throw new Exception("Here should not be a variable.");
     }
     else{
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.evaluateChild()");
-      System.out.println(side.getClass());
-      System.out.println(side.toString() + side.getType().toString());
       throw new Exception("Cannot convert subpart");
     }
   }
@@ -241,7 +248,8 @@ public class Transition {
     return new Integer(left.getValue().toString());
   }
   
-  private int calculate(int leftValue, int rightValue, NumericOperator operator) throws Exception{
+  private int calculate(int leftValue, int rightValue,
+          NumericOperator operator) throws Exception{
     switch(operator){
       case PLUS: return leftValue + rightValue;
       case MINUS: return leftValue - rightValue;
@@ -256,18 +264,16 @@ public class Transition {
     return path.getPathCondition();
   }
 
-  public StateImage applyOn(StateImage alreadyReachedStates, TransitionHelper helper) {
+  public StateImage applyOn(StateImage alreadyReachedStates,
+          TransitionHelper helper) {
     if(isOK()){
       logger.fine(path.toString());
       return helper.applyTransition(alreadyReachedStates, this);
     }else if(isError()){
       return helper.applyError(alreadyReachedStates, this);
     }else{
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.applyOn()");
-      System.out.println("Cannot deal with dont Know paths");
-      System.exit(42);
+      throw new IllegalStateException("Cannot apply DON'T know paths");
     }
-    return null;
   }
 
   public String getError() {

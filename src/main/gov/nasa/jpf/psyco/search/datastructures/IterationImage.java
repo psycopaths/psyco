@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.collections;
+package gov.nasa.jpf.psyco.search.datastructures;
 
-import gov.nasa.jpf.psyco.search.region.Region;
+import gov.nasa.jpf.psyco.search.region.Region_old;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author mmuesly
  */
-public class IterationImage<R extends Region> extends StateImage{
+public class IterationImage<R extends Region_old> extends StateImage{
   private R reachableStates;
   private StringBuilder errors;
   private int depth;
@@ -50,21 +50,6 @@ public class IterationImage<R extends Region> extends StateImage{
     this.depth = depth;
   }
   
-  public String reachableErrorsAsString(){
-    return errors.toString();
-  }
-  
-  public StringBuilder getErrors(){
-    return errors;
-  }
-  public void setErrors(StringBuilder errors){
-    this.errors = errors;
-  }
-  
-  public void addError(String error, int depth){
-    String errorString = "In :" + depth + " reached the error: " +error +"\n";
-    errors.append(errorString);
-  }
 
   public void print(Appendable searchResultString) throws IOException {
     searchResultString.append("This is the iteration image of depth: ");

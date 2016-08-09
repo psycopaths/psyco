@@ -8,7 +8,7 @@ package gov.nasa.jpf.psyco.search.region.util;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
-import gov.nasa.jpf.psyco.search.region.Region;
+import gov.nasa.jpf.psyco.search.region.Region_old;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import java.io.IOException;
 import java.util.HashSet;

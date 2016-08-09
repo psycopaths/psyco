@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.collections;
+package gov.nasa.jpf.psyco.search.datastructures;
 
 import com.google.common.base.Function;
 import java.util.HashMap;

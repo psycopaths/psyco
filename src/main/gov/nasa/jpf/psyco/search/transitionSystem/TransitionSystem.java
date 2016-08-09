@@ -11,8 +11,8 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.psyco.search.collections.StateImage;
-import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     initValuation = new Valuation();
     this.helper = helper;
   }
-  
+
   public TransitionSystem(Valuation initValuation, T helper){
     this(helper);
     this.initValuation = initValuation;
@@ -46,7 +46,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     this.transitions = convertPathsToTransitions(paths);
     this.initValuation = initValuation;
   }
-  
+
   public void add(Path p){
     if(p != null){
       Transition t = new Transition(p);
@@ -153,6 +153,7 @@ public class TransitionSystem<T extends TransitionHelper> {
 //    transitionSystem += "\n\n";
     return transitionSystem;
   }
+
   private String convertPathListToString(List<Path> paths){
     StringBuilder builder = new StringBuilder();
     for(Path p: paths){
@@ -174,5 +175,44 @@ public class TransitionSystem<T extends TransitionHelper> {
     }
     PsycoProfiler.stopTransitionProfiler(alreadyReachedStates.getDepth());
     return alreadyReachedStates;
+  }
+
+  public String getExecutionStatistics(){
+    int errorReached = 0;
+    int errorNonReached = 0;
+    int normalTransitionReached = 0;
+    int normalTransitionNotReached = 0;
+    for(Transition t: transitions){
+      if(t.isError()){
+        if(t.isReached()){
+          errorReached++;
+        }else {
+          errorNonReached++;
+        }
+      }
+      if(t.isOK()){
+        if(t.isReached()){
+          normalTransitionReached++;
+        }else {
+          normalTransitionNotReached++;
+        }
+      }
+    }
+    StringBuilder statistic = new StringBuilder();
+    statistic.append("This transition system has size: " 
+            + transitions.size() + "\n");
+    statistic.append("There are in total: " 
+            + Integer.toString(errorReached + errorNonReached) 
+            + " error paths.\n");
+    statistic.append(Integer.toString(errorReached) 
+            + " error paths have beend reached.\n");
+    statistic.append(errorNonReached + " have not been reached.\n");
+    statistic.append("Further there are :" 
+            + Integer.toString(
+                    normalTransitionReached + normalTransitionNotReached) 
+            + " ok paths.\n");
+    statistic.append(normalTransitionReached + " could be executed.\n");
+    statistic.append(normalTransitionNotReached + " could not be enabled.\n");
+    return statistic.toString();
   }
 }

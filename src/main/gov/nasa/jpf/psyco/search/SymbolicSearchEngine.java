@@ -7,16 +7,12 @@ package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
-import gov.nasa.jpf.constraints.api.Valuation;
-import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
-import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -102,15 +98,6 @@ public class SymbolicSearchEngine {
               .log(Level.SEVERE, null, ex);
     }
   }
-  
-//  private static StringBuilder appendErrors(SymbolicImage newImage,
-//          StringBuilder reachedErrors){
-//    reachedErrors.append("In depth ");
-//    reachedErrors.append(newImage.getDepth());
-//    reachedErrors.append(":\n");
-//    reachedErrors.append(newImage.getErrors());
-//    return reachedErrors;
-//  }
 
   private static void logLimit(boolean limitedTransitionSystem) {
     Logger logger = Logger.getLogger("psyco");

@@ -28,8 +28,8 @@ import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.summaries.MethodSummary;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.search.collections.IterationImage;
-import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.IterationImage;
+import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.ValuationRegion;
 import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
@@ -38,7 +38,6 @@ import gov.nasa.jpf.psyco.util.ResultSaver;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
-import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,9 +155,7 @@ public class SearchShell implements JPFShell {
     }
     logger.info(searchResultString.toString());
     logger.info("");
-    ResultSaver.writeResultToFolder(searchResult, folderName);
-//    logger.info("CSV:");
-//    logger.info(searchResult.toCSV());
+    ResultSaver.writeResultToFolder(searchResult, transitionSystem, folderName);
   }
 
   private List<Path> convertTransitionPaths(SummaryStore store) {
@@ -176,7 +173,7 @@ public class SearchShell implements JPFShell {
 
   /**
   *Fix me! The jDart transition system includes method parameter to the
-  * inital state right know. This should not happen.
+  * inital state right know. This should not happen. This works as a work around
   */
   private Valuation fix_init_valuation(Valuation initialValuation) {
     Valuation result = new Valuation();

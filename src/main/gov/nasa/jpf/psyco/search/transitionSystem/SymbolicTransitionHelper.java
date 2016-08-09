@@ -16,14 +16,13 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SolverInstance;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.collections.NameMap;
-import gov.nasa.jpf.psyco.search.collections.StateImage;
-import gov.nasa.jpf.psyco.search.collections.SymbolicImage;
-import gov.nasa.jpf.psyco.search.collections.VariableReplacementMap;
+import gov.nasa.jpf.psyco.search.datastructures.NameMap;
+import gov.nasa.jpf.psyco.search.datastructures.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
-import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import java.util.List;
  * @author mmuesly
  */
 public class SymbolicTransitionHelper implements TransitionHelper{
-  SolverInstance solver = SolverInstance.getInstance();
   private final JPFLogger logger;
   private final VariableReplacementVisitor replacementVisitor;
   private final VariableAssignmentVisitor assignmentVisitor;
@@ -53,6 +51,7 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       int depth = currentState.getDepth();
       for(SymbolicState state: currentState.getPreviousNewStates().values()){
         if(satisfiesGuardCondition(state, transition, depth)){
+          transition.setIsReached(true);
           SymbolicState newState = executeTransition(state, transition);
           newRegion.put(HelperMethods.getUniqueStateName(), newState);
         }
@@ -185,6 +184,7 @@ public class SymbolicTransitionHelper implements TransitionHelper{
     String newName = var.getName() + "'";
     return Variable.create(var.getType(), newName);
   }
+
   @Override
   public StateImage applyError(StateImage alreadyReachedStates,
           Transition transition) {
@@ -193,8 +193,10 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       String error = transition.getError();
       int depth =  alreadyReachedStates.getDepth();
       for(SymbolicState state: currentState.getReachableStates().values()){
-        if(satisfiesGuardCondition(state, transition, depth)){
-          ((SymbolicImage) alreadyReachedStates).addErrorInCurrentDepth(error);
+        if(satisfiesGuardCondition(state, transition, depth) 
+                && !(transition.isReached())){
+          transition.setIsReached(true);
+          currentState.addErrorInCurrentDepth(error);
         }
       }
       return currentState;
