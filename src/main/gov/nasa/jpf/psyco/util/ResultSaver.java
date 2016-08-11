@@ -5,7 +5,7 @@
  */
 package gov.nasa.jpf.psyco.util;
 
-import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import java.io.IOException;
 import java.io.PrintWriter;
