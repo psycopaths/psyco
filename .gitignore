@@ -2,4 +2,4 @@
 /nbproject/
 /.vagrant/
 /build/
-./result/**/*
+result/*
