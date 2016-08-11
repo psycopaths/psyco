@@ -28,9 +28,9 @@ import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.summaries.MethodSummary;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.search.datastructures.IterationImage;
+import gov.nasa.jpf.psyco.search.datastructures.EnumerativeImage;
 import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
-import gov.nasa.jpf.psyco.search.region.ValuationRegion;
+import gov.nasa.jpf.psyco.search.transitionSystem.EnumerativeTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
@@ -97,22 +97,27 @@ public class SearchShell implements JPFShell {
   private void executeSearch(PsycoConfig pconf, SummaryStore store,
           ConstraintSolver solver){
     if(pconf.shouldUseEnumerativeSearch()){
+      PsycoProfiler.reset();
       executeEnumerativeSearch(store, solver);
     }
     if(pconf.shouldUseSymbolicSearch()){
+      PsycoProfiler.reset();
       executeSymbolicSearch(store, solver, pconf.getMaxSearchDepth());
     }
   }
 
   private void executeEnumerativeSearch(SummaryStore store,
           ConstraintSolver solver){
+    SolverInstance.getInstance().setSolver(solver);
     logger.info("Start enumerative search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
-    IterationImage<ValuationRegion> searchResult =
+    TransitionHelper helper = new EnumerativeTransitionHelper();
+    TransitionSystem system = new TransitionSystem(initValuation,
+                    convertTransitionPaths(store), helper);
+    EnumerativeImage searchResult =
             EnumerativeSearchEngine.enumerativBreadthFirstSearch(
-              convertTransitionPaths(store), 
-              initValuation,
-              solver);
+              system,
+              initValuation, solver);
     logger.info("Enumerative search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();
     try {
@@ -121,6 +126,7 @@ public class SearchShell implements JPFShell {
       Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
     }
     logger.info(searchResultString.toString());
+    logger.info(PsycoProfiler.getResults());
     logger.info();
   }
 

@@ -7,7 +7,6 @@ package gov.nasa.jpf.psyco.util;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.SimpleProfiler;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -111,6 +110,18 @@ public class PsycoProfiler extends SimpleProfiler{
     newStates.put(depth, stateAmount);
   }
 
+
+  public static void reset(){
+    cumulatedGuardTime = new HashMap<>();
+    cumulatedDiffTime = new HashMap<>();
+    cumulatedTransitionTime = new HashMap<>();
+    cumulatedRenamingTime = new HashMap<>();
+    transitionProfiler = new HashMap<>();
+    guardProfiler = new HashMap<>();
+    differenceProfiler = new HashMap<>();
+    renamingTimer = new HashMap<>();
+    newStates = new HashMap<>();
+  }
   public static String getResults(){
     String simpleProfilerResult = SimpleProfiler.getResults();
     StringBuilder thisResult = new StringBuilder(simpleProfilerResult);

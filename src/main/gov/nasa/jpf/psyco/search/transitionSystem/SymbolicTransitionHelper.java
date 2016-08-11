@@ -6,15 +6,12 @@
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
-import static gov.nasa.jpf.constraints.api.ConstraintSolver.Result.SAT;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
-import gov.nasa.jpf.psyco.search.SolverInstance;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.datastructures.NameMap;
 import gov.nasa.jpf.psyco.search.datastructures.StateImage;
@@ -23,17 +20,19 @@ import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.region.SymbolicState;
-import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author mmuesly
  */
-public class SymbolicTransitionHelper implements TransitionHelper{
+public class SymbolicTransitionHelper extends TransitionHelper{
   private final JPFLogger logger;
   private final VariableReplacementVisitor replacementVisitor;
   private final VariableAssignmentVisitor assignmentVisitor;
@@ -51,9 +50,13 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       int depth = currentState.getDepth();
       for(SymbolicState state: currentState.getPreviousNewStates().values()){
         if(satisfiesGuardCondition(state, transition, depth)){
-          transition.setIsReached(true);
-          SymbolicState newState = executeTransition(state, transition);
-          newRegion.put(HelperMethods.getUniqueStateName(), newState);
+          try {
+            SymbolicState newState = executeTransition(state, transition);
+            newRegion.put(HelperMethods.getUniqueStateName(), newState);
+            newRegion.print(System.out);
+          } catch (IOException ex) {
+            Logger.getLogger(SymbolicTransitionHelper.class.getName()).log(Level.SEVERE, null, ex);
+          }
         }
       }
       currentState.addNewStates(newRegion);
@@ -77,6 +80,7 @@ public class SymbolicTransitionHelper implements TransitionHelper{
                       entry, transition, newValue, replacements);
       resultingState.add(primeEntry);
     }
+    transition.setIsReached(true);
     return resultingState;
   }
 
@@ -88,8 +92,8 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       if(!replacements.containsKey(entry.getVariable())){
         replacements.put(entry.getVariable(), replacement);
       }else{
-        logger.severe("IT IS NOT POSSIBLE TO REPLACE A VARIABLE WITH TWO VALUES");
-        System.exit(42);
+        throw new IllegalStateException("IT IS NOT POSSIBLE TO "
+                + "REPLACE A VARIABLE WITH TWO VALUES");
       }
     }
     return replacements;
@@ -104,7 +108,8 @@ public class SymbolicTransitionHelper implements TransitionHelper{
             prefix != null ?
             (Expression) prefix.accept(replacementVisitor, replacements)
             : prefix;
-    if(isStutterEffektForVariable(oldVariable, transitionEffekt) || transitionEffekt == null){
+    if(isStutterEffektForVariable(oldVariable, transitionEffekt)
+            || transitionEffekt == null){
       newValue = createStutterTransition(oldVariable,
                           primeVariable, entry.getValue());
     }else if(isConstantAssignment(transitionEffekt)){
@@ -114,8 +119,10 @@ public class SymbolicTransitionHelper implements TransitionHelper{
       newValue = createResultValue(oldVariable, primeVariable,
               transitionEffekt, replacements, newValue);
     }
-    logger.finest("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.executeTransitionOnEntry()");
-    logger.finest("primeVariable: " + primeVariable + " newValue: " + newValue + " oldValue: " + entry.getValue());
+    logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
+            + "SymbolicTransitionHelper.executeTransitionOnEntry()");
+    logger.finest("primeVariable: " + primeVariable + " newValue: " 
+            + newValue + " oldValue: " + entry.getValue());
     return new SymbolicEntry(primeVariable, newValue);
   }
 
@@ -146,14 +153,8 @@ public class SymbolicTransitionHelper implements TransitionHelper{
           Expression transitionEffekt,
           VariableReplacementMap replacements,
           Expression prefix){
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.createResultValue()");
-    System.out.println("transitionEffekt: " + transitionEffekt + ", " + replacements.get(oldVariable));
-//    transitionEffekt = ExpressionUtil.and(oldValue, transitionEffekt);
-//    System.out.println("transitionEffektAndOld: " + transitionEffekt);
     transitionEffekt = (Expression) 
             transitionEffekt.accept(replacementVisitor, replacements);
-    System.out.println("transitionEffektAfterReplacement: " + transitionEffekt);
-    System.out.println("prefix replacement: " + prefix);
     Expression newValuePart = NumericBooleanExpression.create(primeVariable,
                     NumericComparator.EQ, transitionEffekt);
     return appendNewValue(prefix, newValuePart);
@@ -166,9 +167,8 @@ public class SymbolicTransitionHelper implements TransitionHelper{
     oldValue.accept(assignmentVisitor, data);
     List list = data.get(oldVariable);
     if(list.size() > 1){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper.extractValueForReplacement()");
-      System.out.println("Cannot handle undefined value assignment");
-      System.exit(42);
+      throw new IllegalStateException(
+              "Cannot handle undefined value assignment");
     }else if(list.size() == 1){
       return (Expression) list.get(0);
     }
@@ -183,43 +183,5 @@ public class SymbolicTransitionHelper implements TransitionHelper{
   private Variable createPrimeVariable(Variable var){
     String newName = var.getName() + "'";
     return Variable.create(var.getType(), newName);
-  }
-
-  @Override
-  public StateImage applyError(StateImage alreadyReachedStates,
-          Transition transition) {
-    if(alreadyReachedStates instanceof SymbolicImage){
-      SymbolicImage currentState = (SymbolicImage) alreadyReachedStates;
-      String error = transition.getError();
-      int depth =  alreadyReachedStates.getDepth();
-      for(SymbolicState state: currentState.getReachableStates().values()){
-        if(satisfiesGuardCondition(state, transition, depth) 
-                && !(transition.isReached())){
-          transition.setIsReached(true);
-          currentState.addErrorInCurrentDepth(error);
-        }
-      }
-      return currentState;
-    }
-    return null;
-  }
-
-  private boolean satisfiesGuardCondition(SymbolicState state,
-          Transition transition, int depth) {
-    PsycoProfiler.startGuardProfiler(depth);
-    Expression guard = transition.getGuardCondition();
-    Expression stateExpression = state.toExpression();
-    Expression guardTest = 
-            stateExpression != null?
-            ExpressionUtil.and(guard, stateExpression) : guard;
-    Result res = solver.isSatisfiable(guardTest);
-    PsycoProfiler.stopGuardProfiler(depth);
-    if(res == SAT){
-      return true;
-    }else if(res == Result.DONT_KNOW){
-      logger.severe("Cannot decide transition.");
-      System.exit(42);
-    }
-    return false;
   }
 }

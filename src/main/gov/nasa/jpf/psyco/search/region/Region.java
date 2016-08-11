@@ -50,4 +50,5 @@ public abstract class Region<E extends ValuationEntry, T extends State<E>>
     }
   }
   public abstract void addInitialValuation(Valuation initValuation);
+  public abstract Region createNewRegion();
 }

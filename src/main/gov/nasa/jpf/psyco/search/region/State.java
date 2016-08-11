@@ -30,4 +30,5 @@ public abstract class State<T extends ValuationEntry> extends HashSet<T>{
 //  }
   
   public abstract Expression<Boolean> toExpression();
+  public abstract State<T> createEmptyState();
 }

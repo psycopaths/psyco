@@ -9,12 +9,14 @@ import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
+import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.expressions.NumericOperator;
 import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.constraints.types.Type;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
+import gov.nasa.jpf.jdart.constraints.PathResult;
 import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
@@ -32,6 +34,7 @@ import java.util.logging.Logger;
  */
 public class Transition {
   Path path;
+  Expression transitionExpression = null;
   VariableRestrictionsVisitor visitor;
   List<Variable> modified;
   List<Variable> guardVariables;
@@ -69,7 +72,8 @@ public class Transition {
   //assumes this instance has a OkPath
   private void calculateModified(){
     modified = new ArrayList<>();
-    Map<Variable<?>, Expression<?>> transitionEffekt = path.getPostCondition().getConditions();
+    Map<Variable<?>, Expression<?>> transitionEffekt = 
+            path.getPostCondition().getConditions();
     for(Variable variable : transitionEffekt.keySet()){
       Expression value = transitionEffekt.get(variable);
       if(value instanceof Variable && value.equals(variable)){
@@ -87,7 +91,8 @@ public class Transition {
     List<NumericBooleanExpression> guardLimitations = new ArrayList<>();
     guard.accept(visitor,guardLimitations);
     analyzeVariableLimitations(guardLimitations);
-    logger.finest("\ngov.nasa.jpf.psyco.search.Transition.calculateGuardVariables()");
+    logger.finest("\ngov.nasa.jpf.psyco.search.Transition."
+            + "calculateGuardVariables()");
     logger.finest("path: " + path.toString());
     logger.finest("guard Variables: " + guardLimitations.toString());
     logger.finest("upperBounds: " + upperBound.toString());
@@ -101,14 +106,16 @@ public class Transition {
     upperBound = initializeBoundToFalse(upperBound);
   }
   
-  private Map<Variable, Boolean> initializeBoundToFalse(Map<Variable, Boolean> bound){
+  private Map<Variable, Boolean> initializeBoundToFalse(Map<Variable,
+          Boolean> bound){
     bound = new HashMap<>();
     for(Variable var: stateVariables){
       bound.put(var, Boolean.FALSE);
     }
     return bound;
   }
-  private void analyzeVariableLimitations(List<NumericBooleanExpression> guardLimits){
+  private void analyzeVariableLimitations(
+          List<NumericBooleanExpression> guardLimits){
     for(NumericBooleanExpression expr: guardLimits){
       switch(expr.getComparator()){
         case GT:
@@ -125,14 +132,16 @@ public class Transition {
         case NE:
    //       if(expr.get)
         default:
-          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.Transition.analyzeVariableLimitations()");
-          System.out.println("Unused expr: " + expr.toString());
+          logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
+                  + "Transition.analyzeVariableLimitations()");
+          logger.finest("Unused expr: " + expr.toString());
           break;
       }
     }
   }
 
-  private void addLimit(Expression smaller, Expression limit, boolean upperLimit,boolean lowerLimit){
+  private void addLimit(Expression smaller, Expression limit,
+          boolean upperLimit,boolean lowerLimit){
     Set<Variable<?>> vars = ExpressionUtil.freeVariables(smaller);
     if(limit instanceof Constant){
       for(Variable var: vars){
@@ -214,9 +223,8 @@ public class Transition {
       return calculate(leftValue, rightValue, result.getOperator());
     } catch (Exception ex) {
       ex.printStackTrace();
-      System.exit(42);
+      throw new IllegalStateException("Error Reached");
     }
-    return 0;
   }
   
   private int evaluateChild(Variable var, Expression side) throws Exception{
@@ -267,7 +275,7 @@ public class Transition {
   public StateImage applyOn(StateImage alreadyReachedStates,
           TransitionHelper helper) {
     if(isOK()){
-      logger.fine(path.toString());
+      logger.fine("applying: " + path.toString());
       return helper.applyTransition(alreadyReachedStates, this);
     }else if(isError()){
       return helper.applyError(alreadyReachedStates, this);
@@ -289,7 +297,31 @@ public class Transition {
   }
 
   public Expression getTransitionEffect(Variable oldVariable) {
-    Map<Variable<?>, Expression<?>> pathResults = path.getPostCondition().getConditions();
+    Map<Variable<?>, Expression<?>> pathResults = 
+            path.getPostCondition().getConditions();
     return pathResults.getOrDefault(oldVariable, null);
+  }
+
+  public Expression getTransitionEffectAsTransition(){
+    if(transitionExpression == null){
+      convertPathToExpression();
+    }return transitionExpression;
+  }
+  
+  private void convertPathToExpression(){
+    transitionExpression = path.getPathCondition();
+    PathResult.OkResult result = path.getOkResult();
+    Map<Variable<?>,Expression<?>> postConditions = 
+            result.getPostCondition().getConditions();
+    for(Variable key: postConditions.keySet()){
+      Expression resultingExpression = postConditions.get(key);
+      Variable newKey = new Variable(key.getType(), key.getName() + "'");
+      resultingExpression = NumericBooleanExpression.create(
+              newKey,
+              NumericComparator.EQ,
+              resultingExpression);
+    transitionExpression = ExpressionUtil.and(transitionExpression,
+              resultingExpression);
+    }
   }
 }

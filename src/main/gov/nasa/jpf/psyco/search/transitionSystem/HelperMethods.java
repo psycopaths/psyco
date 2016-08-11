@@ -18,4 +18,8 @@ public class HelperMethods {
     ++stateCounter;
     return stateName;
   }
+  
+  public static String getLoggerName(){
+    return "psyco";
+  }
 }

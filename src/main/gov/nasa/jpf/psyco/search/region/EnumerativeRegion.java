@@ -6,30 +6,31 @@
 package gov.nasa.jpf.psyco.search.region;
 
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.api.ValuationEntry;
 
 /**
  *
  * @author mmuesly
  */
-public class SymbolicRegion extends Region<SymbolicEntry, SymbolicState>{
+public class EnumerativeRegion extends Region<ValuationEntry, EnumerativeState>{
 
-  public SymbolicRegion(){
+  public EnumerativeRegion(){
     super();
   }
-  
-  public SymbolicRegion(Valuation initValuation){
+
+  public EnumerativeRegion(Valuation initValuation){
     super(initValuation);
   }
 
   @Override
   public void addInitialValuation(Valuation initValuation) {
-    SymbolicState initState = new SymbolicState(initValuation);
-    put("initState", initState);
+    EnumerativeState initState = new EnumerativeState (initValuation);
+    this.put("init", initState);
   }
 
   @Override
-  public SymbolicRegion createNewRegion(){
-    return new SymbolicRegion();
+  public EnumerativeRegion createNewRegion() {
+    return new EnumerativeRegion();
   }
 
 }

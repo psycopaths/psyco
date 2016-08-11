@@ -8,10 +8,7 @@ package gov.nasa.jpf.psyco.search.region;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
-import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -39,5 +36,10 @@ public class SymbolicState extends State<SymbolicEntry>{
               entry.getValue();
     }
     return expr;
+  }
+
+  @Override
+  public State<SymbolicEntry> createEmptyState() {
+    return new SymbolicState();
   }
 }

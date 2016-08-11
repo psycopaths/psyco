@@ -9,8 +9,8 @@ import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
 import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
-import gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil;
-import gov.nasa.jpf.psyco.search.util.SymbolicRegionSearchUtil;
+import gov.nasa.jpf.psyco.search.util.region.SymbolicRegionUtil;
+import gov.nasa.jpf.psyco.search.util.SearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -45,33 +45,28 @@ public class SymbolicSearchEngine {
           TransitionSystem transitionSystem,
           ConstraintSolver solver,
           int maxSearchDepth){
-    SymbolicRegion reachableRegion = 
-            new SymbolicRegion(transitionSystem.getInitValuation());
-    SymbolicRegion newRegion = 
+    SymbolicRegion newRegion,reachableRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
     boolean isLimitedTransitionSystem = transitionSystem.isLimited();
     logLimit(isLimitedTransitionSystem);
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
-    SymbolicRegionSearchUtil searchUtil = 
-            new SymbolicRegionSearchUtil(solver);
+    SearchUtil<SymbolicImage> searchUtil = 
+            new SearchUtil<>(regionUtil);
     //We start to count interation based on 1. 0 is skipped.
-    int currentDepth = 0;
-    StringBuilder reachedErrors = new StringBuilder();
     SymbolicImage currentSearchState = 
-            new SymbolicImage(reachableRegion, reachedErrors, currentDepth);
-    currentSearchState.setPreviousNewStates(newRegion);
+            new SymbolicImage(reachableRegion);
+    currentSearchState.setPreviousNewStates(reachableRegion);
     while(!currentSearchState.getPreviousNewStates().isEmpty()){
       SymbolicImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
       SymbolicRegion nextReachableStates = newImage.getNewStates();
-      
       PsycoProfiler.startDiffProfiler(newImage.getDepth());
       newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion, solver);
       PsycoProfiler.stopDiffProfieler(newImage.getDepth());
-      
+
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
-      
+
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);
       newImage.setNewStates(null);

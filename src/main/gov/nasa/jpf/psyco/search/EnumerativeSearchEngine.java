@@ -7,41 +7,53 @@ package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.Valuation;
-import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.collections.IterationImage;
-import gov.nasa.jpf.psyco.search.region.ValuationRegion;
-import gov.nasa.jpf.psyco.search.region.util.ValuationRegionUtil;
-import gov.nasa.jpf.psyco.search.util.EnumerativSearchUtil;
-import java.util.List;
+import gov.nasa.jpf.psyco.search.datastructures.EnumerativeImage;
+import gov.nasa.jpf.psyco.search.region.EnumerativeRegion;
+import gov.nasa.jpf.psyco.search.util.region.EnumerativeRegionUtil;
+import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
+import gov.nasa.jpf.psyco.search.util.SearchUtil;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 
 /**
  *
  * @author mmuesly
  */
 public class EnumerativeSearchEngine {
-    public static IterationImage<ValuationRegion> enumerativBreadthFirstSearch(
-          List<Path> transitionSystem, Valuation init,
+    public static EnumerativeImage enumerativBreadthFirstSearch(
+          TransitionSystem transitionSystem, Valuation init,
           ConstraintSolver solver){
-    ValuationRegion reachableRegion = new ValuationRegion(init);
-    ValuationRegion newRegion = new ValuationRegion(init);
-    ValuationRegionUtil regionUtil = new ValuationRegionUtil();
-    EnumerativSearchUtil<ValuationRegion, ValuationRegionUtil> searchUtil = 
-            new EnumerativSearchUtil<> (regionUtil);
+    EnumerativeRegion newRegion, reachableRegion = new EnumerativeRegion(init);
+    EnumerativeRegionUtil regionUtil = new EnumerativeRegionUtil(solver);
+    SearchUtil<EnumerativeImage> searchUtil = 
+            new SearchUtil<> (regionUtil);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
-    int currentDepth = 1;
-    StringBuilder reachedErrors = new StringBuilder();
-    while(!newRegion.isEmpty()){
-      IterationImage<ValuationRegion> imageResult = searchUtil.post(newRegion,
-              transitionSystem, solver);
-      currentDepth = imageResult.getDepth();
-      reachedErrors.append(imageResult.getErrors());
-      newRegion = regionUtil.difference(imageResult.getReachableStates(),
+    EnumerativeImage currentSearchState = new EnumerativeImage(reachableRegion);
+    currentSearchState.setPreviousNewStates(reachableRegion);
+    while(!currentSearchState.getPreviousNewStates().isEmpty()){
+      EnumerativeImage newImage = searchUtil.post(currentSearchState,
+              transitionSystem);
+      EnumerativeRegion nextReachableStates = newImage.getNewStates();
+
+      PsycoProfiler.startDiffProfiler(newImage.getDepth());
+      newRegion = regionUtil.difference(nextReachableStates,
               reachableRegion);
+      PsycoProfiler.stopDiffProfieler(newImage.getDepth());
+
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+            newImage.setReachableStates(reachableRegion);
+      newImage.setReachableStates(reachableRegion);
+      newImage.setPreviousNewStates(newRegion);
+      newImage.setNewStates(null);
+      currentSearchState = newImage;
+
+//      logState(currentSearchState);
+//      if(maxSearchDepth != Integer.MIN_VALUE 
+//              && currentSearchState.getDepth() == maxSearchDepth){
+//        currentSearchState.setDepth(Integer.MAX_VALUE);
+//        break;
+//      }
     }
-    IterationImage<ValuationRegion> result =
-            new IterationImage<>(reachableRegion, reachedErrors, currentDepth);
-    return result;
+    return currentSearchState;
   }
 }

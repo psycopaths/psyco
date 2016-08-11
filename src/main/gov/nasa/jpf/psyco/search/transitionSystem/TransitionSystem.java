@@ -5,16 +5,11 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
-import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
-import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
-import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.search.datastructures.StateImage;
-import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
-import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

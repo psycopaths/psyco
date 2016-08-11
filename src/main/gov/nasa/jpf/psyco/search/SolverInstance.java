@@ -8,6 +8,7 @@ package gov.nasa.jpf.psyco.search;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
+import gov.nasa.jpf.constraints.api.Valuation;
 
 /**
  *
@@ -31,5 +32,9 @@ public class SolverInstance {
   
   public Result isSatisfiable(Expression expr){
     return solver.isSatisfiable(expr);
+  }
+  
+  public Result solve(Expression expr, Valuation res){
+    return solver.solve(expr, res);
   }
 }

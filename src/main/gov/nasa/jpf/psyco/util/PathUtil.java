@@ -29,7 +29,6 @@ import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
