@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.region;
+package gov.nasa.jpf.psyco.search.datastructures.region;
 
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
 import gov.nasa.jpf.constraints.api.Valuation;
 
 /**

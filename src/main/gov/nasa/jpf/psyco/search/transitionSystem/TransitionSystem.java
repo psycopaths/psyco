@@ -8,7 +8,7 @@ package gov.nasa.jpf.psyco.search.transitionSystem;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
-import gov.nasa.jpf.psyco.search.datastructures.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -5,13 +5,14 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SolverInstance;
-import gov.nasa.jpf.psyco.search.datastructures.StateImage;
-import gov.nasa.jpf.psyco.search.region.Region;
-import gov.nasa.jpf.psyco.search.region.State;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.region.Region;
+import gov.nasa.jpf.psyco.search.datastructures.state.State;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.logging.Logger;
 

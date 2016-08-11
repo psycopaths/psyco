@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.transitionSystem;
+package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.expressions.AbstractExpressionVisitor;

@@ -7,8 +7,8 @@ package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
-import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
-import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.util.region.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;

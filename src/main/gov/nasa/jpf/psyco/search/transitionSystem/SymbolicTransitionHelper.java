@@ -5,6 +5,9 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.VariableReplacementVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.VariableAssignmentVisitor;
+import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
@@ -14,12 +17,12 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.datastructures.NameMap;
-import gov.nasa.jpf.psyco.search.datastructures.StateImage;
-import gov.nasa.jpf.psyco.search.datastructures.SymbolicImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
-import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
-import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
-import gov.nasa.jpf.psyco.search.region.SymbolicState;
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
+import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
 import gov.nasa.jpf.util.JPFLogger;
 import java.io.IOException;
 import java.util.ArrayList;

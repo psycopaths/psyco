@@ -5,6 +5,7 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.VariableRestrictionsVisitor;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
@@ -20,7 +21,7 @@ import gov.nasa.jpf.jdart.constraints.PathResult;
 import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.datastructures.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

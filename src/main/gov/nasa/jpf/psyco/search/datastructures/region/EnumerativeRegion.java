@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.region;
+package gov.nasa.jpf.psyco.search.datastructures.region;
 
+import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 

@@ -8,9 +8,9 @@ package gov.nasa.jpf.psyco.search.util.region;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
-import gov.nasa.jpf.psyco.search.region.EnumerativeRegion;
-import gov.nasa.jpf.psyco.search.region.EnumerativeState;
-import gov.nasa.jpf.psyco.search.region.Region;
+import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
+import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
+import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import java.util.HashMap;
 import java.util.List;
 

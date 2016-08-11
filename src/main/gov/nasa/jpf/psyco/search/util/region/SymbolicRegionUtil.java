@@ -10,10 +10,10 @@ import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.datastructures.NameMap;
-import gov.nasa.jpf.psyco.search.region.Region;
-import gov.nasa.jpf.psyco.search.region.SymbolicEntry;
-import gov.nasa.jpf.psyco.search.region.SymbolicRegion;
-import gov.nasa.jpf.psyco.search.region.SymbolicState;
+import gov.nasa.jpf.psyco.search.datastructures.region.Region;
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
+import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
+import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
 import java.util.List;
 import java.util.Set;
 

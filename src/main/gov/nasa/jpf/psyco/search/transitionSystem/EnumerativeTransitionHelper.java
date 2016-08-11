@@ -1,14 +1,15 @@
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
-import gov.nasa.jpf.psyco.search.datastructures.EnumerativeImage;
-import gov.nasa.jpf.psyco.search.datastructures.StateImage;
-import gov.nasa.jpf.psyco.search.region.EnumerativeRegion;
-import gov.nasa.jpf.psyco.search.region.EnumerativeState;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
+import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import java.util.HashSet;
 import java.util.Set;
 

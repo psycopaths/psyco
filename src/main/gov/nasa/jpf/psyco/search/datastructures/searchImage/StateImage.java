@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.datastructures;
+package gov.nasa.jpf.psyco.search.datastructures.searchImage;
 
-import gov.nasa.jpf.psyco.search.region.Region;
+import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

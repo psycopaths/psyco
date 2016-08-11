@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.nasa.jpf.psyco.search.transitionSystem;
+package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.api.Expression;
@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author mmuesly
  */
-class VariableAssignmentVisitor extends 
+public class VariableAssignmentVisitor extends 
         AbstractExpressionVisitor<Expression<?>,
             HashMap<Variable, List<Expression>>>{
   
