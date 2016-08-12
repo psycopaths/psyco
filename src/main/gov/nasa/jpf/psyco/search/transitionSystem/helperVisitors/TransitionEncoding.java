@@ -13,25 +13,27 @@ import java.util.HashMap;
  * @author mmuesly
  */
 public class TransitionEncoding {
-  public static String numericBooleanExpression = "A";
-  public static String negation = "N";
-  public static String constant = "C";
-  public static String variable = "V";
-  public static String numericComperator = "F";
-  public static String numericOperator = "G";
-  public static String numericCompund = "D";
-  public static String propositionalCompound = "P";
-  public static String logicalOpertaor = "L";
-  public static String unaryMinus = "U";
-  public static String bitVector = "B";
-  public static String bitVectorOperator = "O";
-  public static String bitVectorNegation = "Q";
-  public static String effect ="E";
-  public static String guard = "H";
-  public static String transitionBody = "T";
-  public static String valuation = "I";
-  public static String valuationEntry = "W";
-    public static String error = "H";
+  public static final char numericBooleanExpression = 'A';
+  public static final char negation = 'N';
+  public static final char constant = 'C';
+  public static final char variable = 'V';
+  public static final char numericComperator = 'F';
+  public static final char numericOperator = 'G';
+  public static final char numericCompund = 'D';
+  public static final char propositionalCompound = 'P';
+  public static final char logicalOpertaor = 'L';
+  public static final char unaryMinus = 'U';
+  public static final char bitVector = 'B';
+  public static final char bitVectorOperator = 'O';
+  public static final char bitVectorNegation = 'Q';
+  public static final char effect ='E';
+  public static final char guard = 'H';
+  public static final char transitionBody = 'T';
+  public static final char valuation = 'I';
+  public static final char valuationEntry = 'W';
+  public static final char error = 'K';
+  public static final char okTransition = 'J';
+  public static final char errorTransition = 'M';
 //  public static HashMap<String,String> BackConversion = new HashMap<>();
 //  public static HashMap<String, String> initalizeBackConversion(){
 //    HashMap<String, String> toReturn = new HashMap<>();
@@ -63,7 +65,5 @@ public class TransitionEncoding {
 //            "bitVectorNegation");
 //    return toReturn;
 //  }
-
-
 
 }

@@ -65,6 +65,7 @@ public class SearchEngine {
     TransitionHelper helper = new EnumerativeTransitionHelper();
     TransitionSystem system = new TransitionSystem(initValuation,
                     convertTransitionPaths(store), helper);
+    logger.info(system.toString());
     String transitionSystemFile = folderName +"/transitionSystem.ts";
     system.writeToFile(transitionSystemFile);
     EnumerativeImage searchResult =

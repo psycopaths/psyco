@@ -38,6 +38,11 @@ public class TransitionSystem<T extends TransitionHelper> {
   private T helper;
   private String currentProfilerRun = null;
   private Logger logger = JPFLogger.getLogger(HelperMethods.getLoggerName());
+
+  public TransitionSystem(){
+    transitions = new ArrayList<>();
+  }
+
   public TransitionSystem(T helper){
     transitions = new ArrayList<>();
     initValuation = new Valuation();
@@ -58,6 +63,12 @@ public class TransitionSystem<T extends TransitionHelper> {
   public void add(Path p){
     if(p != null){
       Transition t = new Transition(p);
+      transitions.add(t);
+    }
+  }
+
+  public void add(Transition t){
+    if(t != null){
       transitions.add(t);
     }
   }
@@ -148,20 +159,27 @@ public class TransitionSystem<T extends TransitionHelper> {
             + stutterPath.size() + "\n";
     transitionSystem += "errorTransitions: " 
             + errors.size() + "\n";
-//    transitionSystem += "OkPaths:\n";
-//    transitionSystem += convertPathListToString(okPaths);
-//    transitionSystem += "stutterPaths:\n";
-//    transitionSystem += convertPathListToString(stutterPath);
-//    transitionSystem += "ErrorPaths:\n";
-//    transitionSystem += convertPathListToString(errors);
-//    transitionSystem += "Init Variables: ";
-//    for(Variable var:  initValuation.getVariables()){
-//      transitionSystem += var.getName() + ",";
-//    }
-//    transitionSystem += "\n\n";
     return transitionSystem;
   }
 
+  public String completeToString(){
+    String transitionSystem = toString();
+    List<Path> okPaths = getConsideredOKPaths();
+    List<Path> stutterPath = getStutterPaths();
+    List<Path> errors = getConsideredErrorPaths();
+    transitionSystem += "OkPaths:\n";
+    transitionSystem += convertPathListToString(okPaths);
+    transitionSystem += "stutterPaths:\n";
+    transitionSystem += convertPathListToString(stutterPath);
+    transitionSystem += "ErrorPaths:\n";
+    transitionSystem += convertPathListToString(errors);
+    transitionSystem += "Init Variables: ";
+    for(Variable var:  initValuation.getVariables()){
+      transitionSystem += var.getName() + ",";
+    }
+    transitionSystem += "\n\n";
+    return transitionSystem;
+  }
   private String convertPathListToString(List<Path> paths){
     StringBuilder builder = new StringBuilder();
     for(Path p: paths){
@@ -176,6 +194,10 @@ public class TransitionSystem<T extends TransitionHelper> {
   }
 
   public StateImage applyOn(StateImage alreadyReachedStates) {
+    if(helper == null){
+      throw new IllegalStateException("You must set a TransitionHelper for" 
+              + " the system, before you can use it.");
+    }
     alreadyReachedStates.increaseDepth(1);
     PsycoProfiler.startTransitionProfiler(alreadyReachedStates.getDepth());
     for(Transition t: transitions){
@@ -251,7 +273,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     }
     for(Variable var: variables){
       Class clazz = var.getType().getClass();
-      result.put(clazz, clazz.getName());
+      result.put(clazz, clazz.getName().replace(";",""));
     }
     return result;
   }

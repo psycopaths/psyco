@@ -336,12 +336,15 @@ public class Transition {
     String effects;
     if(isOK()){
       effects = converOkTransitiontForFile(data);
+      return TransitionEncoding.okTransition + ":" 
+              + TransitionEncoding.guard + ":" + guard + ";" 
+              + TransitionEncoding.transitionBody + ":" + effects + ";" + ";";
     }else{
       effects = converErrorTransitiontForFile();
+      return TransitionEncoding.errorTransition + ":" 
+              + TransitionEncoding.guard + ":" + guard + ":" 
+              + TransitionEncoding.transitionBody + ":" + effects + ";" + ";";
     }
-    return TransitionEncoding.guard + ":" + guard + ";" 
-            + TransitionEncoding.transitionBody + ":" + effects + ";";
-    
   }
   private String converErrorTransitiontForFile() {
     return TransitionEncoding.error + ":" + path.getExceptionClass() + ";";
