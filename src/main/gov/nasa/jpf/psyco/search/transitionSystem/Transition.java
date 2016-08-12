@@ -22,6 +22,8 @@ import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.ExpressionConverterVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.TransitionEncoding;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -324,5 +326,39 @@ public class Transition {
     transitionExpression = ExpressionUtil.and(transitionExpression,
               resultingExpression);
     }
+  }
+
+  public String convertForFile(HashMap<Class, String> data){
+    ExpressionConverterVisitor expressionConverter = 
+            new ExpressionConverterVisitor();
+    String guard = 
+            (String) getGuardCondition().accept(expressionConverter, data);
+    String effects;
+    if(isOK()){
+      effects = converOkTransitiontForFile(data);
+    }else{
+      effects = converErrorTransitiontForFile();
+    }
+    return TransitionEncoding.guard + ":" + guard + ";" 
+            + TransitionEncoding.transitionBody + ":" + effects + ";";
+    
+  }
+  private String converErrorTransitiontForFile() {
+    return TransitionEncoding.error + ":" + path.getExceptionClass() + ";";
+  }
+  private String converOkTransitiontForFile(HashMap<Class, String> data) {
+    ExpressionConverterVisitor expressionConverter = 
+            new ExpressionConverterVisitor();
+    PathResult.OkResult result = path.getOkResult();
+    Map<Variable<?>,Expression<?>> postConditions = 
+            result.getPostCondition().getConditions();
+    String effects = "";
+    for(Variable var: postConditions.keySet()){
+      String key = (String) var.accept(expressionConverter, data);
+      String effect = 
+            (String) postConditions.get(var).accept(expressionConverter, data);
+      effects += TransitionEncoding.effect + ":" + key + ":" + effect + ";";
+    }
+    return effects;
   }
 }

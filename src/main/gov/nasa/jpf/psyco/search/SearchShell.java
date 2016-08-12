@@ -51,7 +51,6 @@ import java.util.logging.Logger;
 public class SearchShell implements JPFShell {
 
   private final Config config;
-  private String folderName = "default";
   private final JPFLogger logger; 
   public SearchShell(Config conf) {
     this.config = conf;
@@ -72,7 +71,6 @@ public class SearchShell implements JPFShell {
 
     PsycoProfiler.start("PSYCO-run");
     PsycoConfig pconf = new PsycoConfig(config);
-    updateFolderName(pconf);
     
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
@@ -87,116 +85,13 @@ public class SearchShell implements JPFShell {
     }
 
     PsycoProfiler.start("PSYCO-search");
-    executeSearch(pconf, store, solver);
+    SearchEngine searchEngine = new SearchEngine(pconf);
+    searchEngine.executeSearch(pconf, store, solver);
     PsycoProfiler.stop("PSYCO-search");
     PsycoProfiler.stop("PSYCO-run");
     logger.info("Profiling:\n" + PsycoProfiler.getResults());
-    PsycoProfiler.writeRunToFolder(folderName);
+    searchEngine.saveProfilerResults();
   } 
 
-  private void executeSearch(PsycoConfig pconf, SummaryStore store,
-          ConstraintSolver solver){
-    if(pconf.shouldUseEnumerativeSearch()){
-      PsycoProfiler.reset();
-      executeEnumerativeSearch(store, solver);
-    }
-    if(pconf.shouldUseSymbolicSearch()){
-      PsycoProfiler.reset();
-      executeSymbolicSearch(store, solver, pconf.getMaxSearchDepth());
-    }
-  }
 
-  private void executeEnumerativeSearch(SummaryStore store,
-          ConstraintSolver solver){
-    SolverInstance.getInstance().setSolver(solver);
-    logger.info("Start enumerative search");
-    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
-    TransitionHelper helper = new EnumerativeTransitionHelper();
-    TransitionSystem system = new TransitionSystem(initValuation,
-                    convertTransitionPaths(store), helper);
-    EnumerativeImage searchResult =
-            EnumerativeSearchEngine.enumerativBreadthFirstSearch(
-              system,
-              initValuation, solver);
-    logger.info("Enumerative search done. Here is the result:");
-    StringBuilder searchResultString = new StringBuilder();
-    try {
-      searchResult.print(searchResultString);
-    } catch (IOException ex) {
-      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    logger.info(searchResultString.toString());
-    logger.info(PsycoProfiler.getResults());
-    logger.info();
-  }
-
-  private void executeSymbolicSearch(SummaryStore store,
-          ConstraintSolver solver, int maxDepth){
-    logger.info("Start symbolic search");
-    Valuation initValuation = fix_init_valuation(store.getInitialValuation());
-    TransitionHelper helper = new SymbolicTransitionHelper();
-    SolverInstance.getInstance().setSolver(solver);
-    TransitionSystem transitionSystem = 
-            new TransitionSystem(initValuation,
-                    convertTransitionPaths(store), helper);
-    logger.info(transitionSystem.toString());
-    SymbolicImage searchResult =
-            SymbolicSearchEngine.symbolicBreadthFirstSearch(
-            transitionSystem,
-            solver, maxDepth);
-    logger.info("symbolic search terminated for following reason:");
-    if(searchResult.getDepth() == Integer.MAX_VALUE){
-      logger.info("Symbolic search hit predefined max"
-              + " depth value and was interrupted.");
-    }else{
-      logger.info("Symbolic search done and terminated by fix point");
-    }
-    logger.info("However, here is the result:");
-    
-    StringBuilder searchResultString = new StringBuilder();
-    try {
-      searchResult.print(searchResultString);
-    } catch (IOException ex) {
-      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    logger.info(searchResultString.toString());
-    logger.info("");
-    ResultSaver.writeResultToFolder(searchResult, transitionSystem, folderName);
-  }
-
-  private List<Path> convertTransitionPaths(SummaryStore store) {
-    List<Path> paths = new ArrayList<>();
-    
-    Set<String> keys = store.getConcolicMethodIds();
-    for(String id: keys){
-      MethodSummary summary = store.getSummary(id);
-      for(Path p: summary){
-        paths.add(p);
-      }
-    }
-    return paths;
-  }
-
-  /**
-  *Fix me! The jDart transition system includes method parameter to the
-  * inital state right know. This should not happen. This works as a work around
-  */
-  private Valuation fix_init_valuation(Valuation initialValuation) {
-    Valuation result = new Valuation();
-    for(ValuationEntry entry: initialValuation){
-      if(entry.getVariable().getName().startsWith("this")){
-        result.addEntry(entry);
-      }
-    }
-    return result;
-  }
-
-  private void updateFolderName(PsycoConfig pconf){
-    folderName = pconf.getResultFolderName();
-    folderName = "result" + File.separator + folderName + File.separator;
-    File file = new File(folderName);
-    if(!file.exists()){
-      file.mkdirs();
-    }
-  }
 }

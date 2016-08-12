@@ -5,15 +5,27 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
+import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
+import gov.nasa.jpf.constraints.api.ValuationEntry;
+import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.ExpressionConverterVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.TransitionEncoding;
+import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
+import gov.nasa.jpf.util.JPFLogger;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -25,6 +37,7 @@ public class TransitionSystem<T extends TransitionHelper> {
   private Valuation initValuation;
   private T helper;
   private String currentProfilerRun = null;
+  private Logger logger = JPFLogger.getLogger(HelperMethods.getLoggerName());
   public TransitionSystem(T helper){
     transitions = new ArrayList<>();
     initValuation = new Valuation();
@@ -96,8 +109,8 @@ public class TransitionSystem<T extends TransitionHelper> {
     boolean limited = true;
     for(Transition t: transitions){
       if(!t.isLimitedTransition()){
-        System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem.isLimited()");
-        System.out.println("unlimitedTransition: " + t.getPath().toString());
+        logger.finer("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem.isLimited()");
+        logger.finer("unlimitedTransition: " + t.getPath().toString());
         limited = false;
       }
     }
@@ -156,7 +169,7 @@ public class TransitionSystem<T extends TransitionHelper> {
         p.print(builder);
         builder.append("\n");
       } catch (IOException ex) {
-        Logger.getLogger(TransitionSystem.class.getName()).log(Level.SEVERE, null, ex);
+       logger.severe(ex.toString());
       }
     }
     return builder.toString();
@@ -209,5 +222,50 @@ public class TransitionSystem<T extends TransitionHelper> {
     statistic.append(normalTransitionReached + " could be executed.\n");
     statistic.append(normalTransitionNotReached + " could not be enabled.\n");
     return statistic.toString();
+  }
+  
+  public void writeToFile(String fileName){
+    try (PrintWriter writer = new PrintWriter(fileName);){
+      ExpressionConverterVisitor visitor = new ExpressionConverterVisitor();
+      HashMap<Class, String> data = exctractDataTypes();
+      String initState = convert(initValuation, data);
+      writer.println(initState);
+      for(Transition t: transitions){
+        String transformedTransition = t.convertForFile(data);
+        writer.println(transformedTransition);
+      }
+    } catch (FileNotFoundException ex) {
+      logger.severe(ex.toString());
+      
+    }
+  }
+  
+  private HashMap<Class, String> exctractDataTypes(){
+    Set<Variable> variables = new HashSet<>();
+    HashMap<Class, String> result = new HashMap<>();
+    for(Transition t: transitions){
+      if(t.isOK()){
+        variables.addAll(ExpressionUtil.freeVariables(
+              t.getTransitionEffectAsTransition()));
+      }
+    }
+    for(Variable var: variables){
+      Class clazz = var.getType().getClass();
+      result.put(clazz, clazz.getName());
+    }
+    return result;
+  }
+
+  private String convert(Valuation initValuation, HashMap<Class, String> data) {
+    ExpressionConverterVisitor converter = new ExpressionConverterVisitor();
+    String result = TransitionEncoding.valuation + ":";
+    for(ValuationEntry entry: initValuation){
+      String var = (String) entry.getVariable().accept(converter, data);
+      String value = entry.getValue().toString();
+      result += TransitionEncoding.valuationEntry + ":" + var 
+              + ":" + value + ";";
+    }
+    result += ";";
+    return result;
   }
 }
