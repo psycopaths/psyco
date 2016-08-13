@@ -15,39 +15,19 @@
  */
 package gov.nasa.jpf.psyco.search;
 
-import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
-
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
-import gov.nasa.jpf.constraints.api.Valuation;
-import gov.nasa.jpf.constraints.api.ValuationEntry;
-import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.jdart.summaries.MethodSummary;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
-import gov.nasa.jpf.psyco.search.transitionSystem.EnumerativeTransitionHelper;
-import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
-import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
-import gov.nasa.jpf.psyco.util.ResultSaver;
-
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-/**
- *
- * @author mmuesly
- */
+
 public class SearchShell implements JPFShell {
 
   private final Config config;
@@ -77,8 +57,6 @@ public class SearchShell implements JPFShell {
     
     ConstraintSolver solver = factory.createSolver();
 
-//    SymbolicMethodAlphabet inputs = null;
-//    SymbolicExecutionOracle seOracle = null;
     SummaryStore store = SummaryStore.create(config);
     if(store == null){
       System.exit(1);
@@ -86,7 +64,7 @@ public class SearchShell implements JPFShell {
 
     PsycoProfiler.start("PSYCO-search");
     SearchEngine searchEngine = new SearchEngine(pconf);
-    searchEngine.executeSearch(pconf, store, solver);
+    searchEngine.executeSearch(store, solver);
     PsycoProfiler.stop("PSYCO-search");
     PsycoProfiler.stop("PSYCO-run");
     logger.info("Profiling:\n" + PsycoProfiler.getResults());

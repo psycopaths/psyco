@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.util;
 
@@ -13,10 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
-/**
- *
- * @author mmuesly
- */
+
 public class PsycoProfiler extends SimpleProfiler{
   private static HashMap<Integer, Long> cumulatedGuardTime = new HashMap<>();
   private static HashMap<Integer, Long> cumulatedDiffTime = new HashMap<>();
@@ -87,6 +94,7 @@ public class PsycoProfiler extends SimpleProfiler{
       cumulatedGuardTime.put(depth, diff);
     }
   }
+
   public static void startDiffProfiler(int depth){
     if(!SimpleProfiler.PROFILE){
       return;
@@ -94,6 +102,7 @@ public class PsycoProfiler extends SimpleProfiler{
     long currentTimeStamp = System.currentTimeMillis();
     differenceProfiler.put(depth, currentTimeStamp);
   }
+
   public static void stopDiffProfieler(int depth){
     if(differenceProfiler.containsKey(depth)){
       long currentTimeStamp = System.currentTimeMillis();
@@ -110,7 +119,6 @@ public class PsycoProfiler extends SimpleProfiler{
     newStates.put(depth, stateAmount);
   }
 
-
   public static void reset(){
     cumulatedGuardTime = new HashMap<>();
     cumulatedDiffTime = new HashMap<>();
@@ -122,6 +130,7 @@ public class PsycoProfiler extends SimpleProfiler{
     renamingTimer = new HashMap<>();
     newStates = new HashMap<>();
   }
+
   public static String getResults(){
     String simpleProfilerResult = SimpleProfiler.getResults();
     StringBuilder thisResult = new StringBuilder(simpleProfilerResult);
@@ -158,6 +167,7 @@ public class PsycoProfiler extends SimpleProfiler{
     }
     return thisResult.toString();
   }
+
   private static StringBuilder addEntryToString(Entry<Integer, Long> e, 
           StringBuilder builder, String prefix){
     builder.append(prefix).append(e.getKey());
@@ -166,6 +176,7 @@ public class PsycoProfiler extends SimpleProfiler{
     builder.append("\n");
     return builder;
   }
+
   public static void writeRunToFolder(String folderName) {
     String currentDateSuffix = 
             new SimpleDateFormat("yyyyMMddhhmm'.csv'").format(new Date());
@@ -181,6 +192,7 @@ public class PsycoProfiler extends SimpleProfiler{
     writeResultToFile(getResults(), fileName);
     
   }
+
   private static void writeResultToFile(HashMap<Integer, Long> map, String filename){
     try(PrintWriter writer = new PrintWriter(filename)){
       writer.println("#depth\ttime\tdimensionOfTime");
@@ -192,7 +204,8 @@ public class PsycoProfiler extends SimpleProfiler{
     }
     
   }
-    private static void writeResultToFile(String content, String filename){
+
+  private static void writeResultToFile(String content, String filename){
     try(PrintWriter writer = new PrintWriter(filename)){
       writer.print(content);
     }catch(IOException e){

@@ -1,11 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
-import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
@@ -13,8 +22,10 @@ import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.ExpressionConverterVisitor;
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.TransitionEncoding;
+import gov.nasa.jpf.psyco.search.transitionSystem
+        .helperVisitors.ExpressionConverterVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem
+        .helperVisitors.TransitionEncoding;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
@@ -28,14 +39,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-/**
- *
- * @author mmuesly
- */
 public class TransitionSystem<T extends TransitionHelper> {
   private List<Transition> transitions;
   private Valuation initValuation;
   private T helper;
+
   private String currentProfilerRun = null;
   private Logger logger = JPFLogger.getLogger(HelperMethods.getLoggerName());
 
@@ -60,6 +68,14 @@ public class TransitionSystem<T extends TransitionHelper> {
     this.initValuation = initValuation;
   }
 
+  public T getHelper() {
+    return helper;
+  }
+
+  public void setHelper(T helper) {
+    this.helper = helper;
+  }
+
   public void add(Path p){
     if(p != null){
       Transition t = new Transition(p);
@@ -73,44 +89,40 @@ public class TransitionSystem<T extends TransitionHelper> {
     }
   }
 
-  public List<Path> getTransitions() {
-    ArrayList<Path> paths = new ArrayList<>();
-    for (Transition t: transitions){
-      paths.add(t.getPath());
-    }
-    return paths;
+  public List<Transition> getTransitions(){
+    return transitions;
   }
 
-  public List<Path> getConsideredOKPaths(){
-    ArrayList<Path> returnList = new ArrayList<>();
+  public List<Transition> getConsideredOkTransitions(){
+    ArrayList<Transition> returnList = new ArrayList<>();
     for(Transition t : transitions){
       if(t.isOK()){
         if(t.isStutterTransition()){
           continue;
         }
-        returnList.add(t.getPath());
+        returnList.add(t);
       }
     }
     return returnList;
   }
-  public void setTransitions(List<Path> transitions) {
+
+  public void setTransitions(List<Path> transitions){
     this.transitions = convertPathsToTransitions(transitions);
   }
 
-  public Valuation getInitValuation() {
+  public Valuation getInitValuation(){
     return initValuation;
   }
 
-  public void setInitValuation(Valuation initValuation) {
+  public void setInitValuation(Valuation initValuation){
     this.initValuation = initValuation;
   }
 
-  public ArrayList<Path> getConsideredErrorPaths() {
-    ArrayList<Path> returnList = new ArrayList<>();
+  public ArrayList<Transition> getConsideredErrorTransitions() {
+    ArrayList<Transition> returnList = new ArrayList<>();
     for(Transition t : transitions){
-      Path p = t.getPath();
-      if(p.getState() ==PathState.ERROR){
-        returnList.add(p);
+      if(t.isError()){
+        returnList.add(t);
       }
     }
     return returnList;
@@ -120,13 +132,15 @@ public class TransitionSystem<T extends TransitionHelper> {
     boolean limited = true;
     for(Transition t: transitions){
       if(!t.isLimitedTransition()){
-        logger.finer("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem.isLimited()");
+        logger.finer("gov.nasa.jpf.psyco.search.transitionSystem" 
+                + ".TransitionSystem.isLimited()");
         logger.finer("unlimitedTransition: " + t.getPath().toString());
         limited = false;
       }
     }
     return limited;
   }
+
   private List<Transition> convertPathsToTransitions(List<Path> paths){
     ArrayList<Transition> tmpTransitions = new ArrayList();
     for(Path p: paths){
@@ -134,27 +148,28 @@ public class TransitionSystem<T extends TransitionHelper> {
     }
     return tmpTransitions;
   }
-  
-  private List<Path> getStutterPaths(){
-    ArrayList<Path> returnList = new ArrayList<>();
+
+  private List<Transition> getStutterTransition(){
+    ArrayList<Transition> returnList = new ArrayList<>();
     for(Transition t : transitions){
       if(t.isOK()){
         if(t.isStutterTransition()){
-          returnList.add(t.getPath());
+          returnList.add(t);
         }
       }
     }
     return returnList;
   }
+
   @Override
   public String toString() {
     String transitionSystem ="Transition system:\n";
     transitionSystem += "transitions: " + transitions.size() + "\n";
-    List<Path> okPaths = getConsideredOKPaths();
-    List<Path> stutterPath = getStutterPaths();
-    List<Path> errors = getConsideredErrorPaths();
+    List<Transition> okPaths = getConsideredOkTransitions();
+    List<Transition> stutterPath = getStutterTransition();
+    List<Transition> errors = getConsideredErrorTransitions();
     transitionSystem += "consideredTransitions: " 
-            + getConsideredOKPaths().size() + "\n";
+            + getConsideredOkTransitions().size() + "\n";
     transitionSystem += "stutterTransitions: " 
             + stutterPath.size() + "\n";
     transitionSystem += "errorTransitions: " 
@@ -164,9 +179,9 @@ public class TransitionSystem<T extends TransitionHelper> {
 
   public String completeToString(){
     String transitionSystem = toString();
-    List<Path> okPaths = getConsideredOKPaths();
-    List<Path> stutterPath = getStutterPaths();
-    List<Path> errors = getConsideredErrorPaths();
+    List<Transition> okPaths = getConsideredOkTransitions();
+    List<Transition> stutterPath = getStutterTransition();
+    List<Transition> errors = getConsideredErrorTransitions();
     transitionSystem += "OkPaths:\n";
     transitionSystem += convertPathListToString(okPaths);
     transitionSystem += "stutterPaths:\n";
@@ -180,10 +195,12 @@ public class TransitionSystem<T extends TransitionHelper> {
     transitionSystem += "\n\n";
     return transitionSystem;
   }
-  private String convertPathListToString(List<Path> paths){
+
+  private String convertPathListToString(List<Transition> transitions){
     StringBuilder builder = new StringBuilder();
-    for(Path p: paths){
+    for(Transition t: transitions){
       try {
+        Path p = t.getPath();
         p.print(builder);
         builder.append("\n");
       } catch (IOException ex) {
@@ -193,7 +210,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     return builder.toString();
   }
 
-  public StateImage applyOn(StateImage alreadyReachedStates) {
+  public StateImage applyOn(StateImage alreadyReachedStates){
     if(helper == null){
       throw new IllegalStateException("You must set a TransitionHelper for" 
               + " the system, before you can use it.");
@@ -245,7 +262,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     statistic.append(normalTransitionNotReached + " could not be enabled.\n");
     return statistic.toString();
   }
-  
+
   public void writeToFile(String fileName){
     try (PrintWriter writer = new PrintWriter(fileName);){
       ExpressionConverterVisitor visitor = new ExpressionConverterVisitor();
@@ -262,6 +279,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     }
   }
   
+
   private HashMap<Class, String> exctractDataTypes(){
     Set<Variable> variables = new HashSet<>();
     HashMap<Class, String> result = new HashMap<>();
@@ -278,7 +296,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     return result;
   }
 
-  private String convert(Valuation initValuation, HashMap<Class, String> data) {
+  private String convert(Valuation initValuation, HashMap<Class, String> data){
     ExpressionConverterVisitor converter = new ExpressionConverterVisitor();
     String result = TransitionEncoding.valuation + ":";
     for(ValuationEntry entry: initValuation){

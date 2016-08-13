@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search;
 
@@ -9,6 +19,7 @@ import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
 import gov.nasa.jpf.psyco.search.util.region.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
@@ -35,7 +46,6 @@ import java.util.logging.Logger;
  *  Reach := Disj(Reach, New);
  * }
  * return false;
- *@author mmuesly
  */
 public class SymbolicSearchEngine {
   static String loggerName = "psyco";
@@ -45,6 +55,7 @@ public class SymbolicSearchEngine {
           TransitionSystem transitionSystem,
           ConstraintSolver solver,
           int maxSearchDepth){
+    SolverInstance.getInstance().setSolver(solver);
     SymbolicRegion newRegion,reachableRegion = 
             new SymbolicRegion(transitionSystem.getInitValuation());
     boolean isLimitedTransitionSystem = transitionSystem.isLimited();
@@ -81,7 +92,7 @@ public class SymbolicSearchEngine {
     }
     return currentSearchState;
   }
-    
+
   private static void logState(SymbolicImage newImage){
     Logger logger = Logger.getLogger("psyco");
     StringBuilder builder= new StringBuilder();
@@ -108,7 +119,7 @@ public class SymbolicSearchEngine {
       logger.info("");
     }
   }
-  
+
   public static String getSearchLoggerName(){
     return loggerName;
   }

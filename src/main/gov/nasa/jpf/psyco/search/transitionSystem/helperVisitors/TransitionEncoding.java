@@ -1,17 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
-import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
-import java.util.HashMap;
-
-/**
- *
- * @author mmuesly
- */
 public class TransitionEncoding {
   public static final char numericBooleanExpression = 'A';
   public static final char negation = 'N';
@@ -34,36 +37,4 @@ public class TransitionEncoding {
   public static final char error = 'K';
   public static final char okTransition = 'J';
   public static final char errorTransition = 'M';
-//  public static HashMap<String,String> BackConversion = new HashMap<>();
-//  public static HashMap<String, String> initalizeBackConversion(){
-//    HashMap<String, String> toReturn = new HashMap<>();
-//    toReturn.put(ExpressionEncoding.numericBooleanExpression,
-//            "numericBooleanExpression");
-//    toReturn.put(ExpressionEncoding.negation,
-//            "negation");
-//    toReturn.put(ExpressionEncoding.constant,
-//            "constant");
-//    toReturn.put(ExpressionEncoding.variable,
-//            "variable");
-//    toReturn.put(ExpressionEncoding.numericComperator,
-//           "numericComperator");
-//    toReturn.put(ExpressionEncoding.numericOperator,
-//            "numericOperator");
-//    toReturn.put(ExpressionEncoding.numericCompund,
-//            "numericCompund");
-//    toReturn.put(ExpressionEncoding.propositionalCompound,
-//            "propositionalCompound");
-//    toReturn.put(ExpressionEncoding.logicalOpertaor,
-//            "logicalOpertaor");
-//    toReturn.put(ExpressionEncoding.unaryMinus,
-//            "unaryMinus");
-//    toReturn.put(ExpressionEncoding.bitVector,
-//            "bitVector");
-//    toReturn.put(ExpressionEncoding.bitVectorOperator,
-//            "bitVectorOperator");
-//    toReturn.put(ExpressionEncoding.bitVectorNegation,
-//            "bitVectorNegation");
-//    return toReturn;
-//  }
-
 }

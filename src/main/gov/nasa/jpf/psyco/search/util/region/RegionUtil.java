@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.util.region;
 
@@ -22,10 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-/**
- *
- * @author mmuesly
- */
 public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
   private long unique;
   ConstraintSolver solver;
@@ -89,6 +95,9 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
         long start = System.currentTimeMillis();
         Valuation val = new Valuation();
         ConstraintSolver.Result rs = solver.solve(testDiffState, val);
+        logger.finest("gov.nasa.jpf.psyco.search.util.region" 
+                + ".RegionUtil.difference()");
+        logger.finest("result" + ExpressionUtil.valuationToExpression(val));
         long stop = System.currentTimeMillis();
         logger.finer("Time needed for difference: " 
                 + Long.toString(stop - start) + " in Millis");
@@ -96,6 +105,8 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
           resultRegion.put(key, state);
           toExclude.add(state);
           logger.finer("excludedSize: " + toExclude.size());
+        }else if(rs == ConstraintSolver.Result.DONT_KNOW){
+          throw new IllegalStateException("Cannot compute difference test");
         }
         else{
           logger.finer("result: " + rs);

@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search;
 
@@ -31,20 +41,18 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author mmuesly
- */
 public class SearchEngine {
   private Logger logger;
   private String folderName = "default";
   PsycoConfig pconf; 
+
   public SearchEngine(PsycoConfig pconf){
     this.pconf = pconf;
     logger = JPFLogger.getLogger(HelperMethods.getLoggerName());
     updateFolderName(pconf);
   }
-  public StateImage executeSearch(PsycoConfig pconf, SummaryStore store,
+
+  public StateImage executeSearch(SummaryStore store,
           ConstraintSolver solver){
     if(pconf.shouldUseEnumerativeSearch()){
       PsycoProfiler.reset();
@@ -52,14 +60,13 @@ public class SearchEngine {
     }
     if(pconf.shouldUseSymbolicSearch()){
       PsycoProfiler.reset();
-      executeSymbolicSearch(store, solver, pconf.getMaxSearchDepth());
+      executeSymbolicSearch(store, solver);
     }
     return null;
   }
 
   private void executeEnumerativeSearch(SummaryStore store,
           ConstraintSolver solver){
-    SolverInstance.getInstance().setSolver(solver);
     logger.info("Start enumerative search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     TransitionHelper helper = new EnumerativeTransitionHelper();
@@ -71,7 +78,7 @@ public class SearchEngine {
     EnumerativeImage searchResult =
             EnumerativeSearchEngine.enumerativBreadthFirstSearch(
               system,
-              initValuation, solver);
+              solver, pconf.getMaxSearchDepth());
     logger.info("Enumerative search done. Here is the result:");
     StringBuilder searchResultString = new StringBuilder();
     try {
@@ -85,7 +92,7 @@ public class SearchEngine {
   }
 
   private void executeSymbolicSearch(SummaryStore store,
-          ConstraintSolver solver, int maxDepth){
+          ConstraintSolver solver){
     logger.info("Start symbolic search");
     Valuation initValuation = fix_init_valuation(store.getInitialValuation());
     TransitionHelper helper = new SymbolicTransitionHelper();
@@ -94,10 +101,11 @@ public class SearchEngine {
             new TransitionSystem(initValuation,
                     convertTransitionPaths(store), helper);
     logger.info(transitionSystem.toString());
+    logger.info(Integer.toString(pconf.getMaxDepth()));
     SymbolicImage searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearch(
             transitionSystem,
-            solver, maxDepth);
+            solver, pconf.getMaxSearchDepth());
     logger.info("symbolic search terminated for following reason:");
     if(searchResult.getDepth() == Integer.MAX_VALUE){
       logger.info("Symbolic search hit predefined max"
@@ -111,16 +119,16 @@ public class SearchEngine {
     try {
       searchResult.print(searchResultString);
     } catch (IOException ex) {
-      Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
+      logger.severe(ex.getMessage());
     }
     logger.info(searchResultString.toString());
     logger.info("");
-    ResultSaver.writeResultToFolder(searchResult, transitionSystem, folderName);
+    ResultSaver.writeResultToFolder(searchResult,
+            transitionSystem, folderName);
   }
 
   private List<Path> convertTransitionPaths(SummaryStore store) {
     List<Path> paths = new ArrayList<>();
-    
     Set<String> keys = store.getConcolicMethodIds();
     for(String id: keys){
       MethodSummary summary = store.getSummary(id);

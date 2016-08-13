@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
+ */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
@@ -13,21 +28,9 @@ import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import java.util.HashSet;
 import java.util.Set;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author mmuesly
- */
-//public class EnumerativeTransitionHelper{}
 public class EnumerativeTransitionHelper extends TransitionHelper{
-
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition) {  
+  public StateImage applyTransition(StateImage image, Transition transition){
     if(image instanceof EnumerativeImage){
       EnumerativeImage currentSearchStatus = (EnumerativeImage) image;
       int depth = currentSearchStatus.getDepth();
@@ -46,9 +49,11 @@ public class EnumerativeTransitionHelper extends TransitionHelper{
     return null;
   }
 
-  private EnumerativeState executeTransition(Transition transition, EnumerativeState state) {
+  private EnumerativeState executeTransition(Transition transition,
+          EnumerativeState state){
     Expression resultingExpression = state.toExpression();
-    Expression transitionEffects = transition.getTransitionEffectAsTransition();
+    Expression transitionEffects = 
+            transition.getTransitionEffectAsTransition();
     resultingExpression = 
             ExpressionUtil.and(resultingExpression, transitionEffects);
     logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
@@ -57,7 +62,7 @@ public class EnumerativeTransitionHelper extends TransitionHelper{
     Set oldVariables = new HashSet(transition.stateVariables);
     Valuation result = new Valuation();
     Result res = solver.solve(resultingExpression, result);
-    System.out.println("Valuation: " + result.toString());
+    logger.finest("Valuation: " + result.toString());
     Valuation filtered = new Valuation();
     for(ValuationEntry entry: result){
       if(!oldVariables.contains(entry.getVariable())){

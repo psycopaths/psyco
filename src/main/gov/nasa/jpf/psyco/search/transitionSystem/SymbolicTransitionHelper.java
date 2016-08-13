@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
@@ -23,43 +33,36 @@ import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.VariableRestrictionsVisitor;
 import gov.nasa.jpf.util.JPFLogger;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 
-/**
- *
- * @author mmuesly
- */
 public class SymbolicTransitionHelper extends TransitionHelper{
   private final JPFLogger logger;
   private final VariableReplacementVisitor replacementVisitor;
+  private final VariableRestrictionsVisitor restrictionsVisitor;
   private final VariableAssignmentVisitor assignmentVisitor;
 
   public SymbolicTransitionHelper() {
     this.assignmentVisitor = new VariableAssignmentVisitor();
     this.replacementVisitor = new VariableReplacementVisitor();
+    this.restrictionsVisitor = new VariableRestrictionsVisitor();
     this.logger = JPF.getLogger(SymbolicSearchEngine.getSearchLoggerName());
   }
+
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition) {
+  public StateImage applyTransition(StateImage image, Transition transition){
     if(image instanceof SymbolicImage){
       SymbolicRegion newRegion = new SymbolicRegion();
       SymbolicImage currentState = (SymbolicImage) image;
       int depth = currentState.getDepth();
       for(SymbolicState state: currentState.getPreviousNewStates().values()){
         if(satisfiesGuardCondition(state, transition, depth)){
-          try {
-            SymbolicState newState = executeTransition(state, transition);
-            newRegion.put(HelperMethods.getUniqueStateName(), newState);
-            newRegion.print(System.out);
-          } catch (IOException ex) {
-            Logger.getLogger(SymbolicTransitionHelper.class.getName()).log(Level.SEVERE, null, ex);
-          }
+          SymbolicState newState = executeTransition(state, transition);
+          newRegion.put(HelperMethods.getUniqueStateName(), newState);
         }
       }
       currentState.addNewStates(newRegion);
@@ -101,6 +104,7 @@ public class SymbolicTransitionHelper extends TransitionHelper{
     }
     return replacements;
   }
+
   private SymbolicEntry executeTransitionOnEntry(SymbolicEntry entry,
           Transition transition, Expression prefix,
           VariableReplacementMap replacements){
@@ -108,9 +112,24 @@ public class SymbolicTransitionHelper extends TransitionHelper{
             primeVariable = createPrimeVariable(oldVariable);
     Expression transitionEffekt = transition.getTransitionEffect(oldVariable);
     Expression newValue = 
-            prefix != null ?
-            (Expression) prefix.accept(replacementVisitor, replacements)
-            : prefix;
+        prefix != null ?
+        (Expression) prefix.accept(replacementVisitor, replacements)
+        : prefix;
+    
+    List<NumericBooleanExpression> oldRestrictionsToKeep = new ArrayList<>();
+    Set<Variable<?>> possibleBound = ExpressionUtil.freeVariables(entry.getValue());
+    entry.getValue().accept(restrictionsVisitor, oldRestrictionsToKeep);
+    for(NumericBooleanExpression expr: oldRestrictionsToKeep){
+      Set<Variable<?>> variables = ExpressionUtil.freeVariables(expr);
+      for(Variable var: variables){
+        if((!(var.getName().startsWith("uVarReplacement"))) 
+                && (!variables.contains(entry.getVariable()))
+                && possibleBound.contains(var)){
+          newValue = ExpressionUtil.and(newValue, expr);
+          break;
+        }
+      }
+    }
     if(isStutterEffektForVariable(oldVariable, transitionEffekt)
             || transitionEffekt == null){
       newValue = createStutterTransition(oldVariable,
@@ -134,19 +153,20 @@ public class SymbolicTransitionHelper extends TransitionHelper{
     return transitionEffekt instanceof Variable 
             && transitionEffekt.equals(oldVariable);
   }
+
   private Expression createStutterTransition(Variable oldVariable,
-          Variable primeVariable, Expression<Boolean> value) {
+          Variable primeVariable, Expression<Boolean> value){
     NameMap rename = new NameMap();
     rename.mapNames(oldVariable.getName(), primeVariable.getName());
     return ExpressionUtil.renameVars(value, rename);
   }
 
-  private boolean isConstantAssignment(Expression transitionEffekt) {
+  private boolean isConstantAssignment(Expression transitionEffekt){
     return transitionEffekt instanceof Constant;
   }
 
   private Expression createConstantAssignment(Variable primeVariable,
-          Expression transitionEffekt) {
+          Expression transitionEffekt){
     return NumericBooleanExpression.create(primeVariable,
                     NumericComparator.EQ, transitionEffekt);
   }
@@ -183,6 +203,7 @@ public class SymbolicTransitionHelper extends TransitionHelper{
               ExpressionUtil.and(newValue, toAppend));
     return newValue;
   }
+
   private Variable createPrimeVariable(Variable var){
     String newName = var.getName() + "'";
     return Variable.create(var.getType(), newName);

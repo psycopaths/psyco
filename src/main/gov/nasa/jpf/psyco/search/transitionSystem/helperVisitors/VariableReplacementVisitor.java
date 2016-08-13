@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
@@ -14,16 +24,12 @@ import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 
-/**
- *
- * @author mmuesly
- */
-public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expression<?>, VariableReplacementMap> {
+public class VariableReplacementVisitor 
+      extends AbstractExpressionVisitor<Expression<?>, VariableReplacementMap>{
 
   @Override
-  public Expression<?> visit(PropositionalCompound expr, VariableReplacementMap data){
-//    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.VariableReplacementVisitor.visit()");
-//    System.out.println("propsitionalCompound: " + expr);
+  public Expression<?> visit(PropositionalCompound expr,
+          VariableReplacementMap data){
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -31,9 +37,8 @@ public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expres
   }
 
   @Override
-  public <E> Expression<?> visit(NumericCompound<E> expr, VariableReplacementMap data){
-//    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.VariableReplacementVisitor.visit()");
-//    System.out.println("numaericCompound: " + expr);
+  public <E> Expression<?> visit(NumericCompound<E> expr,
+          VariableReplacementMap data){
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -42,7 +47,8 @@ public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expres
   }
 
   @Override
-  public <E> Expression<?> visit(NumericBooleanExpression expr, VariableReplacementMap data){
+  public <E> Expression<?> visit(NumericBooleanExpression expr,
+          VariableReplacementMap data){
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -56,18 +62,18 @@ public class VariableReplacementVisitor extends AbstractExpressionVisitor<Expres
     innerValue = check(innerValue, data);
     return new Negation(innerValue);
   }
+
   @Override
-  protected <E> Expression<?> defaultVisit(Expression<E> expression, VariableReplacementMap data) {
-//    System.out.println("defaultVisit: " + expression + " class: " + expression.getClass());
+  protected <E> Expression<?> defaultVisit(Expression<E> expression,
+          VariableReplacementMap data) {
     for(Expression expr:expression.getChildren()){
       expr.accept(this, data);
     }
     return expression;
   }
 
-  private Expression check(Expression expr, VariableReplacementMap data) {
-//    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.VariableReplacementVisitor.check()");
-//    System.out.println("check: " + expr);
+  private Expression check(Expression expr,
+          VariableReplacementMap data) {
     if(expr instanceof Variable){
       return data.getOrDefault(expr, expr);
     }else if(expr instanceof NumericCompound){

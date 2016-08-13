@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search;
 
@@ -13,23 +23,26 @@ import gov.nasa.jpf.psyco.search.util.region.EnumerativeRegionUtil;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.util.SearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author mmuesly
- */
 public class EnumerativeSearchEngine {
     public static EnumerativeImage enumerativBreadthFirstSearch(
-          TransitionSystem transitionSystem, Valuation init,
-          ConstraintSolver solver){
-    EnumerativeRegion newRegion, reachableRegion = new EnumerativeRegion(init);
+          TransitionSystem transitionSystem,
+          ConstraintSolver solver,
+          int maxSearchDepth){
+    SolverInstance.getInstance().setSolver(solver);
+    EnumerativeRegion newRegion, reachableRegion =
+            new EnumerativeRegion(transitionSystem.getInitValuation());
     EnumerativeRegionUtil regionUtil = new EnumerativeRegionUtil(solver);
     SearchUtil<EnumerativeImage> searchUtil = 
             new SearchUtil<> (regionUtil);
+    EnumerativeImage currentSearchState = 
+            new EnumerativeImage(reachableRegion);
+    currentSearchState.setPreviousNewStates(reachableRegion);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
-    EnumerativeImage currentSearchState = new EnumerativeImage(reachableRegion);
-    currentSearchState.setPreviousNewStates(reachableRegion);
     while(!currentSearchState.getPreviousNewStates().isEmpty()){
       EnumerativeImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
@@ -47,13 +60,25 @@ public class EnumerativeSearchEngine {
       newImage.setNewStates(null);
       currentSearchState = newImage;
 
-//      logState(currentSearchState);
-//      if(maxSearchDepth != Integer.MIN_VALUE 
-//              && currentSearchState.getDepth() == maxSearchDepth){
-//        currentSearchState.setDepth(Integer.MAX_VALUE);
-//        break;
-//      }
+      logState(currentSearchState);
+      if(maxSearchDepth != Integer.MIN_VALUE 
+              && currentSearchState.getDepth() == maxSearchDepth){
+        currentSearchState.setDepth(Integer.MAX_VALUE);
+        break;
+      }
     }
     return currentSearchState;
+  }
+
+  private static void logState(EnumerativeImage newImage){
+    Logger logger = Logger.getLogger("psyco");
+    StringBuilder builder= new StringBuilder();
+    try {
+      newImage.print(builder);
+      logger.fine(builder.toString());
+    } catch (IOException ex) {
+      Logger.getLogger(SymbolicSearchEngine.class.getName())
+              .log(Level.SEVERE, null, ex);
+    }
   }
 }

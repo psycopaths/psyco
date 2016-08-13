@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
@@ -31,10 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-/**
- *
- * @author mmuesly
- */
 public class Transition {
   Path path;
   Expression transitionExpression = null;
@@ -47,7 +53,6 @@ public class Transition {
   private boolean isReached = false;
   private static final Logger logger = 
           Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
-
 
   public Transition(Path p){
     this.path = p;
@@ -72,7 +77,6 @@ public class Transition {
     return path.getState() == ERROR;
   }
 
-  //assumes this instance has a OkPath
   private void calculateModified(){
     modified = new ArrayList<>();
     Map<Variable<?>, Expression<?>> transitionEffekt = 
@@ -108,7 +112,7 @@ public class Transition {
     lowerBound = initializeBoundToFalse(lowerBound);
     upperBound = initializeBoundToFalse(upperBound);
   }
-  
+
   private Map<Variable, Boolean> initializeBoundToFalse(Map<Variable,
           Boolean> bound){
     bound = new HashMap<>();
@@ -117,6 +121,7 @@ public class Transition {
     }
     return bound;
   }
+
   private void analyzeVariableLimitations(
           List<NumericBooleanExpression> guardLimits){
     for(NumericBooleanExpression expr: guardLimits){
@@ -133,7 +138,6 @@ public class Transition {
           break;
         case EQ:
         case NE:
-   //       if(expr.get)
         default:
           logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
                   + "Transition.analyzeVariableLimitations()");
@@ -152,7 +156,7 @@ public class Transition {
       }
     }
   }
-  
+
   public void markLimits(Variable var, boolean upper, boolean lower){
     if(upper){
           markTrue(var, upperBound);
@@ -161,10 +165,11 @@ public class Transition {
       markTrue(var, lowerBound);
     }
   }
+
   public void markTrue(Variable var, Map<Variable, Boolean> bound){
     bound.put(var, Boolean.TRUE);
   }
-  
+
   public Path getPath(){
     return path;
   }
@@ -216,6 +221,7 @@ public class Transition {
     }
     return false;
   }
+
   private int evaluateNumericCompound(Variable var, NumericCompound result){
     Expression left = result.getLeft(),
                right = result.getRight();
@@ -229,7 +235,7 @@ public class Transition {
       throw new IllegalStateException("Error Reached");
     }
   }
-  
+
   private int evaluateChild(Variable var, Expression side) throws Exception{
     if(side instanceof Constant){
       Type type = side.getType();
@@ -241,7 +247,7 @@ public class Transition {
           || type == BuiltinTypes.UINT16){
         return getIntegerValue((Constant) side);
       }
-      throw new Exception("No Integer type here.");
+      throw new Exception("Integer type expected but not found.");
     }else if(side instanceof NumericCompound){
       return evaluateNumericCompound(var, (NumericCompound) side);
     }else if(side instanceof Variable){
@@ -266,7 +272,7 @@ public class Transition {
       case MINUS: return leftValue - rightValue;
       case MUL: return leftValue * rightValue;
       case REM:
-      case DIV: throw new Exception("Div and REM not supported");
+      case DIV: throw new Exception("Div and REM are not supported");
       default: return 0;
     }
   }
@@ -310,7 +316,7 @@ public class Transition {
       convertPathToExpression();
     }return transitionExpression;
   }
-  
+
   private void convertPathToExpression(){
     transitionExpression = path.getPathCondition();
     PathResult.OkResult result = path.getOkResult();
@@ -346,9 +352,11 @@ public class Transition {
               + TransitionEncoding.transitionBody + ":" + effects + ";" + ";";
     }
   }
+
   private String converErrorTransitiontForFile() {
     return TransitionEncoding.error + ":" + path.getExceptionClass() + ";";
   }
+
   private String converOkTransitiontForFile(HashMap<Class, String> data) {
     ExpressionConverterVisitor expressionConverter = 
             new ExpressionConverterVisitor();

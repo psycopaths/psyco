@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
@@ -25,13 +35,13 @@ import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.TransitionEncoding;
+import gov.nasa.jpf.psyco.search.transitionSystem.
+        helperVisitors.TransitionEncoding;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.util.JPFLogger;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
 import java.util.logging.Logger;
 
 public class TransitionSystemLoader {
@@ -48,24 +58,16 @@ public class TransitionSystemLoader {
       String line;
       while((line = reader.readLine()) != null){
         currentLine = line;
-        System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseFile()");
-        System.out.println(currentLine);
         if(nextTokenIs(TransitionEncoding.valuation)){
           Valuation initValuation = parseInitialValuation();
-          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseFile()");
-          System.out.println(initValuation.toString());
           tSystem.setInitValuation(initValuation);
         }
         if(nextTokenIs(TransitionEncoding.okTransition)){
           Transition t = parseOkTransition();
-          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseFile()");
-          System.out.println(t.toString());
           tSystem.add(t);
         }
         if(nextTokenIs(TransitionEncoding.errorTransition)){
           Transition t = parseErrorTransition();
-          System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseFile()");
-          System.out.println(t.toString());
           tSystem.add(t);
         }
       }
@@ -76,7 +78,6 @@ public class TransitionSystemLoader {
     return null;
   }
 
-  
   private Transition parseErrorTransition() {
     currentLine = currentLine.substring(2);
     Expression guard = null;
@@ -88,9 +89,11 @@ public class TransitionSystemLoader {
     String error = currentLine.substring(0,index);
     currentLine = currentLine.substring(index + 1).replace("\n","");
     if(!currentLine.equals(";;")){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseErrorTransition()");
-      System.out.println(currentLine);
-      throw new IllegalStateException("The error Transition is not parsed corretly");
+      System.err.println("gov.nasa.jpf.psyco.search.transitionSystem" 
+              +".TransitionSystemLoader.parseErrorTransition()");
+      System.err.println(currentLine);
+      throw new IllegalStateException(
+              "The error Transition is not parsed corretly");
     }
     Path p = new Path(guard, new PathResult.ErrorResult(null, error, null));
     return new Transition(p);
@@ -121,7 +124,6 @@ public class TransitionSystemLoader {
     return new Transition(p);
   }
 
-  
   private PostCondition parseTransitionEffect(PostCondition post) {
     currentLine = currentLine.substring(2);
     Variable effectedVar = null;
@@ -171,17 +173,10 @@ public class TransitionSystemLoader {
     currentLine = currentLine.substring(endValue + 1);
     endValue = currentLine.indexOf(';');
     String type = currentLine.substring(0, endValue);
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseConstant()");
-    System.out.println("type: " + type);
-    System.out.println("value:" + value);
     currentLine = currentLine.substring(endValue + 1);
     if(type.endsWith("BuiltinTypes$SInt32Type")){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseConstant()");
-      System.out.println(Integer.parseInt(value));
       return new Constant(BuiltinTypes.SINT32, Integer.parseInt(value));
     }else if(type.endsWith("BuiltinTypes$BoolType")){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseConstant()");
-      System.out.println(Boolean.parseBoolean(value));
       return new Constant(BuiltinTypes.BOOL, Boolean.parseBoolean(value));
     }else{
       throw new IllegalStateException("This Type is currently not supported");
@@ -203,11 +198,7 @@ public class TransitionSystemLoader {
     String operator = currentLine.substring(0, endOperator);
     NumericComparator op = NumericComparator.fromString(operator);
     currentLine = currentLine.substring(endOperator + 2);
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parsePropositionalCompound()");
-    System.out.println(currentLine);
     Expression right = parseNextExpression();
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseNumericBooleanExpression()");
-    System.out.println("right: " + right);
     currentLine = currentLine.substring(1);
     return new NumericBooleanExpression(left, op, right);
   }
@@ -220,11 +211,7 @@ public class TransitionSystemLoader {
     String operator = currentLine.substring(0, endOperator);
     NumericOperator op = NumericOperator.fromString(operator);
     currentLine = currentLine.substring(endOperator + 2);
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parsePropositionalCompound()");
-    System.out.println(currentLine);
     Expression right = parseNextExpression();
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseNumericCompound()");
-    System.out.println("right: " + right);
     currentLine = currentLine.substring(1);
     return new NumericCompound(left, op, right);
   }
@@ -237,11 +224,7 @@ public class TransitionSystemLoader {
     String operator = currentLine.substring(0, endOperator);
     LogicalOperator op = LogicalOperator.fromString(operator);
     currentLine = currentLine.substring(endOperator + 2);
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parsePropositionalCompound()");
-    System.out.println(currentLine);
     Expression right = parseNextExpression();
-    System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parsePropositionalCompound()");
-    System.out.println("right: " + right);
     currentLine = currentLine.substring(1);
     return new PropositionalCompound(left, op, right);
   }
@@ -269,9 +252,6 @@ public class TransitionSystemLoader {
     }
     currentLine = currentLine.substring(1).replace("\n","");
     if(!currentLine.isEmpty()){
-      System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseInitialValuation()");
-      System.out.println("current Line: ");
-      System.out.println(currentLine);
       throw new IllegalStateException("Valuation not finished");
     }
     return result;
@@ -334,8 +314,9 @@ public class TransitionSystemLoader {
       case TransitionEncoding.variable:
         return parseVariable();
       default:
-        System.out.println("gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader.parseNextExpression()");
-        System.out.println("line: " + currentLine);
+        System.err.println("gov.nasa.jpf.psyco.search.transitionSystem"
+                + ".TransitionSystemLoader.parseNextExpression()");
+        System.err.println("line: " + currentLine);
         throw new IllegalStateException("Cannot parse next Expression.");
     }
   }

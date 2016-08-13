@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package gov.nasa.jpf.psyco.search.util.region;
 
@@ -17,11 +27,8 @@ import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- * @author mmuesly
- */
-public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion>{
+public class SymbolicRegionUtil
+        extends RegionUtil<SymbolicState, SymbolicRegion>{
   public SymbolicRegionUtil(ConstraintSolver solver){
     super(solver);
   }
@@ -36,10 +43,11 @@ public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion
     }
     return resultingRegion;
   }
-  
+
   private SymbolicState renameState(SymbolicState state, 
           List<Variable<?>> primeNames, List<Variable<?>> variableNames ){
-    logger.finest("gov.nasa.jpf.psyco.search.region.util.SymbolicRegionUtil.renameState()");
+    logger.finest("gov.nasa.jpf.psyco.search.region.util."
+            + "SymbolicRegionUtil.renameState()");
     logger.finest("stateToRename: " );
     for(SymbolicEntry entry: state){
       logger.finest("Var: " + entry.getVariable() + " : " + entry.getValue());
@@ -62,9 +70,6 @@ public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion
         String newParameterName = getUniqueParameterName(var);
         Variable newParameter = 
                 new Variable(var.getType(), newParameterName);
-        //logger.finest("gov.nasa.jpf.psyco.search.region"
-        //        + ".util.SymbolicRegionUtil.renameState()");
-        //logger.finest(newParameterName);
         state = 
                 renameParameterInEntrys(state, var, newParameter);
       }
@@ -73,6 +78,7 @@ public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion
     logger.finest(" renamed State: " + state);
     return state;
   }
+
   private SymbolicState renameAllVariableEntrys(
           SymbolicState oldState,  Variable primeName, Variable varibaleName){
     SymbolicState renamedState = new SymbolicState();
@@ -96,8 +102,9 @@ public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion
     }
     return renamedState;
   }
+
   private SymbolicState renameParameterInEntrys(SymbolicState renamedState,
-          Variable var, Variable newParameter) {
+          Variable var, Variable newParameter){
     SymbolicState resultState = new SymbolicState();
     NameMap rename = new NameMap();
     rename.mapNames(var.getName(), newParameter.getName());
@@ -110,7 +117,8 @@ public class SymbolicRegionUtil extends RegionUtil<SymbolicState, SymbolicRegion
   }
 
   @Override
-  public SymbolicRegion rename(Region<?, SymbolicState> region, List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+  public SymbolicRegion rename(Region<?, SymbolicState> region,
+          List<Variable<?>> primeNames, List<Variable<?>> variableNames){
     return rename((SymbolicRegion)region, primeNames, variableNames);
   }
 }
