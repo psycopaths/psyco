@@ -56,11 +56,11 @@ public class TransitionSystemTest {
     String[] args = {};
     Config conf = new Config(args);
     conf.setProperty("symbolic.dp", "NativeZ3");
-    conf.setProperty("symbolic.dp", "NativeZ3");
+    conf.setProperty("symbolic.dp.z3.bitvectors", "false");
     conf.setProperty("log.finest", "psyco");
-    PsycoConfig pconf = new PsycoConfig(conf);
     ConstraintSolverFactory factory = new ConstraintSolverFactory(conf);
     solver = factory.createSolver();
+    PsycoConfig pconf = new PsycoConfig(conf, solver, null);
   }
 
   /*

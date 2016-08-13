@@ -50,13 +50,13 @@ public class SearchShell implements JPFShell {
   public void run() throws IOException {
 
     PsycoProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
     
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
-    
+
     ConstraintSolver solver = factory.createSolver();
 
+    PsycoConfig pconf = new PsycoConfig(config, solver, null);
     SummaryStore store = SummaryStore.create(config);
     if(store == null){
       System.exit(1);
