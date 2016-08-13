@@ -42,8 +42,10 @@ public class SymbolicMethodSymbol {
     this(id, cmc, ExpressionUtil.TRUE, constructor, isStatic);
   }
 
-  public SymbolicMethodSymbol(String id, ConcolicMethodConfig concolicMethodConfig, 
-          Expression<Boolean> precondition, boolean constructor, boolean isStatic) {
+  public SymbolicMethodSymbol(String id, 
+          ConcolicMethodConfig concolicMethodConfig, 
+          Expression<Boolean> precondition,
+          boolean constructor, boolean isStatic) {
     this.id = id;
     this.concolicMethodConfig = concolicMethodConfig;
     this.precondition = precondition;
@@ -96,7 +98,8 @@ public class SymbolicMethodSymbol {
 
   @Override
   public String toString() {
-    return this.id + ":" + this.concolicMethodConfig.getId() + "[" + this.precondition +  "]"; 
+    return this.id + ":" + this.concolicMethodConfig.getId() 
+            + "[" + this.precondition +  "]"; 
   }
 
   public boolean isConstructor() {

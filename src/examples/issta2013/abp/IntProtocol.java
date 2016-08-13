@@ -41,7 +41,7 @@ public class IntProtocol {
       // message is discarded
     }
   } 
-  
+
   public void recv_ack(int value) {
     if (buffer_empty==1) {
       assert false;
@@ -55,5 +55,4 @@ public class IntProtocol {
       }
     }        
   }
-  
 }

@@ -1,5 +1,3 @@
-
-
 jdart.configs.cev.symbolic.statics=gsoc.cev_esas.Spacecraft
 jdart.configs.cev.symbolic.include=gsoc.cev_esas.Spacecraft.*;gsoc.cve_esas.CEV.*
 

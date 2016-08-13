@@ -13,6 +13,10 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
  * specific language governing permissions and limitations under the License.
  */
+/*
+* Example taken from:
+* http://gamesdev.wordpress.com/2008/11/03/circuit-simple-j2me-game/
+*/
 package issta2013.accelerometer;
 
 import gov.nasa.jpf.jdart.Symbolic;

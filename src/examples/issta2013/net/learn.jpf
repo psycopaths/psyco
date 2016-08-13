@@ -3,4 +3,3 @@
 @include=./example.jpf
 
 psyco.depth=8
-psyco.por=false

@@ -15,6 +15,7 @@
  */
 package gov.nasa.jpf.psyco;
 
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
@@ -27,6 +28,9 @@ import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
+import gov.nasa.jpf.psyco.equivalence.InvarianceTest;
+import gov.nasa.jpf.psyco.equivalence.ProgramAnalysisTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
@@ -66,13 +70,17 @@ public class Psyco implements JPFShell {
   public void run() throws IOException {
 
     SimpleProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
+
     
     ConstraintSolverFactory factory = 
             new ConstraintSolverFactory(this.config);
     
-    ConstraintSolver solver = new SolverWrapper(factory.createSolver());
-
+    ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
+    InterpolationSolver iSolver = (InterpolationSolver) 
+            factory.createSolver("smtinterpol");   
+    
+    PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
+    
     SymbolicMethodAlphabet inputs = null;
     SymbolicExecutionOracle seOracle = null;
     if (!pconf.isUseSummaries()) {    
@@ -83,8 +91,8 @@ public class Psyco implements JPFShell {
     }
     else {
       SummaryStore store = SummaryStore.create(config);
-      inputs = new SummaryAlphabet(store, solver);    
-      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, solver);
+      inputs = new SummaryAlphabet(store, cSolver);    
+      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, cSolver);
     }
     
     int sigma = inputs.size();
@@ -94,15 +102,12 @@ public class Psyco implements JPFShell {
     }
     logger.info("---------------------------------------------------------------");
 
-    OracleProvider provider = new OracleProvider(seOracle, inputs, pconf);
+    DefaultOracleProvider provider = new DefaultOracleProvider(seOracle, inputs, pconf);
             
-    SymbolicEquivalenceTest eqtest = null;    
-    // TODO: this should be parameterized later
-    eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
-    
-    InterfaceGenerator gen = new InterfaceGenerator(
-            provider, pconf, eqtest, solver);
-    
+    SymbolicEquivalenceTest eqtest = provider.getEqTest();
+   
+    InterfaceGenerator gen = new InterfaceGenerator(provider, pconf, eqtest);    
+
     MealyMachine model = gen.generateInterface();
     
     SimpleProfiler.stop("PSYCO-run");

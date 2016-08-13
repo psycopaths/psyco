@@ -82,13 +82,13 @@ public class PORFilter extends MethodExecutionFilter {
   private void initialize(Collection<String> mconfig, 
           SymbolicMethodAlphabet inputs) {
     
-    System.out.println("POR CONFIG: " + Arrays.toString(mconfig.toArray()));
+//    System.out.println("POR CONFIG: " + Arrays.toString(mconfig.toArray()));
     
     Map<String,Pair<BitSet,BitSet>> config = new HashMap<>();
     
     for (String line : mconfig) {    
       String[] conf = line.trim().split(",");      
-      System.out.println("line: " + Arrays.toString(conf));
+//      System.out.println("line: " + Arrays.toString(conf));
       config.put( conf[0].trim(), new Pair<>( 
               makeSet(conf[1].trim()), makeSet(conf[2].trim()) ));
     }

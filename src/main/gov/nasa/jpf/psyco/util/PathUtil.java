@@ -37,6 +37,52 @@ import net.automatalib.words.Word;
 
 public class PathUtil {
 
+  public static class PathQuery {
+    private final Word<SymbolicMethodSymbol> methods;
+    private final Word<Path> paths;
+    public PathQuery(Word<SymbolicMethodSymbol> methods, Word<Path> paths) {
+      this.methods = methods;
+      this.paths = paths;
+    }  
+
+    public Word<SymbolicMethodSymbol> getMethods() {
+      return methods;
+    }
+
+    public Word<Path> getPaths() {
+      return paths;
+    }
+    
+  }
+  
+  public static Collection<PathQuery> explode(Word<SymbolicMethodSymbol> in, SummaryAlphabet inputs) {
+    if (in.length() < 1) {
+      Word<Path> eps = Word.epsilon();
+      return Collections.singletonList(new PathQuery(in, eps));
+    }
+    
+    ArrayList<PathQuery> queries = new ArrayList<>();
+    Word<Path> eps = Word.epsilon();
+    explode(in, 0, eps, queries, inputs);
+    return queries;
+  }
+  
+  private static void explode(Word<SymbolicMethodSymbol> in, int pos, 
+          Word<Path> prefix, Collection<PathQuery> queries, SummaryAlphabet inputs) {
+    
+    SymbolicMethodSymbol a = in.getSymbol(pos);
+    SymbolicExecutionResult summary = inputs.getSummary(a);
+    pos++;
+    
+    for (Path p : summary) {
+      if (p.getState() == PathState.OK && pos < in.length()) {
+        explode(in, pos, prefix.append(p), queries, inputs);
+      } else {
+        queries.add(new PathQuery(
+                (pos < in.length() ? in.prefix(pos) : in), prefix.append(p)));
+      } 
+    }   
+  }  
   
   public static Path executeSymbolically(
           Word<SymbolicMethodSymbol> sword, Word<Path> paths, Valuation initial) {
@@ -53,6 +99,7 @@ public class PathUtil {
       SymbolicMethodSymbol sms = sword.getSymbol(spos);      
       Function<String, String> shift = 
               SEResultUtil.shift(1, ppos, sms.getArity());
+
       Path pShifted = SEResultUtil.rename(p, shift);
       Expression<Boolean> fragment = executeSymbolically(pShifted, val);
       Collection<Expression<Boolean>> atoms = decomposePath(fragment);
@@ -105,8 +152,8 @@ public class PathUtil {
     }    
     return pc;    
   } 
-          
-  private static Expression<?> transformVars(Expression<?> in, 
+
+  public static Expression<?> transformVars(Expression<?> in, 
           final Map<Variable<?>, Expression<?>> val) {
     
     return ExpressionUtil.transformVars(

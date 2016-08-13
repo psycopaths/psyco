@@ -23,7 +23,11 @@ concolic.method.update=issta2013.security.Signature.update()
 concolic.method.update.config=signature
 
 
+<<<<<<< HEAD
 psyco.methods=Signature,initSign,initVerify,verify,sign,update
+=======
+summary.methods=Signature,initSign,initVerify,verify,sign,update
+>>>>>>> origin/interpolation_gsoc
 
 psyco.por.config=update,1,0;\
   sign,1,0;\

@@ -10,5 +10,8 @@
 	<classpathentry kind="lib" path="lib/learnlib-0.9.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
 	<classpathentry kind="lib" path="lib/automatalib-0.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="tools/RunAnt.jar"/>
+	<classpathentry kind="lib" path="tools/RunJPF.jar"/>
+	<classpathentry kind="lib" path="tools/RunTest.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

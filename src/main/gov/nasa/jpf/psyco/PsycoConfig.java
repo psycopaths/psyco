@@ -16,6 +16,8 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
@@ -24,20 +26,29 @@ import java.util.Collection;
 
 public class PsycoConfig {
 
+  public static enum EqTestType {bfs, interpolation, blast}
   private final Config config;
   private int maxDepth = -1;
   private boolean usePOR = false;
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
+
+  private EqTestType eqTestType = EqTestType.bfs;
   private TerminationStrategy termination = new NeverTerminate();
   private boolean symbolicSearch = true;
   private boolean enumerativeSearch = false;
   private String resultFolderName="default";
   private int maxSearchDepth = Integer.MIN_VALUE;
+  
+  private final ConstraintSolver constraintSolver;
+  private final InterpolationSolver interpolationSolver;
 
-  public PsycoConfig(Config conf) {
-    this.config = conf;
+  public PsycoConfig(Config config, ConstraintSolver constraintSolver, 
+          InterpolationSolver interpolationSolver) {
+    this.config = config;
+    this.constraintSolver = constraintSolver;
+    this.interpolationSolver = interpolationSolver;
     initialize();
   }
 
@@ -73,6 +84,10 @@ public class PsycoConfig {
     
     if(config.hasValue("psyco.maxSearchDepth")){
       maxSearchDepth = config.getInt("psyco.maxSearchDepth");
+    }
+    if (config.hasValue("psyco.eqtest")) {
+      eqTestType = config.getEnum("psyco.eqtest", 
+              EqTestType.values(), eqTestType.bfs);
     }
   }
 
@@ -118,6 +133,7 @@ public class PsycoConfig {
   public boolean shouldUseEnumerativeSearch(){
     return enumerativeSearch;
   }
+
   /**
    * @return the termination
    */
@@ -132,6 +148,7 @@ public class PsycoConfig {
   public int getMaxSearchDepth(){
     return this.maxSearchDepth;
   }
+
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
@@ -139,5 +156,26 @@ public class PsycoConfig {
 
   public String getResultFolderName() {
     return resultFolderName;
+  }
+
+  /**
+   * @return type of eq test to perform
+   */
+  public EqTestType getEqTestType() {
+    return eqTestType;
+  }
+
+  /**
+   * @return the constraintSolver
+   */
+  public ConstraintSolver getConstraintSolver() {
+    return constraintSolver;
+  }
+
+  /**
+   * @return the interpolationSolver
+   */
+  public InterpolationSolver getInterpolationSolver() {
+    return interpolationSolver;
   }
 }
