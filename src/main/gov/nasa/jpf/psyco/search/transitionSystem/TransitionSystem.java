@@ -308,4 +308,10 @@ public class TransitionSystem<T extends TransitionHelper> {
     result += ";";
     return result;
   }
+
+  public void resetStatistics(){
+    for(Transition t: transitions){
+      t.setIsReached(false);
+    }
+  }
 }

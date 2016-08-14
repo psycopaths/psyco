@@ -21,6 +21,7 @@ import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -40,6 +41,9 @@ public class PsycoConfig {
   private boolean enumerativeSearch = false;
   private String resultFolderName="default";
   private int maxSearchDepth = Integer.MIN_VALUE;
+  private boolean saveResult = false;
+  private boolean saveModel = false;
+  private boolean saveTransitionSystem = false;
   
   private final ConstraintSolver constraintSolver;
   private final InterpolationSolver interpolationSolver;
@@ -79,7 +83,11 @@ public class PsycoConfig {
       enumerativeSearch = config.getBoolean("psyco.enumerativeSearch");
     }
     if(config.hasValue("psyco.resultFolderName")){
-      resultFolderName = config.getString("psyco.resultFolderName");
+      resultFolderName = "result" + File.separator 
+              + config.getString("psyco.resultFolderName");
+      if(!resultFolderName.endsWith(File.separator)){
+        resultFolderName += File.separator;
+      }
     }
     
     if(config.hasValue("psyco.maxSearchDepth")){
@@ -88,6 +96,17 @@ public class PsycoConfig {
     if (config.hasValue("psyco.eqtest")) {
       eqTestType = config.getEnum("psyco.eqtest", 
               EqTestType.values(), eqTestType.bfs);
+    }
+
+    if (config.hasValue("psyco.saveSearchResult")) {
+      saveResult = config.getBoolean("psyco.saveSearchResult");
+    }
+    
+    if(config.hasValue("psyco.saveTransitionSystem")){
+      saveTransitionSystem = config.getBoolean("psyco.saveTransitionSystem");
+    }
+    if(config.hasValue("psyco.saveModel")){
+      saveModel = config.getBoolean("psyco.saveModel");
     }
   }
 
@@ -140,13 +159,29 @@ public class PsycoConfig {
   public TerminationStrategy getTermination() {
     return termination;
   }
-  
+
   public int getMaxDepth() {
     return this.maxDepth;
   }  
 
-  public int getMaxSearchDepth(){
+  public void updateMaxDepth(int maxDepth) {
+    this.maxDepth = maxDepth;
+  }
+
+  public int getMaxSearchDepth() {
     return this.maxSearchDepth;
+  }
+
+  public boolean isSaveSearchResult(){
+    return saveResult;
+  }
+
+  public boolean isSaveTransitionSystem(){
+    return saveTransitionSystem;
+  }
+
+  public boolean isSaveModel(){
+    return saveModel;
   }
 
   public Collection<String> getPOR() {

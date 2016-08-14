@@ -15,6 +15,7 @@
  */
 package gov.nasa.jpf.psyco.util;
 
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 public class ResultSaver {
-  public static void writeResultToFolder(SymbolicImage result,
+  public static void writeResultToFolder(StateImage result,
           String folder){
     String currentDate = 
             new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
@@ -42,7 +43,7 @@ public class ResultSaver {
     }
   }
 
-  public static void writeResultToFolder(SymbolicImage result,
+  public static void writeResultToFolder(StateImage result,
           TransitionSystem transitionSystem, String folder){
     String currentDate = 
             new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());

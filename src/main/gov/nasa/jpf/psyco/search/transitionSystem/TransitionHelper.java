@@ -23,6 +23,7 @@ import gov.nasa.jpf.psyco.search.SolverInstance;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import gov.nasa.jpf.psyco.search.datastructures.state.State;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.logging.Logger;
 
@@ -53,7 +54,9 @@ public abstract class TransitionHelper {
           Transition transition, int depth) throws IllegalStateException{
     Expression guardTest = state.toExpression();
     guardTest = ExpressionUtil.and(guardTest, transition.getGuardCondition());
+    PsycoProfiler.startGuardProfiler(depth);
     Result res = solver.isSatisfiable(guardTest);
+    PsycoProfiler.stopGuardProfiler(depth);
     if(null != res){
       switch (res) {
         case SAT:

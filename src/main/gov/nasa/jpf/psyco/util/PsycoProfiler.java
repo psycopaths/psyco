@@ -17,6 +17,7 @@ package gov.nasa.jpf.psyco.util;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.SimpleProfiler;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -178,6 +179,9 @@ public class PsycoProfiler extends SimpleProfiler{
   }
 
   public static void writeRunToFolder(String folderName) {
+    if(!folderName.endsWith(File.separator)){
+      folderName = folderName +File.separator;
+    }
     String currentDateSuffix = 
             new SimpleDateFormat("yyyyMMddhhmm'.csv'").format(new Date());
     String fileName = folderName + "guardTimes-" + currentDateSuffix;

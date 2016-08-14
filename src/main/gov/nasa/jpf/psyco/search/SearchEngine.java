@@ -86,9 +86,14 @@ public class SearchEngine {
     } catch (IOException ex) {
       Logger.getLogger(SearchShell.class.getName()).log(Level.SEVERE, null, ex);
     }
-    logger.info(searchResultString.toString());
-    logger.info(PsycoProfiler.getResults());
-    logger.info("");
+    
+    logger.fine(searchResultString.toString());
+    if(searchResult.getDepth() != Integer.MAX_VALUE){
+      pconf.updateMaxDepth(searchResult.getDepth());
+    }
+    if(pconf.isSaveSearchResult()){
+      ResultSaver.writeResultToFolder(searchResult, folderName);
+    }
   }
 
   private void executeSymbolicSearch(SummaryStore store,
@@ -100,8 +105,7 @@ public class SearchEngine {
     TransitionSystem transitionSystem = 
             new TransitionSystem(initValuation,
                     convertTransitionPaths(store), helper);
-    logger.info(transitionSystem.toString());
-    logger.info(Integer.toString(pconf.getMaxDepth()));
+    logger.fine(transitionSystem.toString());
     SymbolicImage searchResult =
             SymbolicSearchEngine.symbolicBreadthFirstSearch(
             transitionSystem,
@@ -121,10 +125,17 @@ public class SearchEngine {
     } catch (IOException ex) {
       logger.severe(ex.getMessage());
     }
-    logger.info(searchResultString.toString());
-    logger.info("");
-    ResultSaver.writeResultToFolder(searchResult,
+    logger.fine(searchResultString.toString());
+    logger.info("Symbolic Search determined:");
+    logger.info("Max search depth k = " + searchResult.getDepth());
+    if(searchResult.getDepth() != Integer.MAX_VALUE){
+      logger.info("Set Psyco maxDepth to k.");
+      pconf.updateMaxDepth(searchResult.getDepth());
+    }
+    if(pconf.isSaveSearchResult()){
+      ResultSaver.writeResultToFolder(searchResult,
             transitionSystem, folderName);
+    }
   }
 
   private List<Path> convertTransitionPaths(SummaryStore store) {
@@ -155,7 +166,6 @@ public class SearchEngine {
 
   private void updateFolderName(PsycoConfig pconf){
     folderName = pconf.getResultFolderName();
-    folderName = "result" + File.separator + folderName + File.separator;
     File file = new File(folderName);
     if(!file.exists()){
       file.mkdirs();

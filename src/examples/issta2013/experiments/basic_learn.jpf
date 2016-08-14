@@ -20,7 +20,7 @@ symbolic.dp.z3.bitvectors=true
 #
 
 log.severe=jdart
-log.finer=constraints, psyco
+log.info=constraints,psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

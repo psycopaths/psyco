@@ -94,10 +94,16 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
         Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
         long start = System.currentTimeMillis();
         Valuation val = new Valuation();
+//        System.out.println("gov.nasa.jpf.psyco.search.util.region.RegionUtil.difference()");
+//        System.out.println("testState: " + testDiffState);
         ConstraintSolver.Result rs = solver.solve(testDiffState, val);
         logger.finest("gov.nasa.jpf.psyco.search.util.region" 
                 + ".RegionUtil.difference()");
         logger.finest("result" + ExpressionUtil.valuationToExpression(val));
+//        System.out.println("gov.nasa.jpf.psyco.search.util.region" 
+//                + ".RegionUtil.difference()");
+//        System.out.println("res: " + rs);
+//        System.out.println("result " + ExpressionUtil.valuationToExpression(val));
         long stop = System.currentTimeMillis();
         logger.finer("Time needed for difference: " 
                 + Long.toString(stop - start) + " in Millis");
