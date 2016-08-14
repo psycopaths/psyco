@@ -1,3 +1,9 @@
 
 @include=../experiments/basic_learn.jpf
 @include=./example.jpf
+
+psyco.depth=8
+psyco.saveSearchResult=true
+psyco.saveTransitionSystem=true
+psyco.saveModel=true
+psyco.resultFolderName=net

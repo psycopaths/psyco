@@ -1,0 +1,11 @@
+
+jdart.configs.wbs.symbolic.statics=daikon.wbs.WBS
+jdart.configs.wbs.symbolic.include=daikon.wbs.WBS.*
+
+concolic.method.WBS=daikon.wbs.WBS.<init>()
+concolic.method.WBS.config=wbs
+
+concolic.method.update=daikon.wbs.WBS.update(pp:int,ab:boolean,s:boolean)
+concolic.method.update.config=wbs
+
+summary.methods=WBS,update

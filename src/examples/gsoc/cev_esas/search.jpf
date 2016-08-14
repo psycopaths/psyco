@@ -1,0 +1,8 @@
+
+@include=../../symbolicsearch/basic_search.jpf
+@include=./example_search.jpf
+
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false
+psyco.depth=8
+psyco.resultFolderName=gsocCEV

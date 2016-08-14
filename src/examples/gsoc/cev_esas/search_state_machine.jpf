@@ -1,0 +1,7 @@
+
+@include=../../symbolicsearch/basic_search.jpf
+@include=./example_search_state_machine.jpf
+
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false
+psyco.resultFolderName=gsoc_cev_state_machine

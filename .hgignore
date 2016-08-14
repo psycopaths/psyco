@@ -1,0 +1,16 @@
+syntax: glob
+
+build.properties
+nbproject/private/*
+build/*
+dist/*
+*.class
+*~
+*.DS_Store
+tmp/*
+RefinedAlphabet.java
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$

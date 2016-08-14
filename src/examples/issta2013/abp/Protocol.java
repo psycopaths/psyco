@@ -1,5 +1,4 @@
-/*
- * Copyright (C) 2015, United States Government, as represented by the 
+/* Copyright (C) 2015, United States Government, as represented by the 
  * Administrator of the National Aeronautics and Space Administration.
  * All rights reserved.
  *
@@ -19,7 +18,7 @@ import gov.nasa.jpf.jdart.Symbolic;
 
 /** This example is a modified version from:
  *  Automata Learning with Automated Alphabet Abstraction Reﬁnement
- *  Falk Howar, Bernhard Steffen, and Maik Merten
+ *  Falk Howar, Bernhard Steﬀen, and Maik Merten
  *  VMCAI 2011
  */
 

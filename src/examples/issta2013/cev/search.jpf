@@ -1,0 +1,7 @@
+
+@include=../../symbolicsearch/basic_search.jpf
+@include=./example_1.jpf
+
+psyco.symbolicSearch=true
+psyco.resultFolderName=cev
+psyco.maxSearchDepth=5

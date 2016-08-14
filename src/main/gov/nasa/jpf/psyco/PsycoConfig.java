@@ -16,24 +16,43 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
 public class PsycoConfig {
 
+  public static enum EqTestType {bfs, interpolation, blast}
   private final Config config;
   private int maxDepth = -1;
   private boolean usePOR = false;
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
-  private TerminationStrategy termination = new NeverTerminate();
 
-  public PsycoConfig(Config conf) {
-    this.config = conf;
+  private EqTestType eqTestType = EqTestType.bfs;
+  private TerminationStrategy termination = new NeverTerminate();
+  private boolean symbolicSearch = true;
+  private boolean enumerativeSearch = false;
+  private String resultFolderName="default";
+  private int maxSearchDepth = Integer.MIN_VALUE;
+  private boolean saveResult = false;
+  private boolean saveModel = false;
+  private boolean saveTransitionSystem = false;
+  
+  private final ConstraintSolver constraintSolver;
+  private final InterpolationSolver interpolationSolver;
+
+  public PsycoConfig(Config config, ConstraintSolver constraintSolver, 
+          InterpolationSolver interpolationSolver) {
+    this.config = config;
+    this.constraintSolver = constraintSolver;
+    this.interpolationSolver = interpolationSolver;
     initialize();
   }
 
@@ -56,6 +75,38 @@ public class PsycoConfig {
     }
     if (config.hasValue("psyco.por")) {
       usePOR = config.getBoolean("psyco.por");
+    }
+    if(config.hasValue("psyco.symbolicSearch")){
+      symbolicSearch = config.getBoolean("psyco.symbolicSearch");
+    }
+    if(config.hasValue("psyco.enumerativeSearch")){
+      enumerativeSearch = config.getBoolean("psyco.enumerativeSearch");
+    }
+    if(config.hasValue("psyco.resultFolderName")){
+      resultFolderName = "result" + File.separator 
+              + config.getString("psyco.resultFolderName");
+      if(!resultFolderName.endsWith(File.separator)){
+        resultFolderName += File.separator;
+      }
+    }
+    
+    if(config.hasValue("psyco.maxSearchDepth")){
+      maxSearchDepth = config.getInt("psyco.maxSearchDepth");
+    }
+    if (config.hasValue("psyco.eqtest")) {
+      eqTestType = config.getEnum("psyco.eqtest", 
+              EqTestType.values(), eqTestType.bfs);
+    }
+
+    if (config.hasValue("psyco.saveSearchResult")) {
+      saveResult = config.getBoolean("psyco.saveSearchResult");
+    }
+    
+    if(config.hasValue("psyco.saveTransitionSystem")){
+      saveTransitionSystem = config.getBoolean("psyco.saveTransitionSystem");
+    }
+    if(config.hasValue("psyco.saveModel")){
+      saveModel = config.getBoolean("psyco.saveModel");
     }
   }
 
@@ -94,19 +145,72 @@ public class PsycoConfig {
     return useSummaries;
   }
 
+  public boolean shouldUseSymbolicSearch(){
+    return symbolicSearch;
+  }
+  
+  public boolean shouldUseEnumerativeSearch(){
+    return enumerativeSearch;
+  }
+
   /**
    * @return the termination
    */
   public TerminationStrategy getTermination() {
     return termination;
   }
-  
+
   public int getMaxDepth() {
     return this.maxDepth;
   }  
 
+  public void updateMaxDepth(int maxDepth) {
+    this.maxDepth = maxDepth;
+  }
+
+  public int getMaxSearchDepth() {
+    return this.maxSearchDepth;
+  }
+
+  public boolean isSaveSearchResult(){
+    return saveResult;
+  }
+
+  public boolean isSaveTransitionSystem(){
+    return saveTransitionSystem;
+  }
+
+  public boolean isSaveModel(){
+    return saveModel;
+  }
+
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
+  }
+
+  public String getResultFolderName() {
+    return resultFolderName;
+  }
+
+  /**
+   * @return type of eq test to perform
+   */
+  public EqTestType getEqTestType() {
+    return eqTestType;
+  }
+
+  /**
+   * @return the constraintSolver
+   */
+  public ConstraintSolver getConstraintSolver() {
+    return constraintSolver;
+  }
+
+  /**
+   * @return the interpolationSolver
+   */
+  public InterpolationSolver getInterpolationSolver() {
+    return interpolationSolver;
   }
 }

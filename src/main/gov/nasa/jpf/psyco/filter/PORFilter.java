@@ -21,6 +21,7 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.Pair;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;

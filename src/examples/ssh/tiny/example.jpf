@@ -1,0 +1,11 @@
+
+jdart.configs.loop.symbolic.statics=ssh.tiny.Loop
+jdart.configs.loop.symbolic.include=ssh.tiny.Loop.*
+
+concolic.method.Loop=ssh.tiny.Loop.<init>()
+concolic.method.Loop.config=loop
+
+concolic.method.do=ssh.tiny.Loop.doLoop()
+concolic.method.do.config=loop
+
+summary.methods=Loop,do

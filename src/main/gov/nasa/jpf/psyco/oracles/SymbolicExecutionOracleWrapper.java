@@ -66,6 +66,4 @@ public class SymbolicExecutionOracleWrapper implements ThreeValuedOracle {
     }
     this.oracle.processQueries(queries);
   }
-  
-  
 }

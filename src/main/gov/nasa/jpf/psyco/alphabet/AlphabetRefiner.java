@@ -199,5 +199,4 @@ public class AlphabetRefiner {
   private boolean sat(Expression<Boolean> test) {
     return solver.isSatisfiable(test) == Result.SAT;
   }
-  
 }

@@ -81,37 +81,37 @@ public class Spacecraft {
 
   void reset(int component) {
 
-//    switch (component) {
-//      case LAS:
-//        lasDocked = true;
-//        dockedComponents++;
-//        break;
-//      case STAGE1:
-//        doneStage1 = false;
-//        break;
-//      case STAGE2:
-//        doneStage2 = false;
-//        break;
-//      case CM:
-//        cmDocked = true;
-//        dockedComponents++;
-//        break;
-//      case SM:
-//        smDocked = true;
-//        break;
-//      case LSAM_ASCENT:
-//        lsamAscentDocked = false;
-//        dockedComponents--;
-//        break;
-//      case LSAM_DESCENT:
-//        lsamDescentDocked = false;
-//        dockedComponents--;
-//        break;
-//      case EDS:
-//        edsDocked = false;
-//        dockedComponents--;
-//        break;
-//    }
+    switch (component) {
+      case LAS:
+        lasDocked = true;
+        dockedComponents++;
+        break;
+      case STAGE1:
+        doneStage1 = false;
+        break;
+      case STAGE2:
+        doneStage2 = false;
+        break;
+      case CM:
+        cmDocked = true;
+        dockedComponents++;
+        break;
+      case SM:
+        smDocked = true;
+        break;
+      case LSAM_ASCENT:
+        lsamAscentDocked = false;
+        dockedComponents--;
+        break;
+      case LSAM_DESCENT:
+        lsamDescentDocked = false;
+        dockedComponents--;
+        break;
+      case EDS:
+        edsDocked = false;
+        dockedComponents--;
+        break;
+    }
 
 
     if (component == LAS) {
