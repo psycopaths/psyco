@@ -26,21 +26,13 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
 import gov.nasa.jpf.psyco.util.PathUtil;
+import gov.nasa.jpf.psyco.util.PathUtil.PathQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.automatalib.words.Word;
 
 public class SummaryOracle implements SymbolicExecutionOracle {  
   
-  private static class PathQuery {
-    final Word<SymbolicMethodSymbol> methods;
-    final Word<Path> paths;
-    public PathQuery(Word<SymbolicMethodSymbol> methods, Word<Path> paths) {
-      this.methods = methods;
-      this.paths = paths;
-    }   
-  }
- 
   private final SummaryAlphabet inputs;
 
   private final ConstraintSolver solver;
@@ -65,10 +57,10 @@ public class SummaryOracle implements SymbolicExecutionOracle {
     ArrayList<Path> err = new ArrayList<>(); 
     ArrayList<Path> dk  = new ArrayList<>(); 
     
-    Collection<PathQuery> paths = explode(query.getInput());
+    Collection<PathQuery> paths = PathUtil.explode(query.getInput(), inputs);
     for (PathQuery q : paths) {      
       Path p = PathUtil.executeSymbolically(
-              q.methods, q.paths, inputs.getInitialValuation());
+              q.getMethods(), q.getPaths(), inputs.getInitialValuation());
       
       // TODO: maybe add model to path 
       if (!sat(p.getPathCondition())) {
@@ -90,30 +82,6 @@ public class SummaryOracle implements SymbolicExecutionOracle {
     query.answer(new SymbolicExecutionResult(ok, err, dk));
   }
 
-  private Collection<PathQuery> explode(Word<SymbolicMethodSymbol> in) {
-    ArrayList<PathQuery> queries = new ArrayList<>();
-    Word<Path> eps = Word.epsilon();
-    explode(in, 0, eps, queries);
-    return queries;
-  }
-  
-  private void explode(Word<SymbolicMethodSymbol> in, int pos, 
-          Word<Path> prefix, Collection<PathQuery> queries) {
-    
-    SymbolicMethodSymbol a = in.getSymbol(pos);
-    SymbolicExecutionResult summary = this.inputs.getSummary(a);
-    pos++;
-    
-    for (Path p : summary) {
-      if (p.getState() == PathState.OK && pos < in.length()) {
-        explode(in, pos, prefix.append(p), queries);
-      } else {
-        queries.add(new PathQuery(
-                (pos < in.length() ? in.prefix(pos) : in), prefix.append(p)));
-      } 
-    }   
-  }
-  
   private boolean sat(Expression<Boolean> expr) {
     return solver.isSatisfiable(expr) == Result.SAT;
   }  

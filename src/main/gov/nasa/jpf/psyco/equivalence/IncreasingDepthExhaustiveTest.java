@@ -160,4 +160,5 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     logger.info("EQ Test depth completed: " + (k-1));
     logger.info("EQ Test max depth: " + kMax);
   }
+  
 }

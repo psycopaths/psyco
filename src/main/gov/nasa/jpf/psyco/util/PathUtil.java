@@ -27,7 +27,9 @@ import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult;
 import gov.nasa.jpf.jdart.constraints.PathState;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
+import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
+import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +39,55 @@ import net.automatalib.words.Word;
 
 public class PathUtil {
 
-  
+  public static class PathQuery {
+
+    private final Word<SymbolicMethodSymbol> methods;
+    private final Word<Path> paths;
+
+    public PathQuery(Word<SymbolicMethodSymbol> methods, Word<Path> paths) {
+      this.methods = methods;
+      this.paths = paths;
+    }
+
+    public Word<SymbolicMethodSymbol> getMethods() {
+      return methods;
+    }
+
+    public Word<Path> getPaths() {
+      return paths;
+    }
+
+  }
+
+  public static Collection<PathQuery> explode(Word<SymbolicMethodSymbol> in, SummaryAlphabet inputs) {
+    if (in.length() < 1) {
+      Word<Path> eps = Word.epsilon();
+      return Collections.singletonList(new PathQuery(in, eps));
+    }
+
+    ArrayList<PathQuery> queries = new ArrayList<>();
+    Word<Path> eps = Word.epsilon();
+    explode(in, 0, eps, queries, inputs);
+    return queries;
+  }
+
+  private static void explode(Word<SymbolicMethodSymbol> in, int pos,
+          Word<Path> prefix, Collection<PathQuery> queries, SummaryAlphabet inputs) {
+
+    SymbolicMethodSymbol a = in.getSymbol(pos);
+    SymbolicExecutionResult summary = inputs.getSummary(a);
+    pos++;
+
+    for (Path p : summary) {
+      if (p.getState() == PathState.OK && pos < in.length()) {
+        explode(in, pos, prefix.append(p), queries, inputs);
+      } else {
+        queries.add(new PathQuery(
+                (pos < in.length() ? in.prefix(pos) : in), prefix.append(p)));
+      }
+    }
+  }
+
   public static Path executeSymbolically(
           Word<SymbolicMethodSymbol> sword, Word<Path> paths, Valuation initial) {
 
@@ -50,9 +100,9 @@ public class PathUtil {
     int ppos = 1;
     int spos = 0;
     for (Path p : paths) {
-      SymbolicMethodSymbol sms = sword.getSymbol(spos);      
-      Function<String, String> shift = 
-              SEResultUtil.shift(1, ppos, sms.getArity());
+      SymbolicMethodSymbol sms = sword.getSymbol(spos);
+      Function<String, String> shift
+              = SEResultUtil.shift(1, ppos, sms.getArity());
       Path pShifted = SEResultUtil.rename(p, shift);
       Expression<Boolean> fragment = executeSymbolically(pShifted, val);
       Collection<Expression<Boolean>> atoms = decomposePath(fragment);
@@ -60,7 +110,7 @@ public class PathUtil {
       spos++;
       ppos += sms.getArity();
     }
-    
+
     Path last = paths.lastSymbol();
     PathResult res = null;
     switch (last.getState()) {
@@ -75,40 +125,40 @@ public class PathUtil {
         res = PathResult.dontKnow();
         break;
     }
-    
+
     return new Path(asPathCondition(pc), res);
   }
-  
+
   private static PostCondition asPostCondition(Map<Variable<?>, Expression<?>> map) {
     PostCondition post = new PostCondition();
     post.getConditions().putAll(map);
     return post;
   }
-  
-  public static Expression<Boolean> executeSymbolically( 
+
+  public static Expression<Boolean> executeSymbolically(
           Path path, final Map<Variable<?>, Expression<?>> val) {
-    
-    Expression pc = transformVars(path.getPathCondition(), val); 
-    
+
+    Expression pc = transformVars(path.getPathCondition(), val);
+
     if (path.getState() == PathState.OK) {
       Map<Variable<?>, Expression<?>> old = new HashMap<>(val);
-      Map<Variable<?>, Expression<?>> post =
-              path.getOkResult().getPostCondition().getConditions();
+      Map<Variable<?>, Expression<?>> post
+              = path.getOkResult().getPostCondition().getConditions();
       val.clear();
-      for (Variable<?> v : old.keySet()) {  
+      for (Variable<?> v : old.keySet()) {
         if (post.containsKey(v)) {
-          val.put(v, transformVars( post.get(v), old));
+          val.put(v, transformVars(post.get(v), old));
         } else {
           val.put(v, old.get(v));
         }
       }
-    }    
-    return pc;    
-  } 
-          
-  private static Expression<?> transformVars(Expression<?> in, 
+    }
+    return pc;
+  }
+
+  public static Expression<?> transformVars(Expression<?> in,
           final Map<Variable<?>, Expression<?>> val) {
-    
+
     return ExpressionUtil.transformVars(
             in, new Function<Variable<?>, Expression<?>>() {
       @Override
@@ -122,29 +172,29 @@ public class PathUtil {
     if (pc.isEmpty()) {
       return ExpressionUtil.TRUE;
     }
-    
+
     Expression<Boolean> expr = pc.remove(0);
     if (pc.isEmpty()) {
       return expr;
     }
-    
+
     return ExpressionUtil.and(expr, asPathCondition(pc));
   }
-  
+
   public static Collection<Expression<Boolean>> decomposePath(Expression<Boolean> path) {
     ArrayList<Expression<Boolean>> list = new ArrayList<>();
     decomposePath(path, list);
     list.removeAll(Collections.singleton(ExpressionUtil.TRUE));
     return list;
   }
-  
+
   private static void decomposePath(Expression<Boolean> path, Collection<Expression<Boolean>> atoms) {
     if (!(path instanceof PropositionalCompound)) {
       atoms.add(path);
     } else {
-      PropositionalCompound pc = (PropositionalCompound)path;
+      PropositionalCompound pc = (PropositionalCompound) path;
       decomposePath(pc.getLeft(), atoms);
       decomposePath(pc.getRight(), atoms);
     }
-  }    
+  }
 }
