@@ -9,7 +9,7 @@ concolic.method.m1=symbolicsearch.startingExample.FirstExample.m1()
 concolic.method.close.config=stream
 
 #Important: the ',' is not allowed to be followed by a whitespace!
-summary.methods=m1
+summary.methods=FirstExample,m1
 
 psyco.por.config=m1,10,00
 psyco.symbolicSearch=true

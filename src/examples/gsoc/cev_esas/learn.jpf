@@ -2,7 +2,7 @@ shell=gov.nasa.jpf.psyco.Psyco
 
 @include=./example_search.jpf
 
-psyco.depth=4
+psyco.depth=8
 
 psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
 psyco.summaries=true

@@ -3,3 +3,9 @@
 @include=./example_search.jpf
 
 psyco.resultFolderName=net
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false
+psyco.saveSearchResult=true
+psyco.saveTransitionSystem=true
+psyco.saveModel=true
+psyco.depth=5

@@ -1,6 +1,6 @@
-shell=gov.nasa.jpf.psyco.search.SearchShell
+shell=gov.nasa.jpf.psyco.Psyco
 
-psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
+psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,60,0,0
 psyco.summaries=true
 #changing summaries to false causes an error in the io example.
 #why?
@@ -9,7 +9,7 @@ psyco.memorize=true
 psyco.suffixes=true
 psyco.por=true
 
-
+psyco.interpolation=true
 
 symbolic.dp=NativeZ3
 symbolic.dp.z3.bitvectors=true
@@ -20,8 +20,7 @@ symbolic.dp.z3.bitvectors=true
 #original:
 #log.severe=constraints,jdart
 #log.info=psyco
-log.info=jdart
-log.info=psyco
+log.info=jdart,constraints,psyco
 
 # avoid statistics during learning process by enabling the following two lines
 report.console.start=

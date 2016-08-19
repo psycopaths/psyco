@@ -4,3 +4,9 @@
 
 psyco.maxSearchDepth=25
 psyco.resultFolderName=abp
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false
+psyco.saveSearchResult=true
+psyco.saveTransitionSystem=true
+psyco.saveModel=true
+psyco.depth=25
