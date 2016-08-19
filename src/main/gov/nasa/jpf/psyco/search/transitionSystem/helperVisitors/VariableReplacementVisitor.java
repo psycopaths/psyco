@@ -24,6 +24,10 @@ import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 
+/**
+ * This visitor is able to replace a Variable by any other expression 
+ * and return the resulting expression as copy.
+ */
 public class VariableReplacementVisitor
         extends AbstractExpressionVisitor<Expression<?>,
                   VariableReplacementMap> {

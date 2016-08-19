@@ -20,6 +20,10 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Valuation;
 
+/**
+ * It is a singleton class, to provide the solver within the search algorithm.
+ * The solve must be set in upfront.
+ */
 public class SolverInstance {
 
   private static SolverInstance instance = null;

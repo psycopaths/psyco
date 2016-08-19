@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class is an enumerative breadth-first search.
+ */
 public class EnumerativeSearchEngine {
 
   public static EnumerativeImage enumerativBreadthFirstSearch(

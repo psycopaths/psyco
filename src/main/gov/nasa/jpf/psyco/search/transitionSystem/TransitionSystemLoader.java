@@ -43,7 +43,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Logger;
-
+/**
+ * The transition system loader is able to parse a transition 
+ * system and load it from a file. 
+ * So the search can be executed without a jDart run in upfront.
+ */
 public class TransitionSystemLoader {
 
   public String fileName;

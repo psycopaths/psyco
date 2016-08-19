@@ -20,6 +20,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A state image is the current search state at a given point of time.
+ * At the end of the search, an StateImage object is returned as search result.
+ * @param <T> Any type implementing the abstract Region class.
+ */
 public abstract class StateImage<T extends Region> {
 
   protected int depth = 0;

@@ -22,7 +22,9 @@ import gov.nasa.jpf.constraints.expressions.AbstractExpressionVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+/**
+ * This visitor collects variable assignments.
+ */
 public class VariableAssignmentVisitor extends
         AbstractExpressionVisitor<Expression<?>,
             HashMap<Variable, List<Expression>>> {

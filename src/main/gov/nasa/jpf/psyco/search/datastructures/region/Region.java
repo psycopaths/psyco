@@ -23,6 +23,11 @@ import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * A Region is a set of states.
+ * @param <E> Any class extending ValuationEntry
+ * @param <T> Any class extending a State description.
+ */
 public abstract class Region<E extends ValuationEntry, T extends State<E>>
         extends HashMap<String, T> {
 

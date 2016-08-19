@@ -21,6 +21,10 @@ import gov.nasa.jpf.constraints.api.Variable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A state is a set of variables with a value assignment.
+ * @param <T> Any class extending ValuationEntry.
+ */
 public abstract class State<T extends ValuationEntry> extends HashSet<T> {
 
   public Set<T> getEntriesForVariable(Variable var) {

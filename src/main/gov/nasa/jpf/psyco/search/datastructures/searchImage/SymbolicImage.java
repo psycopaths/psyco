@@ -16,7 +16,9 @@
 package gov.nasa.jpf.psyco.search.datastructures.searchImage;
 
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
-
+/**
+ * Used for StateImages produced by the symbolic search.
+ */
 public class SymbolicImage extends StateImage<SymbolicRegion> {
 
   public SymbolicImage(SymbolicRegion reachableStates) {

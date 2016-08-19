@@ -23,7 +23,9 @@ import gov.nasa.jpf.constraints.expressions.Constant;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.psyco.search.SolverInstance;
-
+/**
+ * A SymbolicEntry is a variable assingment with an expression as value.
+ */
 public class SymbolicEntry extends ValuationEntry<Expression<Boolean>> {
 
   public SymbolicEntry(Variable<Expression<Boolean>> variable,

@@ -43,7 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
+/**
+ * A Transition wrapps a Path to make it usable in a transition system.
+ */
 public class Transition {
 
   Path path;

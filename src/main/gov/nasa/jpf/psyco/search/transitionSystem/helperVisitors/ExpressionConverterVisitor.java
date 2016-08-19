@@ -34,7 +34,11 @@ import gov.nasa.jpf.constraints.expressions.QuantifierExpression;
 import gov.nasa.jpf.constraints.expressions.UnaryMinus;
 import gov.nasa.jpf.constraints.expressions.functions.FunctionExpression;
 import java.util.HashMap;
-
+/**
+ * During encoding of the transition system, this visitor is used to 
+ * convert a Expression to a storable String.
+ * It can be restored using the TransitionSystemLoader.
+ */
 public class ExpressionConverterVisitor
         extends AbstractExpressionVisitor<String, HashMap<Class, String>> {
 

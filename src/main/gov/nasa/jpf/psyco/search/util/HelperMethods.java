@@ -20,12 +20,14 @@ public class HelperMethods {
   private static long currentCounter = 0;
   private static long stateCounter = 0;
 
+  //We need unique State names in the search.
   public static String getUniqueStateName() {
     String stateName = "state_" + stateCounter;
     ++stateCounter;
     return stateName;
   }
 
+  //The search algortihms use all this logger.
   public static String getLoggerName() {
     return "psyco";
   }

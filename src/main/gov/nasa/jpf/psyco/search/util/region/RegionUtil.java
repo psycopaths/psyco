@@ -31,7 +31,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
+/**
+ * Supporting class to performe a operations on Regions.
+ * Supported operations are renamin, exists, conjunction, difference.
+ * It is used in the search algorithms. Renaming must be implemented in a 
+ * subclass so that it fits the state entries.
+ */
 public abstract class RegionUtil<V extends State<?>, T extends Region<?, V>> {
 
   private long unique;

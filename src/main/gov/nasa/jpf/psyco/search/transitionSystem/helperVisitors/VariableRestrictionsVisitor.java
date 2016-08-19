@@ -20,6 +20,9 @@ import gov.nasa.jpf.constraints.expressions.AbstractExpressionVisitor;
 import gov.nasa.jpf.constraints.expressions.NumericBooleanExpression;
 import java.util.List;
 
+/**
+ * Collects possible restrictions on variables.
+ */
 public class VariableRestrictionsVisitor extends 
         AbstractExpressionVisitor<Expression<?>,
             List<NumericBooleanExpression>> {

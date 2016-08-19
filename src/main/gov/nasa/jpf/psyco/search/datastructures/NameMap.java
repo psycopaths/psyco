@@ -17,7 +17,10 @@ package gov.nasa.jpf.psyco.search.datastructures;
 
 import com.google.common.base.Function;
 import java.util.HashMap;
-
+/**
+ * NameMap implements the Function interface to be used for example 
+ * in the ExpressionUtil requiering a function object.
+ */
 public class NameMap implements Function<String, String> {
 
   HashMap<String, String> map;

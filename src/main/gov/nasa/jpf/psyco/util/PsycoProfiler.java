@@ -23,7 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
-
+/**
+ * An adadpted version of the SimpleProfiler to collect execution 
+ * insights on the search behavior.
+ * Calls to SimpleProfiler are also included in the PsycoProfiler result.
+ */
 public class PsycoProfiler extends SimpleProfiler {
 
   private static HashMap<Integer, Long> cumulatedGuardTime =

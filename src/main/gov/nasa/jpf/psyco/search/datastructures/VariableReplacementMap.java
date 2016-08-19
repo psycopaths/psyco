@@ -19,7 +19,11 @@ import com.google.common.base.Function;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import java.util.HashMap;
-
+/**
+ * The VariableReplacementMap can be used by the VariableReplacementVisitor to 
+ * replace a variable by a value Expression.
+ * @author mmuesly
+ */
 public class VariableReplacementMap
         extends HashMap<Variable, Expression<Boolean>>
         implements Function<Variable<?>, Expression<Boolean>>{

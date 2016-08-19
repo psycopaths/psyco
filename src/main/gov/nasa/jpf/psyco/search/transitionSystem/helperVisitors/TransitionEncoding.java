@@ -15,6 +15,9 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
+/**
+ * Each object is encoded during write out. The mapping is stored in this file.
+ */
 public class TransitionEncoding {
 
   public static final char numericBooleanExpression = 'A';

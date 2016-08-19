@@ -26,6 +26,11 @@ import gov.nasa.jpf.psyco.search.datastructures.state.State;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.logging.Logger;
 
+/**
+ * The TransitionHelper executes a transition on a state.
+ * Different helpers are needed for symbolic and enumerative search algorithms.
+ * This class might be extended for other search algorithms in future.
+ */
 public abstract class TransitionHelper {
 
   protected SolverInstance solver = SolverInstance.getInstance();

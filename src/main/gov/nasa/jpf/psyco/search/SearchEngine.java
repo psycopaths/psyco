@@ -41,6 +41,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The search engine is the central hook-up point for search algorithms and extensions.
+ */
 public class SearchEngine {
 
   private Logger logger;
@@ -74,8 +77,11 @@ public class SearchEngine {
     TransitionSystem system = new TransitionSystem(initValuation,
             convertTransitionPaths(store), helper);
     logger.info(system.toString());
-    String transitionSystemFile = folderName + "/transitionSystem.ts";
-    system.writeToFile(transitionSystemFile);
+    if(pconf.isSaveTransitionSystem()){
+      String transitionSystemFile = pconf.getResultFolderName() 
+              + "/transitionSystem.ts";
+      system.writeToFile(transitionSystemFile);
+    }
     EnumerativeImage searchResult
             = EnumerativeSearchEngine.enumerativBreadthFirstSearch(
                     system,
@@ -113,6 +119,11 @@ public class SearchEngine {
     TransitionSystem transitionSystem
             = new TransitionSystem(initValuation,
                     convertTransitionPaths(store), helper);
+    if(pconf.isSaveTransitionSystem()){
+      String transitionSystemFile = pconf.getResultFolderName() 
+              + "/transitionSystem.ts";
+      transitionSystem.writeToFile(transitionSystemFile);
+    }
     logger.fine(transitionSystem.toString());
     SymbolicImage searchResult
             = SymbolicSearchEngine.symbolicBreadthFirstSearch(

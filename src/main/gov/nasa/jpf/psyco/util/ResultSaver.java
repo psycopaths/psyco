@@ -23,6 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
+/**
+ * Saves results to a file.
+ */
 public class ResultSaver {
 
   public static void writeResultToFolder(StateImage result,

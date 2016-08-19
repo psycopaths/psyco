@@ -28,6 +28,9 @@ import gov.nasa.jpf.util.LogManager;
 import java.io.*;
 import java.util.logging.Level;
 
+/**
+ * The SearchShell can be used to test search algorithms apart form Pysco model learning.
+ */
 public class SearchShell implements JPFShell {
 
   private final Config config;

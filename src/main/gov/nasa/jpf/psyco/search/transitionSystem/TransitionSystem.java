@@ -37,7 +37,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
+/**
+ * The transition system maintains a set of transitions and some 
+ * meta data about the transition system. 
+ * For example the amount of stutter transitions, error paths and so on...
+ * @author mmuesly
+ * @param <T> 
+ */
 public class TransitionSystem<T extends TransitionHelper> {
 
   private List<Transition> transitions;

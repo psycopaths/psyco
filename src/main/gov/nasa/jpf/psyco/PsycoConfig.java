@@ -25,6 +25,31 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * PsycoConfig is a container for the Psyco configuration.
+ * The used equivalence test method and Psycos search behavior can be modified.
+ * Further it is possible to controll result files produced by PSYCO.
+ * The following values can be overwritten in the experiment setting, a file ending with .jpf.
+ * psyco.depth set the maximal interface enrollment depth. (default infinite)
+ * psyco.termination saves the reason, why PSYCO terminated 
+ *      during interface learning.
+ * psyco.summaries determines whether Psyco should use summaries or not. (default false)
+ * psyco.memorize determines whether Psyco should use memorize feature. (default false)
+ * psyco.suffixes determines whether Psyco should use a suffix filer. (default false)
+ * psyco.por determines whether Psyco should use por filter (default false)
+ * psyco.symbolicSearch determines whether Psyco should use symbolicSearch 
+ *            to set maxDepth before interface generation. (default true)
+ * psyco.enumerativeSearch determines whether Psyco should use enumerativeSearch
+ *            to set maxDepth before interface generation. (default true)
+ * psyco.resultFolderName the folder in which the result of the psyco run are written.
+ *            It is by default prefixed with ./result.
+ * psyco.maxSearchDepth it is possible to define an upper bound for the search if desired.
+ * psyco.interpolation enables interpolation as equivalence test. (default false)
+ * psyco.saveSearchResult determines whether to save searchResult or not. (default false)
+ * psyco.saveTransitionSystem determines whether to save the transition System or not. (default false)
+ * psyco.saveModel determines whether to write learning result into a file or not. (default false)
+ */
+
 public class PsycoConfig {
 
   private final Config config;
