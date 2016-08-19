@@ -24,31 +24,35 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public abstract class Region<E extends ValuationEntry, T extends State<E>>
-        extends HashMap<String, T>{
-  public Region(){};
+        extends HashMap<String, T> {
 
-  public Region(Valuation initValuation){
+  public Region() {
+  }
+
+  ;
+
+  public Region(Valuation initValuation) {
     addInitialValuation(initValuation);
   }
 
   public Expression<Boolean> toExpression() {
     Expression returnExpression = null;
-    for(T state: values()){
+    for (T state : values()) {
       Expression stateExpression = state.toExpression();
-      returnExpression = 
-              returnExpression == null ? 
-              stateExpression 
-              : ExpressionUtil.or(stateExpression, returnExpression);
+      returnExpression
+              = returnExpression == null
+                      ? stateExpression
+                      : ExpressionUtil.or(stateExpression, returnExpression);
     }
     return returnExpression;
   }
 
-  public void print(Appendable a) throws IOException{
-    for(String stateName: keySet()){
+  public void print(Appendable a) throws IOException {
+    for (String stateName : keySet()) {
       a.append("stateName: ");
       a.append(stateName);
       a.append("\n");
-      for(E entry: get(stateName)){
+      for (E entry : get(stateName)) {
         a.append(entry.getVariable().getName());
         a.append(": ");
         a.append(entry.getValue().toString());
@@ -59,5 +63,6 @@ public abstract class Region<E extends ValuationEntry, T extends State<E>>
   }
 
   public abstract void addInitialValuation(Valuation initValuation);
+
   public abstract Region createNewRegion();
 }

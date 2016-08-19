@@ -18,9 +18,9 @@ package gov.nasa.jpf.psyco.learnlib;
 import de.learnlib.api.MembershipOracle;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 
-public interface SymbolicExecutionOracle extends 
-          MembershipOracle<SymbolicMethodSymbol, SymbolicExecutionResult> {
-  
-  //public SymbolicExecutionResult processQuery(Word<SymbolicMethodSymbol> query);
-          
+public interface SymbolicExecutionOracle extends
+        MembershipOracle<SymbolicMethodSymbol, SymbolicExecutionResult> {
+
+  //public SymbolicExecutionResult processQuery(
+  //        Word<SymbolicMethodSymbol> query);
 }

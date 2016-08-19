@@ -27,11 +27,13 @@ import net.automatalib.words.Word;
 
 public class SymbolicExecutionOracleWrapper implements ThreeValuedOracle {
 
-  private static class WrapperQuery extends Query<SymbolicMethodSymbol, SymbolicExecutionResult> {
-    
+  private static class WrapperQuery extends
+          Query<SymbolicMethodSymbol, SymbolicExecutionResult> {
+
     private final Query<SymbolicMethodSymbol, SymbolicQueryOutput> query;
 
-    public WrapperQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
+    public WrapperQuery(
+            Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
       this.query = query;
     }
 
@@ -49,15 +51,15 @@ public class SymbolicExecutionOracleWrapper implements ThreeValuedOracle {
     public void answer(SymbolicExecutionResult o) {
       query.answer(new SymbolicQueryOutput(o));
     }
-   
+
   }
-  
+
   private final SymbolicExecutionOracle oracle;
 
   public SymbolicExecutionOracleWrapper(SymbolicExecutionOracle oracle) {
     this.oracle = oracle;
   }
- 
+
   @Override
   public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
     ArrayList<WrapperQuery> queries = new ArrayList<>();
@@ -66,6 +68,4 @@ public class SymbolicExecutionOracleWrapper implements ThreeValuedOracle {
     }
     this.oracle.processQueries(queries);
   }
-  
-  
 }

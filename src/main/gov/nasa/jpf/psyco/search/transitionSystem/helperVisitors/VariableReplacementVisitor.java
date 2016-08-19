@@ -24,12 +24,13 @@ import gov.nasa.jpf.constraints.expressions.NumericCompound;
 import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 
-public class VariableReplacementVisitor 
-      extends AbstractExpressionVisitor<Expression<?>, VariableReplacementMap>{
+public class VariableReplacementVisitor
+        extends AbstractExpressionVisitor<Expression<?>,
+                  VariableReplacementMap> {
 
   @Override
   public Expression<?> visit(PropositionalCompound expr,
-          VariableReplacementMap data){
+          VariableReplacementMap data) {
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -38,7 +39,7 @@ public class VariableReplacementVisitor
 
   @Override
   public <E> Expression<?> visit(NumericCompound<E> expr,
-          VariableReplacementMap data){
+          VariableReplacementMap data) {
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -48,7 +49,7 @@ public class VariableReplacementVisitor
 
   @Override
   public <E> Expression<?> visit(NumericBooleanExpression expr,
-          VariableReplacementMap data){
+          VariableReplacementMap data) {
     Expression left = expr.getLeft(), right = expr.getRight();
     left = check(left, data);
     right = check(right, data);
@@ -57,7 +58,7 @@ public class VariableReplacementVisitor
   }
 
   @Override
-  public Expression visit(Negation expr, VariableReplacementMap data){
+  public Expression visit(Negation expr, VariableReplacementMap data) {
     Expression innerValue = expr.getNegated();
     innerValue = check(innerValue, data);
     return new Negation(innerValue);
@@ -66,7 +67,7 @@ public class VariableReplacementVisitor
   @Override
   protected <E> Expression<?> defaultVisit(Expression<E> expression,
           VariableReplacementMap data) {
-    for(Expression expr:expression.getChildren()){
+    for (Expression expr : expression.getChildren()) {
       expr.accept(this, data);
     }
     return expression;
@@ -74,15 +75,15 @@ public class VariableReplacementVisitor
 
   private Expression check(Expression expr,
           VariableReplacementMap data) {
-    if(expr instanceof Variable){
+    if (expr instanceof Variable) {
       return data.getOrDefault(expr, expr);
-    }else if(expr instanceof NumericCompound){
+    } else if (expr instanceof NumericCompound) {
       return this.visit((NumericCompound) expr, data);
-    }else if(expr instanceof PropositionalCompound){
+    } else if (expr instanceof PropositionalCompound) {
       return visit((PropositionalCompound) expr, data);
-    }else if(expr instanceof NumericBooleanExpression){
+    } else if (expr instanceof NumericBooleanExpression) {
       return visit((NumericBooleanExpression) expr, data);
-    }else if(expr instanceof Negation){
+    } else if (expr instanceof Negation) {
       return visit((Negation) expr, data);
     }
     return expr;

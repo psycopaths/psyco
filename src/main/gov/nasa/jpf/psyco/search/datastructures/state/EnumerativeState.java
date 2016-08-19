@@ -20,10 +20,10 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 
-public class EnumerativeState extends State<ValuationEntry>{
+public class EnumerativeState extends State<ValuationEntry> {
 
   public EnumerativeState(Valuation initValuation) {
-    for(ValuationEntry entry: initValuation.entries()){
+    for (ValuationEntry entry : initValuation.entries()) {
       this.add(entry);
     }
   }
@@ -35,7 +35,7 @@ public class EnumerativeState extends State<ValuationEntry>{
   @Override
   public Expression<Boolean> toExpression() {
     Valuation toConvert = new Valuation();
-    for(ValuationEntry entry: this){
+    for (ValuationEntry entry : this) {
       toConvert.addEntry(entry);
     }
     return ExpressionUtil.valuationToExpression(toConvert);
@@ -45,5 +45,4 @@ public class EnumerativeState extends State<ValuationEntry>{
   public State<ValuationEntry> createEmptyState() {
     return new EnumerativeState();
   }
-  
 }

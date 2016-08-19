@@ -28,74 +28,76 @@ import java.util.List;
 import java.util.Set;
 
 public class SymbolicRegionUtil
-        extends RegionUtil<SymbolicState, SymbolicRegion>{
-  public SymbolicRegionUtil(ConstraintSolver solver){
+        extends RegionUtil<SymbolicState, SymbolicRegion> {
+
+  public SymbolicRegionUtil(ConstraintSolver solver) {
     super(solver);
   }
 
-   public SymbolicRegion rename(SymbolicRegion region,
+  public SymbolicRegion rename(SymbolicRegion region,
           List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
     SymbolicRegion resultingRegion = region.createNewRegion();
-     for(String key: region.keySet()){
+    for (String key : region.keySet()) {
       SymbolicState state = region.get(key);
-      SymbolicState renamedState = renameState(state, primeNames, variableNames);
+      SymbolicState renamedState =
+              renameState(state, primeNames, variableNames);
       resultingRegion.put(key, renamedState);
     }
     return resultingRegion;
   }
 
-  private SymbolicState renameState(SymbolicState state, 
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames ){
+  private SymbolicState renameState(SymbolicState state,
+          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
     logger.finest("gov.nasa.jpf.psyco.search.region.util."
             + "SymbolicRegionUtil.renameState()");
-    logger.finest("stateToRename: " );
-    for(SymbolicEntry entry: state){
+    logger.finest("stateToRename: ");
+    for (SymbolicEntry entry : state) {
       logger.finest("Var: " + entry.getVariable() + " : " + entry.getValue());
     }
-    Set<Variable<?>> variablesInTheState = 
-            ExpressionUtil.freeVariables(state.toExpression());
+    Set<Variable<?>> variablesInTheState
+            = ExpressionUtil.freeVariables(state.toExpression());
     logger.finest("gov.nasa.jpf.psyco.search.region"
             + ".util.SymbolicRegionUtil.renameState()");
     logger.finest("State bevor rename: " + state.toExpression().toString());
-    for(int i = 0; i < primeNames.size(); i++){
-        Variable primeName = primeNames.get(i);
-        Variable variableName = variableNames.get(i);
-        state = 
-                renameAllVariableEntrys(state, primeName, variableName);
-        variablesInTheState.remove(variableName);
-        variablesInTheState.remove(primeName);
+    for (int i = 0; i < primeNames.size(); i++) {
+      Variable primeName = primeNames.get(i);
+      Variable variableName = variableNames.get(i);
+      state
+              = renameAllVariableEntrys(state, primeName, variableName);
+      variablesInTheState.remove(variableName);
+      variablesInTheState.remove(primeName);
     }
-    for(Variable var: variablesInTheState){
-      if(!var.getName().startsWith("uVarReplacement")){
+    for (Variable var : variablesInTheState) {
+      if (!var.getName().startsWith("uVarReplacement")) {
         String newParameterName = getUniqueParameterName(var);
-        Variable newParameter = 
-                new Variable(var.getType(), newParameterName);
-        state = 
-                renameParameterInEntrys(state, var, newParameter);
+        Variable newParameter
+                = new Variable(var.getType(), newParameterName);
+        state
+                = renameParameterInEntrys(state, var, newParameter);
       }
     }
-    
+
     logger.finest(" renamed State: " + state);
     return state;
   }
 
   private SymbolicState renameAllVariableEntrys(
-          SymbolicState oldState,  Variable primeName, Variable varibaleName){
+          SymbolicState oldState, Variable primeName, Variable varibaleName) {
     SymbolicState renamedState = new SymbolicState();
     NameMap renameVariable = new NameMap();
     renameVariable.mapNames(varibaleName.getName(), getUniqueName());
     logger.finest("renameMap: " + renameVariable.toString());
-    for(SymbolicEntry entry: oldState){
+    for (SymbolicEntry entry : oldState) {
       Expression value = (Expression) entry.getValue();
       value = ExpressionUtil.renameVars(value, renameVariable);
-      if(entry.getVariable().equals(primeName)){
+      if (entry.getVariable().equals(primeName)) {
         NameMap rename = new NameMap();
         rename.mapNames(primeName.getName(), varibaleName.getName());
         logger.finest("renameMap: " + rename.toString());
         value = ExpressionUtil.renameVars(value, rename);
         SymbolicEntry newEntry = new SymbolicEntry(varibaleName, value);
         renamedState.add(newEntry);
-      }else{
+      } else {
         entry.setValue(value);
         renamedState.add(entry);
       }
@@ -104,11 +106,11 @@ public class SymbolicRegionUtil
   }
 
   private SymbolicState renameParameterInEntrys(SymbolicState renamedState,
-          Variable var, Variable newParameter){
+          Variable var, Variable newParameter) {
     SymbolicState resultState = new SymbolicState();
     NameMap rename = new NameMap();
     rename.mapNames(var.getName(), newParameter.getName());
-    for(SymbolicEntry entry: renamedState){
+    for (SymbolicEntry entry : renamedState) {
       Expression valueExpression = entry.getValue();
       valueExpression = ExpressionUtil.renameVars(valueExpression, rename);
       resultState.add(new SymbolicEntry(entry.getVariable(), valueExpression));
@@ -118,7 +120,7 @@ public class SymbolicRegionUtil
 
   @Override
   public SymbolicRegion rename(Region<?, SymbolicState> region,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames){
-    return rename((SymbolicRegion)region, primeNames, variableNames);
+          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+    return rename((SymbolicRegion) region, primeNames, variableNames);
   }
 }

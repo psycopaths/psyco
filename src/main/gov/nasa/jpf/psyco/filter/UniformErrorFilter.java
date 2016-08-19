@@ -17,7 +17,6 @@ package gov.nasa.jpf.psyco.filter;
 
 import de.learnlib.api.MembershipOracle;
 import de.learnlib.api.Query;
-import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
@@ -27,7 +26,8 @@ import java.util.Collection;
 import java.util.Collections;
 import net.automatalib.words.Word;
 
-public class UniformErrorFilter implements ThreeValuedFilter, ThreeValuedOracle {
+public class UniformErrorFilter 
+        implements ThreeValuedFilter, ThreeValuedOracle {
 
   private MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle;
   
@@ -40,18 +40,21 @@ public class UniformErrorFilter implements ThreeValuedFilter, ThreeValuedOracle 
   }
   
   @Override
-  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
+  public void setNext(
+          MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
     this.oracle = mo;
   }
 
   @Override
-  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+  public void processQueries(Collection<? extends 
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> query : clctn) {
       processQuery(query);
     }
   }
   
-  private void processQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
+  private void processQuery(
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
     Word<SymbolicQueryOutput> out = getPotentialOutput(query.getInput());
 
     //FIXME: this has to be adapted to include dont knows!!
@@ -65,7 +68,8 @@ public class UniformErrorFilter implements ThreeValuedFilter, ThreeValuedOracle 
     this.oracle.processQueries(Collections.singleton(query));
   }
   
-  private Word<SymbolicQueryOutput> getPotentialOutput(Word<SymbolicMethodSymbol> in) {
+  private Word<SymbolicQueryOutput> getPotentialOutput(
+          Word<SymbolicMethodSymbol> in) {
     ArrayList<SymbolicQueryOutput> list = new ArrayList<>();
     for (SymbolicMethodSymbol sms : in) {
       list.add(new SymbolicQueryOutput(inputs.getSummary(sms)));

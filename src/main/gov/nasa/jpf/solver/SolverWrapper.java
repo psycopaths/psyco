@@ -28,7 +28,7 @@ public class SolverWrapper extends ConstraintSolver {
   }
 
   public SolverWrapper() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    throw new UnsupportedOperationException("Not supported yet.");
   }
   
   @Override
@@ -39,5 +39,4 @@ public class SolverWrapper extends ConstraintSolver {
     }
     return res;
   }
-  
 }

@@ -26,7 +26,8 @@ import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import java.util.Collection;
 import java.util.Collections;
 
-public class TerminationCheckOracle implements ThreeValuedFilter, ThreeValuedOracle {
+public class TerminationCheckOracle implements 
+        ThreeValuedFilter, ThreeValuedOracle {
   
   private final TerminationStrategy termination;
   
@@ -44,7 +45,8 @@ public class TerminationCheckOracle implements ThreeValuedFilter, ThreeValuedOra
   }
 
   @Override
-  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+  public void processQueries(Collection<? extends 
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> query : clctn) {
       if (termination.isDone()) {
         throw new Terminate(termination);

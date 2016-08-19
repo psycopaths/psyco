@@ -15,7 +15,8 @@
  */
 package gov.nasa.jpf.psyco.search.transitionSystem;
 
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.VariableRestrictionsVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
+        .VariableRestrictionsVisitor;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Constant;
@@ -32,8 +33,10 @@ import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.ExpressionConverterVisitor;
-import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors.TransitionEncoding;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
+        .ExpressionConverterVisitor;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
+        .TransitionEncoding;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +45,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class Transition {
+
   Path path;
   Expression transitionExpression = null;
   VariableRestrictionsVisitor visitor;
@@ -51,12 +55,12 @@ public class Transition {
   Map<Variable, Boolean> lowerBound;
   Map<Variable, Boolean> upperBound;
   private boolean isReached = false;
-  private static final Logger logger = 
-          Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
+  private static final Logger logger
+          = Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
 
-  public Transition(Path p){
+  public Transition(Path p) {
     this.path = p;
-    if(isOK()){
+    if (isOK()) {
       visitor = new VariableRestrictionsVisitor();
       stateVariables = new ArrayList<Variable>(path.getPostCondition()
               .getConditions().keySet());
@@ -65,38 +69,38 @@ public class Transition {
     }
   }
 
-  public boolean isStutterTransition(){
+  public boolean isStutterTransition() {
     return modified.isEmpty();
   }
 
-  public boolean isOK(){
+  public boolean isOK() {
     return path.getState() == OK;
   }
 
-  public boolean isError(){
+  public boolean isError() {
     return path.getState() == ERROR;
   }
 
-  private void calculateModified(){
+  private void calculateModified() {
     modified = new ArrayList<>();
-    Map<Variable<?>, Expression<?>> transitionEffekt = 
-            path.getPostCondition().getConditions();
-    for(Variable variable : transitionEffekt.keySet()){
+    Map<Variable<?>, Expression<?>> transitionEffekt
+            = path.getPostCondition().getConditions();
+    for (Variable variable : transitionEffekt.keySet()) {
       Expression value = transitionEffekt.get(variable);
-      if(value instanceof Variable && value.equals(variable)){
+      if (value instanceof Variable && value.equals(variable)) {
         continue;
       }
       modified.add(variable);
     }
   }
 
-  private void calculateGuardVariables(){
+  private void calculateGuardVariables() {
     initializeBoundsToFalse();
     Expression<Boolean> guard = path.getPathCondition();
     guardVariables = new ArrayList<Variable>(
             ExpressionUtil.freeVariables(guard));
     List<NumericBooleanExpression> guardLimitations = new ArrayList<>();
-    guard.accept(visitor,guardLimitations);
+    guard.accept(visitor, guardLimitations);
     analyzeVariableLimitations(guardLimitations);
     logger.finest("\ngov.nasa.jpf.psyco.search.Transition."
             + "calculateGuardVariables()");
@@ -108,24 +112,24 @@ public class Transition {
     return;
   }
 
-  private void initializeBoundsToFalse(){
+  private void initializeBoundsToFalse() {
     lowerBound = initializeBoundToFalse(lowerBound);
     upperBound = initializeBoundToFalse(upperBound);
   }
 
-  private Map<Variable, Boolean> initializeBoundToFalse(Map<Variable,
-          Boolean> bound){
+  private Map<Variable, Boolean> initializeBoundToFalse(
+          Map<Variable, Boolean> bound) {
     bound = new HashMap<>();
-    for(Variable var: stateVariables){
+    for (Variable var : stateVariables) {
       bound.put(var, Boolean.FALSE);
     }
     return bound;
   }
 
   private void analyzeVariableLimitations(
-          List<NumericBooleanExpression> guardLimits){
-    for(NumericBooleanExpression expr: guardLimits){
-      switch(expr.getComparator()){
+          List<NumericBooleanExpression> guardLimits) {
+    for (NumericBooleanExpression expr : guardLimits) {
+      switch (expr.getComparator()) {
         case GT:
         case GE:
           addLimit(expr.getRight(), expr.getLeft(), true, false);
@@ -148,29 +152,29 @@ public class Transition {
   }
 
   private void addLimit(Expression smaller, Expression limit,
-          boolean upperLimit,boolean lowerLimit){
+          boolean upperLimit, boolean lowerLimit) {
     Set<Variable<?>> vars = ExpressionUtil.freeVariables(smaller);
-    if(limit instanceof Constant){
-      for(Variable var: vars){
-        markLimits(var, upperLimit,lowerLimit);
+    if (limit instanceof Constant) {
+      for (Variable var : vars) {
+        markLimits(var, upperLimit, lowerLimit);
       }
     }
   }
 
-  public void markLimits(Variable var, boolean upper, boolean lower){
-    if(upper){
-          markTrue(var, upperBound);
+  public void markLimits(Variable var, boolean upper, boolean lower) {
+    if (upper) {
+      markTrue(var, upperBound);
     }
-    if(lower){
+    if (lower) {
       markTrue(var, lowerBound);
     }
   }
 
-  public void markTrue(Variable var, Map<Variable, Boolean> bound){
+  public void markTrue(Variable var, Map<Variable, Boolean> bound) {
     bound.put(var, Boolean.TRUE);
   }
 
-  public Path getPath(){
+  public Path getPath() {
     return path;
   }
 
@@ -186,19 +190,20 @@ public class Transition {
     this.isReached = isReached;
   }
 
-/*
+  /*
   FIX ME: This is currently a first try to analyze the transition system 
   regarding limitiations for the state space. It may be extended and 
   improved in near future.
-  */
-  public boolean isLimitedTransition(){
-    if(isOK()){
-      Map<Variable<?>, Expression<?>> pathEffects = 
-              path.getPostCondition().getConditions();
-      for(Variable var: pathEffects.keySet()){
+   */
+  public boolean isLimitedTransition() {
+    if (isOK()) {
+      Map<Variable<?>, Expression<?>> pathEffects
+              = path.getPostCondition().getConditions();
+      for (Variable var : pathEffects.keySet()) {
         Expression result = pathEffects.get(var);
-        if(result instanceof NumericCompound){
-          boolean limit = analyzeNumericCompound(var,(NumericCompound) result);
+        if (result instanceof NumericCompound) {
+          boolean limit = 
+                  analyzeNumericCompound(var, (NumericCompound) result);
           return limit;
         }
       }
@@ -206,27 +211,28 @@ public class Transition {
     return true;
   }
 
-  private boolean analyzeNumericCompound(Variable var, NumericCompound result){
-    Set<Variable<?>> variables  = ExpressionUtil.freeVariables(result);
+  private boolean analyzeNumericCompound(
+          Variable var, NumericCompound result) {
+    Set<Variable<?>> variables = ExpressionUtil.freeVariables(result);
     variables.remove(var);
-    if(!variables.isEmpty()){
+    if (!variables.isEmpty()) {
       return true;
     }
     int delta = evaluateNumericCompound(var, result);
-    if(delta < 0 && lowerBound.get(var)){
+    if (delta < 0 && lowerBound.get(var)) {
       return true;
     }
-    if(delta > 0 && upperBound.get(var)){
+    if (delta > 0 && upperBound.get(var)) {
       return true;
     }
     return false;
   }
 
-  private int evaluateNumericCompound(Variable var, NumericCompound result){
+  private int evaluateNumericCompound(Variable var, NumericCompound result) {
     Expression left = result.getLeft(),
-               right = result.getRight();
+            right = result.getRight();
     int leftValue, rightValue;
-    try{
+    try {
       leftValue = evaluateChild(var, left);
       rightValue = evaluateChild(var, right);
       return calculate(leftValue, rightValue, result.getOperator());
@@ -236,44 +242,49 @@ public class Transition {
     }
   }
 
-  private int evaluateChild(Variable var, Expression side) throws Exception{
-    if(side instanceof Constant){
+  private int evaluateChild(Variable var, Expression side) throws Exception {
+    if (side instanceof Constant) {
       Type type = side.getType();
-      if((type == BuiltinTypes.INTEGER)
-          || type == BuiltinTypes.SINT16
-          || type == BuiltinTypes.SINT32
-          || type == BuiltinTypes.SINT64
-          || type == BuiltinTypes.SINT8
-          || type == BuiltinTypes.UINT16){
+      if ((type == BuiltinTypes.INTEGER)
+              || type == BuiltinTypes.SINT16
+              || type == BuiltinTypes.SINT32
+              || type == BuiltinTypes.SINT64
+              || type == BuiltinTypes.SINT8
+              || type == BuiltinTypes.UINT16) {
         return getIntegerValue((Constant) side);
       }
       throw new Exception("Integer type expected but not found.");
-    }else if(side instanceof NumericCompound){
+    } else if (side instanceof NumericCompound) {
       return evaluateNumericCompound(var, (NumericCompound) side);
-    }else if(side instanceof Variable){
+    } else if (side instanceof Variable) {
       Variable sideVar = (Variable) side;
-      if(sideVar.equals(var)){
+      if (sideVar.equals(var)) {
         return 0;
       }
       throw new Exception("Here should not be a variable.");
-    }
-    else{
+    } else {
       throw new Exception("Cannot convert subpart");
     }
   }
-  private int getIntegerValue(Constant left){
+
+  private int getIntegerValue(Constant left) {
     return new Integer(left.getValue().toString());
   }
-  
+
   private int calculate(int leftValue, int rightValue,
-          NumericOperator operator) throws Exception{
-    switch(operator){
-      case PLUS: return leftValue + rightValue;
-      case MINUS: return leftValue - rightValue;
-      case MUL: return leftValue * rightValue;
+          NumericOperator operator) throws Exception {
+    switch (operator) {
+      case PLUS:
+        return leftValue + rightValue;
+      case MINUS:
+        return leftValue - rightValue;
+      case MUL:
+        return leftValue * rightValue;
       case REM:
-      case DIV: throw new Exception("Div and REM are not supported");
-      default: return 0;
+      case DIV:
+        throw new Exception("Div and REM are not supported");
+      default:
+        return 0;
     }
   }
 
@@ -283,18 +294,18 @@ public class Transition {
 
   public StateImage applyOn(StateImage alreadyReachedStates,
           TransitionHelper helper) {
-    if(isOK()){
+    if (isOK()) {
       logger.fine("applying: " + path.toString());
       return helper.applyTransition(alreadyReachedStates, this);
-    }else if(isError()){
+    } else if (isError()) {
       return helper.applyError(alreadyReachedStates, this);
-    }else{
+    } else {
       throw new IllegalStateException("Cannot apply DON'T know paths");
     }
   }
 
   public String getError() {
-    if(isError()){
+    if (isError()) {
       return path.getErrorResult().getExceptionClass();
     }
     return "";
@@ -306,49 +317,50 @@ public class Transition {
   }
 
   public Expression getTransitionEffect(Variable oldVariable) {
-    Map<Variable<?>, Expression<?>> pathResults = 
-            path.getPostCondition().getConditions();
+    Map<Variable<?>, Expression<?>> pathResults
+            = path.getPostCondition().getConditions();
     return pathResults.getOrDefault(oldVariable, null);
   }
 
-  public Expression getTransitionEffectAsTransition(){
-    if(transitionExpression == null){
+  public Expression getTransitionEffectAsTransition() {
+    if (transitionExpression == null) {
       convertPathToExpression();
-    }return transitionExpression;
+    }
+    return transitionExpression;
   }
 
-  private void convertPathToExpression(){
+  private void convertPathToExpression() {
     transitionExpression = path.getPathCondition();
     PathResult.OkResult result = path.getOkResult();
-    Map<Variable<?>,Expression<?>> postConditions = 
-            result.getPostCondition().getConditions();
-    for(Variable key: postConditions.keySet()){
+    Map<Variable<?>, Expression<?>> postConditions
+            = result.getPostCondition().getConditions();
+    for (Variable key : postConditions.keySet()) {
       Expression resultingExpression = postConditions.get(key);
       Variable newKey = new Variable(key.getType(), key.getName() + "'");
       resultingExpression = NumericBooleanExpression.create(
               newKey,
               NumericComparator.EQ,
               resultingExpression);
-    transitionExpression = ExpressionUtil.and(transitionExpression,
+      transitionExpression = ExpressionUtil.and(transitionExpression,
               resultingExpression);
     }
   }
 
-  public String convertForFile(HashMap<Class, String> data){
-    ExpressionConverterVisitor expressionConverter = 
-            new ExpressionConverterVisitor();
-    String guard = 
-            (String) getGuardCondition().accept(expressionConverter, data);
+  public String convertForFile(HashMap<Class, String> data) {
+    ExpressionConverterVisitor expressionConverter
+            = new ExpressionConverterVisitor();
+    String guard
+            = (String) getGuardCondition().accept(expressionConverter, data);
     String effects;
-    if(isOK()){
+    if (isOK()) {
       effects = converOkTransitiontForFile(data);
-      return TransitionEncoding.okTransition + ":" 
-              + TransitionEncoding.guard + ":" + guard + ";" 
+      return TransitionEncoding.okTransition + ":"
+              + TransitionEncoding.guard + ":" + guard + ";"
               + TransitionEncoding.transitionBody + ":" + effects + ";" + ";";
-    }else{
+    } else {
       effects = converErrorTransitiontForFile();
-      return TransitionEncoding.errorTransition + ":" 
-              + TransitionEncoding.guard + ":" + guard + ":" 
+      return TransitionEncoding.errorTransition + ":"
+              + TransitionEncoding.guard + ":" + guard + ":"
               + TransitionEncoding.transitionBody + ":" + effects + ";" + ";";
     }
   }
@@ -358,16 +370,17 @@ public class Transition {
   }
 
   private String converOkTransitiontForFile(HashMap<Class, String> data) {
-    ExpressionConverterVisitor expressionConverter = 
-            new ExpressionConverterVisitor();
+    ExpressionConverterVisitor expressionConverter
+            = new ExpressionConverterVisitor();
     PathResult.OkResult result = path.getOkResult();
-    Map<Variable<?>,Expression<?>> postConditions = 
-            result.getPostCondition().getConditions();
+    Map<Variable<?>, Expression<?>> postConditions
+            = result.getPostCondition().getConditions();
     String effects = "";
-    for(Variable var: postConditions.keySet()){
+    for (Variable var : postConditions.keySet()) {
       String key = (String) var.accept(expressionConverter, data);
-      String effect = 
-            (String) postConditions.get(var).accept(expressionConverter, data);
+      String effect
+              = (String) postConditions.get(var)
+                      .accept(expressionConverter, data);
       effects += TransitionEncoding.effect + ":" + key + ":" + effect + ";";
     }
     return effects;

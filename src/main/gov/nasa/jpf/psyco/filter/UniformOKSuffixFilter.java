@@ -27,7 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import net.automatalib.words.Word;
 
-public class UniformOKSuffixFilter implements ThreeValuedFilter, ThreeValuedOracle {
+public class UniformOKSuffixFilter 
+        implements ThreeValuedFilter, ThreeValuedOracle {
 
   private MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle;
   
@@ -38,20 +39,23 @@ public class UniformOKSuffixFilter implements ThreeValuedFilter, ThreeValuedOrac
     this.oracle = oracle;
     this.inputs = inputs;
   }
-  
+
   @Override
-  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
+  public void setNext(
+          MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
     this.oracle = mo;
   }
 
   @Override
-  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+  public void processQueries(Collection<? extends 
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> query : clctn) {
       processQuery(query);
     }
   }
-  
-  private void processQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
+
+  private void processQuery(
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
     Word<SymbolicQueryOutput> out = getPotentialOutput(query.getInput());
     int uniformIdx = getUniformIndex(out);
     if (uniformIdx == 0) {
@@ -71,7 +75,7 @@ public class UniformOKSuffixFilter implements ThreeValuedFilter, ThreeValuedOrac
     this.oracle.processQueries(Collections.singleton(dQuery));
     query.answer(dQuery.getOutput());
   }
-  
+
   private int getUniformIndex(Word<SymbolicQueryOutput> out) {
     for (int i=out.length(); i> 0; i--) {
       SymbolicQueryOutput o = out.getSymbol(i-1);
@@ -81,13 +85,13 @@ public class UniformOKSuffixFilter implements ThreeValuedFilter, ThreeValuedOrac
     }
     return 0;
   }
-  
-  private Word<SymbolicQueryOutput> getPotentialOutput(Word<SymbolicMethodSymbol> in) {
+
+  private Word<SymbolicQueryOutput> getPotentialOutput(
+          Word<SymbolicMethodSymbol> in) {
     ArrayList<SymbolicQueryOutput> list = new ArrayList<>();
     for (SymbolicMethodSymbol sms : in) {
       list.add(new SymbolicQueryOutput(inputs.getSummary(sms)));
     }
     return Word.fromList(list);
   }
-  
 }

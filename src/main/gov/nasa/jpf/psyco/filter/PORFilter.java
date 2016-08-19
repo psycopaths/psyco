@@ -48,20 +48,17 @@ public class PORFilter extends MethodExecutionFilter {
   @Override
   public boolean evaluateQuery(Query<SymbolicMethodSymbol, Boolean> query) {
     Word<SymbolicMethodSymbol> input = query.getInput();
-    
     // constructor + 1 will always be executed
     if (input.size() < 3) {
       return false;
     }
-    
-    //System.out.println(input);
-    
+
     String lastName = input.getSymbol(1).getConcolicMethodConfig().getId();
     Pair<BitSet,BitSet> lastMethod = po.get(lastName);
     for (int i=2; i<input.size(); i++) {      
       String curName = input.getSymbol(i).getConcolicMethodConfig().getId();
       Pair<BitSet,BitSet> cur = po.get(curName); 
-      
+
       if (cur != null && lastMethod != null) {
         if (curName.compareTo(lastName) < 0
                 && !lastMethod._1.intersects(cur._2) // read-write
@@ -71,28 +68,27 @@ public class PORFilter extends MethodExecutionFilter {
           return false;
         }
       }
-        
+
       lastName = curName;
       lastMethod = cur;
     }
     return true;
   }
-  
-  
+
   private void initialize(Collection<String> mconfig, 
           SymbolicMethodAlphabet inputs) {
     
-    System.out.println("POR CONFIG: " + Arrays.toString(mconfig.toArray()));
+    logger.info("POR CONFIG: " + Arrays.toString(mconfig.toArray()));
     
     Map<String,Pair<BitSet,BitSet>> config = new HashMap<>();
-    
+
     for (String line : mconfig) {    
       String[] conf = line.trim().split(",");      
-      System.out.println("line: " + Arrays.toString(conf));
+      logger.info("line: " + Arrays.toString(conf));
       config.put( conf[0].trim(), new Pair<>( 
               makeSet(conf[1].trim()), makeSet(conf[2].trim()) ));
     }
-      
+
     for (SymbolicMethodSymbol m : inputs) {
       
       String mName = m.getConcolicMethodConfig().getId();
@@ -103,16 +99,17 @@ public class PORFilter extends MethodExecutionFilter {
         continue;
       }
       
-      logger.fine("bit-sets for " + m + "  :  " + sets._1.toString() + " : " + sets._2.toString());
+      logger.fine("bit-sets for " + m + "  :  " 
+              + sets._1.toString() + " : " + sets._2.toString());
       this.po.put(mName, sets);
     }   
   }
-  
+
   private BitSet makeSet(String bits) {    
     BitSet set = new BitSet(bits.length());
     for (int i=0;i<bits.length();i++) {
       set.set(i,  bits.charAt(i) == '1');
     }
     return set;
-  }  
+  }
 }

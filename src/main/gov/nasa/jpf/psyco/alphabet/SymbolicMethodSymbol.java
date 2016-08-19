@@ -21,29 +21,31 @@ import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
 import java.util.Objects;
 
 public class SymbolicMethodSymbol {
-  
+
   private final String id;
-  
+
   private final ConcolicMethodConfig concolicMethodConfig;
-  
+
   private final Expression<Boolean> precondition;
 
   private final boolean constructor;
-  
+
   private final boolean isStatic;
-  
-  public SymbolicMethodSymbol(ConcolicMethodConfig cmc, 
+
+  public SymbolicMethodSymbol(ConcolicMethodConfig cmc,
           boolean constructor, boolean isStatic) {
     this(cmc.getId(), cmc, constructor, isStatic);
   }
-  
-  public SymbolicMethodSymbol(String id, ConcolicMethodConfig cmc, 
+
+  public SymbolicMethodSymbol(String id, ConcolicMethodConfig cmc,
           boolean constructor, boolean isStatic) {
     this(id, cmc, ExpressionUtil.TRUE, constructor, isStatic);
   }
 
-  public SymbolicMethodSymbol(String id, ConcolicMethodConfig concolicMethodConfig, 
-          Expression<Boolean> precondition, boolean constructor, boolean isStatic) {
+  public SymbolicMethodSymbol(String id,
+          ConcolicMethodConfig concolicMethodConfig,
+          Expression<Boolean> precondition,
+          boolean constructor, boolean isStatic) {
     this.id = id;
     this.concolicMethodConfig = concolicMethodConfig;
     this.precondition = precondition;
@@ -63,7 +65,7 @@ public class SymbolicMethodSymbol {
    */
   public ConcolicMethodConfig getConcolicMethodConfig() {
     return this.concolicMethodConfig;
-  }  
+  }
 
   /**
    * @return the precondition
@@ -96,17 +98,17 @@ public class SymbolicMethodSymbol {
 
   @Override
   public String toString() {
-    return this.id + ":" + this.concolicMethodConfig.getId() + "[" + this.precondition +  "]"; 
+    return this.id + ":" + this.concolicMethodConfig.getId() + "[" + this.precondition + "]";
   }
 
   public boolean isConstructor() {
     return constructor;
   }
- 
+
   public boolean isStatic() {
     return isStatic;
   }
-  
+
   public int getArity() {
     return this.concolicMethodConfig.getParams().size();
   }

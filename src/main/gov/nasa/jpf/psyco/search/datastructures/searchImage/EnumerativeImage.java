@@ -17,20 +17,20 @@ package gov.nasa.jpf.psyco.search.datastructures.searchImage;
 
 import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
 
-public class EnumerativeImage extends StateImage<EnumerativeRegion>{
+public class EnumerativeImage extends StateImage<EnumerativeRegion> {
 
-  public EnumerativeImage(EnumerativeRegion region){
+  public EnumerativeImage(EnumerativeRegion region) {
     super(region);
   }
 
   public EnumerativeImage(EnumerativeRegion region,
-          StringBuilder errors, int depth){
+          StringBuilder errors, int depth) {
     super(region, errors, depth);
   }
 
   @Override
-   public EnumerativeRegion getPreviousNewStates() {
-    if(this.previousNewStates == null){
+  public EnumerativeRegion getPreviousNewStates() {
+    if (this.previousNewStates == null) {
       return new EnumerativeRegion();
     }
     return this.previousNewStates;

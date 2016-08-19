@@ -21,5 +21,4 @@ import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 
 public interface ThreeValuedFilter extends 
         Filter<SymbolicMethodSymbol, SymbolicQueryOutput> {
-  
 }

@@ -19,13 +19,13 @@ import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
 import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
 import gov.nasa.jpf.constraints.api.Valuation;
 
-public class SymbolicRegion extends Region<SymbolicEntry, SymbolicState>{
+public class SymbolicRegion extends Region<SymbolicEntry, SymbolicState> {
 
-  public SymbolicRegion(){
+  public SymbolicRegion() {
     super();
   }
 
-  public SymbolicRegion(Valuation initValuation){
+  public SymbolicRegion(Valuation initValuation) {
     super(initValuation);
   }
 
@@ -36,7 +36,7 @@ public class SymbolicRegion extends Region<SymbolicEntry, SymbolicState>{
   }
 
   @Override
-  public SymbolicRegion createNewRegion(){
+  public SymbolicRegion createNewRegion() {
     return new SymbolicRegion();
   }
 }

@@ -18,14 +18,15 @@ package gov.nasa.jpf.psyco.search.datastructures;
 import com.google.common.base.Function;
 import java.util.HashMap;
 
-public class NameMap implements Function<String, String>{
+public class NameMap implements Function<String, String> {
+
   HashMap<String, String> map;
 
-  public NameMap(){
-    map = new HashMap<String,String>();
+  public NameMap() {
+    map = new HashMap<String, String>();
   }
 
-  public void mapNames(String oldName, String newName){
+  public void mapNames(String oldName, String newName) {
     map.put(oldName, newName);
   }
 
@@ -35,10 +36,10 @@ public class NameMap implements Function<String, String>{
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     StringBuilder resultingString = new StringBuilder();
     resultingString.append("[ ");
-    for(String key: map.keySet()){
+    for (String key : map.keySet()) {
       String entry = key;
       entry += ": ";
       entry += map.get(key);

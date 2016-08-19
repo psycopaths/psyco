@@ -27,34 +27,35 @@ import gov.nasa.jpf.util.JPFLogger;
 import java.util.logging.Logger;
 
 public abstract class TransitionHelper {
+
   protected SolverInstance solver = SolverInstance.getInstance();
-  protected final Logger logger = 
-          JPFLogger.getLogger(HelperMethods.getLoggerName());
+  protected final Logger logger
+          = JPFLogger.getLogger(HelperMethods.getLoggerName());
 
   public abstract StateImage applyTransition(StateImage image,
           Transition transition);
 
   public StateImage applyError(StateImage searchStatus,
           Transition transition) {
-      int depth = searchStatus.getDepth();
-      String error = transition.getError();
-      Region<?, State<?>> reachableStates = searchStatus.getReachableStates();
-      for(State state: reachableStates.values()){
-        if(satisfiesGuardCondition(state, transition, depth)
-                && !transition.isReached()){
-          transition.setIsReached(true);
-          searchStatus.addErrorInCurrentDepth(error);
-        }
+    int depth = searchStatus.getDepth();
+    String error = transition.getError();
+    Region<?, State<?>> reachableStates = searchStatus.getReachableStates();
+    for (State state : reachableStates.values()) {
+      if (satisfiesGuardCondition(state, transition, depth)
+              && !transition.isReached()) {
+        transition.setIsReached(true);
+        searchStatus.addErrorInCurrentDepth(error);
       }
+    }
     return searchStatus;
   }
 
   protected boolean satisfiesGuardCondition(State state,
-          Transition transition, int depth) throws IllegalStateException{
+          Transition transition, int depth) throws IllegalStateException {
     Expression guardTest = state.toExpression();
     guardTest = ExpressionUtil.and(guardTest, transition.getGuardCondition());
     Result res = solver.isSatisfiable(guardTest);
-    if(null != res){
+    if (null != res) {
       switch (res) {
         case SAT:
           return true;

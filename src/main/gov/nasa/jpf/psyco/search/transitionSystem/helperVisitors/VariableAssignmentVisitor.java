@@ -23,29 +23,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VariableAssignmentVisitor extends 
+public class VariableAssignmentVisitor extends
         AbstractExpressionVisitor<Expression<?>,
-            HashMap<Variable, List<Expression>>>{
+            HashMap<Variable, List<Expression>>> {
 
   @Override
   public <E> Expression visit(NumericBooleanExpression expr,
-            HashMap<Variable, List<Expression>> data){
+          HashMap<Variable, List<Expression>> data) {
     Expression left = expr.getLeft(), right = expr.getRight();
-    for(Variable var: data.keySet()){
-      if(left.equals(var)){
-        List<Expression> list = 
-                data.getOrDefault(var, new ArrayList<Expression>());
+    for (Variable var : data.keySet()) {
+      if (left.equals(var)) {
+        List<Expression> list
+                = data.getOrDefault(var, new ArrayList<Expression>());
         list.add(right);
       }
     }
     return expr;
   }
-  
 
   @Override
   protected <E> Expression<?> defaultVisit(Expression<E> expression,
-          HashMap<Variable, List<Expression>>  data) {
-    for(Expression expr:expression.getChildren()){
+          HashMap<Variable, List<Expression>> data) {
+    for (Expression expr : expression.getChildren()) {
       expr.accept(this, data);
     }
     return expression;

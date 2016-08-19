@@ -28,34 +28,35 @@ import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EnumerativeTransitionHelper extends TransitionHelper{
+public class EnumerativeTransitionHelper extends TransitionHelper {
+
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition){
-    if(image instanceof EnumerativeImage){
+  public StateImage applyTransition(StateImage image, Transition transition) {
+    if (image instanceof EnumerativeImage) {
       EnumerativeImage currentSearchStatus = (EnumerativeImage) image;
       int depth = currentSearchStatus.getDepth();
       EnumerativeRegion newRegion = new EnumerativeRegion();
-      for(EnumerativeState state: 
-              currentSearchStatus.getPreviousNewStates().values()){
-        if(satisfiesGuardCondition(state, transition, depth)){
+      for (EnumerativeState state
+              : currentSearchStatus.getPreviousNewStates().values()) {
+        if (satisfiesGuardCondition(state, transition, depth)) {
           transition.setIsReached(true);
           EnumerativeState newState = executeTransition(transition, state);
           newRegion.put(HelperMethods.getUniqueStateName(), newState);
         }
       }
-    currentSearchStatus.addNewStates(newRegion);
-    return currentSearchStatus;
+      currentSearchStatus.addNewStates(newRegion);
+      return currentSearchStatus;
     }
     return null;
   }
 
   private EnumerativeState executeTransition(Transition transition,
-          EnumerativeState state){
+          EnumerativeState state) {
     Expression resultingExpression = state.toExpression();
-    Expression transitionEffects = 
-            transition.getTransitionEffectAsTransition();
-    resultingExpression = 
-            ExpressionUtil.and(resultingExpression, transitionEffects);
+    Expression transitionEffects
+            = transition.getTransitionEffectAsTransition();
+    resultingExpression
+            = ExpressionUtil.and(resultingExpression, transitionEffects);
     logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
             + "EnumerativeTransitionHelper.executeTransition()");
     logger.finest(resultingExpression.toString());
@@ -64,14 +65,14 @@ public class EnumerativeTransitionHelper extends TransitionHelper{
     Result res = solver.solve(resultingExpression, result);
     logger.finest("Valuation: " + result.toString());
     Valuation filtered = new Valuation();
-    for(ValuationEntry entry: result){
-      if(!oldVariables.contains(entry.getVariable())){
+    for (ValuationEntry entry : result) {
+      if (!oldVariables.contains(entry.getVariable())) {
         filtered.addEntry(entry);
       }
     }
-    if(res == Result.SAT){
+    if (res == Result.SAT) {
       return new EnumerativeState(filtered);
-    }else {
+    } else {
       throw new IllegalStateException("Solver could not SAT state result.");
     }
   }

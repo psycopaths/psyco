@@ -24,7 +24,6 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.expressions.Negation;
-import gov.nasa.jpf.constraints.expressions.PropositionalCompound;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;

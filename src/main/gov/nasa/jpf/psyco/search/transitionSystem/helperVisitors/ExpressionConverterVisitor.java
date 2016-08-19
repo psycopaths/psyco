@@ -35,17 +35,18 @@ import gov.nasa.jpf.constraints.expressions.UnaryMinus;
 import gov.nasa.jpf.constraints.expressions.functions.FunctionExpression;
 import java.util.HashMap;
 
-public class ExpressionConverterVisitor 
-        extends AbstractExpressionVisitor<String, HashMap<Class, String>>{
+public class ExpressionConverterVisitor
+        extends AbstractExpressionVisitor<String, HashMap<Class, String>> {
+
   @Override
-  public <E> String visit(Variable<E> v, HashMap<Class, String> data){
+  public <E> String visit(Variable<E> v, HashMap<Class, String> data) {
     String name = v.getName();
     String type = data.get(v.getType().getClass());
-    return TransitionEncoding.variable + ":" + name + ":" + type + ";" ;
+    return TransitionEncoding.variable + ":" + name + ":" + type + ";";
   }
 
   @Override
-  public <E> String visit(Constant<E> c, HashMap<Class, String> data) { 
+  public <E> String visit(Constant<E> c, HashMap<Class, String> data) {
     String value = c.getValue().toString();
     String type = data.get(c.getType().getClass());
     return TransitionEncoding.constant + ":" + value + ":" + type + ";";
@@ -53,91 +54,91 @@ public class ExpressionConverterVisitor
 
   @Override
   public String visit(Negation n, HashMap<Class, String> data) {
-    return TransitionEncoding.negation + ":" + n.getNegated() +";";
+    return TransitionEncoding.negation + ":" + n.getNegated() + ";";
   }
 
   @Override
   public <E> String visit(NumericBooleanExpression n,
-          HashMap<Class, String> data){
+          HashMap<Class, String> data) {
     String left = visit(n.getLeft(), data);
     String right = visit(n.getRight(), data);
     String operator = convert(n.getComparator());
-    return TransitionEncoding.numericBooleanExpression + ":" 
-            + left + ":"+ operator + ":" + right + ";";
+    return TransitionEncoding.numericBooleanExpression + ":"
+            + left + ":" + operator + ":" + right + ";";
   }
 
   @Override
-  public <F,E> String visit(CastExpression<F,E> cast,
-          HashMap<Class, String> data){
-    throw new IllegalStateException("Cast expression are not allowed so" 
+  public <F, E> String visit(CastExpression<F, E> cast,
+          HashMap<Class, String> data) {
+    throw new IllegalStateException("Cast expression are not allowed so"
             + "far in the transitionSystem.");
   }
 
   @Override
   public <E>
-  String visit(NumericCompound<E> n, HashMap<Class, String> data){
+          String visit(NumericCompound<E> n, HashMap<Class, String> data) {
     String left = visit(n.getLeft(), data);
     String right = visit(n.getRight(), data);
     String operator = convert(n.getOperator());
-    return TransitionEncoding.numericCompund + ":" 
+    return TransitionEncoding.numericCompund + ":"
             + left + ":" + operator + ":" + right + ";";
   }
 
   @Override
-  public <E> String visit(IfThenElse<E> n, HashMap<Class, String> data){ 
-    throw new IllegalStateException("If-Then-Else is not supposed to be part" 
+  public <E> String visit(IfThenElse<E> n, HashMap<Class, String> data) {
+    throw new IllegalStateException("If-Then-Else is not supposed to be part"
             + " of the transiton system."
             + "Instead there should be one transition per path.");
   }
 
   @Override
-  public String visit(PropositionalCompound n, HashMap<Class, String> data){
+  public String visit(PropositionalCompound n, HashMap<Class, String> data) {
     String left = visit(n.getLeft(), data);
     String right = visit(n.getRight(), data);
     String operator = convert(n.getOperator());
-    return TransitionEncoding.propositionalCompound + ":" + left + ":" 
+    return TransitionEncoding.propositionalCompound + ":" + left + ":"
             + operator + ":" + right + ";";
   }
 
   @Override
-  public <E> String visit(UnaryMinus<E> n, HashMap<Class, String> data){
+  public <E> String visit(UnaryMinus<E> n, HashMap<Class, String> data) {
     String negated = visit(n.getNegated());
     return TransitionEncoding.unaryMinus + ":" + negated + ";";
   }
 
   @Override
-  public String visit(QuantifierExpression q, HashMap<Class, String> data){
+  public String visit(QuantifierExpression q, HashMap<Class, String> data) {
     throw new IllegalStateException(
             "Quantifier must not be part of the TransitionSystem.");
   }
 
   @Override
   public <E> String visit(FunctionExpression<E> f,
-          HashMap<Class, String> data){
+          HashMap<Class, String> data) {
     throw new IllegalStateException(
-            "FunctionExpression are not expected in the TransitionSystem." 
-                    + "Don't know how to handle them.");
+            "FunctionExpression are not expected in the TransitionSystem."
+            + "Don't know how to handle them.");
   }
 
   @Override
   public <E> String visit(
-          BitvectorExpression<E> bv, HashMap<Class, String> data){
+          BitvectorExpression<E> bv, HashMap<Class, String> data) {
     String left = visit(bv.getLeft(), data);
     String right = visit(bv.getRight(), data);
-    String operator= convert(bv.getOperator());
+    String operator = convert(bv.getOperator());
     return TransitionEncoding.bitVector + ":" + left + ":" + operator
             + ":" + right + ";";
-    
+
   }
 
   @Override
   public <E> String visit(
-          BitvectorNegation<E> n, HashMap<Class, String> data){
+          BitvectorNegation<E> n, HashMap<Class, String> data) {
     String negated = visit(n.getNegated());
     return TransitionEncoding.bitVectorNegation + ":" + negated + ";";
   }
 
-  private String convert(NumericComparator comparator){
+  private String convert(NumericComparator comparator) {
     return TransitionEncoding.numericComperator + ":"
             + comparator.toString() + ";";
   }
@@ -148,7 +149,7 @@ public class ExpressionConverterVisitor
   }
 
   private String convert(LogicalOperator operator) {
-    return TransitionEncoding.logicalOpertaor + ":" 
+    return TransitionEncoding.logicalOpertaor + ":"
             + operator.toString() + ";";
   }
 

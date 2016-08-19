@@ -17,22 +17,22 @@ package gov.nasa.jpf.psyco.search.datastructures.searchImage;
 
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
 
-public class SymbolicImage extends StateImage<SymbolicRegion>{
+public class SymbolicImage extends StateImage<SymbolicRegion> {
 
-  public SymbolicImage(SymbolicRegion reachableStates){
+  public SymbolicImage(SymbolicRegion reachableStates) {
     super(reachableStates);
   }
 
   public SymbolicImage(SymbolicRegion reachableStates,
-          StringBuilder errors, int depth){
+          StringBuilder errors, int depth) {
     super(reachableStates, errors, depth);
   }
 
   @Override
   public SymbolicRegion getPreviousNewStates() {
-    if(this.previousNewStates == null){
+    if (this.previousNewStates == null) {
       return new SymbolicRegion();
-     
+
     }
     return this.previousNewStates;
   }

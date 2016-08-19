@@ -1,21 +1,18 @@
-/*******************************************************************************
- * Copyright (C) 2008 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration
- * (NASA).  All Rights Reserved.
- * 
- * This software is distributed under the NASA Open Source Agreement
- * (NOSA), version 1.3.  The NOSA has been approved by the Open Source
- * Initiative.  See the file NOSA-1.3-JPF at the top of the distribution
- * directory tree for the complete NOSA document.
- * 
- * THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF ANY
- * KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT
- * LIMITED TO, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO
- * SPECIFICATIONS, ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR
- * A PARTICULAR PURPOSE, OR FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT
- * THE SUBJECT SOFTWARE WILL BE ERROR FREE, OR ANY WARRANTY THAT
- * DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE SUBJECT SOFTWARE.
- ******************************************************************************/
+/*
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
+ */
 package gov.nasa.jpf.psyco.filter;
 
 import de.learnlib.api.Query;
@@ -40,17 +37,12 @@ import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.util.PathUtil;
 import gov.nasa.jpf.util.JPFLogger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.automatalib.words.Word;
 
-/**
- *
- * @author falkhowar
- */
 public class InterpolationCache implements ThreeValuedOracle {
   
   private static JPFLogger logger = JPF.getLogger("psyco");
@@ -79,7 +71,7 @@ public class InterpolationCache implements ThreeValuedOracle {
       this.sPrefix = sPrefix;
       // end of recursion
       if (suffix.length() < 1 || (pPrefix.length() > 0 
-              && pPrefix.lastSymbol().getState() != PathState.OK)) {        
+              && pPrefix.lastSymbol().getState() != PathState.OK)) {
         this.output = SymbolicQueryOutput.forPath(pPrefix.lastSymbol());
       } else {
         // try to use cache
@@ -124,7 +116,8 @@ public class InterpolationCache implements ThreeValuedOracle {
           continue;
         }
 
-        ExecutionTree child = new ExecutionTree(pNext, sNext, suffix.subWord(1));
+        ExecutionTree child = 
+                new ExecutionTree(pNext, sNext, suffix.subWord(1));
         outputs.add(child.output);
         // TODO: is the key important?  
         this.feasible.add(child);
@@ -138,7 +131,8 @@ public class InterpolationCache implements ThreeValuedOracle {
   
   
   
-  private final Map<Word<SymbolicMethodSymbol>, SuffixCache> cache = new HashMap<>();
+  private final Map<Word<SymbolicMethodSymbol>, SuffixCache> cache = 
+          new HashMap<>();
   
   private final InterpolationSolver iSolver;
   
@@ -148,7 +142,8 @@ public class InterpolationCache implements ThreeValuedOracle {
   
   private final SummaryAlphabet inputs;
 
-  public InterpolationCache(InterpolationSolver iSolver, ConstraintSolver cSolver, SummaryAlphabet inputs) {
+  public InterpolationCache(InterpolationSolver iSolver, 
+          ConstraintSolver cSolver, SummaryAlphabet inputs) {
     this.iSolver = iSolver;
     this.cSolver = cSolver;
     this.inputs = inputs;
@@ -158,21 +153,24 @@ public class InterpolationCache implements ThreeValuedOracle {
 
   @Override
   public void processQueries(
-          Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+          Collection<? extends 
+                  Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
 
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> q : clctn) {
       processQuery(q);
     }
   }
   
-  private void processQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> query) {        
+  private void processQuery(Query<SymbolicMethodSymbol,
+          SymbolicQueryOutput> query) {
     Word<SymbolicMethodSymbol> sEps = Word.epsilon();
     Word<Path> pEps = Word.epsilon();    
     ExecutionTree tree = new ExecutionTree(pEps, sEps, query.getInput());
     query.answer(tree.getOutput());
   }
 
-  private SymbolicQueryOutput lookup(Word<Path> pPrefix, Word<SymbolicMethodSymbol> sPrefix,
+  private SymbolicQueryOutput lookup(Word<Path> pPrefix,
+          Word<SymbolicMethodSymbol> sPrefix,
           Word<SymbolicMethodSymbol> suffix) {    
     // TODO: try to find a cached result
     return SymbolicQueryOutput.NONE;
@@ -186,24 +184,22 @@ public class InterpolationCache implements ThreeValuedOracle {
       joined = new Path(ExpressionUtil.TRUE, PathResult.ok(
               null, asPostCondition(initial)));
     } else {
-      joined = PathUtil.executeSymbolically(sPrefix, pPrefix, initial);      
-    }    
-          
-    System.out.println();    
-    System.out.println("Searching for interpolant after: " + joined);
+      joined = PathUtil.executeSymbolically(sPrefix, pPrefix, initial);
+    }
+
     SymbolicQueryOutput out = tree.getOutput();
     for (Path p : tree.getInfeasiblePaths()) {
       if (!SymbolicQueryOutput.forPath(p).equals(out)) {
-        System.out.println( "  " + p);
+        logger.finer( "  " + p);
       }
-    }    
-    System.out.println();    
+    }
+    logger.finer("");
   }
-  
+
   private boolean sat(Expression<Boolean> test) {
     return cSolver.isSatisfiable(test) == Result.SAT;
   }
-  
+
   private PostCondition asPostCondition(Valuation initial) {
     PostCondition post = new PostCondition();
     for (ValuationEntry e : initial) {
@@ -211,6 +207,5 @@ public class InterpolationCache implements ThreeValuedOracle {
               new Constant<>(e.getVariable().getType(), e.getValue()));
     }
     return post;
-  }  
-  
+  }
 }

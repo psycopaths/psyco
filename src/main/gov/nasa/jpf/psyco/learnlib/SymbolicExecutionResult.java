@@ -27,7 +27,8 @@ public class SymbolicExecutionResult implements Iterable<Path> {
   private final Collection<Path> error;
   private final Collection<Path> dontKnow;
 
-  public SymbolicExecutionResult(Collection<Path> ok, Collection<Path> error, Collection<Path> dontKnow) {
+  public SymbolicExecutionResult(Collection<Path> ok,
+          Collection<Path> error, Collection<Path> dontKnow) {
     this.ok = ok;
     this.error = error;
     this.dontKnow = dontKnow;

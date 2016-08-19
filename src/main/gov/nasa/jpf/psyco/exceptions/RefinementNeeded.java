@@ -23,7 +23,8 @@ public class RefinementNeeded extends RuntimeException {
   
   private final DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> query;
 
-  public RefinementNeeded(DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> query) {
+  public RefinementNeeded(DefaultQuery<SymbolicMethodSymbol,
+          SymbolicQueryOutput> query) {
     this.query = query;
   }
 

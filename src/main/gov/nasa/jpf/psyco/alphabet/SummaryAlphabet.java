@@ -56,7 +56,7 @@ public class SummaryAlphabet extends SymbolicMethodAlphabet {
   
 
   @Override
-  public boolean refine(SymbolicMethodSymbol sms, Expression<Boolean> refiner) {
+  public boolean refine(SymbolicMethodSymbol sms, Expression<Boolean> refiner){
     
     SymbolicExecutionResult result = this.summaries.remove(sms);
     this.remove(sms);

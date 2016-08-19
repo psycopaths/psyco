@@ -35,8 +35,8 @@ import gov.nasa.jpf.constraints.types.BuiltinTypes;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.constraints.PathResult;
 import gov.nasa.jpf.jdart.constraints.PostCondition;
-import gov.nasa.jpf.psyco.search.transitionSystem.
-        helperVisitors.TransitionEncoding;
+import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
+        .TransitionEncoding;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
 import gov.nasa.jpf.util.JPFLogger;
 import java.io.BufferedReader;
@@ -45,28 +45,31 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class TransitionSystemLoader {
+
   public String fileName;
   public String currentLine;
   private Logger logger = JPFLogger.getLogger(HelperMethods.getLoggerName());
-  public TransitionSystemLoader(String fileName){
+
+  public TransitionSystemLoader(String fileName) {
     this.fileName = fileName;
   }
 
-  public TransitionSystem parseFile(){
-    try(BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+  public TransitionSystem parseFile() {
+    try (BufferedReader reader = 
+            new BufferedReader(new FileReader(fileName))) {
       TransitionSystem tSystem = new TransitionSystem(null);
       String line;
-      while((line = reader.readLine()) != null){
+      while ((line = reader.readLine()) != null) {
         currentLine = line;
-        if(nextTokenIs(TransitionEncoding.valuation)){
+        if (nextTokenIs(TransitionEncoding.valuation)) {
           Valuation initValuation = parseInitialValuation();
           tSystem.setInitValuation(initValuation);
         }
-        if(nextTokenIs(TransitionEncoding.okTransition)){
+        if (nextTokenIs(TransitionEncoding.okTransition)) {
           Transition t = parseOkTransition();
           tSystem.add(t);
         }
-        if(nextTokenIs(TransitionEncoding.errorTransition)){
+        if (nextTokenIs(TransitionEncoding.errorTransition)) {
           Transition t = parseErrorTransition();
           tSystem.add(t);
         }
@@ -81,16 +84,16 @@ public class TransitionSystemLoader {
   private Transition parseErrorTransition() {
     currentLine = currentLine.substring(2);
     Expression guard = null;
-    if(nextTokenIs(TransitionEncoding.guard)){
+    if (nextTokenIs(TransitionEncoding.guard)) {
       guard = parseGuard();
     }
     currentLine = currentLine.substring(4);
     int index = currentLine.indexOf(';');
-    String error = currentLine.substring(0,index);
-    currentLine = currentLine.substring(index + 1).replace("\n","");
-    if(!currentLine.equals(";;")){
-      System.err.println("gov.nasa.jpf.psyco.search.transitionSystem" 
-              +".TransitionSystemLoader.parseErrorTransition()");
+    String error = currentLine.substring(0, index);
+    currentLine = currentLine.substring(index + 1).replace("\n", "");
+    if (!currentLine.equals(";;")) {
+      System.err.println("gov.nasa.jpf.psyco.search.transitionSystem"
+              + ".TransitionSystemLoader.parseErrorTransition()");
       System.err.println(currentLine);
       throw new IllegalStateException(
               "The error Transition is not parsed corretly");
@@ -99,23 +102,23 @@ public class TransitionSystemLoader {
     return new Transition(p);
   }
 
-  private Transition parseOkTransition(){
+  private Transition parseOkTransition() {
     currentLine = currentLine.substring(2);
     Expression guard;
-    if(nextTokenIs(TransitionEncoding.guard)){
+    if (nextTokenIs(TransitionEncoding.guard)) {
       guard = parseGuard();
-    }else{
-      throw new IllegalStateException("The input file is malformed." 
+    } else {
+      throw new IllegalStateException("The input file is malformed."
               + "Missign Guard in Transition");
     }
     PostCondition post = new PostCondition();
-    if(nextTokenIs(TransitionEncoding.transitionBody)){
+    if (nextTokenIs(TransitionEncoding.transitionBody)) {
       currentLine = currentLine.substring(2);
-      
-      while(nextTokenIs(TransitionEncoding.effect)){
+
+      while (nextTokenIs(TransitionEncoding.effect)) {
         post = parseTransitionEffect(post);
       }
-      if(!currentLine.replace("\n", "").equals(";;")){
+      if (!currentLine.replace("\n", "").equals(";;")) {
         throw new IllegalStateException(
                 "The transition Line cannot be parsed entirely");
       }
@@ -127,30 +130,30 @@ public class TransitionSystemLoader {
   private PostCondition parseTransitionEffect(PostCondition post) {
     currentLine = currentLine.substring(2);
     Variable effectedVar = null;
-    if(nextTokenIs(TransitionEncoding.variable)){
+    if (nextTokenIs(TransitionEncoding.variable)) {
       effectedVar = parseVariable();
       currentLine = currentLine.substring(1);
     }
     Expression effect = parseNextExpression();
-    if(currentLine.startsWith(";")){
+    if (currentLine.startsWith(";")) {
       currentLine = currentLine.substring(1);
     }
     post.addCondition(effectedVar, effect);
     return post;
   }
 
-  private BitvectorExpression parseBitVectorExpression(){
+  private BitvectorExpression parseBitVectorExpression() {
     currentLine = currentLine.substring(2);
     Expression left = parseNextExpression();
     currentLine = currentLine.substring(1);
     BitvectorOperator operator;
-    if(nextTokenIs(TransitionEncoding.bitVectorOperator)){
+    if (nextTokenIs(TransitionEncoding.bitVectorOperator)) {
       currentLine = currentLine.substring(1);
       int operatorEnde = currentLine.indexOf(";");
       String readOperator = currentLine.substring(0, operatorEnde);
       operator = BitvectorOperator.valueOf(readOperator);
       currentLine = currentLine.substring(operatorEnde + 1);
-    }else{
+    } else {
       throw new IllegalStateException(
               "The next token must be an BitVectorOperator");
     }
@@ -159,14 +162,14 @@ public class TransitionSystemLoader {
     return new BitvectorExpression(left, operator, right);
   }
 
-  private BitvectorNegation parseBitvectorNeagtion(){
+  private BitvectorNegation parseBitvectorNeagtion() {
     currentLine = currentLine.substring(2);
     Expression negated = parseNextExpression();
     currentLine = currentLine.substring(1);
     return new BitvectorNegation(negated);
   }
 
-  private Constant parseConstant(){
+  private Constant parseConstant() {
     currentLine = currentLine.substring(2);
     int endValue = currentLine.indexOf(':');
     String value = currentLine.substring(0, endValue);
@@ -174,23 +177,23 @@ public class TransitionSystemLoader {
     endValue = currentLine.indexOf(';');
     String type = currentLine.substring(0, endValue);
     currentLine = currentLine.substring(endValue + 1);
-    if(type.endsWith("BuiltinTypes$SInt32Type")){
+    if (type.endsWith("BuiltinTypes$SInt32Type")) {
       return new Constant(BuiltinTypes.SINT32, Integer.parseInt(value));
-    }else if(type.endsWith("BuiltinTypes$BoolType")){
+    } else if (type.endsWith("BuiltinTypes$BoolType")) {
       return new Constant(BuiltinTypes.BOOL, Boolean.parseBoolean(value));
-    }else{
+    } else {
       throw new IllegalStateException("This Type is currently not supported");
     }
   }
 
-  private Negation parseNegation(){
+  private Negation parseNegation() {
     currentLine = currentLine.substring(2);
     Expression negated = parseNextExpression();
     currentLine = currentLine.substring(1);
     return new Negation(negated);
   }
 
-  private NumericBooleanExpression parseNumericBooleanExpression(){
+  private NumericBooleanExpression parseNumericBooleanExpression() {
     currentLine = currentLine.substring(2);
     Expression left = parseNextExpression();
     currentLine = currentLine.substring(3);
@@ -203,7 +206,7 @@ public class TransitionSystemLoader {
     return new NumericBooleanExpression(left, op, right);
   }
 
-  private NumericCompound parseNumericCompound(){
+  private NumericCompound parseNumericCompound() {
     currentLine = currentLine.substring(2);
     Expression left = parseNextExpression();
     currentLine = currentLine.substring(3);
@@ -216,7 +219,7 @@ public class TransitionSystemLoader {
     return new NumericCompound(left, op, right);
   }
 
-  private PropositionalCompound parsePropositionalCompound(){
+  private PropositionalCompound parsePropositionalCompound() {
     currentLine = currentLine.substring(2);
     Expression left = parseNextExpression();
     currentLine = currentLine.substring(3);
@@ -229,35 +232,35 @@ public class TransitionSystemLoader {
     return new PropositionalCompound(left, op, right);
   }
 
-  private UnaryMinus parseUnaryMinus(){
+  private UnaryMinus parseUnaryMinus() {
     currentLine = currentLine.substring(2);
     Expression unaryExpression = parseNextExpression();
     currentLine = currentLine.substring(1);
     return UnaryMinus.create(unaryExpression);
   }
 
-  private Valuation parseInitialValuation(){
+  private Valuation parseInitialValuation() {
     currentLine = currentLine.substring(2);
     Valuation result = new Valuation();
-    while(nextTokenIs(TransitionEncoding.valuationEntry)){
+    while (nextTokenIs(TransitionEncoding.valuationEntry)) {
       currentLine = currentLine.substring(2);
       Variable var = parseVariable();
       currentLine = currentLine.substring(1);
       int endValue = currentLine.indexOf(';');
       String value = currentLine.substring(0, endValue);
       currentLine = currentLine.substring(endValue + 1);
-      ValuationEntry entry = 
-              new ValuationEntry(var, var.getType().parse(value));
+      ValuationEntry entry
+              = new ValuationEntry(var, var.getType().parse(value));
       result.addEntry(entry);
     }
-    currentLine = currentLine.substring(1).replace("\n","");
-    if(!currentLine.isEmpty()){
+    currentLine = currentLine.substring(1).replace("\n", "");
+    if (!currentLine.isEmpty()) {
       throw new IllegalStateException("Valuation not finished");
     }
     return result;
   }
 
-  public static TransitionSystem load(String fileName){
+  public static TransitionSystem load(String fileName) {
     TransitionSystemLoader loader = new TransitionSystemLoader(fileName);
     return loader.parseFile();
   }
@@ -277,32 +280,32 @@ public class TransitionSystemLoader {
     endName = currentLine.indexOf(';');
     String type = currentLine.substring(0, endName);
     currentLine = currentLine.substring(endName + 1);
-    if(type.endsWith("BuiltinTypes$SInt32Type")){
+    if (type.endsWith("BuiltinTypes$SInt32Type")) {
       return Variable.create(BuiltinTypes.SINT32, name);
-    }else if(type.endsWith("BuiltinTypes$BoolType")){
+    } else if (type.endsWith("BuiltinTypes$BoolType")) {
       return Variable.create(BuiltinTypes.BOOL, name);
-    }else{
+    } else {
       throw new IllegalStateException("This Type is currently not supported");
     }
-    
+
   }
 
-  private boolean nextTokenIs(char tokenType){
+  private boolean nextTokenIs(char tokenType) {
     String prefix = String.valueOf(tokenType);
     return currentLine.startsWith(prefix);
   }
 
   private Expression parseNextExpression() {
     char nextExpressionType = currentLine.charAt(0);
-    switch(nextExpressionType){
+    switch (nextExpressionType) {
       case TransitionEncoding.bitVector:
-        return parseBitVectorExpression(); 
+        return parseBitVectorExpression();
       case TransitionEncoding.bitVectorNegation:
-        return parseBitvectorNeagtion(); 
+        return parseBitvectorNeagtion();
       case TransitionEncoding.constant:
-        return parseConstant(); 
+        return parseConstant();
       case TransitionEncoding.negation:
-        return parseNegation(); 
+        return parseNegation();
       case TransitionEncoding.numericBooleanExpression:
         return parseNumericBooleanExpression();
       case TransitionEncoding.numericCompund:

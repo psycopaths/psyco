@@ -20,26 +20,26 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 
-public class SymbolicState extends State<SymbolicEntry>{
+public class SymbolicState extends State<SymbolicEntry> {
 
-  public SymbolicState(){
+  public SymbolicState() {
     super();
   }
 
-  public SymbolicState(Valuation initValuation){
+  public SymbolicState(Valuation initValuation) {
     this();
-    for(ValuationEntry entry: initValuation.entries()){
+    for (ValuationEntry entry : initValuation.entries()) {
       SymbolicEntry newStateEntry = SymbolicEntry.create(entry);
       add(newStateEntry);
     }
   }
 
   @Override
-  public Expression<Boolean> toExpression(){
+  public Expression<Boolean> toExpression() {
     Expression<Boolean> expr = null;
-    for(SymbolicEntry entry: this){
-      expr = expr != null ? ExpressionUtil.and(expr, entry.getValue()):
-              entry.getValue();
+    for (SymbolicEntry entry : this) {
+      expr = expr != null ? ExpressionUtil.and(expr, entry.getValue())
+              : entry.getValue();
     }
     return expr;
   }

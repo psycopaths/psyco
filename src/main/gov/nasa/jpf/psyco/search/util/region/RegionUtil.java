@@ -32,12 +32,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
+public abstract class RegionUtil<V extends State<?>, T extends Region<?, V>> {
+
   private long unique;
   ConstraintSolver solver;
   protected final Logger logger;
 
-  public RegionUtil(ConstraintSolver solver){
+  public RegionUtil(ConstraintSolver solver) {
     this.solver = solver;
     this.unique = 1L;
     logger = Logger.getLogger("psyco");
@@ -46,9 +47,9 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
   public T disjunction(T regionA, T regionB) {
     T disjunctedRegion = (T) regionA.createNewRegion();
     disjunctedRegion.putAll(regionA);
-    for(String key: regionB.keySet()){
+    for (String key : regionB.keySet()) {
       //This assumes, that state names are unique to work!
-      if(disjunctedRegion.containsKey(key)){
+      if (disjunctedRegion.containsKey(key)) {
         continue;
       }
       disjunctedRegion.put(key, regionB.get(key));
@@ -69,61 +70,60 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
           ConstraintSolver solver) {
     T resultRegion = (T) outterRegion.createNewRegion();
     Expression notRegion = null;
-    if(null == excludedRegion || excludedRegion.isEmpty()){
+    if (null == excludedRegion || excludedRegion.isEmpty()) {
       return outterRegion;
     }
     Set<State> toExclude = new HashSet();
-    for(State<?> state: excludedRegion.values()){
+    for (State<?> state : excludedRegion.values()) {
       toExclude.add(state);
     }
     logger.finer("gov.nasa.jpf.psyco.search.region."
             + "util.SymbolicRegionUtil.difference()");
-    for(String key : outterRegion.keySet()){
-        Expression excludedRegionExpr = convertSetToExpression(toExclude);
-        Set<Variable<?>> stateVariables = convertToVariableSet(excludedRegion);
-        notRegion = new Negation(excludedRegionExpr);
-        notRegion = 
-                bindParameters(notRegion, stateVariables, Quantifier.FORALL);
-        V state = outterRegion.get(key);
-        Expression stateRegion = state.toExpression();
-        Set<Variable<?>> newStateVariables = convertToVariableSet(state);
-        newStateVariables.addAll(stateVariables);
-        stateRegion =
-                bindParameters(stateRegion,
-                        newStateVariables, Quantifier.EXISTS);
-        Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
-        long start = System.currentTimeMillis();
-        Valuation val = new Valuation();
-        ConstraintSolver.Result rs = solver.solve(testDiffState, val);
-        logger.finest("gov.nasa.jpf.psyco.search.util.region" 
-                + ".RegionUtil.difference()");
-        logger.finest("result" + ExpressionUtil.valuationToExpression(val));
-        long stop = System.currentTimeMillis();
-        logger.finer("Time needed for difference: " 
-                + Long.toString(stop - start) + " in Millis");
-        if(rs == ConstraintSolver.Result.SAT){
-          resultRegion.put(key, state);
-          toExclude.add(state);
-          logger.finer("excludedSize: " + toExclude.size());
-        }else if(rs == ConstraintSolver.Result.DONT_KNOW){
-          throw new IllegalStateException("Cannot compute difference test");
-        }
-        else{
-          logger.finer("result: " + rs);
-        }
+    for (String key : outterRegion.keySet()) {
+      Expression excludedRegionExpr = convertSetToExpression(toExclude);
+      Set<Variable<?>> stateVariables = convertToVariableSet(excludedRegion);
+      notRegion = new Negation(excludedRegionExpr);
+      notRegion
+              = bindParameters(notRegion, stateVariables, Quantifier.FORALL);
+      V state = outterRegion.get(key);
+      Expression stateRegion = state.toExpression();
+      Set<Variable<?>> newStateVariables = convertToVariableSet(state);
+      newStateVariables.addAll(stateVariables);
+      stateRegion
+              = bindParameters(stateRegion,
+                      newStateVariables, Quantifier.EXISTS);
+      Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
+      long start = System.currentTimeMillis();
+      Valuation val = new Valuation();
+      ConstraintSolver.Result rs = solver.solve(testDiffState, val);
+      logger.finest("gov.nasa.jpf.psyco.search.util.region"
+              + ".RegionUtil.difference()");
+      logger.finest("result" + ExpressionUtil.valuationToExpression(val));
+      long stop = System.currentTimeMillis();
+      logger.finer("Time needed for difference: "
+              + Long.toString(stop - start) + " in Millis");
+      if (rs == ConstraintSolver.Result.SAT) {
+        resultRegion.put(key, state);
+        toExclude.add(state);
+        logger.finer("excludedSize: " + toExclude.size());
+      } else if (rs == ConstraintSolver.Result.DONT_KNOW) {
+        throw new IllegalStateException("Cannot compute difference test");
+      } else {
+        logger.finer("result: " + rs);
+      }
     }
     return resultRegion;
   }
 
   public T exists(T aRegion, Set<Variable<?>> subsetOfVariables) {
     T existingRegion = (T) aRegion.createNewRegion();
-    if(aRegion.isEmpty()){
+    if (aRegion.isEmpty()) {
       return existingRegion;
     }
-    for(String key: aRegion.keySet()){
+    for (String key : aRegion.keySet()) {
       State<?> state = aRegion.get(key);
-      for(ValuationEntry entry: state){
-        if(!subsetOfVariables.contains(entry.getVariable())){
+      for (ValuationEntry entry : state) {
+        if (!subsetOfVariables.contains(entry.getVariable())) {
           existingRegion.put(key, (V) state);
           break;
         }
@@ -134,8 +134,8 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
 
   public Set<Variable<?>> convertToVariableSet(T region) {
     Set<Variable<?>> resultingSet = new HashSet<>();
-    for(State <?> state: region.values()){
-      for(ValuationEntry entry: state){
+    for (State<?> state : region.values()) {
+      for (ValuationEntry entry : state) {
         resultingSet.add(entry.getVariable());
       }
     }
@@ -144,52 +144,52 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?,V>> {
 
   public Set<Variable<?>> convertToVariableSet(State<?> state) {
     Set<Variable<?>> resultingSet = new HashSet<>();
-    for(ValuationEntry entry: state){
+    for (ValuationEntry entry : state) {
       resultingSet.add(entry.getVariable());
     }
     return resultingSet;
   }
 
-  protected String getUniqueName(){
+  protected String getUniqueName() {
     String uniqueName = "uVarReplacement_" + unique;
     ++unique;
     return uniqueName;
   }
-  
-  protected String getUniqueParameterName(Variable parameter){
+
+  protected String getUniqueParameterName(Variable parameter) {
     String uniqueName = "p" + parameter.getName() + "_" + unique;
     ++unique;
     return uniqueName;
   }
 
   private Expression bindParameters(Expression region,
-          Set<Variable<?>> stateVariables, Quantifier quantifier){
+          Set<Variable<?>> stateVariables, Quantifier quantifier) {
     Set<Variable<?>> freeVars = ExpressionUtil.freeVariables(region);
     ArrayList<Variable<?>> bound = new ArrayList<>();
-    for(Variable var: freeVars){
-      if(!stateVariables.contains(var) 
-              && !var.getName().startsWith("uVarReplacement")){
+    for (Variable var : freeVars) {
+      if (!stateVariables.contains(var)
+              && !var.getName().startsWith("uVarReplacement")) {
         logger.finest("gov.nasa.jpf.psyco.search.region"
                 + ".util.SymbolicRegionUtil.bindParameters()");
         logger.finest(var.getName());
         bound.add(var);
       }
     }
-    if(!bound.isEmpty()){
+    if (!bound.isEmpty()) {
       region = new QuantifierExpression(quantifier, bound, region);
     }
     return region;
   }
 
-  private Expression convertSetToExpression(Set<State> states){
+  private Expression convertSetToExpression(Set<State> states) {
     Expression expr = null;
-    for(State state: states){
+    for (State state : states) {
       Expression stateExpr = state.toExpression();
-      expr = expr==null? stateExpr : ExpressionUtil.or(expr, stateExpr);
+      expr = expr == null ? stateExpr : ExpressionUtil.or(expr, stateExpr);
     }
     return expr;
   }
 
-  public abstract T rename(Region<?,V> region,
+  public abstract T rename(Region<?, V> region,
           List<Variable<?>> primeNames, List<Variable<?>> variableNames);
 }

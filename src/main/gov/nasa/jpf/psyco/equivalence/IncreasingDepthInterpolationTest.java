@@ -25,7 +25,6 @@ import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.exceptions.CounterexampleFound;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
-import gov.nasa.jpf.psyco.interpolation.InterpolationCache;
 import gov.nasa.jpf.psyco.interpolation.InterpolationUtil;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
@@ -38,29 +37,31 @@ import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
 public class IncreasingDepthInterpolationTest implements SymbolicEquivalenceTest {
-  
+
   private static final JPFLogger logger = JPF.getLogger("psyco");
 
   private InterpolationUtil util;
-  
+
   private final int kMax;
-  
+
   private final SummaryAlphabet inputs;
 
   private final ThreeValuedOracle oracle;
-    
+
   private final ConstraintSolver cSolver;
-  
+
   private final InterpolationSolver iSolver;
 
   private final TerminationStrategy termination;
-  
-  private int k = 1;
-    
-  private MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model;
 
-  public IncreasingDepthInterpolationTest(int kMax, SummaryAlphabet inputs, 
-          ThreeValuedOracle oracle, ConstraintSolver cSolver, InterpolationSolver iSolver, 
+  private int k = 1;
+
+  private MealyMachine<Object, SymbolicMethodSymbol, ?,
+          SymbolicQueryOutput> model;
+
+  public IncreasingDepthInterpolationTest(int kMax, SummaryAlphabet inputs,
+          ThreeValuedOracle oracle, ConstraintSolver cSolver,
+          InterpolationSolver iSolver,
           TerminationStrategy termination) {
     this.kMax = kMax;
     this.inputs = inputs;
@@ -71,27 +72,31 @@ public class IncreasingDepthInterpolationTest implements SymbolicEquivalenceTest
     this.util = new InterpolationUtil(iSolver, cSolver, inputs, model);
   }
 
-  public IncreasingDepthInterpolationTest(SummaryAlphabet inputs, 
-          ThreeValuedOracle oracle, ConstraintSolver cSolver, InterpolationSolver iSolver, 
+  public IncreasingDepthInterpolationTest(SummaryAlphabet inputs,
+          ThreeValuedOracle oracle, ConstraintSolver cSolver,
+          InterpolationSolver iSolver,
           TerminationStrategy termination) {
     this(-1, inputs, oracle, cSolver, iSolver, termination);
-  }  
-    
+  }
+
   @Override
   public void logStatistics() {
-    logger.info("EQ Test depth completed: " + (k-1));
+    logger.info("EQ Test depth completed: " + (k - 1));
     logger.info("EQ Test max depth: " + kMax);
-  }  
+  }
 
   @Override
-  public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExample(
-          MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a, Collection<? extends SymbolicMethodSymbol> clctn) {
+  public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> 
+        findCounterExample(
+          MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a,
+          Collection<? extends SymbolicMethodSymbol> clctn) {
 
-    this.model = (MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput>)a;
+    this.model = (MealyMachine<Object, SymbolicMethodSymbol, ?,
+            SymbolicQueryOutput>) a;
     DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce = null;
     this.util = new InterpolationUtil(iSolver, cSolver, inputs, model);
     k = 2;
-    try {      
+    try {
       while (true) {
         ce = check(k);
         if (ce != null) {
@@ -101,12 +106,12 @@ public class IncreasingDepthInterpolationTest implements SymbolicEquivalenceTest
         logger.info("==== completed depth " + k);
         logger.fine(this.util.getCache());
         k++;
-        //this.util = new InterpolationUtil(iSolver, cSolver, inputs, model);    
-        if (deepEnough()) {          
+        //this.util = new InterpolationUtil(iSolver, cSolver, inputs, model);
+        if (deepEnough()) {
           return null;
         }
       }
-      
+
     } catch (Terminate t) {
       return null;
     }
@@ -119,20 +124,19 @@ public class IncreasingDepthInterpolationTest implements SymbolicEquivalenceTest
       Word<Path> empty = Word.epsilon();
       util.expand(eps, empty, k);
     } catch (CounterexampleFound ce) {
-      DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ret = 
-              new DefaultQuery<>(ce.getCounterexample());
+      DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ret
+              = new DefaultQuery<>(ce.getCounterexample());
       oracle.processQueries(Collections.singletonList(ret));
       return ret;
     }
     return null;
   }
-  
+
   public int getCurrentK() {
     return k;
   }
-  
-  private boolean deepEnough() {
-    return (kMax > 0 ) && (k > kMax);
-  }
 
+  private boolean deepEnough() {
+    return (kMax > 0) && (k > kMax);
+  }
 }

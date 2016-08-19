@@ -40,7 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class SymbolicTransitionHelper extends TransitionHelper{
+public class SymbolicTransitionHelper extends TransitionHelper {
+
   private final JPFLogger logger;
   private final VariableReplacementVisitor replacementVisitor;
   private final VariableRestrictionsVisitor restrictionsVisitor;
@@ -54,13 +55,14 @@ public class SymbolicTransitionHelper extends TransitionHelper{
   }
 
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition){
-    if(image instanceof SymbolicImage){
+  public StateImage applyTransition(StateImage image, Transition transition) {
+    if (image instanceof SymbolicImage) {
       SymbolicRegion newRegion = new SymbolicRegion();
       SymbolicImage currentState = (SymbolicImage) image;
       int depth = currentState.getDepth();
-      for(SymbolicState state: currentState.getPreviousNewStates().values()){
-        if(satisfiesGuardCondition(state, transition, depth)){
+      for (SymbolicState state : 
+              currentState.getPreviousNewStates().values()) {
+        if (satisfiesGuardCondition(state, transition, depth)) {
           SymbolicState newState = executeTransition(state, transition);
           newRegion.put(HelperMethods.getUniqueStateName(), newState);
         }
@@ -75,14 +77,14 @@ public class SymbolicTransitionHelper extends TransitionHelper{
           Transition transition) {
     Expression newValue = null;
     SymbolicState resultingState = new SymbolicState();
-    if(!transition.isGuardSymbolicConstant()){
+    if (!transition.isGuardSymbolicConstant()) {
       newValue = transition.getGuardCondition();
     }
-    VariableReplacementMap replacements = 
-            extractValueReplacements(state);
-    for(SymbolicEntry entry: state){
-      SymbolicEntry primeEntry =
-              executeTransitionOnEntry(
+    VariableReplacementMap replacements
+            = extractValueReplacements(state);
+    for (SymbolicEntry entry : state) {
+      SymbolicEntry primeEntry
+              = executeTransitionOnEntry(
                       entry, transition, newValue, replacements);
       resultingState.add(primeEntry);
     }
@@ -90,14 +92,15 @@ public class SymbolicTransitionHelper extends TransitionHelper{
     return resultingState;
   }
 
-  private VariableReplacementMap extractValueReplacements(SymbolicState state){
+  private VariableReplacementMap extractValueReplacements(
+          SymbolicState state) {
     VariableReplacementMap replacements = new VariableReplacementMap();
-    for(SymbolicEntry entry: state){
-      Expression replacement = 
+    for (SymbolicEntry entry : state) {
+      Expression replacement =
             extractValueForReplacement(entry.getVariable(), entry.getValue());
-      if(!replacements.containsKey(entry.getVariable())){
+      if (!replacements.containsKey(entry.getVariable())) {
         replacements.put(entry.getVariable(), replacement);
-      }else{
+      } else {
         throw new IllegalStateException("IT IS NOT POSSIBLE TO "
                 + "REPLACE A VARIABLE WITH TWO VALUES");
       }
@@ -107,104 +110,105 @@ public class SymbolicTransitionHelper extends TransitionHelper{
 
   private SymbolicEntry executeTransitionOnEntry(SymbolicEntry entry,
           Transition transition, Expression prefix,
-          VariableReplacementMap replacements){
+          VariableReplacementMap replacements) {
     Variable oldVariable = entry.getVariable(),
             primeVariable = createPrimeVariable(oldVariable);
     Expression transitionEffekt = transition.getTransitionEffect(oldVariable);
-    Expression newValue = 
-        prefix != null ?
-        (Expression) prefix.accept(replacementVisitor, replacements)
-        : prefix;
-    
+    Expression newValue
+            = prefix != null
+                ? (Expression) prefix.accept(replacementVisitor, replacements)
+                : prefix;
+
     List<NumericBooleanExpression> oldRestrictionsToKeep = new ArrayList<>();
-    Set<Variable<?>> possibleBound = ExpressionUtil.freeVariables(entry.getValue());
+    Set<Variable<?>> possibleBound = 
+            ExpressionUtil.freeVariables(entry.getValue());
     entry.getValue().accept(restrictionsVisitor, oldRestrictionsToKeep);
-    for(NumericBooleanExpression expr: oldRestrictionsToKeep){
+    for (NumericBooleanExpression expr : oldRestrictionsToKeep) {
       Set<Variable<?>> variables = ExpressionUtil.freeVariables(expr);
-      for(Variable var: variables){
-        if((!(var.getName().startsWith("uVarReplacement"))) 
+      for (Variable var : variables) {
+        if ((!(var.getName().startsWith("uVarReplacement")))
                 && (!variables.contains(entry.getVariable()))
-                && possibleBound.contains(var)){
+                && possibleBound.contains(var)) {
           newValue = ExpressionUtil.and(newValue, expr);
           break;
         }
       }
     }
-    if(isStutterEffektForVariable(oldVariable, transitionEffekt)
-            || transitionEffekt == null){
+    if (isStutterEffektForVariable(oldVariable, transitionEffekt)
+            || transitionEffekt == null) {
       newValue = createStutterTransition(oldVariable,
-                          primeVariable, entry.getValue());
-    }else if(isConstantAssignment(transitionEffekt)){
-        newValue = 
-              createConstantAssignment(primeVariable, transitionEffekt);
-    }else{
+              primeVariable, entry.getValue());
+    } else if (isConstantAssignment(transitionEffekt)) {
+      newValue
+              = createConstantAssignment(primeVariable, transitionEffekt);
+    } else {
       newValue = createResultValue(oldVariable, primeVariable,
               transitionEffekt, replacements, newValue);
     }
     logger.finest("gov.nasa.jpf.psyco.search.transitionSystem."
             + "SymbolicTransitionHelper.executeTransitionOnEntry()");
-    logger.finest("primeVariable: " + primeVariable + " newValue: " 
+    logger.finest("primeVariable: " + primeVariable + " newValue: "
             + newValue + " oldValue: " + entry.getValue());
     return new SymbolicEntry(primeVariable, newValue);
   }
 
   private boolean isStutterEffektForVariable(Variable oldVariable,
-          Expression transitionEffekt){
-    return transitionEffekt instanceof Variable 
+          Expression transitionEffekt) {
+    return transitionEffekt instanceof Variable
             && transitionEffekt.equals(oldVariable);
   }
 
   private Expression createStutterTransition(Variable oldVariable,
-          Variable primeVariable, Expression<Boolean> value){
+          Variable primeVariable, Expression<Boolean> value) {
     NameMap rename = new NameMap();
     rename.mapNames(oldVariable.getName(), primeVariable.getName());
     return ExpressionUtil.renameVars(value, rename);
   }
 
-  private boolean isConstantAssignment(Expression transitionEffekt){
+  private boolean isConstantAssignment(Expression transitionEffekt) {
     return transitionEffekt instanceof Constant;
   }
 
   private Expression createConstantAssignment(Variable primeVariable,
-          Expression transitionEffekt){
+          Expression transitionEffekt) {
     return NumericBooleanExpression.create(primeVariable,
-                    NumericComparator.EQ, transitionEffekt);
+            NumericComparator.EQ, transitionEffekt);
   }
 
-  private Expression createResultValue(Variable oldVariable, 
+  private Expression createResultValue(Variable oldVariable,
           Variable primeVariable,
           Expression transitionEffekt,
           VariableReplacementMap replacements,
-          Expression prefix){
-    transitionEffekt = (Expression) 
+          Expression prefix) {
+    transitionEffekt = (Expression)
             transitionEffekt.accept(replacementVisitor, replacements);
     Expression newValuePart = NumericBooleanExpression.create(primeVariable,
-                    NumericComparator.EQ, transitionEffekt);
+            NumericComparator.EQ, transitionEffekt);
     return appendNewValue(prefix, newValuePart);
   }
 
   private Expression extractValueForReplacement(Variable oldVariable,
-          Expression oldValue){
+          Expression oldValue) {
     HashMap<Variable, List<Expression>> data = new HashMap<>();
     data.put(oldVariable, new ArrayList<Expression>());
     oldValue.accept(assignmentVisitor, data);
     List list = data.get(oldVariable);
-    if(list.size() > 1){
+    if (list.size() > 1) {
       throw new IllegalStateException(
               "Cannot handle undefined value assignment");
-    }else if(list.size() == 1){
+    } else if (list.size() == 1) {
       return (Expression) list.get(0);
     }
     return oldVariable;
   }
 
-  private Expression appendNewValue(Expression newValue, Expression toAppend){
-    newValue = (newValue == null? toAppend:
-              ExpressionUtil.and(newValue, toAppend));
+  private Expression appendNewValue(Expression newValue, Expression toAppend) {
+    newValue = (newValue == null ? toAppend
+            : ExpressionUtil.and(newValue, toAppend));
     return newValue;
   }
 
-  private Variable createPrimeVariable(Variable var){
+  private Variable createPrimeVariable(Variable var) {
     String newName = var.getName() + "'";
     return Variable.create(var.getType(), newName);
   }

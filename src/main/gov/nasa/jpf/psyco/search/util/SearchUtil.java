@@ -28,31 +28,32 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class SearchUtil<T extends StateImage> {
+
   private RegionUtil util;
   private long uniqueCount = 1L;
   private long uniqueStateCount;
   private Logger logger;
 
-  public SearchUtil(RegionUtil util){
+  public SearchUtil(RegionUtil util) {
     this.logger = Logger.getLogger(SymbolicSearchEngine.getSearchLoggerName());
     this.util = util;
   }
 
   public T post(T currentSearchState,
-          TransitionSystem transitionSystem){
-    Set<Variable<?>> variablesInPreviousState = 
+          TransitionSystem transitionSystem) {
+    Set<Variable<?>> variablesInPreviousState =
             util.convertToVariableSet(currentSearchState.getReachableStates());
-    T iterationResult = 
-            applyIterationOfTheTransitionSystem(currentSearchState,
+    T iterationResult
+            = applyIterationOfTheTransitionSystem(currentSearchState,
                     transitionSystem);
     PsycoProfiler.newStates(iterationResult.getDepth(),
             iterationResult.getNewStates().size());
-    Region existingRegion = 
+    Region existingRegion =
             util.exists(iterationResult.getNewStates(),
                     variablesInPreviousState);
     PsycoProfiler.startRenamingProfiler(currentSearchState.getDepth());
 
-    Region renamedRegion = 
+    Region renamedRegion =
             rename(existingRegion, variablesInPreviousState);
     PsycoProfiler.stopRenamingProfiler(currentSearchState.getDepth());
     iterationResult.setNewStates(renamedRegion);
@@ -66,10 +67,11 @@ public class SearchUtil<T extends StateImage> {
     return alreadyReachedStates;
   }
 
-  private Region rename(Region existingRegion, Set<Variable<?>> variablesInPreviousState) {
+  private Region rename(Region existingRegion,
+          Set<Variable<?>> variablesInPreviousState) {
     List<Variable<?>> primeNames = new ArrayList<>();
     List<Variable<?>> variableNames = new ArrayList<>();
-    for(Variable var: variablesInPreviousState){
+    for (Variable var : variablesInPreviousState) {
       String primeName = var.getName() + "'";
       Variable primeVar = new Variable(var.getType(), primeName);
       primeNames.add(primeVar);

@@ -59,7 +59,8 @@ public class PathUtil {
 
   }
 
-  public static Collection<PathQuery> explode(Word<SymbolicMethodSymbol> in, SummaryAlphabet inputs) {
+  public static Collection<PathQuery> explode(
+          Word<SymbolicMethodSymbol> in, SummaryAlphabet inputs) {
     if (in.length() < 1) {
       Word<Path> eps = Word.epsilon();
       return Collections.singletonList(new PathQuery(in, eps));
@@ -72,7 +73,8 @@ public class PathUtil {
   }
 
   private static void explode(Word<SymbolicMethodSymbol> in, int pos,
-          Word<Path> prefix, Collection<PathQuery> queries, SummaryAlphabet inputs) {
+          Word<Path> prefix, Collection<PathQuery> queries,
+          SummaryAlphabet inputs) {
 
     SymbolicMethodSymbol a = in.getSymbol(pos);
     SymbolicExecutionResult summary = inputs.getSummary(a);
@@ -89,7 +91,8 @@ public class PathUtil {
   }
 
   public static Path executeSymbolically(
-          Word<SymbolicMethodSymbol> sword, Word<Path> paths, Valuation initial) {
+          Word<SymbolicMethodSymbol> sword,
+          Word<Path> paths, Valuation initial) {
 
     ArrayList<Expression<Boolean>> pc = new ArrayList<>();
     Map<Variable<?>, Expression<?>> val = new HashMap<>();
@@ -119,7 +122,8 @@ public class PathUtil {
         break;
       case ERROR:
         PathResult.ErrorResult err = last.getErrorResult();
-        res = PathResult.error(null, err.getExceptionClass(), err.getStackTrace());
+        res = 
+          PathResult.error(null, err.getExceptionClass(), err.getStackTrace());
         break;
       case DONT_KNOW:
         res = PathResult.dontKnow();
@@ -129,7 +133,8 @@ public class PathUtil {
     return new Path(asPathCondition(pc), res);
   }
 
-  private static PostCondition asPostCondition(Map<Variable<?>, Expression<?>> map) {
+  private static PostCondition asPostCondition(
+          Map<Variable<?>, Expression<?>> map) {
     PostCondition post = new PostCondition();
     post.getConditions().putAll(map);
     return post;
@@ -168,7 +173,8 @@ public class PathUtil {
     });
   }
 
-  private static Expression<Boolean> asPathCondition(ArrayList<Expression<Boolean>> pc) {
+  private static Expression<Boolean> asPathCondition(
+          ArrayList<Expression<Boolean>> pc) {
     if (pc.isEmpty()) {
       return ExpressionUtil.TRUE;
     }
@@ -181,14 +187,16 @@ public class PathUtil {
     return ExpressionUtil.and(expr, asPathCondition(pc));
   }
 
-  public static Collection<Expression<Boolean>> decomposePath(Expression<Boolean> path) {
+  public static Collection<Expression<Boolean>> decomposePath(
+          Expression<Boolean> path) {
     ArrayList<Expression<Boolean>> list = new ArrayList<>();
     decomposePath(path, list);
     list.removeAll(Collections.singleton(ExpressionUtil.TRUE));
     return list;
   }
 
-  private static void decomposePath(Expression<Boolean> path, Collection<Expression<Boolean>> atoms) {
+  private static void decomposePath(
+          Expression<Boolean> path, Collection<Expression<Boolean>> atoms) {
     if (!(path instanceof PropositionalCompound)) {
       atoms.add(path);
     } else {

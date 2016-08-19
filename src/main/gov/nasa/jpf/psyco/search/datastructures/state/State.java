@@ -21,11 +21,12 @@ import gov.nasa.jpf.constraints.api.Variable;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class State<T extends ValuationEntry> extends HashSet<T>{
-  public Set<T> getEntriesForVariable(Variable var){
+public abstract class State<T extends ValuationEntry> extends HashSet<T> {
+
+  public Set<T> getEntriesForVariable(Variable var) {
     Set<T> entriesForVariable = new HashSet<>();
-    for(T entry: this){
-      if(entry.getVariable().equals(var)){
+    for (T entry : this) {
+      if (entry.getVariable().equals(var)) {
         entriesForVariable.add(entry);
       }
     }
@@ -33,5 +34,6 @@ public abstract class State<T extends ValuationEntry> extends HashSet<T>{
   }
 
   public abstract Expression<Boolean> toExpression();
+
   public abstract State<T> createEmptyState();
 }

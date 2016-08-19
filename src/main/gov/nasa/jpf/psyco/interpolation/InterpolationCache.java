@@ -25,10 +25,6 @@ import gov.nasa.jpf.util.JPFLogger;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author falk
- */
 public class InterpolationCache {
 
   private static class StateCache {
@@ -63,7 +59,8 @@ public class InterpolationCache {
     this.clear();
   }
 
-  public Expression<Boolean> lookup(int depth, Object state, Expression<Boolean> expr) {
+  public Expression<Boolean> lookup(int depth, Object state,
+          Expression<Boolean> expr) {
     StateCache sc = caches.get(state);
     if (sc == null) {
       misses.addDataPoint((long) depth);
@@ -112,5 +109,4 @@ public class InterpolationCache {
   public String toString() {
     return "" + misses.getDetails() + hits.getDetails();
   }
-
 }

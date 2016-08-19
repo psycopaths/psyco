@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015, United States Government, as represented by the 
+ * Administrator of the National Aeronautics and Space Administration.
+ * All rights reserved.
+ *
+ * The PSYCO: A Predicate-based Symbolic Compositional Reasoning environment 
+ * platform is licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may obtain a 
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+ * specific language governing permissions and limitations under the License.
  */
 package transitionSystem;
 
@@ -34,18 +44,11 @@ import gov.nasa.jpf.psyco.search.transitionSystem.TransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystemLoader;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author mmuesly
- */
 public class TransitionSystemTest {
   
   public TransitionSystemTest() {
@@ -56,11 +59,11 @@ public class TransitionSystemTest {
     String[] args = {};
     Config conf = new Config(args);
     conf.setProperty("symbolic.dp", "NativeZ3");
-    conf.setProperty("symbolic.dp", "NativeZ3");
+    conf.setProperty("symbolic.dp.z3.bitvectors", "false");
     conf.setProperty("log.finest", "psyco");
-    PsycoConfig pconf = new PsycoConfig(conf);
     ConstraintSolverFactory factory = new ConstraintSolverFactory(conf);
     solver = factory.createSolver();
+    PsycoConfig pconf = new PsycoConfig(conf, solver, null);
   }
 
   /*
@@ -101,7 +104,6 @@ public class TransitionSystemTest {
   @Test
   public void transitionSystemTest1(){
     TransitionSystem system = createTransitionSystem();
-    System.out.println(system.completeToString());
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
     StateImage image = 
@@ -135,21 +137,15 @@ public class TransitionSystemTest {
   @Test
   public void transitionSystemTest2(){
     TransitionSystem system = createTransitionSystem2();
-    System.out.println(system.completeToString());
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
     StateImage image = null;
     try{
       image = 
             SymbolicSearchEngine.symbolicBreadthFirstSearch(system,
-                    solver, 3); //Integer.MIN_VALUE);
+                    solver, Integer.MIN_VALUE);
     }catch(IllegalStateException ex){
       assertFalse(true);
-    }
-    try {
-      image.print(System.out);
-    } catch (IOException ex) {
-      Logger.getLogger(TransitionSystemTest.class.getName()).log(Level.SEVERE, null, ex);
     }
     assertEquals(2, image.getDepth());
     List<Transition> errorTransition = system.getConsideredErrorTransitions();
@@ -167,25 +163,18 @@ public class TransitionSystemTest {
           counter ++;
         }else{counter--;}
     }
-    assertEquals(2, counter);
+    assertEquals(0, counter);
     assertEquals(2, image.getReachableStates().size());
   }
 
   @Test
   public void transitionSystemTest3(){
     TransitionSystem system = createTransitionSystem3();
-    System.out.println("transitionSystem.TransitionSystemTest.transitionSystemTest3()");
-    System.out.println(system.completeToString());
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
     StateImage image = 
             SymbolicSearchEngine.symbolicBreadthFirstSearch(system,
                     solver, Integer.MIN_VALUE);
-    try {
-      image.print(System.out);
-    } catch (IOException ex) {
-      Logger.getLogger(TransitionSystemTest.class.getName()).log(Level.SEVERE, null, ex);
-    }
     assertEquals(2, image.getDepth());
     List<Transition> errorTransition = system.getConsideredErrorTransitions();
     for(Transition t: errorTransition){
@@ -253,31 +242,33 @@ public class TransitionSystemTest {
 
   private TransitionSystem createTransitionSystem2(){
     Variable var = new Variable(BuiltinTypes.SINT32, "this.x");
-    Variable var1 = new Variable(BuiltinTypes.SINT32, "this.y");
     Variable parameter = new Variable(BuiltinTypes.SINT32, "p");
-//    Variable parameter2 = new Variable(BuiltinTypes.SINT32, "z");
     Constant<Integer> constant = Constant.create(BuiltinTypes.SINT32, 5);
     Constant<Integer> constant1 = Constant.create(BuiltinTypes.SINT32, 1);
     Constant constant2 = Constant.create(BuiltinTypes.SINT32, 15);
     Constant constant3 = Constant.create(BuiltinTypes.SINT32, 15*15);
+    Constant constant4 = Constant.create(BuiltinTypes.SINT32, 300);
+    Constant constant5 = Constant.create(BuiltinTypes.SINT32, 0);
     Expression guard1 = NumericBooleanExpression.create(var,
             NumericComparator.GT, constant);
-//    Expression guard2 = NumericBooleanExpression.create(var1,
-//            NumericComparator.NE, constant3);
+    NumericCompound part = NumericCompound.create(var,
+            NumericOperator.PLUS, parameter);
+    Expression guard2 = NumericBooleanExpression.create(part, 
+            NumericComparator.LT, constant4);
     Expression guard6 = NumericBooleanExpression.create(parameter,
             NumericComparator.GT, constant2);
+    Expression guard7 = NumericBooleanExpression.create(part, 
+            NumericComparator.GT, constant5);
     Expression guard = 
             new PropositionalCompound(guard1, LogicalOperator.AND, guard6);
-//    guard = new PropositionalCompound(guard, LogicalOperator.AND, guard2);
+    guard = new PropositionalCompound(guard, LogicalOperator.AND, guard2);
+    guard = new PropositionalCompound(guard, LogicalOperator.AND, guard7);
     Expression effect = 
             new NumericCompound(var, NumericOperator.PLUS, parameter);
-//    Expression effect2 = 
-//            new NumericCompound(var1, NumericOperator.MUL, parameter2);
     PostCondition post = new PostCondition();
     post.addCondition(var, effect);
-//    post.addCondition(var1, effect2);
     Path p = new Path(guard, new PathResult.OkResult(null, post));
-    Expression guard3 = NumericBooleanExpression.create(var1,
+    Expression guard3 = NumericBooleanExpression.create(var,
             NumericComparator.EQ, constant3);
     Path p2 = new Path(guard3,
             new PathResult.ErrorResult(null,
@@ -291,11 +282,9 @@ public class TransitionSystemTest {
     Expression effect3 = new Constant(BuiltinTypes.SINT32, 1);
     post = new PostCondition();
     post.addCondition(var, effect3);
-//    post.addCondition(var1, var1);
     Path p4 = new Path(guard5, new PathResult.OkResult(null, post));
     Valuation initValuation = new Valuation();
     initValuation.addEntry(new ValuationEntry(var,7));
-//    initValuation.addEntry(new ValuationEntry(var1,1));
     TransitionSystem system = new TransitionSystem();
     system.setInitValuation(initValuation);
     system.add(p);

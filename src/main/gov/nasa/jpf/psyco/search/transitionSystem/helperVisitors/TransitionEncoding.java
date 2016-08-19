@@ -16,6 +16,7 @@
 package gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors;
 
 public class TransitionEncoding {
+
   public static final char numericBooleanExpression = 'A';
   public static final char negation = 'N';
   public static final char constant = 'C';
@@ -29,7 +30,7 @@ public class TransitionEncoding {
   public static final char bitVector = 'B';
   public static final char bitVectorOperator = 'O';
   public static final char bitVectorNegation = 'Q';
-  public static final char effect ='E';
+  public static final char effect = 'E';
   public static final char guard = 'H';
   public static final char transitionBody = 'T';
   public static final char valuation = 'I';

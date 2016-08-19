@@ -16,7 +16,6 @@
 package gov.nasa.jpf.psyco.search;
 
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
-import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
 import gov.nasa.jpf.psyco.search.util.region.EnumerativeRegionUtil;
@@ -28,22 +27,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EnumerativeSearchEngine {
-    public static EnumerativeImage enumerativBreadthFirstSearch(
+
+  public static EnumerativeImage enumerativBreadthFirstSearch(
           TransitionSystem transitionSystem,
           ConstraintSolver solver,
-          int maxSearchDepth){
+          int maxSearchDepth) {
     SolverInstance.getInstance().setSolver(solver);
-    EnumerativeRegion newRegion, reachableRegion =
-            new EnumerativeRegion(transitionSystem.getInitValuation());
+    EnumerativeRegion newRegion, reachableRegion
+            = new EnumerativeRegion(transitionSystem.getInitValuation());
     EnumerativeRegionUtil regionUtil = new EnumerativeRegionUtil(solver);
-    SearchUtil<EnumerativeImage> searchUtil = 
-            new SearchUtil<> (regionUtil);
-    EnumerativeImage currentSearchState = 
-            new EnumerativeImage(reachableRegion);
+    SearchUtil<EnumerativeImage> searchUtil
+            = new SearchUtil<>(regionUtil);
+    EnumerativeImage currentSearchState
+            = new EnumerativeImage(reachableRegion);
     currentSearchState.setPreviousNewStates(reachableRegion);
     //If newRegion is empty, it was not possible to reach a new state by 
     //the last iteration. A fix point is reached. This is the termiantion goal.
-    while(!currentSearchState.getPreviousNewStates().isEmpty()){
+    while (!currentSearchState.getPreviousNewStates().isEmpty()) {
       EnumerativeImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
       EnumerativeRegion nextReachableStates = newImage.getNewStates();
@@ -54,15 +54,15 @@ public class EnumerativeSearchEngine {
       PsycoProfiler.stopDiffProfieler(newImage.getDepth());
 
       reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
-            newImage.setReachableStates(reachableRegion);
+      newImage.setReachableStates(reachableRegion);
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);
       newImage.setNewStates(null);
       currentSearchState = newImage;
 
       logState(currentSearchState);
-      if(maxSearchDepth != Integer.MIN_VALUE 
-              && currentSearchState.getDepth() == maxSearchDepth){
+      if (maxSearchDepth != Integer.MIN_VALUE
+              && currentSearchState.getDepth() == maxSearchDepth) {
         currentSearchState.setDepth(Integer.MAX_VALUE);
         break;
       }
@@ -70,9 +70,9 @@ public class EnumerativeSearchEngine {
     return currentSearchState;
   }
 
-  private static void logState(EnumerativeImage newImage){
+  private static void logState(EnumerativeImage newImage) {
     Logger logger = Logger.getLogger("psyco");
-    StringBuilder builder= new StringBuilder();
+    StringBuilder builder = new StringBuilder();
     try {
       newImage.print(builder);
       logger.fine(builder.toString());

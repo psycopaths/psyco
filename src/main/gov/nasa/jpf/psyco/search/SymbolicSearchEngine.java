@@ -19,7 +19,6 @@ import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
 import gov.nasa.jpf.psyco.search.util.region.SymbolicRegionUtil;
 import gov.nasa.jpf.psyco.search.util.SearchUtil;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
@@ -28,46 +27,39 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *This class implements a Symbolic Breadth-First search
- *The Basis for the Algorithmen is taken from 
- *Alur, R.:2015. 3.4.2 Symbolic Breadth-First Search. 
- *In: Alur, R. Principles of Cyber-Physical Systems. 
- *Cambridge, London: The MIT Press
- *I cite: 
- * Input: A transition system T given by regions Init for the initial states
- * and Trans for transitions, and a region q for the property.
- * Output: If q is reachable in T, return true, else false
- * 
- * reg Reach := Init;
- * reg New := Init;
- * while isEmtpy(new) = 0 do{
- *  if isEmpty(Conj(New, q)) = 0 then return true;
- *  New := Diff(Post(New,Trans),Reach);
- *  Reach := Disj(Reach, New);
- * }
- * return false;
- */
+* This class implements a Symbolic Breadth-First search The Basis for the
+* Algorithmen is taken from Alur, R.:2015. 3.4.2 Symbolic Breadth-First Search.
+* In: Alur, R. Principles of Cyber-Physical Systems. Cambridge, London: The MIT
+* Press I cite: Input: A transition system T given by regions Init for the
+* initial states and Trans for transitions, and a region q for the property.
+* Output: If q is reachable in T, return true, else false
+*
+* reg Reach := Init; reg New := Init; while isEmtpy(new) = 0 do{ if
+* isEmpty(Conj(New, q)) = 0 then return true; New :=
+* Diff(Post(New,Trans),Reach); Reach := Disj(Reach, New); } return false;
+*/
 public class SymbolicSearchEngine {
+
   static String loggerName = "psyco";
   Logger logger = Logger.getLogger(loggerName);
 
   public static SymbolicImage symbolicBreadthFirstSearch(
           TransitionSystem transitionSystem,
           ConstraintSolver solver,
-          int maxSearchDepth){
+          int maxSearchDepth) {
     SolverInstance.getInstance().setSolver(solver);
-    SymbolicRegion newRegion,reachableRegion = 
-            new SymbolicRegion(transitionSystem.getInitValuation());
+    SymbolicRegion newRegion, reachableRegion
+            = new SymbolicRegion(transitionSystem.getInitValuation());
     boolean isLimitedTransitionSystem = transitionSystem.isLimited();
     logLimit(isLimitedTransitionSystem);
     SymbolicRegionUtil regionUtil = new SymbolicRegionUtil(solver);
-    SearchUtil<SymbolicImage> searchUtil = 
-            new SearchUtil<>(regionUtil);
+    SearchUtil<SymbolicImage> searchUtil
+            = new SearchUtil<>(regionUtil);
     //We start to count interation based on 1. 0 is skipped.
-    SymbolicImage currentSearchState = 
-            new SymbolicImage(reachableRegion);
+    SymbolicImage currentSearchState
+            = new SymbolicImage(reachableRegion);
     currentSearchState.setPreviousNewStates(reachableRegion);
-    while(!currentSearchState.getPreviousNewStates().isEmpty()){
+    while (!currentSearchState.getPreviousNewStates().isEmpty()) {
       SymbolicImage newImage = searchUtil.post(currentSearchState,
               transitionSystem);
       SymbolicRegion nextReachableStates = newImage.getNewStates();
@@ -84,8 +76,8 @@ public class SymbolicSearchEngine {
       currentSearchState = newImage;
 
       logState(currentSearchState);
-      if(maxSearchDepth != Integer.MIN_VALUE 
-              && currentSearchState.getDepth() == maxSearchDepth){
+      if (maxSearchDepth != Integer.MIN_VALUE
+              && currentSearchState.getDepth() == maxSearchDepth) {
         currentSearchState.setDepth(Integer.MAX_VALUE);
         break;
       }
@@ -93,9 +85,9 @@ public class SymbolicSearchEngine {
     return currentSearchState;
   }
 
-  private static void logState(SymbolicImage newImage){
+  private static void logState(SymbolicImage newImage) {
     Logger logger = Logger.getLogger("psyco");
-    StringBuilder builder= new StringBuilder();
+    StringBuilder builder = new StringBuilder();
     try {
       newImage.print(builder);
       logger.fine(builder.toString());
@@ -107,12 +99,12 @@ public class SymbolicSearchEngine {
 
   private static void logLimit(boolean limitedTransitionSystem) {
     Logger logger = Logger.getLogger("psyco");
-    if(!limitedTransitionSystem){
+    if (!limitedTransitionSystem) {
       logger.info("");
       logger.info("The Transition system is not finite.");
       logger.info("It is very likely, that the search does not terminate.");
       logger.info("");
-    }else{
+    } else {
       logger.info("");
       logger.info("The Transition system seems to be finite.");
       logger.info("The search should terminate.");
@@ -120,7 +112,7 @@ public class SymbolicSearchEngine {
     }
   }
 
-  public static String getSearchLoggerName(){
+  public static String getSearchLoggerName() {
     return loggerName;
   }
 }

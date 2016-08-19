@@ -19,20 +19,20 @@ import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 
-public class EnumerativeRegion 
-        extends Region<ValuationEntry, EnumerativeState>{
+public class EnumerativeRegion
+        extends Region<ValuationEntry, EnumerativeState> {
 
-  public EnumerativeRegion(){
+  public EnumerativeRegion() {
     super();
   }
 
-  public EnumerativeRegion(Valuation initValuation){
+  public EnumerativeRegion(Valuation initValuation) {
     super(initValuation);
   }
 
   @Override
   public void addInitialValuation(Valuation initValuation) {
-    EnumerativeState initState = new EnumerativeState (initValuation);
+    EnumerativeState initState = new EnumerativeState(initValuation);
     this.put("init", initState);
   }
 

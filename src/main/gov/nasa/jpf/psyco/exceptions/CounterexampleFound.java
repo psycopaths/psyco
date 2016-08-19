@@ -19,12 +19,12 @@ import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import net.automatalib.words.Word;
 
 public class CounterexampleFound extends Exception {
-    
-    private final Word<SymbolicMethodSymbol> counterexample;
 
-    public CounterexampleFound(Word<SymbolicMethodSymbol> counterexample) {
-      this.counterexample = counterexample;            
-    }
+  private final Word<SymbolicMethodSymbol> counterexample;
+
+  public CounterexampleFound(Word<SymbolicMethodSymbol> counterexample) {
+    this.counterexample = counterexample;
+  }
 
   /**
    * @return the counterexample
@@ -32,5 +32,4 @@ public class CounterexampleFound extends Exception {
   public Word<SymbolicMethodSymbol> getCounterexample() {
     return counterexample;
   }
-        
 }

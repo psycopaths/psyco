@@ -19,7 +19,6 @@ import gov.nasa.jpf.psyco.alphabet.AlphabetRefiner;
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.util.MixedParamsException;
-import gov.nasa.jpf.jdart.termination.TerminationStrategy;
 import gov.nasa.jpf.psyco.learnlib.LStar;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
@@ -32,35 +31,33 @@ import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import net.automatalib.automata.transout.MealyMachine;
 
 public class InterfaceGenerator {
-  
+
   private final ConstraintSolver solver;
-  
+
   private final SymbolicMethodAlphabet inputs;
-  
+
   private final SymbolicExecutionOracle seOracle;
-  
+
   private ThreeValuedOracle mqOrcale;
-  
+
   private final SymbolicEquivalenceTest eqTest;
-    
+
   private final AlphabetRefiner refiner;
-  
+
   private LStar lstar = null;
 
   private MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model = null;
 
-  public InterfaceGenerator(DefaultOracleProvider provider, PsycoConfig pconf,
-          SymbolicEquivalenceTest eqTest) {
+  public InterfaceGenerator(DefaultOracleProvider provider, PsycoConfig pconf) {
     this.inputs = provider.getInputs();
     this.seOracle = provider.getSymbolicExecutionOracle();
     this.mqOrcale = provider.getThreeValuedOracle();
-    this.eqTest = eqTest;
+    this.eqTest = provider.getEqTest();
     this.solver = pconf.getConstraintSolver();
     this.refiner = new AlphabetRefiner(seOracle, inputs, solver);
-    
   }
-  
-  public MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> generateInterface() {    
+
+  public MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> generateInterface() {
     while (true) {
       try {
         learnModel();
@@ -80,20 +77,20 @@ public class InterfaceGenerator {
     }
     return this.model;
   }
-      
+
   private void learnModel() {
-    this.lstar = new LStar(inputs, mqOrcale);    
-    this.lstar.startLearning();    
-    while (true) {    
+    this.lstar = new LStar(inputs, mqOrcale);
+    this.lstar.startLearning();
+    while (true) {
       this.model = this.lstar.getHypothesisModel();
-      DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce = 
-              this.eqTest.findCounterExample(this.model, this.inputs);
-      
+      DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce
+              = this.eqTest.findCounterExample(this.model, this.inputs);
+
       if (ce == null) {
         break;
       }
-      
+
       this.lstar.refineHypothesis(ce);
-    }    
+    }
   }
 }

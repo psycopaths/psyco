@@ -21,16 +21,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class StateImage<T extends Region> {
+
   protected int depth = 0;
   protected StringBuilder errors = new StringBuilder();
-  protected T 
-          reachableStates, newStates, previousNewStates;
+  protected T reachableStates, newStates, previousNewStates;
 
-  public StateImage(T reachableStates){
+  public StateImage(T reachableStates) {
     this.reachableStates = reachableStates;
   }
 
-  public StateImage(T reachableStates, StringBuilder errors, int depth){
+  public StateImage(T reachableStates, StringBuilder errors, int depth) {
     this.reachableStates = reachableStates;
     this.errors = errors;
     this.depth = depth;
@@ -44,28 +44,30 @@ public abstract class StateImage<T extends Region> {
     this.depth = depth;
   }
 
-  public void increaseDepth(int amount){
+  public void increaseDepth(int amount) {
     this.depth += amount;
     errors.append("\n");
   }
-  public String reachableErrorsAsString(){
+
+  public String reachableErrorsAsString() {
     return errors.toString();
   }
 
-  public StringBuilder getErrors(){
+  public StringBuilder getErrors() {
     return errors;
   }
 
-  public void setErrors(StringBuilder errors){
+  public void setErrors(StringBuilder errors) {
     this.errors = errors;
   }
 
-  public void addError(String error, int depth){
-    String errorString = "In: " + depth + " reached the error: " +error +"\n";
+  public void addError(String error, int depth) {
+    String errorString = "In: " + depth 
+            + " reached the error: " + error + "\n";
     errors.append(errorString);
   }
 
-  public void addErrorInCurrentDepth(String error){
+  public void addErrorInCurrentDepth(String error) {
     addError(error, depth);
   }
 
@@ -81,14 +83,14 @@ public abstract class StateImage<T extends Region> {
     this.newStates = newStates;
   }
 
-  public T getNewStates(){
+  public T getNewStates() {
     return newStates;
   }
 
-  public void addNewStates(T newStates){
-    if(this.newStates == null){
+  public void addNewStates(T newStates) {
+    if (this.newStates == null) {
       this.newStates = newStates;
-    }else{
+    } else {
       this.newStates.putAll(newStates);
     }
   }
@@ -108,7 +110,7 @@ public abstract class StateImage<T extends Region> {
     searchResultString.append("A good choice for k in Psyco would be k = ");
     searchResultString.append(Integer.toString(depth));
     searchResultString.append("\n");
-    searchResultString.append("There are: " + reachableStates.size() 
+    searchResultString.append("There are: " + reachableStates.size()
             + " states reachable\n");
     searchResultString.append("The reachable states are:\n");
     try {

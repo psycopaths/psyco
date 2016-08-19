@@ -18,6 +18,8 @@ package gov.nasa.jpf.psyco;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
 import gov.nasa.jpf.psyco.filter.Cache;
 import gov.nasa.jpf.psyco.filter.InterpolationCache;
 import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
@@ -27,6 +29,7 @@ import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
 import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.QueryCounter;
+import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.oracles.RefinementCheckOracle;
@@ -52,6 +55,8 @@ public class DefaultOracleProvider {
   private MethodExecutionFilter filter = null;
   
   private final SymbolicMethodAlphabet inputs;
+
+  private SymbolicEquivalenceTest eqtest;
 
   public DefaultOracleProvider(SymbolicExecutionOracle back, SymbolicMethodAlphabet inputs, PsycoConfig pconf) {
     this.back = back;
@@ -102,6 +107,21 @@ public class DefaultOracleProvider {
     if (pconf.isUsePOR()) {
       this.filter = new PORFilter(pconf.getPOR(), inputs);
     }
+
+    if(pconf.isUseInterpolation()){
+      if (pconf.isUseSummaries()) {
+          eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
+                  (SummaryAlphabet)inputs, oracle, 
+                  pconf.getConstraintSolver(), 
+                  pconf.getInterpolationSolver(), 
+                  pconf.getTermination());          
+        }
+        else {
+          eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+        }
+    }else{
+      eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+    }
   }
   
   /**
@@ -127,6 +147,10 @@ public class DefaultOracleProvider {
   
   public SymbolicMethodAlphabet getInputs() {
     return inputs;
+  }
+
+    public SymbolicEquivalenceTest getEqTest() {
+    return eqtest;
   }
 
   public void logStatistics() {

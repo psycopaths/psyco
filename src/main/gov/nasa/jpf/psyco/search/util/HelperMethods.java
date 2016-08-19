@@ -16,16 +16,17 @@
 package gov.nasa.jpf.psyco.search.util;
 
 public class HelperMethods {
+
   private static long currentCounter = 0;
   private static long stateCounter = 0;
-  
-  public static String getUniqueStateName(){
+
+  public static String getUniqueStateName() {
     String stateName = "state_" + stateCounter;
     ++stateCounter;
     return stateName;
   }
-  
-  public static String getLoggerName(){
+
+  public static String getLoggerName() {
     return "psyco";
   }
 }

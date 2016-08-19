@@ -59,5 +59,6 @@ public abstract class MethodExecutionFilter implements
     }
   }
   
-  public abstract boolean evaluateQuery(Query<SymbolicMethodSymbol, Boolean> query); 
+  public abstract boolean 
+        evaluateQuery(Query<SymbolicMethodSymbol, Boolean> query); 
 }

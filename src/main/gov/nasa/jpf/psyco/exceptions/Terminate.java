@@ -31,5 +31,4 @@ public class Terminate extends RuntimeException {
   public TerminationStrategy getStrategy() {
     return strategy;
   }
-
 }

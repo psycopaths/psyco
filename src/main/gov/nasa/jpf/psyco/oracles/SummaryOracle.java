@@ -44,7 +44,8 @@ public class SummaryOracle implements SymbolicExecutionOracle {
   
   @Override
   public void processQueries(
-          Collection<? extends Query<SymbolicMethodSymbol, SymbolicExecutionResult>> clctn) {
+          Collection<? extends 
+                Query<SymbolicMethodSymbol, SymbolicExecutionResult>> clctn) {
     for (Query<SymbolicMethodSymbol, SymbolicExecutionResult> query : clctn) {
       processQuery(query);
     }
@@ -84,5 +85,5 @@ public class SummaryOracle implements SymbolicExecutionOracle {
 
   private boolean sat(Expression<Boolean> expr) {
     return solver.isSatisfiable(expr) == Result.SAT;
-  }  
+  }
 }

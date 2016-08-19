@@ -24,19 +24,22 @@ import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import java.util.HashMap;
 import java.util.List;
 
-public class EnumerativeRegionUtil 
-        extends RegionUtil<EnumerativeState, EnumerativeRegion>{
+public class EnumerativeRegionUtil
+        extends RegionUtil<EnumerativeState, EnumerativeRegion> {
 
   public EnumerativeRegionUtil(ConstraintSolver solver) {
     super(solver);
   }
 
   @Override
-  public EnumerativeRegion rename(Region<?, EnumerativeState> region, List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+  public EnumerativeRegion rename(
+          Region<?, EnumerativeState> region,
+          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
     EnumerativeRegion toBeRenamed = (EnumerativeRegion) region;
     EnumerativeRegion renamedRegion = toBeRenamed.createNewRegion();
-    HashMap<Variable, Variable> names = createHashMap(primeNames, variableNames);
-    for(String key: region.keySet()){
+    HashMap<Variable, Variable> names =
+            createHashMap(primeNames, variableNames);
+    for (String key : region.keySet()) {
       EnumerativeState state = region.get(key);
       state = renameState(state, names);
       renamedRegion.put(key, state);
@@ -44,24 +47,25 @@ public class EnumerativeRegionUtil
     return renamedRegion;
   }
 
-  private EnumerativeState renameState(EnumerativeState state, 
-          HashMap<Variable, Variable> nameReplacements){
+  private EnumerativeState renameState(EnumerativeState state,
+          HashMap<Variable, Variable> nameReplacements) {
     EnumerativeState renamedState = new EnumerativeState();
-    for(ValuationEntry entry: state){
-      Variable newVar = 
-              nameReplacements.getOrDefault(entry.getVariable(),
+    for (ValuationEntry entry : state) {
+      Variable newVar
+              = nameReplacements.getOrDefault(entry.getVariable(),
                       entry.getVariable());
       renamedState.add(new ValuationEntry(newVar, entry.getValue()));
     }
     return renamedState;
   }
 
-  private HashMap<Variable, Variable> createHashMap(List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+  private HashMap<Variable, Variable> createHashMap(
+          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
     HashMap<Variable, Variable> resultMap = new HashMap<>();
-    for(int i = 0; i < primeNames.size(); i++){
+    for (int i = 0; i < primeNames.size(); i++) {
       resultMap.put(primeNames.get(i), variableNames.get(i));
     }
     return resultMap;
   }
-  
+
 }

@@ -31,7 +31,8 @@ import java.util.logging.Level;
 public class SearchShell implements JPFShell {
 
   private final Config config;
-  private final JPFLogger logger; 
+  private final JPFLogger logger;
+
   public SearchShell(Config conf) {
     this.config = conf;
     LogManager.init(conf);
@@ -50,15 +51,15 @@ public class SearchShell implements JPFShell {
   public void run() throws IOException {
 
     PsycoProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
-    
-    ConstraintSolverFactory factory = 
-            new ConstraintSolverFactory(this.config);
-    
+
+    ConstraintSolverFactory factory
+            = new ConstraintSolverFactory(this.config);
+
     ConstraintSolver solver = factory.createSolver();
 
+    PsycoConfig pconf = new PsycoConfig(config, solver, null);
     SummaryStore store = SummaryStore.create(config);
-    if(store == null){
+    if (store == null) {
       System.exit(1);
     }
 
@@ -69,7 +70,5 @@ public class SearchShell implements JPFShell {
     PsycoProfiler.stop("PSYCO-run");
     logger.info("Profiling:\n" + PsycoProfiler.getResults());
     searchEngine.saveProfilerResults();
-  } 
-
-
+  }
 }
