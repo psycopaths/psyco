@@ -25,6 +25,7 @@ import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
 import gov.nasa.jpf.psyco.search.datastructures.region.SymbolicRegion;
 import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicState;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class SymbolicRegionUtil
@@ -35,19 +36,19 @@ public class SymbolicRegionUtil
   }
 
   public SymbolicRegion rename(SymbolicRegion region,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+          Map<Variable, Variable> renamings) {
     SymbolicRegion resultingRegion = region.createNewRegion();
     for (String key : region.keySet()) {
       SymbolicState state = region.get(key);
       SymbolicState renamedState =
-              renameState(state, primeNames, variableNames);
+              renameState(state, renamings);
       resultingRegion.put(key, renamedState);
     }
     return resultingRegion;
   }
 
   private SymbolicState renameState(SymbolicState state,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+          Map<Variable, Variable> renamings) {
     logger.finest("gov.nasa.jpf.psyco.search.region.util."
             + "SymbolicRegionUtil.renameState()");
     logger.finest("stateToRename: ");
@@ -59,13 +60,12 @@ public class SymbolicRegionUtil
     logger.finest("gov.nasa.jpf.psyco.search.region"
             + ".util.SymbolicRegionUtil.renameState()");
     logger.finest("State bevor rename: " + state.toExpression().toString());
-    for (int i = 0; i < primeNames.size(); i++) {
-      Variable primeName = primeNames.get(i);
-      Variable variableName = variableNames.get(i);
+    for (Variable primeVariable: renamings.keySet()) {
+      Variable variableName = renamings.get(primeVariable);
       state
-              = renameAllVariableEntrys(state, primeName, variableName);
+              = renameAllVariableEntrys(state, primeVariable, variableName);
       variablesInTheState.remove(variableName);
-      variablesInTheState.remove(primeName);
+      variablesInTheState.remove(primeVariable);
     }
     for (Variable var : variablesInTheState) {
       if (!var.getName().startsWith("uVarReplacement")) {
@@ -119,8 +119,7 @@ public class SymbolicRegionUtil
   }
 
   @Override
-  public SymbolicRegion rename(Region<?, SymbolicState> region,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
-    return rename((SymbolicRegion) region, primeNames, variableNames);
+  public SymbolicRegion rename(Region<?, SymbolicState> region, Map<Variable, Variable> renamings) {
+    return rename((SymbolicRegion) region, renamings);
   }
 }

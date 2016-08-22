@@ -27,7 +27,7 @@ import gov.nasa.jpf.constraints.expressions.NumericComparator;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
 import gov.nasa.jpf.psyco.search.datastructures.NameMap;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.datastructures.VariableReplacementMap;
 import gov.nasa.jpf.psyco.search.datastructures.state.SymbolicEntry;
@@ -55,7 +55,7 @@ public class SymbolicTransitionHelper extends TransitionHelper {
   }
 
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition) {
+  public SearchIterationImage applyTransition(SearchIterationImage image, Transition transition) {
     if (image instanceof SymbolicImage) {
       SymbolicRegion newRegion = new SymbolicRegion();
       SymbolicImage currentState = (SymbolicImage) image;

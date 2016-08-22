@@ -29,6 +29,7 @@ import gov.nasa.jpf.psyco.search.datastructures.state.State;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 /**
@@ -49,22 +50,17 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?, V>> {
     logger = Logger.getLogger("psyco");
   }
 
-  public T disjunction(T regionA, T regionB) {
-    T disjunctedRegion = (T) regionA.createNewRegion();
-    disjunctedRegion.putAll(regionA);
+  public T union(T regionA, T regionB) {
+    T union = (T) regionA.createNewRegion();
+    union.putAll(regionA);
     for (String key : regionB.keySet()) {
       //This assumes, that state names are unique to work!
-      if (disjunctedRegion.containsKey(key)) {
+      if (union.containsKey(key)) {
         continue;
       }
-      disjunctedRegion.put(key, regionB.get(key));
+      union.put(key, regionB.get(key));
     }
-    return disjunctedRegion;
-  }
-
-  public T conjunction(T regionA,
-          T regionB) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return union;
   }
 
   public T difference(T outterRegion, T excludedRegion) {
@@ -100,9 +96,8 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?, V>> {
       Expression testDiffState = ExpressionUtil.and(stateRegion, notRegion);
       long start = System.currentTimeMillis();
       Valuation val = new Valuation();
+      logger.finest("Diff state for test: " + testDiffState.toString());
       ConstraintSolver.Result rs = solver.solve(testDiffState, val);
-      logger.finest("gov.nasa.jpf.psyco.search.util.region"
-              + ".RegionUtil.difference()");
       logger.finest("result" + ExpressionUtil.valuationToExpression(val));
       long stop = System.currentTimeMillis();
       logger.finer("Time needed for difference: "
@@ -196,5 +191,5 @@ public abstract class RegionUtil<V extends State<?>, T extends Region<?, V>> {
   }
 
   public abstract T rename(Region<?, V> region,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames);
+          Map<Variable, Variable> renamings);
 }

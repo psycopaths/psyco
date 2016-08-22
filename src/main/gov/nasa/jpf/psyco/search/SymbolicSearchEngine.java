@@ -68,7 +68,7 @@ public class SymbolicSearchEngine {
               reachableRegion, solver);
       PsycoProfiler.stopDiffProfieler(newImage.getDepth());
 
-      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+      reachableRegion = regionUtil.union(reachableRegion, newRegion);
 
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);

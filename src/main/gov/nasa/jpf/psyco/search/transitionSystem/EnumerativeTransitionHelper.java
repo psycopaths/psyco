@@ -22,7 +22,7 @@ import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
 import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ import java.util.Set;
 public class EnumerativeTransitionHelper extends TransitionHelper {
 
   @Override
-  public StateImage applyTransition(StateImage image, Transition transition) {
+  public SearchIterationImage applyTransition(SearchIterationImage image, Transition transition) {
     if (image instanceof EnumerativeImage) {
       EnumerativeImage currentSearchStatus = (EnumerativeImage) image;
       int depth = currentSearchStatus.getDepth();

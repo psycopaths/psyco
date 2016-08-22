@@ -17,17 +17,19 @@ package gov.nasa.jpf.psyco.search.util;
 
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import gov.nasa.jpf.psyco.search.util.region.RegionUtil;
 import gov.nasa.jpf.psyco.search.transitionSystem.TransitionSystem;
 import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class SearchUtil<T extends StateImage> {
+public class SearchUtil<T extends SearchIterationImage> {
 
   private RegionUtil util;
   private long uniqueCount = 1L;
@@ -71,12 +73,12 @@ public class SearchUtil<T extends StateImage> {
           Set<Variable<?>> variablesInPreviousState) {
     List<Variable<?>> primeNames = new ArrayList<>();
     List<Variable<?>> variableNames = new ArrayList<>();
+    Map<Variable, Variable> renamings = new HashMap<>();
     for (Variable var : variablesInPreviousState) {
       String primeName = var.getName() + "'";
       Variable primeVar = new Variable(var.getType(), primeName);
-      primeNames.add(primeVar);
-      variableNames.add(var);
+      renamings.put(primeVar, var);
     }
-    return util.rename(existingRegion, primeNames, variableNames);
+    return util.rename(existingRegion, renamings);
   }
 }

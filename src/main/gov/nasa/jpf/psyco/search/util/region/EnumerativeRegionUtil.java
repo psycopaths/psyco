@@ -23,6 +23,7 @@ import gov.nasa.jpf.psyco.search.datastructures.state.EnumerativeState;
 import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EnumerativeRegionUtil
         extends RegionUtil<EnumerativeState, EnumerativeRegion> {
@@ -34,21 +35,19 @@ public class EnumerativeRegionUtil
   @Override
   public EnumerativeRegion rename(
           Region<?, EnumerativeState> region,
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
+          Map<Variable, Variable> renamings) {
     EnumerativeRegion toBeRenamed = (EnumerativeRegion) region;
     EnumerativeRegion renamedRegion = toBeRenamed.createNewRegion();
-    HashMap<Variable, Variable> names =
-            createHashMap(primeNames, variableNames);
     for (String key : region.keySet()) {
       EnumerativeState state = region.get(key);
-      state = renameState(state, names);
+      state = renameState(state, renamings);
       renamedRegion.put(key, state);
     }
     return renamedRegion;
   }
 
   private EnumerativeState renameState(EnumerativeState state,
-          HashMap<Variable, Variable> nameReplacements) {
+          Map<Variable, Variable> nameReplacements) {
     EnumerativeState renamedState = new EnumerativeState();
     for (ValuationEntry entry : state) {
       Variable newVar
@@ -58,14 +57,4 @@ public class EnumerativeRegionUtil
     }
     return renamedState;
   }
-
-  private HashMap<Variable, Variable> createHashMap(
-          List<Variable<?>> primeNames, List<Variable<?>> variableNames) {
-    HashMap<Variable, Variable> resultMap = new HashMap<>();
-    for (int i = 0; i < primeNames.size(); i++) {
-      resultMap.put(primeNames.get(i), variableNames.get(i));
-    }
-    return resultMap;
-  }
-
 }

@@ -20,7 +20,7 @@ import gov.nasa.jpf.constraints.api.ConstraintSolver.Result;
 import gov.nasa.jpf.constraints.api.Expression;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.psyco.search.SolverInstance;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.datastructures.region.Region;
 import gov.nasa.jpf.psyco.search.datastructures.state.State;
 import gov.nasa.jpf.util.JPFLogger;
@@ -37,10 +37,10 @@ public abstract class TransitionHelper {
   protected final Logger logger
           = JPFLogger.getLogger(HelperMethods.getLoggerName());
 
-  public abstract StateImage applyTransition(StateImage image,
+  public abstract SearchIterationImage applyTransition(SearchIterationImage image,
           Transition transition);
 
-  public StateImage applyError(StateImage searchStatus,
+  public SearchIterationImage applyError(SearchIterationImage searchStatus,
           Transition transition) {
     int depth = searchStatus.getDepth();
     String error = transition.getError();

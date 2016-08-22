@@ -1,15 +1,4 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package gsoc.cev_esas;
-
-/**
- *
- * @author mmuesly
- */
-/*
  * Copyright (C) 2015, United States Government, as represented by the 
  * Administrator of the National Aeronautics and Space Administration.
  * All rights reserved.
@@ -24,6 +13,7 @@ package gsoc.cev_esas;
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the 
  * specific language governing permissions and limitations under the License.
  */
+package gsoc.cev_esas;
 
 import gov.nasa.jpf.jdart.Symbolic;
 

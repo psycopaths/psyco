@@ -20,7 +20,7 @@ import gov.nasa.jpf.constraints.api.ValuationEntry;
 import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.util.ExpressionUtil;
 import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
         .ExpressionConverterVisitor;
 import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
@@ -217,7 +217,7 @@ public class TransitionSystem<T extends TransitionHelper> {
     return builder.toString();
   }
 
-  public StateImage applyOn(StateImage alreadyReachedStates) {
+  public SearchIterationImage applyOn(SearchIterationImage alreadyReachedStates) {
     if (helper == null) {
       throw new IllegalStateException("You must set a TransitionHelper for"
               + " the system, before you can use it.");

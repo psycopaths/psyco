@@ -36,7 +36,7 @@ import gov.nasa.jpf.jdart.constraints.PostCondition;
 import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.search.EnumerativeSearchEngine;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.EnumerativeTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.SymbolicTransitionHelper;
 import gov.nasa.jpf.psyco.search.transitionSystem.Transition;
@@ -106,12 +106,13 @@ public class TransitionSystemTest {
     TransitionSystem system = createTransitionSystem();
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
-    StateImage image = 
+    SearchIterationImage image = 
             SymbolicSearchEngine.symbolicBreadthFirstSearch(system,
                     solver, Integer.MIN_VALUE);
     TransitionHelper enumerativeHelper = new EnumerativeTransitionHelper();
     system.setHelper(enumerativeHelper);
-    StateImage image2= EnumerativeSearchEngine.enumerativBreadthFirstSearch(
+    SearchIterationImage image2 =
+            EnumerativeSearchEngine.enumerativBreadthFirstSearch(
             system, solver, Integer.MIN_VALUE);
     assertEquals(3, image.getDepth());
     List<Transition> errorTransition = system.getConsideredErrorTransitions();
@@ -139,7 +140,7 @@ public class TransitionSystemTest {
     TransitionSystem system = createTransitionSystem2();
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
-    StateImage image = null;
+    SearchIterationImage image = null;
     try{
       image = 
             SymbolicSearchEngine.symbolicBreadthFirstSearch(system,
@@ -172,7 +173,7 @@ public class TransitionSystemTest {
     TransitionSystem system = createTransitionSystem3();
     TransitionHelper symbolicHelper = new SymbolicTransitionHelper();
     system.setHelper(symbolicHelper);
-    StateImage image = 
+    SearchIterationImage image = 
             SymbolicSearchEngine.symbolicBreadthFirstSearch(system,
                     solver, Integer.MIN_VALUE);
     assertEquals(2, image.getDepth());

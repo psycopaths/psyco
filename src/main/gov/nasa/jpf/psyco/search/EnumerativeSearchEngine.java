@@ -56,7 +56,7 @@ public class EnumerativeSearchEngine {
               reachableRegion);
       PsycoProfiler.stopDiffProfieler(newImage.getDepth());
 
-      reachableRegion = regionUtil.disjunction(reachableRegion, newRegion);
+      reachableRegion = regionUtil.union(reachableRegion, newRegion);
       newImage.setReachableStates(reachableRegion);
       newImage.setReachableStates(reachableRegion);
       newImage.setPreviousNewStates(newRegion);

@@ -32,7 +32,7 @@ import gov.nasa.jpf.jdart.constraints.PathResult;
 import static gov.nasa.jpf.jdart.constraints.PathState.OK;
 import static gov.nasa.jpf.jdart.constraints.PathState.ERROR;
 import gov.nasa.jpf.psyco.search.SymbolicSearchEngine;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
         .ExpressionConverterVisitor;
 import gov.nasa.jpf.psyco.search.transitionSystem.helperVisitors
@@ -294,7 +294,7 @@ public class Transition {
     return path.getPathCondition();
   }
 
-  public StateImage applyOn(StateImage alreadyReachedStates,
+  public SearchIterationImage applyOn(SearchIterationImage alreadyReachedStates,
           TransitionHelper helper) {
     if (isOK()) {
       logger.fine("applying: " + path.toString());

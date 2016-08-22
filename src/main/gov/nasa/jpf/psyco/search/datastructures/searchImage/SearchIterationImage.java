@@ -22,20 +22,20 @@ import java.util.logging.Logger;
 
 /**
  * A state image is the current search state at a given point of time.
- * At the end of the search, an StateImage object is returned as search result.
+ * At the end of the search, an SearchIterationImage object is returned as search result.
  * @param <T> Any type implementing the abstract Region class.
  */
-public abstract class StateImage<T extends Region> {
+public abstract class SearchIterationImage<T extends Region> {
 
   protected int depth = 0;
   protected StringBuilder errors = new StringBuilder();
   protected T reachableStates, newStates, previousNewStates;
 
-  public StateImage(T reachableStates) {
+  public SearchIterationImage(T reachableStates) {
     this.reachableStates = reachableStates;
   }
 
-  public StateImage(T reachableStates, StringBuilder errors, int depth) {
+  public SearchIterationImage(T reachableStates, StringBuilder errors, int depth) {
     this.reachableStates = reachableStates;
     this.errors = errors;
     this.depth = depth;

@@ -23,7 +23,7 @@ import gov.nasa.jpf.jdart.summaries.MethodSummary;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.EnumerativeImage;
-import gov.nasa.jpf.psyco.search.datastructures.searchImage.StateImage;
+import gov.nasa.jpf.psyco.search.datastructures.searchImage.SearchIterationImage;
 import gov.nasa.jpf.psyco.search.datastructures.searchImage.SymbolicImage;
 import gov.nasa.jpf.psyco.search.transitionSystem.EnumerativeTransitionHelper;
 import gov.nasa.jpf.psyco.search.util.HelperMethods;
@@ -56,7 +56,13 @@ public class SearchEngine {
     updateFolderName(pconf);
   }
 
-  public StateImage executeSearch(SummaryStore store,
+  /**
+  * This method exchanges results with PSYCOs interface learning
+  * algorithm using the a PsycoConfig element.
+  * Search results might be written into files, in case PSYCO is configured
+  * to do so.
+  */
+  public void executeSearch(SummaryStore store,
           ConstraintSolver solver) {
     if (pconf.shouldUseEnumerativeSearch()) {
       PsycoProfiler.reset();
@@ -66,7 +72,6 @@ public class SearchEngine {
       PsycoProfiler.reset();
       executeSymbolicSearch(store, solver);
     }
-    return null;
   }
 
   private void executeEnumerativeSearch(SummaryStore store,

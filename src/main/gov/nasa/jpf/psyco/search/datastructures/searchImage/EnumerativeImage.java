@@ -20,7 +20,7 @@ import gov.nasa.jpf.psyco.search.datastructures.region.EnumerativeRegion;
 /**
  * Used for StateImages produced by the enumerative search.
  */
-public class EnumerativeImage extends StateImage<EnumerativeRegion> {
+public class EnumerativeImage extends SearchIterationImage<EnumerativeRegion> {
 
   public EnumerativeImage(EnumerativeRegion region) {
     super(region);

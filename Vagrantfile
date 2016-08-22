@@ -34,20 +34,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     domain.uri = 'qemu+unix:///system'
     domain.disk_bus = "virtio"
     domain.memory = 2048
+    domain.name = "psyco-vm"
   end
 
   config.vm.provider :virtualbox do |domain|
-    domain.memory = 4096
+    domain.memory = 2048
     domain.cpus = 2
-    domain.name = "GSOC_VM_windows_source"
+    domain.name = "psyco-vm"
 #    domain.gui = true
   end
   
-  config.vm.synced_folder "../jdart", "/home/vagrant/gsoc-project/jdart"
-  config.vm.synced_folder "../jconstraints", "/home/vagrant/gsoc-project/jconstraints"
-  config.vm.synced_folder "../jconstraints-z3", "/home/vagrant/gsoc-project/jconstraints-z3"
-  config.vm.synced_folder "../jpf-core", "/home/vagrant/gsoc-project/jpf-core"
-  config.vm.synced_folder ".", "/home/vagrant/gsoc-project/psyco_gsoc16"
+  config.vm.synced_folder ".", "/home/vagrant/psyco"
+  #config.vm.synced_folder "../jconstraints-smtinterpol", "/home/vagrant/jconstraints-smtinterpol"
 
   config.vm.provision :shell, :privileged => false, path: "scripts/install.sh"
 end
