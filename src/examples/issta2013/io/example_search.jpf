@@ -1,0 +1,30 @@
+
+
+jdart.configs.stream.symbolic.statics=issta2013.io.PipedOutputStream
+jdart.configs.stream.symbolic.include=issta2013.io.PipedOutputStream.*
+
+concolic.method.PipedOutputStream=issta2013.io.PipedOutputStream.<init>()
+concolic.method.PipedOutputStream.config=stream
+
+concolic.method.close=issta2013.io.PipedOutputStream.close()
+concolic.method.close.config=stream
+
+concolic.method.connect=issta2013.io.PipedOutputStream.connect(snk:int,conn:int)
+concolic.method.connect.config=stream
+
+concolic.method.flush=issta2013.io.PipedOutputStream.flush()
+concolic.method.flush.config=stream
+
+concolic.method.write=issta2013.io.PipedOutputStream.write()
+concolic.method.write.config=stream
+
+
+summary.methods=PipedOutputStream,close,connect,flush,write
+
+
+psyco.por.config=close,10,00;\
+  write,10,00;\
+  connect,10,11;\
+  flush,10,00
+
+psyco.symbolicSearch=true

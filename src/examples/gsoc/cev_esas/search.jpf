@@ -1,0 +1,13 @@
+
+@include=../../issta2013/experiments/basic_learn.jpf
+@include=./example_search.jpf
+
+psyco.depth=8
+
+psyco.resultFolderName=gsocCEV
+psyco.symbolicSearch=true
+psyco.enumerativeSearch=false
+psyco.saveSearchResult=true
+psyco.saveTransitionSystem=true
+psyco.saveModel=true
+psyco.interpolation=true

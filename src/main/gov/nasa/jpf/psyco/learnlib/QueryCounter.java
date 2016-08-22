@@ -18,7 +18,8 @@ package gov.nasa.jpf.psyco.learnlib;
 import de.learnlib.oracles.CounterOracle;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 
-public class QueryCounter extends CounterOracle<SymbolicMethodSymbol, SymbolicQueryOutput> 
+public class QueryCounter extends 
+        CounterOracle<SymbolicMethodSymbol, SymbolicQueryOutput> 
     implements ThreeValuedOracle {
 
   public QueryCounter(ThreeValuedOracle back, String name) {

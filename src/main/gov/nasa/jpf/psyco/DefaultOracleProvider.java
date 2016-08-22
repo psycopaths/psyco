@@ -18,7 +18,10 @@ package gov.nasa.jpf.psyco;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
+import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
 import gov.nasa.jpf.psyco.filter.Cache;
+import gov.nasa.jpf.psyco.filter.InterpolationCache;
 import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
 import gov.nasa.jpf.psyco.filter.PORFilter;
 import gov.nasa.jpf.psyco.filter.QueryLogger;
@@ -26,6 +29,7 @@ import gov.nasa.jpf.psyco.filter.UniformErrorFilter;
 import gov.nasa.jpf.psyco.filter.UniformOKSuffixFilter;
 import gov.nasa.jpf.psyco.filter.ValidQueryFilter;
 import gov.nasa.jpf.psyco.learnlib.QueryCounter;
+import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import gov.nasa.jpf.psyco.oracles.RefinementCheckOracle;
@@ -38,7 +42,7 @@ import java.util.List;
 /**
  * an oracle provider has the membership oracles necessary for psyco.
  */
-public class OracleProvider {
+public class DefaultOracleProvider {
   
   protected static final JPFLogger logger = JPF.getLogger("psyco");  
     
@@ -52,7 +56,9 @@ public class OracleProvider {
   
   private final SymbolicMethodAlphabet inputs;
 
-  public OracleProvider(SymbolicExecutionOracle back, SymbolicMethodAlphabet inputs, PsycoConfig pconf) {
+  private SymbolicEquivalenceTest eqtest;
+
+  public DefaultOracleProvider(SymbolicExecutionOracle back, SymbolicMethodAlphabet inputs, PsycoConfig pconf) {
     this.back = back;
     this.inputs = inputs;
     initialize(pconf);
@@ -60,10 +66,18 @@ public class OracleProvider {
    
   protected final void initialize(PsycoConfig pconf) {
 
+    
+    ThreeValuedOracle sink;
+    if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
+      sink = new InterpolationCache(pconf.getInterpolationSolver(), 
+              pconf.getConstraintSolver(), (SummaryAlphabet) inputs);
+    } else {
+      sink = new SymbolicExecutionOracleWrapper(back);
+    }
+    
     oracle = new QueryLogger(
              new RefinementCheckOracle(
-             new TerminationCheckOracle(pconf.getTermination(),
-             new SymbolicExecutionOracleWrapper(back))));
+             new TerminationCheckOracle(pconf.getTermination(), sink)));
     
     QueryCounter count;
     
@@ -93,6 +107,21 @@ public class OracleProvider {
     if (pconf.isUsePOR()) {
       this.filter = new PORFilter(pconf.getPOR(), inputs);
     }
+
+    if(pconf.isUseInterpolation()){
+      if (pconf.isUseSummaries()) {
+          eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
+                  (SummaryAlphabet)inputs, oracle, 
+                  pconf.getConstraintSolver(), 
+                  pconf.getInterpolationSolver(), 
+                  pconf.getTermination());          
+        }
+        else {
+          eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+        }
+    }else{
+      eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+    }
   }
   
   /**
@@ -118,6 +147,10 @@ public class OracleProvider {
   
   public SymbolicMethodAlphabet getInputs() {
     return inputs;
+  }
+
+    public SymbolicEquivalenceTest getEqTest() {
+    return eqtest;
   }
 
   public void logStatistics() {

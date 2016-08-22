@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.automatalib.words.Word;
 
-public class LStar extends ClassicLStarMealy<SymbolicMethodSymbol, SymbolicQueryOutput> {
+public class LStar extends 
+        ClassicLStarMealy<SymbolicMethodSymbol, SymbolicQueryOutput> {
   
   public LStar(SymbolicMethodAlphabet alphabet, 
           ThreeValuedOracle oracle) {        
@@ -33,7 +34,8 @@ public class LStar extends ClassicLStarMealy<SymbolicMethodSymbol, SymbolicQuery
             ClosingStrategies.CLOSE_FIRST);
   }
   
-  private static List<Word<SymbolicMethodSymbol>> asSuffixes(SymbolicMethodAlphabet sigma) {
+  private static List<Word<SymbolicMethodSymbol>> asSuffixes(
+          SymbolicMethodAlphabet sigma) {
     List<Word<SymbolicMethodSymbol>> suffixes = new ArrayList<>();
     Word<SymbolicMethodSymbol> eps = Word.epsilon();
     suffixes.add(eps);

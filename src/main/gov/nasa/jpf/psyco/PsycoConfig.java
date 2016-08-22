@@ -16,11 +16,39 @@
 package gov.nasa.jpf.psyco;
 
 import gov.nasa.jpf.Config;
+import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.termination.NeverTerminate;
 import gov.nasa.jpf.jdart.termination.TerminationStrategy;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+
+/**
+ * PsycoConfig is a container for the Psyco configuration.
+ * The used equivalence test method and Psycos search behavior can be modified.
+ * Further it is possible to controll result files produced by PSYCO.
+ * The following values can be overwritten in the experiment setting, a file ending with .jpf.
+ * psyco.depth set the maximal interface enrollment depth. (default infinite)
+ * psyco.termination saves the reason, why PSYCO terminated 
+ *      during interface learning.
+ * psyco.summaries determines whether Psyco should use summaries or not. (default false)
+ * psyco.memorize determines whether Psyco should use memorize feature. (default false)
+ * psyco.suffixes determines whether Psyco should use a suffix filer. (default false)
+ * psyco.por determines whether Psyco should use por filter (default false)
+ * psyco.symbolicSearch determines whether Psyco should use symbolicSearch 
+ *            to set maxDepth before interface generation. (default true)
+ * psyco.enumerativeSearch determines whether Psyco should use enumerativeSearch
+ *            to set maxDepth before interface generation. (default true)
+ * psyco.resultFolderName the folder in which the result of the psyco run are written.
+ *            It is by default prefixed with ./result.
+ * psyco.maxSearchDepth it is possible to define an upper bound for the search if desired.
+ * psyco.interpolation enables interpolation as equivalence test. (default false)
+ * psyco.saveSearchResult determines whether to save searchResult or not. (default false)
+ * psyco.saveTransitionSystem determines whether to save the transition System or not. (default false)
+ * psyco.saveModel determines whether to write learning result into a file or not. (default false)
+ */
 
 public class PsycoConfig {
 
@@ -30,13 +58,27 @@ public class PsycoConfig {
   private boolean useMemorization = false;
   private boolean useSuffixFilter = false;
   private boolean useSummaries = false;
+  private boolean useInterpolation = false;
   private TerminationStrategy termination = new NeverTerminate();
+  private boolean symbolicSearch = true;
+  private boolean enumerativeSearch = false;
+  private String resultFolderName="default";
+  private int maxSearchDepth = Integer.MIN_VALUE;
+  private boolean saveResult = false;
+  private boolean saveModel = false;
+  private boolean saveTransitionSystem = false;
+  
+  private final ConstraintSolver constraintSolver;
+  private final InterpolationSolver interpolationSolver;
 
-  public PsycoConfig(Config conf) {
-    this.config = conf;
+  public PsycoConfig(Config config, ConstraintSolver constraintSolver, 
+          InterpolationSolver interpolationSolver) {
+    this.config = config;
+    this.constraintSolver = constraintSolver;
+    this.interpolationSolver = interpolationSolver;
     initialize();
   }
-
+  
   private void initialize() {
     if (config.hasValue("psyco.depth")) {
       maxDepth = config.getInt("psyco.depth");
@@ -56,6 +98,36 @@ public class PsycoConfig {
     }
     if (config.hasValue("psyco.por")) {
       usePOR = config.getBoolean("psyco.por");
+    }
+    if(config.hasValue("psyco.symbolicSearch")){
+      symbolicSearch = config.getBoolean("psyco.symbolicSearch");
+    }
+    if(config.hasValue("psyco.enumerativeSearch")){
+      enumerativeSearch = config.getBoolean("psyco.enumerativeSearch");
+    }
+    if(config.hasValue("psyco.resultFolderName")){
+      resultFolderName = "result" + File.separator 
+              + config.getString("psyco.resultFolderName");
+      if(!resultFolderName.endsWith(File.separator)){
+        resultFolderName += File.separator;
+      }
+    }
+    
+    if(config.hasValue("psyco.maxSearchDepth")){
+      maxSearchDepth = config.getInt("psyco.maxSearchDepth");
+    }
+    if (config.hasValue("psyco.interpolation")) {
+      useInterpolation = config.getBoolean("psyco.interpolation");
+    }
+    if (config.hasValue("psyco.saveSearchResult")) {
+      saveResult = config.getBoolean("psyco.saveSearchResult");
+    }
+    
+    if(config.hasValue("psyco.saveTransitionSystem")){
+      saveTransitionSystem = config.getBoolean("psyco.saveTransitionSystem");
+    }
+    if(config.hasValue("psyco.saveModel")){
+      saveModel = config.getBoolean("psyco.saveModel");
     }
   }
 
@@ -94,6 +166,13 @@ public class PsycoConfig {
     return useSummaries;
   }
 
+  public boolean shouldUseSymbolicSearch(){
+    return symbolicSearch;
+  }
+  
+  public boolean shouldUseEnumerativeSearch(){
+    return enumerativeSearch;
+  }
   /**
    * @return the termination
    */
@@ -105,8 +184,54 @@ public class PsycoConfig {
     return this.maxDepth;
   }  
 
+  public int getMaxSearchDepth(){
+    return this.maxSearchDepth;
+  }
+
+  public void updateMaxDepth(int maxDepth) {
+    this.maxDepth = maxDepth;
+  }
+
+  public boolean isSaveSearchResult(){
+    return saveResult;
+  }
+
+  public boolean isSaveTransitionSystem(){
+    return saveTransitionSystem;
+  }
+
+  public boolean isSaveModel(){
+    return saveModel;
+  }
+
   public Collection<String> getPOR() {
     return Arrays.asList(this.config.getString(
             "psyco.por.config").trim().split(";"));
+  }
+
+  public String getResultFolderName() {
+    return resultFolderName;
+  }
+
+  /**
+   * @return the useInterpolation
+   */
+
+  public boolean isUseInterpolation() {
+    return useInterpolation;
+  }
+
+  /**
+   * @return the constraintSolver
+   */
+  public ConstraintSolver getConstraintSolver() {
+    return constraintSolver;
+  }
+
+  /**
+   * @return the interpolationSolver
+   */
+  public InterpolationSolver getInterpolationSolver() {
+    return interpolationSolver;
   }
 }

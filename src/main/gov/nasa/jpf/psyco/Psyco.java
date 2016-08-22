@@ -20,22 +20,23 @@ import gov.nasa.jpf.JPF;
 
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
+import gov.nasa.jpf.constraints.api.InterpolationSolver;
 import gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory;
 import gov.nasa.jpf.jdart.summaries.SummaryConfig;
 import gov.nasa.jpf.jdart.summaries.SummaryStore;
 import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
-import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
 import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.oracles.JDartOracle;
 import gov.nasa.jpf.psyco.oracles.SummaryOracle;
+import gov.nasa.jpf.psyco.search.SearchEngine;
+import gov.nasa.jpf.psyco.util.PsycoProfiler;
 import gov.nasa.jpf.solver.SolverWrapper;
 
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogManager;
-import gov.nasa.jpf.util.SimpleProfiler;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,8 +46,8 @@ import net.automatalib.util.graphs.dot.GraphDOT;
 public class Psyco implements JPFShell {
 
   private Config config;
-  
-  private JPFLogger logger;  
+
+  private JPFLogger logger;
 
   public Psyco(Config conf) {
     this.config = conf;
@@ -62,63 +63,94 @@ public class Psyco implements JPFShell {
       Logger.getLogger(Psyco.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+
   public void run() throws IOException {
 
-    SimpleProfiler.start("PSYCO-run");
-    PsycoConfig pconf = new PsycoConfig(config);
-    
-    ConstraintSolverFactory factory = 
-            new ConstraintSolverFactory(this.config);
-    
-    ConstraintSolver solver = new SolverWrapper(factory.createSolver());
+    PsycoProfiler.start("PSYCO-run");
+    ConstraintSolverFactory factory
+            = new ConstraintSolverFactory(this.config);
+
+    ConstraintSolver cSolver = new SolverWrapper(factory.createSolver());
+    InterpolationSolver iSolver = 
+            (InterpolationSolver) factory.createSolver("smtinterpol");
+    PsycoConfig pconf = new PsycoConfig(config, cSolver, iSolver);
+
+    SearchEngine searchEngine = new SearchEngine(pconf);
 
     SymbolicMethodAlphabet inputs = null;
     SymbolicExecutionOracle seOracle = null;
-    if (!pconf.isUseSummaries()) {    
+    if (!pconf.isUseSummaries()) {
       SummaryConfig concolicConf = new SummaryConfig(this.config);
       inputs = new SymbolicMethodAlphabet(
               concolicConf.getSummaryMethods());
       seOracle = new JDartOracle(this.config, inputs);
-    }
-    else {
+    } else {
       SummaryStore store = SummaryStore.create(config);
-      inputs = new SummaryAlphabet(store, solver);    
-      seOracle = new SummaryOracle( (SummaryAlphabet)inputs, solver);
+      searchEngine.executeSearch(store, cSolver);
+      inputs = new SummaryAlphabet(store, cSolver);
+      seOracle = new SummaryOracle((SummaryAlphabet) inputs, cSolver);
     }
-    
+
     int sigma = inputs.size();
-    logger.info("Methods -------------------------------------------------------");
+    logger.info("Methods ---------------------------------------------------");
     for (SymbolicMethodSymbol sms : inputs) {
       logger.info(sms);
     }
-    logger.info("---------------------------------------------------------------");
+    logger.info("-----------------------------------------------------------");
 
-    OracleProvider provider = new OracleProvider(seOracle, inputs, pconf);
-            
-    SymbolicEquivalenceTest eqtest = null;    
+    DefaultOracleProvider provider
+            = new DefaultOracleProvider(seOracle, inputs, pconf);
+
+    SymbolicEquivalenceTest eqtest = null;
+
     // TODO: this should be parameterized later
-    eqtest = new IncreasingDepthExhaustiveTest(provider, pconf);
-    
-    InterfaceGenerator gen = new InterfaceGenerator(
-            provider, pconf, eqtest, solver);
-    
-    MealyMachine model = gen.generateInterface();
-    
-    SimpleProfiler.stop("PSYCO-run");
+    eqtest = provider.getEqTest();
 
-    logger.info("Model ---------------------------------------------------------");
+    InterfaceGenerator gen = new InterfaceGenerator(provider, pconf);
+
+    MealyMachine model = gen.generateInterface();
+
+    PsycoProfiler.stop("PSYCO-run");
+
+    logger.info("Model -----------------------------------------------------");
     GraphDOT.write(model, inputs, System.out);
-    logger.info("---------------------------------------------------------------");
+    logger.info("-----------------------------------------------------------");
     logger.info();
-    logger.info("Stats ---------------------------------------------------------");
+    logger.info("Stats -----------------------------------------------------");
     logger.info("States: " + model.size());
     logger.info("Inputs: " + inputs.size());
     logger.info("Refinements: " + (inputs.size() - sigma));
     logger.info("Termination: " + pconf.getTermination().getReason());
     provider.logStatistics();
     eqtest.logStatistics();
-    logger.info("---------------------------------------------------------------");    
-    logger.info("Profiling:\n" + SimpleProfiler.getResults());
-  }  
+    logger.info("-----------------------------------------------------------");
+    logger.info("Profiling:\n" + PsycoProfiler.getResults());
+    saveGraphToFile(model, inputs, sigma, pconf);
+  }
+
+  private void saveGraphToFile(MealyMachine model,
+          SymbolicMethodAlphabet inputs,
+          int sigma,
+          PsycoConfig pconf) throws IOException {
+    if (pconf.isSaveModel()) {
+      StringBuilder builder = new StringBuilder();
+      GraphDOT.write(model, inputs, builder);
+      String fileName = pconf.getResultFolderName()
+              + "model.txt";
+      try (PrintWriter writer = new PrintWriter(fileName)) {
+        writer.println("Model ----------------------------------------------");
+        writer.println(builder.toString());
+        writer.println("----------------------------------------------------");
+        writer.println();
+        writer.println("Stats ----------------------------------------------");
+        writer.println("States: " + model.size());
+        writer.println("Inputs: " + inputs.size());
+        writer.println("Refinements: " + (inputs.size() - sigma));
+        writer.println("Termination: " + pconf.getTermination().getReason());
+        writer.println("Profiler -------------------------------------------");
+        PsycoProfiler.writeRunToFolder(pconf.getResultFolderName(),
+                "overallResult-");
+      }
+    }
+  }
 }

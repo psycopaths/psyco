@@ -31,5 +31,4 @@ public class MixedParameter extends RuntimeException {
   public Expression<Boolean> getExpression() {
     return expression;
   }
-  
 }

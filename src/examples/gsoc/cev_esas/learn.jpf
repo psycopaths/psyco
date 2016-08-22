@@ -1,0 +1,27 @@
+shell=gov.nasa.jpf.psyco.Psyco
+
+@include=./example_search.jpf
+
+psyco.depth=8
+
+psyco.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,30,0,0
+psyco.summaries=true
+psyco.memorize=true
+psyco.suffixes=true
+psyco.por=true
+#psyco.depth=
+
+
+symbolic.dp=NativeZ3
+symbolic.dp.z3.bitvectors=true
+
+#
+# logging and jpf output
+#
+log.severe=constraints,jdart
+log.info=psyco
+
+# avoid statistics during learning process by enabling the following two lines
+report.console.start=
+report.console.finished=
+report.console.property_violation=

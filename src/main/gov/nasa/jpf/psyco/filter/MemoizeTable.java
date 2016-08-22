@@ -18,14 +18,10 @@ package gov.nasa.jpf.psyco.filter;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import java.util.TreeMap;
 
-
-
 /**
- * Stores results that have already been computed so they can be 
- * retrieved later
+ * Stores results that have already been computed so they can be retrieved later
  */
-public class MemoizeTable
-{
+public class MemoizeTable {
   // The MemoizeTable stores the data in a tree format.  This way, if
   // a sequence has a prefix that is known to violate, we can easily
   // detect that and say that the sequence will violate without doing
@@ -37,29 +33,26 @@ public class MemoizeTable
   private TreeMap<String, MemoizeTable> children_;
 
   /**
-   * The result for this node in the table, or null if it has not been
-   * computed yet.
-   */ 
+   * The result for this node in the table, or null if it has not been computed
+   * yet.
+   */
   private SymbolicQueryOutput isViolating_;
-
 
   /**
    * Creates a new MemoizeTable
    */
-  public MemoizeTable()
-  {
-    children_    = new TreeMap<>();
+  public MemoizeTable() {
+    children_ = new TreeMap<>();
     isViolating_ = null;
   }
 
   /**
    * Stores a result in the table
-   * 
+   *
    * @param sequence the sequence
    * @param result the result
    */
-  public void setResult(String[]sequence, SymbolicQueryOutput result)
-  {
+  public void setResult(String[] sequence, SymbolicQueryOutput result) {
     this.setResult(sequence, result, 0);
   }
 
@@ -70,27 +63,23 @@ public class MemoizeTable
    * @param result the result
    * @param position the depth in the tree this node is at
    */
-  private void setResult(String[] sequence, SymbolicQueryOutput result, int position)
-    {
-      if(sequence.length == position)
-	{
-	  // We have reached the correct point
-	  isViolating_ = result;
-	}
-      else
-	{
-	  // We need to go deeper
-	  String action = sequence[position];
-	  MemoizeTable child = children_.get(action);
-	  if(child == null)
-	    {
-	      child = new MemoizeTable();
-	      children_.put(action, child);
-	    }
-	  
-	  child.setResult(sequence, result, position + 1);
-	}
+  private void setResult(String[] sequence, SymbolicQueryOutput result,
+          int position) {
+    if (sequence.length == position) {
+      // We have reached the correct point
+      isViolating_ = result;
+    } else {
+      // We need to go deeper
+      String action = sequence[position];
+      MemoizeTable child = children_.get(action);
+      if (child == null) {
+        child = new MemoizeTable();
+        children_.put(action, child);
+      }
+
+      child.setResult(sequence, result, position + 1);
     }
+  }
 
   /**
    * Retrieves a result from the table
@@ -98,17 +87,14 @@ public class MemoizeTable
    * @param sequence the sequence
    *
    * @return the stored result, or null if the result has not been stored
-   */ 
-  public SymbolicQueryOutput getResult(String[] sequence)
-  {
-    return(this.getResult(sequence, 0));
+   */
+  public SymbolicQueryOutput getResult(String[] sequence) {
+    return (this.getResult(sequence, 0));
   }
 
-   public SymbolicQueryOutput getSimulatedResult(String[] sequence)
-  {
-    return(this.getSimulatedResult(sequence, 0));
+  public SymbolicQueryOutput getSimulatedResult(String[] sequence) {
+    return (this.getSimulatedResult(sequence, 0));
   }
-
 
   /**
    * Retrieves a result from the table
@@ -117,78 +103,71 @@ public class MemoizeTable
    * @param position the depth in the tree this node is at
    *
    * @return the stored result, or null if the result has not been stored
-   */ 
+   */
   private SymbolicQueryOutput getResult(String[] sequence, int position) {
-		if (sequence.length == position) {
-			// We have reached the maximum depth
-			return (isViolating_);
-		} else {
-			// We _MAY_ need to go deeper.  If the sequence is violating,
-			// we can stop here
-			if ((isViolating_ != null) && 
-              ((isViolating_== SymbolicQueryOutput.DONT_KNOW) || 
-              (isViolating_ == SymbolicQueryOutput.ERROR))) {
-        return (isViolating_);
-			} else {
-        // Go deeper if we can
-				String action = (String) sequence[position];
-				MemoizeTable child = children_.get(action);
-				if (child == null) {
-					// We have no knowledge that can help
-					return (null);
-				} else {
-          return (child.getResult(sequence, position + 1));
-				}
-			}
-		}
-	}
-  
-  
+    if (sequence.length == position) {
+      // We have reached the maximum depth
+      return (isViolating_);
+    } else // We _MAY_ need to go deeper.  If the sequence is violating,
+    // we can stop here
+    if ((isViolating_ != null)
+            && ((isViolating_ == SymbolicQueryOutput.DONT_KNOW)
+            || (isViolating_ == SymbolicQueryOutput.ERROR))) {
+      return (isViolating_);
+    } else {
+      // Go deeper if we can
+      String action = (String) sequence[position];
+      MemoizeTable child = children_.get(action);
+      if (child == null) {
+        // We have no knowledge that can help
+        return (null);
+      } else {
+        return (child.getResult(sequence, position + 1));
+      }
+    }
+  }
+
   // This is in order to check also based on the alphabet 
   // refinement in order to reuse previous rounds of queries
-  
   private SymbolicQueryOutput getSimulatedResult(String[] sequence, int position) {
-		if (sequence.length == position) {
-			// We have reached the maximum depth
+    if (sequence.length == position) {
+      // We have reached the maximum depth
       return (isViolating_);
-		} else {
-      // We _MAY_ need to go deeper.  If the sequence is violating,
-      // we can stop here
-      if ((isViolating_ != null) &&
-              ((isViolating_== SymbolicQueryOutput.DONT_KNOW) || 
-              (isViolating_ == SymbolicQueryOutput.ERROR))) {
-        return (isViolating_);
-      } else {
-        // Go deeper if we can
-        String action = (String) sequence[position];
-        String[] parts = action.split("_");
-        String root = "";
-        
-        MemoizeTable child = null;
-        boolean check = false; // tracks first string
-        
-        int nextPos = position+1;
-        SymbolicQueryOutput result = null;
-        
-        for (String p : parts) {
-          root = root.concat(p);
-          if (check) {
-            child = (MemoizeTable) children_.get(root);
-            if (child != null) {
-              result = child.getSimulatedResult(sequence, nextPos);
-              if (result != null) {
-                return (result); // otherwise see if other child has a stored sequence
-              }
+    } else // We _MAY_ need to go deeper.  If the sequence is violating,
+    // we can stop here
+    if ((isViolating_ != null)
+            && ((isViolating_ == SymbolicQueryOutput.DONT_KNOW)
+            || (isViolating_ == SymbolicQueryOutput.ERROR))) {
+      return (isViolating_);
+    } else {
+      // Go deeper if we can
+      String action = (String) sequence[position];
+      String[] parts = action.split("_");
+      String root = "";
+
+      MemoizeTable child = null;
+      boolean check = false; // tracks first string
+
+      int nextPos = position + 1;
+      SymbolicQueryOutput result = null;
+
+      for (String p : parts) {
+        root = root.concat(p);
+        if (check) {
+          child = (MemoizeTable) children_.get(root);
+          if (child != null) {
+            result = child.getSimulatedResult(sequence, nextPos);
+            if (result != null) {
+              return (result); // otherwise see if other child has a stored sequence
             }
           }
-          root = root.concat("_");
-          check = true;
         }
-        return result; // at this point it will always be null
-        
-        // otherwise we have no knowledge that may help 
-        }
-		}
-	}
-  
+        root = root.concat("_");
+        check = true;
+      }
+      return result; // at this point it will always be null
+
+      // otherwise we have no knowledge that may help 
+    }
+  }
 }

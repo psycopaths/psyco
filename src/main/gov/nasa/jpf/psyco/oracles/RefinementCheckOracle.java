@@ -26,21 +26,25 @@ import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
 import java.util.Collection;
 import java.util.Collections;
 
-public class RefinementCheckOracle implements ThreeValuedFilter, ThreeValuedOracle {
+public class RefinementCheckOracle implements
+        ThreeValuedFilter, ThreeValuedOracle {
  
   private MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle;
 
-  public RefinementCheckOracle(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> oracle) {
+  public RefinementCheckOracle(MembershipOracle<SymbolicMethodSymbol,
+          SymbolicQueryOutput> oracle) {
     this.oracle = oracle;
   }
   
   @Override
-  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
+  public void setNext(
+          MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
     this.oracle = mo;
   }
 
   @Override
-  public void processQueries(Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+  public void processQueries(Collection<? extends 
+          Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> query : clctn) {
       DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> _query = 
               new DefaultQuery<>(query.getInput());
@@ -51,5 +55,4 @@ public class RefinementCheckOracle implements ThreeValuedFilter, ThreeValuedOrac
       query.answer(_query.getOutput());
     }
   }
-  
 }

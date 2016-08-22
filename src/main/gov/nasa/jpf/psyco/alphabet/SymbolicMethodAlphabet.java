@@ -33,7 +33,7 @@ public class SymbolicMethodAlphabet extends ArrayList<SymbolicMethodSymbol>
 
   protected SymbolicMethodAlphabet() {    
   }
-  
+
   public SymbolicMethodAlphabet(Collection<ConcolicMethodConfig> cmc) {
     for (ConcolicMethodConfig c : cmc) {
       this.addSymbol(c.getId(), c, ExpressionUtil.TRUE);
@@ -108,7 +108,6 @@ public class SymbolicMethodAlphabet extends ArrayList<SymbolicMethodSymbol>
   
   private Method loadMethodObject(ConcolicMethodConfig cmc) 
           throws ClassNotFoundException, NoSuchMethodException {
-   
     Class clazz = Class.forName(cmc.getClassName());
     Method m = clazz.getMethod(cmc.getMethodName(), getParameterTypes(cmc));
     return m;

@@ -19,14 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class JDartOracleTarget {
-  
-  private static String[] _query = null; // jdart cannot handle parameters in sequence
-  
+
+  // jdart cannot handle parameters in sequence
+  private static String[] _query = null;
+
   private static void query() throws Throwable {
 
     Class clazz = Class.forName(JDartOracle.ALPHABET_CLASS);
     //Object inst = clazz.newInstance();
-    for (int i = 0; i < _query.length; i++) {    
+    for (int i = 0; i < _query.length; i++) {
       Method m = clazz.getMethod(_query[i]);
       //System.out.println(m);
       try {
@@ -36,11 +37,11 @@ public class JDartOracleTarget {
       }
     }
   }
-  
+
   public static void main(String[] args) throws Throwable {
     _query = args;
     try {
-     query();
+      query();
     } catch (Throwable e) {
 
       // FIX: catch is needed due to bug in jdart. 
@@ -49,5 +50,4 @@ public class JDartOracleTarget {
       throw e;
     }
   }
-    
 }

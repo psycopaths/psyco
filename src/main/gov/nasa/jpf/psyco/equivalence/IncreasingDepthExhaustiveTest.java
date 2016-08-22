@@ -17,7 +17,7 @@ package gov.nasa.jpf.psyco.equivalence;
 
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.psyco.OracleProvider;
+import gov.nasa.jpf.psyco.DefaultOracleProvider;
 import gov.nasa.jpf.psyco.PsycoConfig;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
@@ -41,7 +41,8 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   
   private int kMax = -1;
   
-  private MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput> model;
+  private MealyMachine<Object, SymbolicMethodSymbol, ?,
+          SymbolicQueryOutput> model;
 
   private final ThreeValuedOracle oracle;
 
@@ -49,7 +50,8 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   
   private final MethodExecutionFilter filter;
   
-  public IncreasingDepthExhaustiveTest(OracleProvider provider, PsycoConfig pconf) {
+  public IncreasingDepthExhaustiveTest(DefaultOracleProvider provider,
+          PsycoConfig pconf){
     this.oracle = provider.getThreeValuedOracle();
     this.inputs = provider.getInputs();
     this.filter = provider.getExecutionFilter();
@@ -57,11 +59,13 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   }
 
   @Override
-  public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExample(
+  public DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> 
+        findCounterExample(
           MealyMachine<?, SymbolicMethodSymbol, ?, SymbolicQueryOutput> a, 
           Collection<? extends SymbolicMethodSymbol> clctn) {
 
-    this.model = (MealyMachine<Object, SymbolicMethodSymbol, ?, SymbolicQueryOutput>)a;
+    this.model = (MealyMachine<Object, SymbolicMethodSymbol, ?,
+            SymbolicQueryOutput>)a;
     DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce = null;
     
     try {
@@ -81,13 +85,15 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     }
   }
   
-  private DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> findCounterExampleAtDepthK() {
-    Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> queries = unroll();
-    for (DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q : queries) {      
+  private DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>
+        findCounterExampleAtDepthK() {
+    Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> 
+            queries = unroll();
+    for (DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q : queries) {
       this.oracle.processQueries(Collections.singleton(q));
       SymbolicQueryOutput refOut = 
               this.model.computeOutput(q.getInput()).lastSymbol();
-      
+
       if (!refOut.equals(q.getOutput())) {
         logger.info("================ CE: " + q.getInput() + 
                 " : " + refOut +" <> " + q.getOutput());
@@ -97,7 +103,8 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     return null;
   }
 
-  private Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> unroll() {
+  private Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>>
+         unroll() {
     ArrayList<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> ret = 
             new ArrayList<>();
     
@@ -108,10 +115,12 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
   }
   
   private void unroll(Word<SymbolicMethodSymbol> prefix, Object state,
-          Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
+          Collection<DefaultQuery<
+                  SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
     
     if (prefix.length() == k) {
-      add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(prefix), words);
+      add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(prefix),
+              words);
       return;
     }
     
@@ -121,13 +130,15 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
       if (out.equals(SymbolicQueryOutput.OK)) {
         unroll(next, this.model.getSuccessor(state, a), words);
       } else {
-        add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(next), words);
+        add(new DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>(next),
+                words);
       }      
     }
   }
 
   private void add(DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> q,
-          Collection<DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
+          Collection<DefaultQuery<
+                  SymbolicMethodSymbol, SymbolicQueryOutput>> words) {
 
     if (this.filter == null) {
       words.add(q);
@@ -160,5 +171,4 @@ public class IncreasingDepthExhaustiveTest implements SymbolicEquivalenceTest {
     logger.info("EQ Test depth completed: " + (k-1));
     logger.info("EQ Test max depth: " + kMax);
   }
-  
 }

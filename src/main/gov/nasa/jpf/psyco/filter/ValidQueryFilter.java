@@ -48,7 +48,7 @@ public class ValidQueryFilter implements ThreeValuedFilter, ThreeValuedOracle {
     this.oracle.processQueries(queries);
   }
 
-  private boolean isValid(Word<SymbolicMethodSymbol> input) {
+  public static boolean isValid(Word<SymbolicMethodSymbol> input) {
     int pos = 0;
     for (SymbolicMethodSymbol s : input) {
       if (pos == 0 ^ s.isConstructor()) {

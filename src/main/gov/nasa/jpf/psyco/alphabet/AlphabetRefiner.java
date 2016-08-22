@@ -99,7 +99,7 @@ public class AlphabetRefiner {
     Expression<Boolean> precondition = sms.getPrecondition();
     Expression<Boolean> refinerOK  = getRefiner(precondition, ok);
     Expression<Boolean> refinerErr = getRefiner(precondition, error);
-    
+
     int scoreOk = (refinerOK == null ? Integer.MAX_VALUE : refinerOK.toString().length());
     int scoreErr = (refinerErr == null ? Integer.MAX_VALUE : refinerErr.toString().length());
    
@@ -184,7 +184,7 @@ public class AlphabetRefiner {
     
     return ExpressionUtil.and(retain);
   }
-  
+
   private boolean refines(Expression<Boolean> original, Expression<Boolean> refine) {
     Expression<Boolean> test1 = ExpressionUtil.and(original, new Negation(refine));
     Expression<Boolean> test2 = ExpressionUtil.and(original, refine);
@@ -199,5 +199,5 @@ public class AlphabetRefiner {
   private boolean sat(Expression<Boolean> test) {
     return solver.isSatisfiable(test) == Result.SAT;
   }
-  
+
 }

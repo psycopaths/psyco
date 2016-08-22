@@ -38,14 +38,16 @@ public class Cache implements ThreeValuedFilter, ThreeValuedOracle {
   
   @Override
   public void processQueries(
-          Collection<? extends Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
+          Collection<? extends 
+                  Query<SymbolicMethodSymbol, SymbolicQueryOutput>> clctn) {
 
     for (Query<SymbolicMethodSymbol, SymbolicQueryOutput> q : clctn) {
       processQuery(q);
     }
   }
 
-  private void processQuery(Query<SymbolicMethodSymbol, SymbolicQueryOutput> q) {
+  private void processQuery(Query<SymbolicMethodSymbol,
+          SymbolicQueryOutput> q) {
    String[] test = queryToString(q.getInput());
    SymbolicQueryOutput result = table.getSimulatedResult(test);
    if (result == null) {
@@ -59,10 +61,10 @@ public class Cache implements ThreeValuedFilter, ThreeValuedOracle {
    } 
    q.answer(result);   
   }
-  
-  
+
   @Override
-  public void setNext(MembershipOracle<SymbolicMethodSymbol, SymbolicQueryOutput> mo) {
+  public void setNext(MembershipOracle<SymbolicMethodSymbol,
+          SymbolicQueryOutput> mo) {
     this.oracle = mo;
   }
 
@@ -73,5 +75,5 @@ public class Cache implements ThreeValuedFilter, ThreeValuedOracle {
       ret[i++] = s.getId() + "_" + i;
     }
     return ret;
-  }  
+  }
 }
