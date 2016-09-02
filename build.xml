@@ -21,28 +21,21 @@
     NOTE: this file is local - it is never in the repository!
   -->
   <property file="local.properties"/>
-  <property environment="env"/>
+
   <!-- this is where we get the 'jpf.core' location from -->
-  <!--<property file="${user.home}/.jpf/site.properties"/>-->
+  <property file="${user.home}/.jpf/site.properties"/>
 
   <!-- if there is none, default to a 'jpf-core' peer dir -->
-  <property name="jpf-core" value = "..\jpf-core"/>
-  <property name="jpf-jdart" value = "..\jdart"/>
+  <property name="jpf-core" value = "../jpf-core"/>
 
   <!-- get the jpf-core path properties -->
   <property file="${jpf-core}/jpf.properties"/>
 
-  <!-- get the jpf-learn path properties -->
-  <property file="${jpf-learnlib}/jpf.properties"/>
-
-  <!-- get the jpf-constraints path properties -->
-  <property file="${jpf-constraints}/jpf.properties"/>
-
   <!-- get the jpf-jdart path properties -->
-  <property file="${jpf-jdart}\jpf.properties"/>
+  <property file="${jpf-jdart}/jpf.properties"/>
 
   <!-- compiler settings -->
-  <property name="src_level"     value="8"/>
+  <property name="src_level"     value="7"/>
   <property name="debug"         value="on"/>
   <property name="deprecation"   value="on"/>
 
@@ -62,9 +55,6 @@
     <!-- add in what we need from the core -->
     <pathelement path="${jpf-core.native_classpath}"/>
     
-    <!-- add in what we need from jpf-learn -->
-    <pathelement path="${jpf-learnlib.native_classpath}"/>
-
     <!-- add in what we need from jpf-jdart -->
     <pathelement path="${jpf-jdart.native_classpath}"/>
     
@@ -178,7 +168,7 @@
     <mkdir dir="build/examples" />
     <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
-           classpathref="lib.path" encoding="UTF-8"/>
+           classpathref="lib.path"/>
   </target>
 
   <target name="compile-examples" if="have_examples" depends="-init">
@@ -186,7 +176,7 @@
     <mkdir dir="build/examples" />
     <javac srcdir="src/examples" destdir="build/examples" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
-           classpathref="lib.path" encoding="UTF-8"/>
+           classpathref="lib.path"/>
   </target>
 
 
@@ -250,8 +240,6 @@
   <target name="test" depends="build"
           description="compile and run core regression tests" if="have_tests">
 
-    <!--<property name="junit.home" value="${env.JUNIT_HOME}"/>-->
-    <property name="junit.home" value="./lib/"/>
     <condition property="junit.usefile">
       <!-- don't set if this is running from within an IDE that collects output -->
       <not>
@@ -259,7 +247,7 @@
       </not>
     </condition>
     
-    <junit printsummary="on" showoutput="yes" haltonfailure="yes" dir="${basedir}"
+    <junit printsummary="on" showoutput="off" haltonfailure="yes" dir="${basedir}"
            fork="yes" forkmode="perTest" maxmemory="1024m" outputtoformatters="true">
       <formatter type="plain" usefile="${junit.usefile}"/>
 
@@ -269,9 +257,7 @@
         <pathelement location="build/tests"/>
         <pathelement location="build/classes"/>
         <pathelement location="build/annotations"/>
-        <fileset dir="${junit.home}">
-          <include name="**/*.jar"/>
-        </fileset> 
+
       </classpath>
 
       <batchtest todir="build/tests">
