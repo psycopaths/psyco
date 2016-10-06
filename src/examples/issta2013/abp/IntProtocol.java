@@ -34,7 +34,7 @@ public class IntProtocol {
     
     if ((buffer_empty == 1) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
       //expect++;
-      expect = 1-expect;
+      expect++;
       buffer_empty = 1-buffer_empty;
       // OK message will be passed to upper layer
     } else {

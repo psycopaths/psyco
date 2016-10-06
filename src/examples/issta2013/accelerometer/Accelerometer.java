@@ -120,7 +120,7 @@ public class Accelerometer {
 
     m_accX = x;
     m_accY = y;
-/*
+
     int tmp = 0;
 
     m_accX = (m_accX < 0) ? max(-1000, m_accX) : min(1000, m_accX);
@@ -131,19 +131,6 @@ public class Accelerometer {
 
     m_accX = (tmp = abs_accX - THRESHOLD) <= 0 ? 0 : tmp * (m_accX / abs_accX);
     m_accY = (tmp = abs_accY - THRESHOLD) <= 0 ? 0 : tmp * (m_accY / abs_accY);
-*/
-    
-    int tmp = 0;
-
-    m_accX = (m_accX < 0) ? max(-1000, m_accX) : min(1000, m_accX);
-    m_accY = (m_accY < 0) ? max(-1000, m_accY) : min(1000, m_accY);
-
-    final int abs_accX = abs(m_accX);
-    final int abs_accY = abs(m_accY);
-
-    m_accX = (tmp = abs_accX - THRESHOLD) <= 0 ? 0 : m_accX;
-    m_accY = (tmp = abs_accY - THRESHOLD) <= 0 ? 0 : m_accY;
-      
 }
 
   private  int max(int i, int j) {
