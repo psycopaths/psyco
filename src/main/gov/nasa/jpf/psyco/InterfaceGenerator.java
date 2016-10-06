@@ -15,20 +15,22 @@
  */
 package gov.nasa.jpf.psyco;
 
-import gov.nasa.jpf.psyco.alphabet.AlphabetRefiner;
 import de.learnlib.oracles.DefaultQuery;
 import gov.nasa.jpf.constraints.api.ConstraintSolver;
 import gov.nasa.jpf.constraints.util.MixedParamsException;
-import gov.nasa.jpf.psyco.learnlib.LStar;
-import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
-import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
+import gov.nasa.jpf.psyco.alphabet.AlphabetRefiner;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodSymbol;
 import gov.nasa.jpf.psyco.exceptions.RefinementNeeded;
 import gov.nasa.jpf.psyco.exceptions.Terminate;
+import gov.nasa.jpf.psyco.learnlib.LStar;
+import gov.nasa.jpf.psyco.learnlib.SymbolicEquivalenceTest;
+import gov.nasa.jpf.psyco.learnlib.SymbolicExecutionOracle;
 import gov.nasa.jpf.psyco.learnlib.SymbolicQueryOutput;
 import gov.nasa.jpf.psyco.learnlib.ThreeValuedOracle;
+import java.io.IOException;
 import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.util.graphs.dot.GraphDOT;
 
 public class InterfaceGenerator {
 
@@ -83,6 +85,10 @@ public class InterfaceGenerator {
     this.lstar.startLearning();
     while (true) {
       this.model = this.lstar.getHypothesisModel();
+      try {
+        GraphDOT.write(model, inputs, System.out);
+      } catch (IOException ex) {
+      }
       DefaultQuery<SymbolicMethodSymbol, SymbolicQueryOutput> ce
               = this.eqTest.findCounterExample(this.model, this.inputs);
 

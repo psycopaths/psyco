@@ -52,7 +52,7 @@ public class QueryLogger implements ThreeValuedFilter, ThreeValuedOracle {
 
     @Override
     public void answer(SymbolicQueryOutput o) {
-      logger.finer("MQ: " + query.getInput() + " : " + o);
+      logger.fine("MQ: " + query.getInput() + " : " + o);
       query.answer(o);
     }
 

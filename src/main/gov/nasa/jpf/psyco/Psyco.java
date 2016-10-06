@@ -86,7 +86,7 @@ public class Psyco implements JPFShell {
       seOracle = new JDartOracle(this.config, inputs);
     } else {
       SummaryStore store = SummaryStore.create(config);
-      searchEngine.executeSearch(store, cSolver);
+      //searchEngine.executeSearch(store, cSolver);
       inputs = new SummaryAlphabet(store, cSolver);
       seOracle = new SummaryOracle((SummaryAlphabet) inputs, cSolver);
     }

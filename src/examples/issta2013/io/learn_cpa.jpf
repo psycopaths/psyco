@@ -1,0 +1,8 @@
+
+@include=../experiments/basic_learn.jpf
+@include=./example.jpf
+
+
+psyco.cpachecker=true
+psyco.cpacommand=/Users/falk/Workspace/tools/CPAchecker-1.6.1-unix/scripts/cpa.sh
+psyco.cpaparams=-timelimit,1800,-predicateAnalysis

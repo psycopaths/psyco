@@ -67,6 +67,10 @@ public class PsycoConfig {
   private boolean saveResult = false;
   private boolean saveModel = false;
   private boolean saveTransitionSystem = false;
+
+  private boolean useCPAchecker = false;
+  private String[] cpaCheckerParams = null; 
+  private String cpaCommand;
   
   private final ConstraintSolver constraintSolver;
   private final InterpolationSolver interpolationSolver;
@@ -110,6 +114,14 @@ public class PsycoConfig {
               + config.getString("psyco.resultFolderName");
       if(!resultFolderName.endsWith(File.separator)){
         resultFolderName += File.separator;
+      }
+    }
+    
+    if (config.hasValue("psyco.cpachecker")) {
+      useCPAchecker = config.getBoolean("psyco.cpachecker");
+      if (useCPAchecker) {
+        cpaCommand = config.getString("psyco.cpacommand");
+        cpaCheckerParams = config.getStringArray("psyco.cpaparams");
       }
     }
     
@@ -233,5 +245,23 @@ public class PsycoConfig {
    */
   public InterpolationSolver getInterpolationSolver() {
     return interpolationSolver;
+  }
+
+  /**
+   * @return the useCPAchecker
+   */
+  public boolean isUseCPAchecker() {
+    return useCPAchecker;
+  }
+
+  /**
+   * @return the cpaCheckerParams
+   */
+  public String[] getCpaCheckerParams() {
+    return cpaCheckerParams;
+  }
+  
+  public String getCpaCommand() {
+    return cpaCommand;
   }
 }

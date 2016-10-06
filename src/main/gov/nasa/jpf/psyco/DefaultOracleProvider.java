@@ -20,6 +20,7 @@ import gov.nasa.jpf.psyco.alphabet.SummaryAlphabet;
 import gov.nasa.jpf.psyco.alphabet.SymbolicMethodAlphabet;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthExhaustiveTest;
 import gov.nasa.jpf.psyco.equivalence.IncreasingDepthInterpolationTest;
+import gov.nasa.jpf.psyco.equivalence.ProgramAnalysisTest;
 import gov.nasa.jpf.psyco.filter.Cache;
 import gov.nasa.jpf.psyco.filter.InterpolationCache;
 import gov.nasa.jpf.psyco.filter.MethodExecutionFilter;
@@ -43,17 +44,17 @@ import java.util.List;
  * an oracle provider has the membership oracles necessary for psyco.
  */
 public class DefaultOracleProvider {
-  
-  protected static final JPFLogger logger = JPF.getLogger("psyco");  
-    
+
+  protected static final JPFLogger logger = JPF.getLogger("psyco");
+
   private final List<QueryCounter> logs = new ArrayList<>();
-          
+
   private final SymbolicExecutionOracle back;
-  
+
   private ThreeValuedOracle oracle;
-  
+
   private MethodExecutionFilter filter = null;
-  
+
   private final SymbolicMethodAlphabet inputs;
 
   private SymbolicEquivalenceTest eqtest;
@@ -63,93 +64,98 @@ public class DefaultOracleProvider {
     this.inputs = inputs;
     initialize(pconf);
   }
-   
+
   protected final void initialize(PsycoConfig pconf) {
 
-    
     ThreeValuedOracle sink;
     if (pconf.isUseInterpolation() && inputs instanceof SummaryAlphabet) {
-      sink = new InterpolationCache(pconf.getInterpolationSolver(), 
+      sink = new InterpolationCache(pconf.getInterpolationSolver(),
               pconf.getConstraintSolver(), (SummaryAlphabet) inputs);
     } else {
       sink = new SymbolicExecutionOracleWrapper(back);
     }
-    
+
     oracle = new QueryLogger(
-             new RefinementCheckOracle(
-             new TerminationCheckOracle(pconf.getTermination(), sink)));
-    
+            new RefinementCheckOracle(
+                    new TerminationCheckOracle(pconf.getTermination(), sink)));
+
     QueryCounter count;
-    
+
     if (pconf.isUseMemorization()) {
       count = new QueryCounter(oracle, "Queries after cache");
       oracle = count;
-      this.logs.add(count);      
+      this.logs.add(count);
       oracle = new Cache(oracle);
     }
-    
+
     if (pconf.isUseSuffixFilter() && inputs instanceof SummaryAlphabet) {
       count = new QueryCounter(oracle, "Queries after suffix filter");
       oracle = count;
-      this.logs.add(count);      
-      oracle = new UniformOKSuffixFilter( (SummaryAlphabet)inputs,
-               new UniformErrorFilter( (SummaryAlphabet)inputs, oracle));
+      this.logs.add(count);
+      oracle = new UniformOKSuffixFilter((SummaryAlphabet) inputs,
+              new UniformErrorFilter((SummaryAlphabet) inputs, oracle));
     }
-        
+
     count = new QueryCounter(oracle, "Valid L*/EQ Queries");
     oracle = count;
     this.logs.add(count);
-    
+
     oracle = new ValidQueryFilter(oracle);
-    
+
     // filter
-    
     if (pconf.isUsePOR()) {
       this.filter = new PORFilter(pconf.getPOR(), inputs);
     }
 
-    if(pconf.isUseInterpolation()){
+    if (pconf.isUseInterpolation()) {
       if (pconf.isUseSummaries()) {
-          eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(), 
-                  (SummaryAlphabet)inputs, oracle, 
-                  pconf.getConstraintSolver(), 
-                  pconf.getInterpolationSolver(), 
-                  pconf.getTermination());          
-        }
-        else {
-          eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
-        }
-    }else{
+        eqtest = new IncreasingDepthInterpolationTest(pconf.getMaxDepth(),
+                (SummaryAlphabet) inputs, oracle,
+                pconf.getConstraintSolver(),
+                pconf.getInterpolationSolver(),
+                pconf.getTermination());
+      } else {
+        eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
+      }
+    } else {
       eqtest = new IncreasingDepthExhaustiveTest(this, pconf);
     }
+    
+    
+    
+    if (pconf.isUseCPAchecker()) {
+      eqtest = new ProgramAnalysisTest( (SummaryAlphabet)inputs, oracle,
+          pconf.getCpaCommand(), pconf.getCpaCheckerParams());      
+    }
   }
-  
+
   /**
-   * this is the three valued oracle used by lstar 
-   * (and some of the equivalence tests)
-   * @return 
+   * this is the three valued oracle used by lstar (and some of the equivalence
+   * tests)
+   *
+   * @return
    */
   public ThreeValuedOracle getThreeValuedOracle() {
     return oracle;
   }
-  
+
   /**
-   * 
-   * @return 
+   *
+   * @return
    */
   public SymbolicExecutionOracle getSymbolicExecutionOracle() {
     return back;
   }
-  
+
   public MethodExecutionFilter getExecutionFilter() {
     return filter;
   }
-  
+
   public SymbolicMethodAlphabet getInputs() {
     return inputs;
   }
 
-    public SymbolicEquivalenceTest getEqTest() {
+  public SymbolicEquivalenceTest getEqTest() {
     return eqtest;
   }
 
@@ -158,5 +164,5 @@ public class DefaultOracleProvider {
       logger.info(counter.getStatisticalData().getSummary());
     }
   }
-  
+
 }

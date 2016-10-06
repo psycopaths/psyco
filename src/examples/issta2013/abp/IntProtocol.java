@@ -33,7 +33,8 @@ public class IntProtocol {
     //System.out.println("Expect is " + (expect & 1));
     
     if ((buffer_empty == 1) && ((sequence %2 ) == (expect % 2) )) {  // this is as expected
-      expect++;
+      //expect++;
+      expect = 1-expect;
       buffer_empty = 1-buffer_empty;
       // OK message will be passed to upper layer
     } else {
